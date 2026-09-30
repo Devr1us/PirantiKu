@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   ShoppingCart,
   Menu,
@@ -11,7 +11,6 @@ import {
   LogOut,
   Calendar,
   ShieldAlert,
-  Sparkles,
   Layers,
   ChevronDown,
 } from "lucide-react";

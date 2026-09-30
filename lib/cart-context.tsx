@@ -29,22 +29,24 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = "sewadongkak_cart_v1";
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+const emptySubscribe = () => () => {};
 
-  useEffect(() => {
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const isLoaded = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
-      if (stored) {
-        setItems(JSON.parse(stored));
-      }
-    } catch (e) {
-      console.error("Gagal memuat keranjang dari localStorage:", e);
-    } finally {
-      setIsLoaded(true);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
     }
-  }, []);
+  });
 
   useEffect(() => {
     if (!isLoaded) return;

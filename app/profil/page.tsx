@@ -13,9 +13,7 @@ import {
   Mail,
   Shield,
   Save,
-  CheckCircle2,
   Calendar,
-  Layers,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";

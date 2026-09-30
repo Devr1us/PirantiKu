@@ -4,15 +4,46 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { Package, ArrowUpRight, Sparkles, CheckCircle2 } from "lucide-react";
+import {
+  ArrowUpRight,
+  Mountain,
+  Hammer,
+  Dumbbell,
+  Home,
+  PartyPopper,
+  Package,
+} from "lucide-react";
 import type { EquipmentWithDetails } from "@/types/database";
 import { formatRupiah } from "@/lib/format";
-import { getCategoryIcon, getCategoryAccent } from "@/lib/constants";
-import { Badge } from "@/components/ui/badge";
+import { getCategoryAccent } from "@/lib/constants";
 
 interface EquipmentCardProps {
   equipment: EquipmentWithDetails;
   priority?: boolean;
+}
+
+function CategoryIconView({
+  ikon,
+  className,
+}: {
+  ikon?: string | null;
+  className?: string;
+}) {
+  const key = ikon?.toLowerCase().trim();
+  switch (key) {
+    case "mountain":
+      return <Mountain className={className} />;
+    case "hammer":
+      return <Hammer className={className} />;
+    case "dumbbell":
+      return <Dumbbell className={className} />;
+    case "home":
+      return <Home className={className} />;
+    case "party-popper":
+      return <PartyPopper className={className} />;
+    default:
+      return <Package className={className} />;
+  }
 }
 
 export function EquipmentCard({ equipment, priority = false }: EquipmentCardProps) {
@@ -28,7 +59,6 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
     equipment.images?.[0]?.url ||
     null;
 
-  const CategoryIcon = getCategoryIcon(equipment.category?.ikon);
   const accent = getCategoryAccent(equipment.category?.ikon);
 
   return (
@@ -55,7 +85,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
               className={`flex h-full w-full flex-col items-center justify-center bg-gradient-to-br ${accent.gradient} p-6 text-center transition-transform duration-500 group-hover:scale-105`}
             >
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-card/80 backdrop-blur-sm shadow-sm border border-border/50 text-primary">
-                <CategoryIcon className="h-8 w-8" />
+                <CategoryIconView ikon={equipment.category?.ikon} className="h-8 w-8" />
               </div>
               <span className="mt-3 text-xs font-semibold text-muted-foreground/80 tracking-wide">
                 {equipment.category?.nama || "Peralatan"}
@@ -84,7 +114,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
               <span
                 className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md shadow-sm bg-card/90 ${accent.text} ${accent.border}`}
               >
-                <CategoryIcon className="h-3 w-3" />
+                <CategoryIconView ikon={equipment.category.ikon} className="h-3 w-3" />
                 {equipment.category.nama}
               </span>
             </div>

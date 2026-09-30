@@ -11,13 +11,11 @@ import {
   CalendarCheck,
   CheckCircle2,
   PhoneCall,
-  Clock,
   Layers,
   ChevronRight,
-  HelpCircle,
 } from "lucide-react";
 import type { Category, EquipmentWithDetails } from "@/types/database";
-import { APP_NAME, TAGLINE, getCategoryIcon, getCategoryAccent } from "@/lib/constants";
+import { APP_NAME, getCategoryIcon, getCategoryAccent } from "@/lib/constants";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { SearchHero } from "@/components/equipment/search-hero";
 import { Button } from "@/components/ui/button";
@@ -307,7 +305,7 @@ export function HomeView({
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            {steps.map((step, idx) => {
+            {steps.map((step) => {
               const StepIcon = step.icon;
               return (
                 <motion.div

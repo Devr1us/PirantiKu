@@ -15,10 +15,8 @@ import {
   Lock,
   User,
   Phone,
-  CheckCircle2,
   AlertCircle,
   ArrowRight,
-  ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
