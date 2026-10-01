@@ -7,7 +7,7 @@ import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const metadata: Metadata = {
   title: `Katalog Alat Rental | ${APP_NAME}`,
-  description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event terlengkap di ${APP_NAME}. DP ringan 30%, stok transparan.`,
+  description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
 };
 
 export default async function AlatPage() {
@@ -36,10 +36,10 @@ export default async function AlatPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="container mx-auto max-w-7xl px-4 py-16 flex items-center justify-center">
+        <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <p className="text-sm text-muted-foreground">Memuat katalog alat...</p>
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+            <p className="text-sm text-[#5F7A84]">Memuat katalog alat...</p>
           </div>
         </div>
       }

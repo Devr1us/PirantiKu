@@ -1,11 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { NavbarClient } from "./navbar-client";
-import { APP_NAME } from "@/lib/constants";
-import type { Profile } from "@/types/database";
+import { DEFAULT_SETTINGS } from "@/lib/constants";
+import type { Profile, Category } from "@/types/database";
 
 export async function Navbar() {
   let user = null;
   let profile: Profile | null = null;
+  let categories: Category[] = [];
+  let whatsappAdmin = DEFAULT_SETTINGS.whatsapp_admin;
 
   try {
     const supabase = await createClient();
@@ -22,6 +24,27 @@ export async function Navbar() {
         .single();
       profile = profileData as Profile | null;
     }
+
+    // Ambil daftar kategori dari database untuk dropdown
+    const { data: catData } = await supabase
+      .from("categories")
+      .select("*")
+      .order("urutan", { ascending: true });
+
+    if (catData) {
+      categories = catData as Category[];
+    }
+
+    // Ambil kontak WhatsApp dari settings
+    const { data: waData } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "whatsapp_admin")
+      .single();
+
+    if (waData?.value) {
+      whatsappAdmin = waData.value;
+    }
   } catch (err: unknown) {
     if (
       err &&
@@ -34,5 +57,12 @@ export async function Navbar() {
     console.error("Gagal memuat status user di Navbar:", err);
   }
 
-  return <NavbarClient user={user} profile={profile} appName={APP_NAME} />;
+  return (
+    <NavbarClient
+      user={user}
+      profile={profile}
+      categories={categories}
+      whatsappAdmin={whatsappAdmin}
+    />
+  );
 }

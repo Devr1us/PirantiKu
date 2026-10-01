@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,8 +18,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { formatDateIndo } from "@/lib/format";
+import { AnimatedText } from "@/components/ui/motion";
 import type { Profile } from "@/types/database";
 import { toast } from "sonner";
 
@@ -151,10 +150,10 @@ export default function ProfilPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-16 flex items-center justify-center">
+      <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Memuat informasi profil...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+          <p className="text-sm text-[#5F7A84]">Memuat informasi profil...</p>
         </div>
       </div>
     );
@@ -166,147 +165,129 @@ export default function ProfilPage() {
     .toUpperCase();
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="space-y-8"
-      >
-        {/* Header Profil */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
+    <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+      {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
+      <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
+        <AnimatedText
+          text="PROFIL PENYEWA"
+          mode="word"
+          as="h1"
+          className="section-title block"
+        />
+        <p className="text-sm text-[#5F7A84] font-medium">
+          Kelola informasi nama dan nomor WhatsApp untuk kelancaran verifikasi booking serta pengambilan unit.
+        </p>
+      </div>
+
+      <div className="max-w-3xl space-y-6">
+        {/* Ringkasan Akun */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary to-teal-400 text-primary-foreground text-2xl font-bold shadow-md shadow-primary/20">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#234E5C] text-white text-xl font-bold">
               {userInitials}
             </div>
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                <h2 className="text-lg font-bold text-[#234E5C]">
                   {profile?.nama || "Penyewa"}
-                </h1>
-                <Badge
-                  variant={isAdmin ? "default" : "secondary"}
-                  className="rounded-xl px-2.5 py-0.5 text-xs font-semibold"
-                >
-                  {isAdmin ? "Administrator" : "Penyewa"}
-                </Badge>
+                </h2>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F3F3EF] border border-[#E8E8E1] text-[#234E5C]">
+                  {isAdmin ? "Admin" : "Penyewa"}
+                </span>
               </div>
-              <p className="text-sm text-muted-foreground">{userEmail}</p>
+              <p className="text-xs text-[#5F7A84]">{userEmail}</p>
               {profile?.created_at && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1.5 pt-0.5">
-                  <Calendar className="h-3.5 w-3.5 text-primary" />
-                  Bergabung sejak {formatDateIndo(profile.created_at)}
+                <p className="text-[11px] text-[#5F7A84] flex items-center gap-1 pt-0.5">
+                  <Calendar className="h-3 w-3 text-[#234E5C]" />
+                  Terdaftar sejak {formatDateIndo(profile.created_at)}
                 </p>
               )}
             </div>
           </div>
         </div>
 
-        {/* Form Pengaturan Data Pribadi */}
-        <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-sm">
-          <div className="border-b border-border pb-4 mb-6">
-            <h2 className="text-lg font-bold text-foreground">
-              Data Pribadi Penyewa
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Pastikan nama dan nomor WhatsApp aktif untuk kelancaran verifikasi booking.
-            </p>
-          </div>
+        {/* Formulir Ubah Profil */}
+        <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+          <h3 className="text-sm font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
+            Informasi Pribadi
+          </h3>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {/* Nama Lengkap */}
-              <div className="space-y-2">
-                <Label htmlFor="nama" className="text-xs font-semibold">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="nama" className="text-xs font-semibold text-[#234E5C]">
                   Nama Lengkap
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                  <User className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
                   <Input
                     id="nama"
                     type="text"
-                    className="pl-10"
-                    placeholder="Nama Lengkap"
+                    className="pl-10 text-xs"
+                    placeholder="Nama Lengkap Anda"
                     {...register("nama")}
                   />
                 </div>
                 {errors.nama && (
-                  <p className="text-xs text-destructive">{errors.nama.message}</p>
+                  <p className="text-xs text-[#DC2626] font-medium">{errors.nama.message}</p>
                 )}
               </div>
 
-              {/* Nomor WhatsApp */}
-              <div className="space-y-2">
-                <Label htmlFor="no_hp" className="text-xs font-semibold">
+              <div className="space-y-1.5">
+                <Label htmlFor="no_hp" className="text-xs font-semibold text-[#234E5C]">
                   Nomor WhatsApp / HP
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                  <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
                   <Input
                     id="no_hp"
                     type="tel"
-                    className="pl-10"
+                    className="pl-10 text-xs"
                     placeholder="081234567890"
                     {...register("no_hp")}
                   />
                 </div>
                 {errors.no_hp && (
-                  <p className="text-xs text-destructive">{errors.no_hp.message}</p>
+                  <p className="text-xs text-[#DC2626] font-medium">{errors.no_hp.message}</p>
                 )}
               </div>
             </div>
 
-            {/* Email (Readonly) */}
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-muted-foreground">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-[#5F7A84]">
                 Alamat Email (Akun Autentikasi)
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
                 <Input
                   value={userEmail}
                   disabled
-                  className="pl-10 bg-muted/60 text-muted-foreground cursor-not-allowed"
+                  className="pl-10 text-xs bg-[#F3F3EF] cursor-not-allowed text-[#5F7A84]"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Email terikat dengan akun autentikasi Anda.
-              </p>
             </div>
 
-            {/* Alamat Domisili */}
-            <div className="space-y-2">
-              <Label htmlFor="alamat" className="text-xs font-semibold">
-                Alamat Domisili / Pengiriman
+            <div className="space-y-1.5">
+              <Label htmlFor="alamat" className="text-xs font-semibold text-[#234E5C]">
+                Alamat Domisili
               </Label>
               <div className="relative">
-                <MapPin className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
                 <Input
                   id="alamat"
                   type="text"
-                  className="pl-10"
-                  placeholder="Contoh: Jl. Merdeka No. 10, Jakarta Selatan"
+                  className="pl-10 text-xs"
+                  placeholder="Contoh: Jl. Sudirman No. 12, Jakarta"
                   {...register("alamat")}
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Diperlukan bila menggunakan opsi pengantaran alat atau verifikasi identitas.
-              </p>
             </div>
 
-            {/* Role Akun (Read-only) */}
-            <div className="rounded-2xl border border-border/80 bg-muted/40 p-4">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-bold text-foreground">
-                    Hak Akses Akun: {isAdmin ? "Administrator" : "Penyewa Umum"}
-                  </h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Kolom hak akses (role) diatur langsung oleh sistem database dan tidak dapat dimodifikasi secara manual.
-                  </p>
-                </div>
-              </div>
+            <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-3.5 flex items-start gap-2.5 text-xs text-[#5F7A84]">
+              <Shield className="h-4 w-4 text-[#234E5C] shrink-0 mt-0.5" />
+              <span>
+                Data akun Anda hanya digunakan untuk verifikasi transaksi penyewaan dan keperluan serah terima barang di toko PirantiKu.
+              </span>
             </div>
 
             <div className="flex justify-end pt-2">
@@ -314,24 +295,15 @@ export default function ProfilPage() {
                 type="submit"
                 variant="warm"
                 disabled={isSaving || !isDirty}
-                className="rounded-2xl h-11 px-6 font-bold shadow-md shadow-accent-warm/20"
+                className="px-6 text-xs font-bold"
               >
-                {isSaving ? (
-                  <span className="flex items-center gap-2">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Menyimpan...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <Save className="h-4 w-4" />
-                    Simpan Perubahan
-                  </span>
-                )}
+                {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
+                <Save className="h-3.5 w-3.5 ml-1.5" />
               </Button>
             </div>
           </form>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -3,12 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence, type Variants } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
-  Layers,
   Eye,
   EyeOff,
   Mail,
@@ -21,6 +20,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Wordmark } from "@/components/ui/wordmark";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { APP_NAME } from "@/lib/constants";
 import { toast } from "sonner";
 
 const loginSchema = z.object({
@@ -85,7 +84,6 @@ function LoginForm() {
       if (authData.user) {
         toast.success("Berhasil masuk!");
 
-        // Periksa apakah user adalah admin
         const { data: profile } = await supabase
           .from("profiles")
           .select("role")
@@ -123,7 +121,7 @@ function LoginForm() {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Email pemulihan kata sandi telah dikirim. Cek inbox Anda.");
+        toast.success("Email pemulihan kata sandi telah dikirim.");
         setIsForgotPasswordOpen(false);
         setResetEmail("");
       }
@@ -134,186 +132,156 @@ function LoginForm() {
     }
   };
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.35,
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
-    <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-md space-y-8 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-xl"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row"
       >
-        <div className="text-center space-y-2">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 group transition-transform active:scale-95"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-teal-400 text-primary-foreground shadow-md shadow-primary/25">
-              <Layers className="h-5 w-5" />
-            </div>
-            <span className="text-2xl font-extrabold text-foreground">
-              {APP_NAME}
-            </span>
-          </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground pt-2">
-            Selamat Datang Kembali
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Masuk untuk melanjutkan sewa alat atau mengelola pesanan
-          </p>
+        {/* Kolom Kiri: Panel Petrol Desktop */}
+        <div className="hidden md:flex md:w-5/12 bg-[#234E5C] text-white p-10 flex-col justify-between">
+          <div>
+            <Wordmark variant="white" />
+          </div>
+
+          <div className="space-y-3 my-auto py-8">
+            <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+              Sewa Alat Praktis & Terpercaya
+            </h2>
+            <p className="text-xs text-white/80 leading-relaxed font-normal">
+              Satu akun untuk menyewa seluruh perlengkapan camping, perkakas, olahraga, dan perayaan dengan stok terjamin per tanggal.
+            </p>
+          </div>
+
+          <div className="text-[11px] text-white/60">
+            &copy; {new Date().getFullYear()} PirantiKu
+          </div>
         </div>
 
-        {/* Notifikasi Error Otentikasi Bergetar */}
-        <AnimatePresence>
-          {authError && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, x: 0 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                x: [-6, 6, -4, 4, -2, 2, 0],
-              }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4 }}
-              className="flex items-start gap-2.5 rounded-2xl border border-destructive/30 bg-destructive/10 p-3.5 text-xs text-destructive font-medium"
-            >
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-              <span>{authError}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Kolom Kanan: Formulir Putih */}
+        <div className="w-full md:w-7/12 p-8 sm:p-10 flex flex-col justify-center space-y-6">
+          {/* Header Mobile Wordmark */}
+          <div className="md:hidden text-center pb-2">
+            <Wordmark />
+          </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Email */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-semibold text-foreground">
-              Alamat Email
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                className="pl-10"
-                {...register("email")}
-              />
-            </div>
-            <AnimatePresence>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.email.message}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+              Masuk ke Akun
+            </h1>
+            <p className="text-xs text-[#5F7A84]">
+              Gunakan email terdaftar untuk melanjutkan sewa atau cek booking.
+            </p>
+          </div>
 
-          {/* Password */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label
-                htmlFor="password"
-                className="text-xs font-semibold text-foreground"
+          {/* Notifikasi Error Bergetar Halus */}
+          <AnimatePresence>
+            {authError && (
+              <motion.div
+                initial={{ opacity: 0, x: 0 }}
+                animate={{
+                  opacity: 1,
+                  x: [-5, 5, -3, 3, 0],
+                }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                className="flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-3 text-xs text-[#991B1B]"
               >
-                Password
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                <span>{authError}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-semibold text-[#234E5C]">
+                Alamat Email
               </Label>
-              <button
-                type="button"
-                onClick={() => setIsForgotPasswordOpen(true)}
-                className="text-xs text-primary hover:underline underline-offset-4 font-medium"
-              >
-                Lupa password?
-              </button>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nama@email.com"
+                  className="pl-10 text-xs"
+                  {...register("email")}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-xs text-[#DC2626] font-medium">{errors.email.message}</p>
+              )}
             </div>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Masukkan kata sandi"
-                className="pl-10 pr-10"
-                {...register("password")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground p-0.5"
-                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-            <AnimatePresence>
-              {errors.password && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-xs font-semibold text-[#234E5C]">
+                  Kata Sandi
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotPasswordOpen(true)}
+                  className="text-xs text-[#A0630F] hover:underline font-semibold"
                 >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.password.message}
-                </motion.p>
+                  Lupa password?
+                </button>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Masukkan kata sandi"
+                  className="pl-10 pr-10 text-xs"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-[#5F7A84] hover:text-[#234E5C]"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-xs text-[#DC2626] font-medium">{errors.password.message}</p>
               )}
-            </AnimatePresence>
-          </motion.div>
+            </div>
 
-          {/* Submit Button */}
-          <motion.div variants={itemVariants} className="pt-2">
-            <Button
-              type="submit"
-              className="w-full rounded-2xl h-12 font-bold text-base shadow-md shadow-primary/20"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Memverifikasi Akun...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  Masuk Sekarang
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              )}
-            </Button>
-          </motion.div>
-        </form>
+            <div className="pt-2">
+              <Button
+                type="submit"
+                variant="warm"
+                disabled={isLoading}
+                className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <span>Memverifikasi...</span>
+                ) : (
+                  <>
+                    Masuk Sekarang
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
 
-        {/* Link ke pendaftaran */}
-        <motion.div variants={itemVariants} className="text-center pt-2 border-t border-border">
-          <p className="text-sm text-muted-foreground">
-            Belum punya akun?{" "}
-            <Link
-              href="/daftar"
-              className="font-bold text-accent-warm hover:underline underline-offset-4"
-            >
-              Daftar sekarang
-            </Link>
-          </p>
-        </motion.div>
+          <div className="text-center pt-2 border-t border-[#E8E8E1]">
+            <p className="text-xs text-[#5F7A84]">
+              Belum punya akun?{" "}
+              <Link
+                href="/daftar"
+                className="font-bold text-[#A0630F] hover:underline"
+              >
+                Daftar sekarang
+              </Link>
+            </p>
+          </div>
+        </div>
       </motion.div>
 
       {/* Dialog Lupa Password */}
@@ -321,20 +289,19 @@ function LoginForm() {
         open={isForgotPasswordOpen}
         onOpenChange={setIsForgotPasswordOpen}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white border-[#E8E8E1] rounded-2xl p-6">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-primary" />
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-[#234E5C]">
+              <HelpCircle className="h-5 w-5 text-[#234E5C]" />
               Atur Ulang Kata Sandi
             </DialogTitle>
-            <DialogDescription>
-              Masukkan alamat email akun Anda. Kami akan mengirimkan tautan untuk
-              membuat kata sandi baru.
+            <DialogDescription className="text-xs text-[#5F7A84]">
+              Masukkan alamat email Anda untuk menerima instruksi reset kata sandi.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleResetPassword} className="space-y-4 pt-2">
             <div className="space-y-1.5">
-              <Label htmlFor="reset-email" className="text-xs font-semibold">
+              <Label htmlFor="reset-email" className="text-xs font-semibold text-[#234E5C]">
                 Alamat Email
               </Label>
               <Input
@@ -344,21 +311,25 @@ function LoginForm() {
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required
+                className="text-xs"
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button
                 type="button"
                 variant="outline"
+                size="sm"
                 onClick={() => setIsForgotPasswordOpen(false)}
-                className="rounded-xl"
+                className="text-xs font-bold"
               >
                 Batal
               </Button>
               <Button
                 type="submit"
+                variant="warm"
+                size="sm"
                 disabled={isResetting}
-                className="rounded-xl font-semibold"
+                className="text-xs font-bold"
               >
                 {isResetting ? "Mengirim..." : "Kirim Tautan"}
               </Button>
@@ -374,8 +345,8 @@ export default function LoginPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="flex min-h-[80vh] items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <div className="flex min-h-[80vh] items-center justify-center bg-[#FAFAF8]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
         </div>
       }
     >

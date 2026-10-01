@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Search, ChevronDown, Sparkles } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Category } from "@/types/database";
 
@@ -38,30 +38,30 @@ export function SearchHero({ categories }: SearchHeroProps) {
   ];
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-4">
+    <div className="w-full max-w-2xl mx-auto space-y-3">
       {/* Search Input Box */}
       <form
         onSubmit={handleSearch}
-        className="flex flex-col sm:flex-row items-center gap-2 p-2 rounded-3xl bg-card border border-border shadow-xl backdrop-blur-md"
+        className="flex flex-col sm:flex-row items-center gap-2 p-1.5 rounded-full bg-white border border-[#E8E8E1] shadow-sm"
       >
         {/* Input Text */}
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-4 top-3.5 h-5 w-5 text-muted-foreground" />
+          <Search className="absolute left-4 top-3 h-4 w-4 text-[#5F7A84]" />
           <input
             type="text"
-            placeholder="Cari alat (contoh: tenda, genset, drill...)"
+            placeholder="Cari alat (tenda, bor, sepeda...)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-4 bg-transparent text-sm sm:text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+            className="w-full h-10 pl-11 pr-4 bg-transparent text-xs sm:text-sm text-[#234E5C] placeholder:text-[#5F7A84]/70 focus:outline-none"
           />
         </div>
 
         {/* Category Dropdown */}
-        <div className="relative w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-border/80 pt-2 sm:pt-0 sm:pl-3">
+        <div className="relative w-full sm:w-auto border-t sm:border-t-0 sm:border-l border-[#E8E8E1] pt-1.5 sm:pt-0 sm:pl-2">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full sm:w-44 h-11 px-3 bg-muted/60 hover:bg-muted text-xs sm:text-sm font-medium text-foreground rounded-2xl appearance-none focus:outline-none cursor-pointer pr-8"
+            className="w-full sm:w-36 h-10 px-3 bg-transparent text-xs font-semibold text-[#234E5C] appearance-none focus:outline-none cursor-pointer pr-7"
           >
             <option value="">Semua Kategori</option>
             {categories.map((cat) => (
@@ -70,31 +70,29 @@ export function SearchHero({ categories }: SearchHeroProps) {
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-3 h-4 w-4 pointer-events-none text-muted-foreground" />
+          <ChevronDown className="absolute right-2.5 top-3.5 h-3.5 w-3.5 pointer-events-none text-[#5F7A84]" />
         </div>
 
         {/* Submit Search Button */}
         <Button
           type="submit"
           variant="warm"
-          className="w-full sm:w-auto h-12 px-7 rounded-2xl font-bold shadow-md shadow-accent-warm/25 shrink-0"
+          size="sm"
+          className="w-full sm:w-auto h-10 px-6 text-xs font-bold shrink-0"
         >
           Cari Alat
         </Button>
       </form>
 
       {/* Popular Keyword Chips */}
-      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1 font-semibold text-foreground/80">
-          <Sparkles className="h-3.5 w-3.5 text-accent-warm" />
-          Populer:
-        </span>
+      <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-[#5F7A84]">
+        <span className="font-semibold text-[#234E5C]">Populer:</span>
         {popularTags.map((tag) => (
           <button
             key={tag}
             type="button"
             onClick={() => handleTagClick(tag)}
-            className="px-3 py-1 rounded-full bg-card/80 border border-border/80 text-muted-foreground hover:text-primary hover:border-primary/40 hover:bg-card transition-all cursor-pointer text-xs"
+            className="px-2.5 py-0.5 rounded-full bg-white border border-[#E8E8E1] text-[11px] text-[#5F7A84] hover:text-[#234E5C] hover:border-[#234E5C] transition-all cursor-pointer"
           >
             {tag}
           </button>

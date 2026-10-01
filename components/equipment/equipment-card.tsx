@@ -4,46 +4,14 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import {
-  ArrowUpRight,
-  Mountain,
-  Hammer,
-  Dumbbell,
-  Home,
-  PartyPopper,
-  Package,
-} from "lucide-react";
 import type { EquipmentWithDetails } from "@/types/database";
 import { formatRupiah } from "@/lib/format";
-import { getCategoryAccent } from "@/lib/constants";
+import { getCategoryIcon } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 
 interface EquipmentCardProps {
   equipment: EquipmentWithDetails;
   priority?: boolean;
-}
-
-function CategoryIconView({
-  ikon,
-  className,
-}: {
-  ikon?: string | null;
-  className?: string;
-}) {
-  const key = ikon?.toLowerCase().trim();
-  switch (key) {
-    case "mountain":
-      return <Mountain className={className} />;
-    case "hammer":
-      return <Hammer className={className} />;
-    case "dumbbell":
-      return <Dumbbell className={className} />;
-    case "home":
-      return <Home className={className} />;
-    case "party-popper":
-      return <PartyPopper className={className} />;
-    default:
-      return <Package className={className} />;
-  }
 }
 
 export function EquipmentCard({ equipment, priority = false }: EquipmentCardProps) {
@@ -53,23 +21,22 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
   );
   const isAvailable = availableStock > 0;
 
-  // Foto utama atau placeholder
   const primaryImage =
     equipment.images?.find((img) => img.is_utama)?.url ||
     equipment.images?.[0]?.url ||
     null;
 
-  const accent = getCategoryAccent(equipment.category?.ikon);
+  const IconComp = getCategoryIcon(equipment.category?.ikon);
 
   return (
     <motion.div
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[#E8E8E1] bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow"
     >
-      <Link href={`/alat/${equipment.slug}`} className="flex flex-col flex-1">
-        {/* Gambar Rasio 4:3 */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted/60">
+      <div className="flex flex-col flex-1 space-y-3">
+        {/* Foto Frame: rounded-2xl, Aspect 4:3 atau Square, zoom 1.04 on hover */}
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-[#F5F3EB] border border-[#E8E8E1]/70">
           {primaryImage ? (
             <Image
               src={primaryImage}
@@ -77,85 +44,80 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
               fill
               priority={priority}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             />
           ) : (
-            // Placeholder Elegan (Gradasi Lembut + Ikon Kategori)
-            <div
-              className={`flex h-full w-full flex-col items-center justify-center bg-gradient-to-br ${accent.gradient} p-6 text-center transition-transform duration-500 group-hover:scale-105`}
-            >
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-card/80 backdrop-blur-sm shadow-sm border border-border/50 text-primary">
-                <CategoryIconView ikon={equipment.category?.ikon} className="h-8 w-8" />
-              </div>
-              <span className="mt-3 text-xs font-semibold text-muted-foreground/80 tracking-wide">
+            // Placeholder datar krem + ikon petrol (tanpa gradasi)
+            <div className="flex h-full w-full flex-col items-center justify-center p-4 text-[#234E5C]">
+              <IconComp className="h-10 w-10 stroke-[1.8]" />
+              <span className="mt-2 text-[11px] font-semibold text-[#5F7A84]">
                 {equipment.category?.nama || "Peralatan"}
               </span>
             </div>
           )}
 
-          {/* Badge Stok di sudut atas gambar */}
-          <div className="absolute left-3 top-3 z-10">
+          {/* Badge Stok di Sudut Kiri Atas */}
+          <div className="absolute left-2.5 top-2.5 z-10">
             {isAvailable ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-card/90 backdrop-blur-md border border-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shadow-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#E2F0D9] border border-[#C5E1A5] px-2.5 py-0.5 text-[11px] font-bold text-[#2E5E4E]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#2E5E4E]" />
                 Tersedia {availableStock} unit
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-card/90 backdrop-blur-md border border-rose-500/20 px-2.5 py-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 shadow-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#FEE2E2] border border-[#FECACA] px-2.5 py-0.5 text-[11px] font-bold text-[#991B1B]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#DC2626]" />
                 Stok Habis
               </span>
             )}
           </div>
-
-          {/* Kategori Badge di sudut kanan atas */}
-          {equipment.category && (
-            <div className="absolute right-3 top-3 z-10">
-              <span
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md shadow-sm bg-card/90 ${accent.text} ${accent.border}`}
-              >
-                <CategoryIconView ikon={equipment.category.ikon} className="h-3 w-3" />
-                {equipment.category.nama}
-              </span>
-            </div>
-          )}
         </div>
 
-        {/* Konten Kartu */}
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="text-base font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-            {equipment.nama}
-          </h3>
+        {/* Informasi Alat */}
+        <div className="space-y-1.5 px-0.5">
+          {equipment.category && (
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#5F7A84] block truncate">
+              {equipment.category.nama}
+            </span>
+          )}
+
+          <Link href={`/alat/${equipment.slug}`}>
+            <h3 className="text-base font-bold text-[#234E5C] line-clamp-2 hover:text-[#A0630F] transition-colors leading-snug">
+              {equipment.nama}
+            </h3>
+          </Link>
 
           {equipment.deskripsi && (
-            <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            <p className="text-xs text-[#5F7A84] line-clamp-2 leading-relaxed">
               {equipment.deskripsi}
             </p>
           )}
+        </div>
+      </div>
 
-          {/* Harga dan CTA */}
-          <div className="mt-auto pt-4 flex items-end justify-between border-t border-border/60">
-            <div>
-              <p className="text-[11px] font-medium text-muted-foreground">Harga Sewa</p>
-              <div className="flex items-baseline gap-1">
-                <span className="text-lg font-extrabold text-foreground">
-                  {formatRupiah(equipment.harga_per_hari)}
-                </span>
-                <span className="text-xs text-muted-foreground">/hari</span>
-              </div>
-              {equipment.harga_mingguan && (
-                <p className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                  Mingguan: {formatRupiah(equipment.harga_mingguan)}
-                </p>
-              )}
-            </div>
-
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-muted text-foreground transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground shadow-sm">
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </div>
+      {/* Harga Sewa dan Tombol Ochre Kecil */}
+      <div className="mt-4 pt-3 border-t border-[#E8E8E1] flex items-center justify-between">
+        <div>
+          <span className="text-[10px] font-medium uppercase tracking-wider text-[#5F7A84] block">
+            Harga Sewa
+          </span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-base font-extrabold text-[#A0630F]">
+              {formatRupiah(equipment.harga_per_hari)}
+            </span>
+            <span className="text-[11px] text-[#5F7A84]">/hari</span>
           </div>
         </div>
-      </Link>
+
+        <Link href={`/alat/${equipment.slug}`}>
+          <Button
+            variant="warm"
+            size="sm"
+            className="h-8 px-3.5 text-xs font-bold"
+          >
+            Lihat Detail
+          </Button>
+        </Link>
+      </div>
     </motion.div>
   );
 }

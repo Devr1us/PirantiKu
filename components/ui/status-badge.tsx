@@ -16,9 +16,9 @@ export function StatusBadge({
 }: StatusBadgeProps) {
   const config = BOOKING_STATUS_CONFIG[status] || {
     label: status,
-    bg: "bg-slate-100 dark:bg-slate-800",
-    text: "text-slate-700 dark:text-slate-300",
-    border: "border-slate-200 dark:border-slate-700",
+    bg: "bg-[#F3F4F6]",
+    text: "text-[#374151]",
+    border: "border-[#E5E7EB]",
     dot: "bg-slate-400",
   };
 

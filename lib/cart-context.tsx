@@ -27,7 +27,7 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const CART_STORAGE_KEY = "sewadongkak_cart_v1";
+const CART_STORAGE_KEY = "pirantiku_cart_v1";
 
 const emptySubscribe = () => () => {};
 

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
+import { AdminLayoutShell } from "@/components/admin/admin-layout-shell";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <section className="flex min-h-full flex-1 flex-col">{children}</section>;
+  return <AdminLayoutShell>{children}</AdminLayoutShell>;
 }

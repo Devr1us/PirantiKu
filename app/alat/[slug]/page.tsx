@@ -6,14 +6,15 @@ import {
   ChevronRight,
   ShieldCheck,
   Clock,
-  Layers,
+  Package,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatSpecKey } from "@/lib/format";
-import { getCategoryAccent, APP_NAME } from "@/lib/constants";
+import { APP_NAME, getCategoryIcon } from "@/lib/constants";
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
+import { AnimatedText } from "@/components/ui/motion";
 
 interface EquipmentDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -96,7 +97,6 @@ export default async function EquipmentDetailPage({
     }
   }
 
-  const accent = getCategoryAccent(equipment.category?.ikon);
   const primaryImage =
     equipment.images?.find((img) => img.is_utama)?.url ||
     equipment.images?.[0]?.url ||
@@ -107,41 +107,56 @@ export default async function EquipmentDetailPage({
     string | number | boolean
   > | null;
 
+  const IconComp = getCategoryIcon(equipment.category?.ikon);
+
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-10 pb-24 md:pb-12">
+    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 pb-24 md:pb-12 bg-[#FAFAF8] text-[#234E5C]">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-primary transition-colors">
+      <nav className="flex items-center gap-2 text-xs sm:text-sm text-[#5F7A84]">
+        <Link href="/" className="hover:text-[#234E5C] transition-colors">
           Beranda
         </Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <Link href="/alat" className="hover:text-primary transition-colors">
-          Katalog Alat
+        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
+        <Link href="/alat" className="hover:text-[#234E5C] transition-colors">
+          Katalog
         </Link>
         {equipment.category && (
           <>
-            <ChevronRight className="h-3.5 w-3.5" />
+            <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
             <Link
               href={`/kategori/${equipment.category.slug}`}
-              className="hover:text-primary transition-colors truncate max-w-[120px]"
+              className="hover:text-[#234E5C] transition-colors truncate max-w-[120px]"
             >
               {equipment.category.nama}
             </Link>
           </>
         )}
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span className="font-semibold text-foreground truncate max-w-[150px] sm:max-w-xs">
+        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
+        <span className="font-bold text-[#234E5C] truncate max-w-[160px] sm:max-w-xs">
           {equipment.nama}
         </span>
       </nav>
 
-      {/* Main Grid: Detail Alat & Widget Pemesanan */}
+      {/* Header Halaman Spesifik Alat */}
+      <div className="space-y-1.5 border-b border-[#E8E8E1] pb-5">
+        <AnimatedText
+          text={equipment.nama.toUpperCase()}
+          mode="word"
+          as="h1"
+          className="section-title block"
+        />
+        <p className="text-sm sm:text-base text-[#5F7A84] font-medium">
+          Kategori {equipment.category?.nama || "Peralatan"} &bull; Unit siap diambil dan digunakan sesuai tanggal yang Anda tentukan.
+        </p>
+      </div>
+
+      {/* Grid: Detail & Widget Pemesanan */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi (8 Kolom di Desktop) */}
+        {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-8">
-          {/* Galeri Gambar */}
+          {/* Galeri Gambar: rounded-2xl */}
           <div className="space-y-3">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-border bg-muted/50 shadow-md">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm">
               {primaryImage ? (
                 <Image
                   src={primaryImage}
@@ -151,29 +166,27 @@ export default async function EquipmentDetailPage({
                   className="object-cover"
                 />
               ) : (
-                <div
-                  className={`flex h-full w-full flex-col items-center justify-center bg-gradient-to-br ${accent.gradient} p-8 text-center`}
-                >
-                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-card/85 backdrop-blur-sm shadow-md border border-border/60 text-primary mb-3">
-                    <Layers className="h-12 w-12" />
+                <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
+                    <IconComp className="h-10 w-10 stroke-[1.8]" />
                   </div>
-                  <span className="text-sm font-bold text-foreground">
+                  <span className="text-sm font-bold text-[#234E5C]">
                     {equipment.nama}
                   </span>
-                  <span className="text-xs text-muted-foreground mt-1">
-                    Foto produk akan segera diperbarui
+                  <span className="text-xs text-[#5F7A84] mt-1">
+                    Foto produk akan diperbarui oleh pengelola
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Thumbnail gallery jika ada lebih dari 1 foto */}
+            {/* Thumbnail jika ada lebih dari 1 foto */}
             {equipment.images && equipment.images.length > 1 && (
               <div className="flex gap-2.5 overflow-x-auto pb-2">
                 {equipment.images.map((img) => (
                   <div
                     key={img.id}
-                    className="relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted cursor-pointer hover:border-primary transition-all"
+                    className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-[#E8E8E1] bg-[#F5F3EB] cursor-pointer hover:border-[#234E5C] transition-all"
                   >
                     <Image
                       src={img.url}
@@ -187,55 +200,49 @@ export default async function EquipmentDetailPage({
             )}
           </div>
 
-          {/* Info Alat Utama */}
-          <div className="space-y-4">
+          {/* Informasi Detail */}
+          <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-2">
               {equipment.category && (
                 <Link href={`/kategori/${equipment.category.slug}`}>
-                  <span
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${accent.bg} ${accent.text} ${accent.border}`}
-                  >
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#B2F5EA] bg-[#E6FFFA] px-3 py-1 text-xs font-bold text-[#234E5C]">
                     {equipment.category.nama}
                   </span>
                 </Link>
               )}
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5 text-primary" />
-                Siap diambil hari ini
+              <span className="text-xs text-[#5F7A84] flex items-center gap-1 font-medium">
+                <Clock className="h-3.5 w-3.5 text-[#234E5C]" />
+                Pengecekan fungsi sebelum serah terima
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
-              {equipment.nama}
-            </h1>
-
-            {/* Deskripsi */}
-            <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm space-y-2">
-              <h2 className="text-base font-bold text-foreground">
+            {/* Deskripsi dalam Kartu Putih */}
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-2">
+              <h2 className="text-base font-bold text-[#234E5C]">
                 Deskripsi Perlengkapan
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+              <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
                 {equipment.deskripsi ||
                   "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada penyewa."}
               </p>
             </div>
 
-            {/* Spesifikasi Teknis (Jsonb objek kunci-nilai) */}
+            {/* Spesifikasi Teknis */}
             {spesifikasiObj && Object.keys(spesifikasiObj).length > 0 && (
-              <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-foreground">
+              <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+                <h2 className="text-base font-bold text-[#234E5C]">
                   Spesifikasi Teknis
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Object.entries(spesifikasiObj).map(([key, val]) => (
                     <div
                       key={key}
-                      className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-border/60 text-xs"
+                      className="flex items-center justify-between p-3 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs"
                     >
-                      <span className="font-semibold text-muted-foreground">
+                      <span className="font-semibold text-[#5F7A84]">
                         {formatSpecKey(key)}
                       </span>
-                      <span className="font-bold text-foreground">
+                      <span className="font-bold text-[#234E5C]">
                         {typeof val === "boolean"
                           ? val
                             ? "Ya"
@@ -248,28 +255,28 @@ export default async function EquipmentDetailPage({
               </div>
             )}
 
-            {/* Ketentuan Sewa & Keamanan */}
-            <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6 space-y-3">
-              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" />
+            {/* Ketentuan Sewa */}
+            <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-6 space-y-3">
+              <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
                 Ketentuan & Jaminan Rental di {APP_NAME}
               </h3>
-              <ul className="space-y-1.5 text-xs text-muted-foreground leading-relaxed list-disc list-inside">
+              <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
                 <li>
                   Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
                 </li>
                 <li>
-                  Pembayaran DP 30% mengunci ketersediaan unit untuk jadwal sewa yang Anda pilih.
+                  Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal sewa yang Anda pilih.
                 </li>
                 <li>
-                  Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat.
+                  Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat di toko.
                 </li>
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Kolom Kanan: Rental Booking Widget (Sticky di Desktop) */}
+        {/* Kolom Kanan: Rental Booking Widget */}
         <div className="lg:col-span-5 xl:col-span-4">
           <div className="sticky top-24">
             <RentalBookingWidget
@@ -282,22 +289,22 @@ export default async function EquipmentDetailPage({
 
       {/* Rekomendasi Alat Terkait */}
       {relatedEquipment.length > 0 && (
-        <section className="pt-12 border-t border-border space-y-6">
+        <section className="pt-12 border-t border-[#E8E8E1] space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-foreground">
+              <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#234E5C]">
                 Alat Terkait di Kategori {equipment.category?.nama}
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-[#5F7A84] mt-0.5">
                 Pilihan lain yang mungkin Anda butuhkan untuk kegiatan serupa
               </p>
             </div>
             {equipment.category && (
               <Link
                 href={`/kategori/${equipment.category.slug}`}
-                className="text-xs font-bold text-primary hover:underline"
+                className="text-xs font-bold text-[#A0630F] hover:underline uppercase"
               >
-                Lihat Semua
+                Lihat Semua &rarr;
               </Link>
             )}
           </div>

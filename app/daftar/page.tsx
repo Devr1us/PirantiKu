@@ -3,26 +3,25 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence, type Variants } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
-  Layers,
   Eye,
   EyeOff,
   Mail,
   Lock,
   User,
   Phone,
-  AlertCircle,
   ArrowRight,
+  AlertCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { APP_NAME } from "@/lib/constants";
+import { Wordmark } from "@/components/ui/wordmark";
 import { toast } from "sonner";
 
 const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{6,11}$/;
@@ -58,7 +57,7 @@ function getPasswordStrength(password: string): {
   label: string;
   color: string;
 } {
-  if (!password) return { score: 0, label: "Kosong", color: "bg-muted" };
+  if (!password) return { score: 0, label: "Kosong", color: "bg-[#E8E8E1]" };
   let score = 0;
   if (password.length >= 8) score += 1;
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
@@ -67,15 +66,15 @@ function getPasswordStrength(password: string): {
 
   switch (score) {
     case 1:
-      return { score: 1, label: "Lemah", color: "bg-rose-500" };
+      return { score: 1, label: "Lemah", color: "bg-[#DC2626]" };
     case 2:
-      return { score: 2, label: "Sedang", color: "bg-amber-500" };
+      return { score: 2, label: "Sedang", color: "bg-[#D97706]" };
     case 3:
-      return { score: 3, label: "Kuat", color: "bg-teal-500" };
+      return { score: 3, label: "Kuat", color: "bg-[#234E5C]" };
     case 4:
-      return { score: 4, label: "Sangat Kuat", color: "bg-emerald-500" };
+      return { score: 4, label: "Sangat Kuat", color: "bg-[#2E5E4E]" };
     default:
-      return { score: 0, label: "Sangat Lemah", color: "bg-rose-400" };
+      return { score: 0, label: "Sangat Lemah", color: "bg-[#DC2626]" };
   }
 }
 
@@ -113,7 +112,6 @@ export default function DaftarPage() {
       const supabase = createClient();
       const origin = window.location.origin;
 
-      // Normalisasi no HP
       let sanitizedPhone = data.no_hp.replace(/[^0-9]/g, "");
       if (sanitizedPhone.startsWith("0")) {
         sanitizedPhone = "62" + sanitizedPhone.slice(1);
@@ -136,13 +134,11 @@ export default function DaftarPage() {
         return;
       }
 
-      // Periksa apakah konfirmasi email dimatikan (session langsung ada)
       if (authData.session) {
-        toast.success("Pendaftaran berhasil! Selamat datang di " + APP_NAME);
+        toast.success("Pendaftaran berhasil! Selamat datang di PirantiKu");
         router.refresh();
         router.push("/");
       } else {
-        // Konfirmasi email aktif
         setRegisteredEmail(data.email);
         setIsSuccessEmailCheck(true);
       }
@@ -155,349 +151,271 @@ export default function DaftarPage() {
     }
   };
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   if (isSuccessEmailCheck) {
     return (
-      <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-md rounded-3xl border border-border bg-card p-8 text-center shadow-xl"
-        >
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-sm mb-6">
-            <Mail className="h-8 w-8" />
+      <div className="flex min-h-[80vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
+        <div className="w-full max-w-md rounded-2xl border border-[#E8E8E1] bg-white p-8 text-center shadow-sm space-y-4">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
+            <Mail className="h-7 w-7" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-foreground">
-            Cek Email Kamu
+          <h2 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+            Cek Email Anda
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+          <p className="text-xs text-[#5F7A84] leading-relaxed">
             Kami telah mengirimkan tautan konfirmasi pendaftaran ke alamat:
           </p>
-          <p className="mt-1 font-semibold text-foreground bg-muted/60 py-1.5 px-3 rounded-xl text-sm">
+          <p className="font-semibold text-xs text-[#234E5C] bg-[#F3F3EF] py-2 px-3 rounded-lg">
             {registeredEmail}
           </p>
-          <p className="mt-4 text-xs text-muted-foreground">
-            Silakan klik tombol konfirmasi di email tersebut untuk mengaktifkan akun dan mulai menyewa alat.
+          <p className="text-[11px] text-[#5F7A84]">
+            Silakan klik tautan di email tersebut untuk mengaktifkan akun dan mulai menyewa alat di PirantiKu.
           </p>
-          <div className="mt-8 flex flex-col gap-3">
+          <div className="pt-4 flex flex-col gap-2">
             <Link href="/login">
-              <Button className="w-full rounded-2xl h-11 font-semibold">
+              <Button variant="warm" className="w-full text-xs font-bold">
                 Masuk ke Akun
               </Button>
             </Link>
             <Link href="/">
-              <Button variant="ghost" className="w-full rounded-2xl h-11 text-xs">
+              <Button variant="ghost" className="w-full text-xs font-bold">
                 Kembali ke Beranda
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-lg space-y-8 rounded-3xl border border-border bg-card p-6 sm:p-10 shadow-xl"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row"
       >
-        <div className="text-center space-y-2">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 group transition-transform active:scale-95"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-teal-400 text-primary-foreground shadow-md shadow-primary/25">
-              <Layers className="h-5 w-5" />
-            </div>
-            <span className="text-2xl font-extrabold text-foreground">
-              {APP_NAME}
-            </span>
-          </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground pt-2">
-            Buat Akun Penyewa Baru
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Daftar sekali untuk sewa berbagai macam alat dengan mudah dan aman
-          </p>
+        {/* Kolom Kiri: Panel Petrol Desktop */}
+        <div className="hidden md:flex md:w-5/12 bg-[#234E5C] text-white p-10 flex-col justify-between">
+          <div>
+            <Wordmark variant="white" />
+          </div>
+
+          <div className="space-y-3 my-auto py-8">
+            <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+              Bergabung dengan PirantiKu
+            </h2>
+            <p className="text-xs text-white/80 leading-relaxed font-normal">
+              Daftar sekali untuk menyewa berbagai alat secara transparan dengan jadwal teratur dan jaminan pengembalian deposit utuh.
+            </p>
+          </div>
+
+          <div className="text-[11px] text-white/60">
+            &copy; {new Date().getFullYear()} PirantiKu
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Nama Lengkap */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="nama" className="text-xs font-semibold text-foreground">
-              Nama Lengkap
-            </Label>
-            <div className="relative">
-              <User className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="nama"
-                type="text"
-                placeholder="Contoh: Budi Pratama"
-                className="pl-10"
-                {...register("nama")}
-              />
-            </div>
-            <AnimatePresence>
-              {errors.nama && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.nama.message}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
+        {/* Kolom Kanan: Formulir Putih */}
+        <div className="w-full md:w-7/12 p-8 sm:p-10 flex flex-col justify-center space-y-5">
+          {/* Header Mobile Wordmark */}
+          <div className="md:hidden text-center pb-2">
+            <Wordmark />
+          </div>
 
-          {/* Nomor WhatsApp */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="no_hp" className="text-xs font-semibold text-foreground">
-              Nomor WhatsApp / HP
-            </Label>
-            <div className="relative">
-              <Phone className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="no_hp"
-                type="tel"
-                placeholder="081234567890"
-                className="pl-10"
-                {...register("no_hp")}
-              />
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              Digunakan untuk konfirmasi jadwal dan info pengambilan alat.
+          <div className="space-y-1">
+            <h1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+              Buat Akun Penyewa
+            </h1>
+            <p className="text-xs text-[#5F7A84]">
+              Lengkapi data di bawah untuk kemudahan verifikasi jadwal sewa alat.
             </p>
-            <AnimatePresence>
-              {errors.no_hp && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.no_hp.message}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          </div>
 
-          {/* Email */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="email" className="text-xs font-semibold text-foreground">
-              Alamat Email
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="nama@email.com"
-                className="pl-10"
-                {...register("email")}
-              />
-            </div>
-            <AnimatePresence>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.email.message}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Password */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="password" className="text-xs font-semibold text-foreground">
-              Password
-            </Label>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Minimal 8 karakter"
-                className="pl-10 pr-10"
-                {...register("password")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground p-0.5"
-                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-
-            {/* Indikator Kekuatan Password */}
-            {passwordVal && (
-              <div className="pt-1 space-y-1">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-muted-foreground">Kekuatan password:</span>
-                  <span className="font-semibold text-foreground">{strength.label}</span>
-                </div>
-                <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden flex gap-1">
-                  {[1, 2, 3, 4].map((step) => (
-                    <div
-                      key={step}
-                      className={`h-full flex-1 transition-all duration-300 ${
-                        step <= strength.score ? strength.color : "bg-muted"
-                      }`}
-                    />
-                  ))}
-                </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+            {/* Nama Lengkap */}
+            <div className="space-y-1">
+              <Label htmlFor="nama" className="text-xs font-semibold text-[#234E5C]">
+                Nama Lengkap (sesuai KTP/SIM)
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="nama"
+                  type="text"
+                  placeholder="Contoh: Budi Santoso"
+                  className="pl-10 text-xs"
+                  {...register("nama")}
+                />
               </div>
-            )}
-
-            <AnimatePresence>
-              {errors.password && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.password.message}
-                </motion.p>
+              {errors.nama && (
+                <p className="text-[11px] text-[#DC2626] font-medium">{errors.nama.message}</p>
               )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Konfirmasi Password */}
-          <motion.div variants={itemVariants} className="space-y-1.5">
-            <Label htmlFor="confirmPassword" className="text-xs font-semibold text-foreground">
-              Konfirmasi Password
-            </Label>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Ulangi password di atas"
-                className="pl-10 pr-10"
-                {...register("confirmPassword")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-3 text-muted-foreground hover:text-foreground p-0.5"
-                aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
-              >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
             </div>
-            <AnimatePresence>
+
+            {/* Nomor WhatsApp */}
+            <div className="space-y-1">
+              <Label htmlFor="no_hp" className="text-xs font-semibold text-[#234E5C]">
+                Nomor WhatsApp Aktif
+              </Label>
+              <div className="relative">
+                <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="no_hp"
+                  type="tel"
+                  placeholder="081234567890"
+                  className="pl-10 text-xs"
+                  {...register("no_hp")}
+                />
+              </div>
+              {errors.no_hp && (
+                <p className="text-[11px] text-[#DC2626] font-medium">{errors.no_hp.message}</p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="space-y-1">
+              <Label htmlFor="email" className="text-xs font-semibold text-[#234E5C]">
+                Alamat Email
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nama@email.com"
+                  className="pl-10 text-xs"
+                  {...register("email")}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-[11px] text-[#DC2626] font-medium">{errors.email.message}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1">
+              <Label htmlFor="password" className="text-xs font-semibold text-[#234E5C]">
+                Kata Sandi (Minimal 8 Karakter)
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="pl-10 pr-10 text-xs"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-3.5 text-[#5F7A84] hover:text-[#234E5C]"
+                  aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+
+              {passwordVal && (
+                <div className="pt-1 space-y-1">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-[#5F7A84]">Kekuatan: {strength.label}</span>
+                  </div>
+                  <div className="h-1 w-full rounded-full bg-[#E8E8E1] overflow-hidden flex gap-1">
+                    {[1, 2, 3, 4].map((step) => (
+                      <div
+                        key={step}
+                        className={`h-full flex-1 transition-all ${
+                          step <= strength.score ? strength.color : "bg-[#E8E8E1]"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {errors.password && (
+                <p className="text-[11px] text-[#DC2626] font-medium">{errors.password.message}</p>
+              )}
+            </div>
+
+            {/* Konfirmasi Password */}
+            <div className="space-y-1">
+              <Label htmlFor="confirmPassword" className="text-xs font-semibold text-[#234E5C]">
+                Ulangi Kata Sandi
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="pl-10 pr-10 text-xs"
+                  {...register("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3.5 top-3.5 text-[#5F7A84] hover:text-[#234E5C]"
+                  aria-label={showConfirmPassword ? "Sembunyikan password" : "Tampilkan password"}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {errors.confirmPassword && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.confirmPassword.message}
-                </motion.p>
+                <p className="text-[11px] text-[#DC2626] font-medium">{errors.confirmPassword.message}</p>
               )}
-            </AnimatePresence>
-          </motion.div>
+            </div>
 
-          {/* Syarat & Ketentuan */}
-          <motion.div variants={itemVariants} className="pt-1">
-            <label className="flex items-start gap-2.5 text-xs text-muted-foreground cursor-pointer select-none">
-              <input
-                type="checkbox"
-                className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary accent-primary"
-                {...register("agreeTerms")}
-              />
-              <span>
-                Saya menyetujui{" "}
-                <span className="font-semibold text-foreground hover:underline">
-                  Syarat & Ketentuan Sewa
-                </span>{" "}
-                serta kewajiban menjaga kondisi alat selama masa peminjaman.
-              </span>
-            </label>
-            <AnimatePresence>
+            {/* Syarat & Ketentuan */}
+            <div className="pt-1">
+              <label className="flex items-start gap-2 text-xs text-[#5F7A84] cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 h-3.5 w-3.5 rounded border-[#E8E8E1] text-[#234E5C] focus:ring-[#234E5C] accent-[#234E5C]"
+                  {...register("agreeTerms")}
+                />
+                <span>
+                  Saya menyetujui ketentuan peminjaman dan bersedia menjaga kondisi alat selama masa sewa.
+                </span>
+              </label>
               {errors.agreeTerms && (
-                <motion.p
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-xs font-medium text-destructive flex items-center gap-1 mt-1.5"
-                >
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.agreeTerms.message}
-                </motion.p>
+                <p className="text-[11px] text-[#DC2626] font-medium mt-1">{errors.agreeTerms.message}</p>
               )}
-            </AnimatePresence>
-          </motion.div>
+            </div>
 
-          {/* Submit Button */}
-          <motion.div variants={itemVariants} className="pt-2">
-            <Button
-              type="submit"
-              variant="warm"
-              className="w-full rounded-2xl h-12 font-bold text-base shadow-lg shadow-accent-warm/25"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Memproses Pendaftaran...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  Daftar Sekarang
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              )}
-            </Button>
-          </motion.div>
-        </form>
+            {/* Tombol Daftar Ochre */}
+            <div className="pt-2">
+              <Button
+                type="submit"
+                variant="warm"
+                disabled={isLoading}
+                className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <span>Memproses Akun...</span>
+                ) : (
+                  <>
+                    Daftar Sekarang
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
 
-        {/* Link ke login */}
-        <motion.div variants={itemVariants} className="text-center pt-2 border-t border-border">
-          <p className="text-sm text-muted-foreground">
-            Sudah punya akun?{" "}
-            <Link
-              href="/login"
-              className="font-semibold text-primary hover:underline underline-offset-4"
-            >
-              Masuk di sini
-            </Link>
-          </p>
-        </motion.div>
+          <div className="text-center pt-2 border-t border-[#E8E8E1]">
+            <p className="text-xs text-[#5F7A84]">
+              Sudah punya akun?{" "}
+              <Link
+                href="/login"
+                className="font-bold text-[#A0630F] hover:underline"
+              >
+                Masuk di sini
+              </Link>
+            </p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

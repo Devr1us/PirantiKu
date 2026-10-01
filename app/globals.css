@@ -1,127 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --panel: #F3F3EF;
+  --border: #E8E8E1;
+  --petrol: #234E5C;
+  --petrol-soft: #5F7A84;
+  --leaf: #2E5E4E;
+  --ochre: #A0630F;
+  --ochre-hover: #85510A;
 
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-
-  /* Primer: Teal / Emerald */
-  --primary: 168 80% 32%;
-  --primary-foreground: 0 0% 100%;
-  --primary-hover: 168 80% 28%;
-
-  /* Aksen hangat: Oranye untuk CTA utama */
-  --accent-warm: 24 95% 53%;
-  --accent-warm-foreground: 0 0% 100%;
-  --accent-warm-hover: 24 95% 48%;
-
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222 47% 11%;
-
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-
-  --accent: 168 70% 95%;
-  --accent-foreground: 168 80% 26%;
-
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 168 80% 32%;
-
-  --radius: 1rem;
-}
-
-.dark {
-  --background: 224 71% 4%;
-  --foreground: 210 40% 98%;
-
-  --card: 224 60% 7%;
-  --card-foreground: 210 40% 98%;
-
-  --popover: 224 60% 7%;
-  --popover-foreground: 210 40% 98%;
-
-  --primary: 168 76% 40%;
-  --primary-foreground: 0 0% 100%;
-  --primary-hover: 168 76% 34%;
-
-  --accent-warm: 24 95% 53%;
-  --accent-warm-foreground: 0 0% 100%;
-  --accent-warm-hover: 24 95% 48%;
-
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-
-  --muted: 217.2 32.6% 15%;
-  --muted-foreground: 215 20.2% 65.1%;
-
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-
-  --border: 217.2 32.6% 20%;
-  --input: 217.2 32.6% 20%;
-  --ring: 168 76% 40%;
+  /* Standard design-token aliases for compatibility */
+  --background: #FAFAF8;
+  --foreground: #234E5C;
+  --card: #FFFFFF;
+  --card-foreground: #234E5C;
+  --popover: #FFFFFF;
+  --popover-foreground: #234E5C;
+  --primary: #A0630F;
+  --primary-foreground: #FFFFFF;
+  --secondary: #234E5C;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F3F3EF;
+  --muted-foreground: #5F7A84;
+  --accent: #F3F3EF;
+  --accent-foreground: #234E5C;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --input: #E8E8E1;
+  --ring: #234E5C;
+  --radius: 0.75rem;
 }
 
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-primary-hover: hsl(var(--primary-hover));
-  --color-accent-warm: hsl(var(--accent-warm));
-  --color-accent-warm-foreground: hsl(var(--accent-warm-foreground));
-  --color-accent-warm-hover: hsl(var(--accent-warm-hover));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
-  --radius-2xl: 1rem;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-border: var(--border);
+  --color-petrol: var(--petrol);
+  --color-petrol-soft: var(--petrol-soft);
+  --color-leaf: var(--leaf);
+  --color-ochre: var(--ochre);
+  --color-ochre-hover: var(--ochre-hover);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-open-sans), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-libre-baskerville), Georgia, serif;
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background-color: var(--bg);
+  color: var(--petrol);
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Custom subtle scrollbar */
+/* Fluid Hero and Section Headings */
+.hero-title {
+  font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: var(--petrol);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.section-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--petrol);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+/* Clean Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: #D5D5CE;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
+  background: #B8B8AD;
 }

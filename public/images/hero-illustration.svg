@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%" fill="none">
+  <!-- Circular / Organic Curved Frame -->
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="300" cy="300" r="280" />
+    </clipPath>
+  </defs>
+
+  <!-- Outer Ring and Background -->
+  <circle cx="300" cy="300" r="285" fill="#E8E8E1" />
+  <circle cx="300" cy="300" r="280" fill="#F3F3EF" />
+  
+  <g clip-path="url(#circleClip)">
+    <!-- Decorative Warm Ground Shapes -->
+    <path d="M-20 440 Q 150 400, 300 430 T 620 420 L 620 620 L -20 620 Z" fill="#E8E8E1" />
+    <path d="M-20 480 Q 200 460, 380 490 T 620 470 L 620 620 L -20 620 Z" fill="#2E5E4E" opacity="0.12" />
+
+    <!-- 1. CAMPING TENT (Center-Left) -->
+    <g id="tent" transform="translate(110, 240)">
+      <!-- Tent Base Shadow -->
+      <ellipse cx="100" cy="180" rx="90" ry="14" fill="#E8E8E1" />
+      
+      <!-- Back Wall / Ground Sheet -->
+      <polygon points="100,20 180,175 20,175" fill="#234E5C" />
+      
+      <!-- Tent Main Face Left -->
+      <polygon points="100,20 20,175 100,175" fill="#A0630F" />
+      
+      <!-- Tent Main Face Right (highlight) -->
+      <polygon points="100,20 100,175 180,175" fill="#85510A" />
+
+      <!-- Tent Inner Entrance Cutout -->
+      <polygon points="100,60 65,175 135,175" fill="#234E5C" />
+      
+      <!-- Tent Door Flap Folded -->
+      <polygon points="100,60 55,175 80,175" fill="#2E5E4E" />
+
+      <!-- Guy Lines and Pegs -->
+      <line x1="100" y1="20" x2="-5" y2="185" stroke="#5F7A84" stroke-width="2.5" stroke-dasharray="4,2" />
+      <circle cx="-5" cy="185" r="3" fill="#234E5C" />
+      <line x1="100" y1="20" x2="205" y2="185" stroke="#5F7A84" stroke-width="2.5" stroke-dasharray="4,2" />
+      <circle cx="205" cy="185" r="3" fill="#234E5C" />
+    </g>
+
+    <!-- 2. BICYCLE (Sports - Right) -->
+    <g id="bicycle" transform="translate(320, 290)">
+      <!-- Wheels -->
+      <g>
+        <!-- Rear Wheel -->
+        <circle cx="50" cy="110" r="42" stroke="#234E5C" stroke-width="6" fill="#FFFFFF" />
+        <circle cx="50" cy="110" r="38" stroke="#E8E8E1" stroke-width="2" fill="none" />
+        <circle cx="50" cy="110" r="8" fill="#A0630F" />
+        <!-- Spokes -->
+        <line x1="50" y1="68" x2="50" y2="152" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="8" y1="110" x2="92" y2="110" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="20" y1="80" x2="80" y2="140" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="20" y1="140" x2="80" y2="80" stroke="#5F7A84" stroke-width="1.5" />
+
+        <!-- Front Wheel -->
+        <circle cx="180" cy="110" r="42" stroke="#234E5C" stroke-width="6" fill="#FFFFFF" />
+        <circle cx="180" cy="110" r="38" stroke="#E8E8E1" stroke-width="2" fill="none" />
+        <circle cx="180" cy="110" r="8" fill="#A0630F" />
+        <!-- Spokes -->
+        <line x1="180" y1="68" x2="180" y2="152" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="138" y1="110" x2="222" y2="110" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="150" y1="80" x2="210" y2="140" stroke="#5F7A84" stroke-width="1.5" />
+        <line x1="150" y1="140" x2="210" y2="80" stroke="#5F7A84" stroke-width="1.5" />
+      </g>
+
+      <!-- Frame Geometry -->
+      <polyline points="50,110 95,110 145,55 85,55 50,110" stroke="#2E5E4E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      <line x1="95" y1="110" x2="85" y2="55" stroke="#2E5E4E" stroke-width="6" stroke-linecap="round" />
+      <line x1="145" y1="55" x2="180" y2="110" stroke="#234E5C" stroke-width="6" stroke-linecap="round" />
+
+      <!-- Seat -->
+      <line x1="85" y1="55" x2="81" y2="40" stroke="#5F7A84" stroke-width="4" stroke-linecap="round" />
+      <path d="M68 40 Q 82 35, 96 40 L 92 45 Z" fill="#234E5C" />
+
+      <!-- Handlebars -->
+      <line x1="145" y1="55" x2="148" y2="35" stroke="#5F7A84" stroke-width="4" stroke-linecap="round" />
+      <path d="M138 35 L 158 35 Q 166 35, 164 45" stroke="#234E5C" stroke-width="4" stroke-linecap="round" fill="none" />
+
+      <!-- Pedal / Chainring -->
+      <circle cx="95" cy="110" r="10" fill="#A0630F" />
+      <line x1="95" y1="110" x2="105" y2="125" stroke="#5F7A84" stroke-width="3" stroke-linecap="round" />
+      <rect x="100" y="125" width="10" height="4" rx="2" fill="#234E5C" />
+    </g>
+
+    <!-- 3. SHOVEL / TOOLS (Behind Tent & Left) -->
+    <g id="shovel" transform="translate(100, 150) rotate(-22)">
+      <!-- Handle Pole -->
+      <rect x="18" y="0" width="8" height="175" rx="3" fill="#A0630F" />
+      <!-- D-Grip Top -->
+      <path d="M12 0 L32 0 Q 34 20, 22 20 L22 0" fill="#234E5C" />
+      <circle cx="22" cy="10" r="3" fill="#F3F3EF" />
+      <!-- Blade Collar -->
+      <rect x="16" y="165" width="12" height="12" rx="2" fill="#5F7A84" />
+      <!-- Blade -->
+      <path d="M12 175 Q 7 220, 22 235 Q 37 220, 32 175 Z" fill="#234E5C" />
+      <line x1="22" y1="175" x2="22" y2="228" stroke="#5F7A84" stroke-width="2" />
+    </g>
+
+    <!-- 4. SPEAKER / SOUND SYSTEM (Event Gear - Center Foreground) -->
+    <g id="speaker" transform="translate(260, 345)">
+      <!-- Main Cabinet Shadow -->
+      <rect x="8" y="105" width="74" height="8" rx="4" fill="#E8E8E1" />
+      <!-- Main Cabinet -->
+      <rect x="10" y="10" width="70" height="100" rx="10" fill="#234E5C" />
+      <rect x="13" y="13" width="64" height="94" rx="8" fill="#FFFFFF" />
+      <!-- Speaker Grille Inner -->
+      <rect x="16" y="16" width="58" height="88" rx="6" fill="#F3F3EF" />
+      
+      <!-- Top Tweeter -->
+      <circle cx="45" cy="38" r="14" fill="#5F7A84" />
+      <circle cx="45" cy="38" r="9" fill="#234E5C" />
+      <circle cx="45" cy="38" r="3" fill="#A0630F" />
+
+      <!-- Bottom Woofer (Large) -->
+      <circle cx="45" cy="74" r="22" fill="#234E5C" />
+      <circle cx="45" cy="74" r="16" fill="#A0630F" />
+      <circle cx="45" cy="74" r="8" fill="#85510A" />
+
+      <!-- Top Carry Handle -->
+      <rect x="33" y="4" width="24" height="6" rx="3" fill="#A0630F" />
+    </g>
+
+    <!-- Decorative Elements (Small Leaf and Minimal Dots) -->
+    <g opacity="0.6">
+      <circle cx="210" cy="180" r="4" fill="#A0630F" />
+      <circle cx="430" cy="200" r="5" fill="#2E5E4E" />
+      <circle cx="460" cy="230" r="3" fill="#5F7A84" />
+    </g>
+  </g>
+</svg>
