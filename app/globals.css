@@ -10,6 +10,7 @@
   --leaf: #2E5E4E;
   --ochre: #A0630F;
   --ochre-hover: #85510A;
+  --navbar-offset: 80px;
 
   /* Standard design-token aliases for compatibility */
   --background: #FAFAF8;

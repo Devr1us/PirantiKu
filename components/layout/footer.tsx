@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/ui/wordmark";
+import { P } from "@/components/ui/typography";
 import { APP_NAME } from "@/lib/constants";
 
 export async function Footer() {
@@ -10,10 +11,10 @@ export async function Footer() {
           {/* Sisi Kiri: Wordmark & Deskripsi Singkat */}
           <div className="space-y-4 max-w-sm">
             <Wordmark />
-            <p className="text-sm text-[#5F7A84] leading-relaxed">
+            <P className="text-sm text-[#5F7A84] leading-relaxed">
               Layanan penyewaan perlengkapan serba ada dengan transparansi stok,
               proses cepat per tanggal sewa, dan kondisi alat prima siap pakai.
-            </p>
+            </P>
           </div>
 
           {/* Sisi Kanan: Daftar Tautan Vertikal Rapi */}

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 import { Calendar, Package } from "lucide-react";
 import type { Booking, BookingItem, EquipmentItem } from "@/types/database";
 
@@ -40,15 +40,12 @@ export default async function AdminCalendarPage() {
     <div className="space-y-8">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-5 space-y-1.5">
-        <AnimatedText
-          text="KALENDER RENTAL"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 mode="word" className="section-title block">
+          KALENDER RENTAL
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Pantau jadwal masa sewa yang sedang aktif dan agenda pengembalian peralatan mendatang.
-        </p>
+        </Lead>
       </div>
 
       {/* Tabel Jadwal Sewa Aktif dalam Kartu Putih */}

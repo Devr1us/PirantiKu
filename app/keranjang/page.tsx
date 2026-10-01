@@ -24,6 +24,7 @@ import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
 import { AnimatedText } from "@/components/ui/motion";
+import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
 import { toast } from "sonner";
 
 export default function KeranjangPage() {
@@ -122,15 +123,12 @@ export default function KeranjangPage() {
           </button>
         </div>
 
-        <AnimatedText
-          text="KERANJANG SEWA"
-          mode="word"
-          as="h1"
-          className="section-title block pt-1"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 className="section-title block pt-1">
+          KERANJANG SEWA
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Tentukan rentang tanggal sewa dan periksa jumlah unit peralatan sebelum melanjutkan ke langkah pembayaran DP.
-        </p>
+        </Lead>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -300,7 +298,7 @@ export default function KeranjangPage() {
 
         {/* Kolom Kanan: Ringkasan Biaya di Kartu Putih */}
         <div className="lg:col-span-5 xl:col-span-4">
-          <div className="sticky top-24 rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+          <div className="sticky top-[var(--navbar-offset)] rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5 transition-[top] duration-300">
             <h3 className="text-base font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
               Ringkasan Biaya Sewa
             </h3>

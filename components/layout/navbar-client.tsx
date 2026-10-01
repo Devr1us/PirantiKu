@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useActiveNav, setOptimisticNav } from "@/components/layout/use-active-nav";
+import { useNavbarVisibility } from "@/components/layout/use-navbar-visibility";
+import { HoverRollText } from "@/components/ui/text-motion";
 
 interface NavbarClientProps {
   user: User | null;
@@ -55,8 +57,19 @@ export function NavbarClient({
   const router = useRouter();
   const { totalItems, isLoaded } = useCart();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
+  const headerRef = React.useRef<HTMLElement | null>(null);
+
   const activeNav = useActiveNav();
   const shouldReduceMotion = useReducedMotion();
+
+  const { isVisible, isScrolled } = useNavbarVisibility({
+    isMobileOpen,
+    isDropdownOpen,
+    isHovered,
+    headerRef,
+  });
 
   const springTransition: Transition = shouldReduceMotion
     ? { duration: 0 }
@@ -115,7 +128,23 @@ export function NavbarClient({
   const userInitials = displayName.slice(0, 2).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-[#E8E8E1] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <motion.header
+      ref={headerRef}
+      animate={{
+        y: isVisible ? 0 : "-100%",
+      }}
+      transition={{
+        duration: isVisible ? 0.25 : 0.3,
+        ease: isVisible ? [0.22, 1, 0.36, 1] : [0, 0, 0.2, 1],
+      }}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => setIsHovered(false)}
+      className={`sticky top-0 z-40 w-full bg-white transition-[border-color,box-shadow] duration-200 ${
+        isScrolled
+          ? "border-b border-[#E8E8E1] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+          : "border-b border-transparent shadow-none"
+      }`}
+    >
       <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Sisi Kiri: Wordmark PirantiKu */}
         <div className="flex items-center gap-6">
@@ -136,7 +165,7 @@ export function NavbarClient({
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              BERANDA
+              <HoverRollText text="BERANDA" />
               {activeNav === "beranda" && (
                 <motion.span
                   layoutId="nav-underline"
@@ -156,7 +185,7 @@ export function NavbarClient({
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              KATALOG
+              <HoverRollText text="KATALOG" />
               {activeNav === "katalog" && (
                 <motion.span
                   layoutId="nav-underline"
@@ -167,7 +196,7 @@ export function NavbarClient({
             </Link>
 
             {/* KATEGORI (Dropdown dari Database) */}
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger
                 aria-current={activeNav === "kategori" ? "page" : undefined}
                 className={`relative inline-flex items-center gap-1 px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer outline-none ${
@@ -176,7 +205,7 @@ export function NavbarClient({
                     : "text-[#234E5C]/80 hover:text-[#234E5C]"
                 }`}
               >
-                <span>KATEGORI</span>
+                <HoverRollText text="KATEGORI" />
                 <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
                 {activeNav === "kategori" && (
                   <motion.span
@@ -224,7 +253,7 @@ export function NavbarClient({
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              CARA SEWA
+              <HoverRollText text="CARA SEWA" />
               {activeNav === "cara-sewa" && (
                 <motion.span
                   layoutId="nav-underline"
@@ -245,7 +274,7 @@ export function NavbarClient({
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              KONTAK
+              <HoverRollText text="KONTAK" />
               {activeNav === "kontak" && (
                 <motion.span
                   layoutId="nav-underline"
@@ -286,7 +315,7 @@ export function NavbarClient({
           {/* Tombol Auth Desktop */}
           <div className="hidden sm:flex items-center gap-2">
             {user ? (
-              <DropdownMenu>
+              <DropdownMenu onOpenChange={setIsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
@@ -355,12 +384,12 @@ export function NavbarClient({
               <div className="flex items-center gap-2">
                 <Link href="/login">
                   <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-bold">
-                    MASUK
+                    <HoverRollText text="MASUK" />
                   </Button>
                 </Link>
                 <Link href="/daftar">
                   <Button variant="warm" size="sm" className="h-9 px-5 text-xs font-bold">
-                    DAFTAR
+                    <HoverRollText text="DAFTAR" />
                   </Button>
                 </Link>
               </div>
@@ -585,6 +614,6 @@ export function NavbarClient({
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

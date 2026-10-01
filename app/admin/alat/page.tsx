@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatRupiah } from "@/lib/format";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import type { EquipmentWithDetails } from "@/types/database";
 
@@ -32,15 +32,12 @@ export default async function AdminEquipmentPage() {
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-5 space-y-1.5 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <AnimatedText
-            text="KELOLA ALAT & STOK"
-            mode="word"
-            as="h1"
-            className="section-title block"
-          />
-          <p className="text-sm text-[#5F7A84] font-medium">
+          <H1 mode="word" className="section-title block">
+            KELOLA ALAT & STOK
+          </H1>
+          <Lead className="text-sm text-[#5F7A84] font-medium">
             Daftar seluruh perlengkapan, pemantauan unit tersedia, dan status aktif inventaris.
-          </p>
+          </Lead>
         </div>
 
         <Link href="/alat">

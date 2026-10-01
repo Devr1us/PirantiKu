@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 import { getCategoryIcon, getCategoryDescription } from "@/lib/constants";
 import type { Category } from "@/types/database";
 
@@ -26,15 +26,12 @@ export default async function AdminCategoriesPage() {
     <div className="space-y-8">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-5 space-y-1.5">
-        <AnimatedText
-          text="KELOLA KATEGORI ALAT"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 mode="word" className="section-title block">
+          KELOLA KATEGORI ALAT
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Daftar klasifikasi kategori perlengkapan sewa yang ditampilkan di beranda dan navigasi website.
-        </p>
+        </Lead>
       </div>
 
       {/* Tabel dalam Kartu Putih */}

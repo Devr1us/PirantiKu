@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 import type { Booking } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -27,15 +27,12 @@ export default async function AdminBookingsPage() {
     <div className="space-y-8">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-5 space-y-1.5">
-        <AnimatedText
-          text="KELOLA BOOKING PELANGGAN"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 mode="word" className="section-title block">
+          KELOLA BOOKING PELANGGAN
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Daftar seluruh pesanan rental, verifikasi pembayaran uang muka (DP), dan pencatatan status peminjaman.
-        </p>
+        </Lead>
       </div>
 
       {/* Tabel dalam Kartu Putih */}

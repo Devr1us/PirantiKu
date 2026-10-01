@@ -19,7 +19,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, H2, H3, Lead, P, Eyebrow } from "@/components/ui/typography";
+import { HoverRollText } from "@/components/ui/motion";
 import { toast } from "sonner";
 import type { Profile } from "@/types/database";
 
@@ -167,15 +168,15 @@ export default function CheckoutPage() {
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#2E5E4E]">
+            <Eyebrow className="text-[#2E5E4E]">
               Pesanan Telah Terdaftar
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#234E5C]">
+            </Eyebrow>
+            <H1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#234E5C]">
               Booking Berhasil Dibuat!
-            </h1>
-            <p className="text-sm text-[#5F7A84]">
+            </H1>
+            <P className="text-sm text-[#5F7A84]">
               Kode Booking Anda:
-            </p>
+            </P>
             <div className="inline-block py-2 px-6 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] font-mono text-lg font-bold text-[#234E5C]">
               {createdBookingCode}
             </div>
@@ -229,15 +230,10 @@ export default function CheckoutPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke Keranjang
         </Link>
-        <AnimatedText
-          text="CHECKOUT PENYEWAAN"
-          mode="word"
-          as="h1"
-          className="section-title block pt-1"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 className="section-title block pt-1">CHECKOUT PENYEWAAN</H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Konfirmasi data penyewa, tinjau ringkasan biaya, dan amankan pesanan unit alat Anda.
-        </p>
+        </Lead>
       </div>
 
       {/* Stepper Sederhana dengan Lingkaran Angka Petrol */}
@@ -448,7 +444,7 @@ export default function CheckoutPage() {
 
         {/* Kolom Kanan: Ringkasan Pesanan (5 Kolom) */}
         <div className="lg:col-span-5 xl:col-span-4">
-          <div className="sticky top-24 rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+          <div className="sticky top-[var(--navbar-offset)] transition-[top] duration-300 rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
             <h3 className="text-base font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
               Ringkasan Pesanan
             </h3>

@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatDateIndo } from "@/lib/format";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 import type { Profile } from "@/types/database";
 import { toast } from "sonner";
 
@@ -168,15 +168,12 @@ export default function ProfilPage() {
     <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <AnimatedText
-          text="PROFIL PENYEWA"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 className="section-title block">
+          PROFIL PENYEWA
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Kelola informasi nama dan nomor WhatsApp untuk kelancaran verifikasi booking serta pengambilan unit.
-        </p>
+        </Lead>
       </div>
 
       <div className="max-w-3xl space-y-6">

@@ -26,6 +26,8 @@ import {
   StaggerItem,
   CountUp,
 } from "@/components/ui/motion";
+import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
+import { HoverRollText } from "@/components/ui/text-motion";
 
 interface HomeViewProps {
   categories: Category[];
@@ -66,28 +68,21 @@ export function HomeView({
             {/* Kolom Kiri: Judul, Sub-judul, Deskripsi, Tombol Aksi */}
             <div className="lg:col-span-7 space-y-6">
               <div className="space-y-2">
-                <AnimatedText
-                  text="PIRANTIKU"
-                  mode="char"
-                  as="h1"
-                  className="hero-title block tracking-tight"
-                />
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide text-[#234E5C]">
+                <H1 hero>PIRANTIKU</H1>
+                <H2 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide text-[#234E5C]">
                   SEWA ALAT SERBA ADA
-                </h2>
+                </H2>
               </div>
 
-              <Reveal delay={0.15}>
-                <p className="max-w-xl text-base sm:text-lg text-[#234E5C] leading-relaxed">
-                  Penyewaan alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai {dpPersen}%.
-                </p>
-              </Reveal>
+              <Lead>
+                Penyewaan alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai {dpPersen}%.
+              </Lead>
 
               <Reveal delay={0.25} className="pt-2">
                 <div className="flex flex-wrap items-center gap-3">
                   <Link href="/alat">
                     <Button variant="petrol" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
-                      LIHAT KATALOG
+                      <HoverRollText text="LIHAT KATALOG" />
                     </Button>
                   </Link>
 
@@ -98,7 +93,7 @@ export function HomeView({
                   >
                     <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2">
                       <MessageCircle className="h-4 w-4" />
-                      CHAT ADMIN
+                      <HoverRollText text="CHAT ADMIN" />
                     </Button>
                   </a>
                 </div>
@@ -142,15 +137,10 @@ export function HomeView({
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
           <div className="rounded-[40px] bg-[#F3F3EF] p-6 sm:p-10 md:p-14 space-y-10 border border-[#E8E8E1]">
             <div className="space-y-2">
-              <AnimatedText
-                text="KATEGORI ALAT"
-                mode="word"
-                as="h2"
-                className="section-title block"
-              />
-              <p className="text-base text-[#5F7A84] font-bold">
+              <H2>KATEGORI ALAT</H2>
+              <Lead className="text-base text-[#5F7A84] font-bold">
                 Pilihan perlengkapan lengkap siap sewa sesuai kebutuhan aktivitas Anda.
-              </p>
+              </Lead>
             </div>
 
             {/* Grid Kartu Putih */}
@@ -246,27 +236,22 @@ export function HomeView({
             {/* Kolom Kiri: Teks Konkret dan Jujur */}
             <div className="lg:col-span-7 space-y-6">
               <div className="space-y-2">
-                <AnimatedText
-                  text="TENTANG PIRANTIKU"
-                  mode="word"
-                  as="h2"
-                  className="section-title block"
-                />
-                <h3 className="text-lg sm:text-xl font-bold text-[#234E5C]">
+                <H2>TENTANG PIRANTIKU</H2>
+                <H3>
                   Penyewaan alat dengan sistem yang jelas dan transparan.
-                </h3>
+                </H3>
               </div>
 
               <div className="space-y-4 text-sm sm:text-base text-[#234E5C] leading-relaxed">
-                <p>
+                <P>
                   PirantiKu hadir untuk memudahkan masyarakat, pekerja lapangan, dan komunitas mendapatkan akses perlengkapan berkualitas tanpa harus membeli unit baru. Kami beroperasi dengan sistem <strong>sewa per tanggal</strong> yang terintegrasi langsung dengan penghitungan sisa unit secara real-time.
-                </p>
-                <p>
+                </P>
+                <P delay={0.08}>
                   Setiap alat yang masuk dan keluar selalu melalui prosedur pembersihan dan <strong>uji fungsi kelayakan</strong>. Untuk menjamin kepastian jadwal, Anda cukup membayar <strong>uang muka (DP) {dpPersen}%</strong> saat pemesanan online.
-                </p>
-                <p>
+                </P>
+                <P delay={0.16}>
                   Pelunasan sisa biaya sewa beserta <strong>deposit jaminan</strong> dilakukan saat serah terima unit di lokasi kami. Setelah masa sewa selesai dan alat dikembalikan dalam keadaan baik sesuai ketentuan, deposit Anda akan <strong>langsung dikembalikan penuh</strong>.
-                </p>
+                </P>
               </div>
             </div>
 
@@ -368,15 +353,10 @@ export function HomeView({
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <AnimatedText
-                text="PILIHAN ALAT"
-                mode="word"
-                as="h2"
-                className="section-title block"
-              />
-              <p className="text-sm text-[#5F7A84] font-semibold mt-1">
+              <H2>PILIHAN ALAT</H2>
+              <Lead className="text-sm text-[#5F7A84] font-semibold mt-1">
                 Perlengkapan terbaru yang siap disewa hari ini.
-              </p>
+              </Lead>
             </div>
             <Link
               href="/alat"
@@ -445,18 +425,13 @@ export function HomeView({
       {/* ========================================================
           6. CARA SEWA (id="cara-sewa", 3 Langkah Bernomor Besar)
           ======================================================== */}
-      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-24">
+      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="space-y-2">
-            <AnimatedText
-              text="CARA SEWA"
-              mode="word"
-              as="h2"
-              className="section-title block"
-            />
-            <p className="text-base text-[#5F7A84] font-bold">
+            <H2>CARA SEWA</H2>
+            <Lead className="text-base text-[#5F7A84] font-bold">
               Tiga langkah praktis untuk meminjam peralatan kebutuhan Anda.
-            </p>
+            </Lead>
           </div>
 
           <Stagger
@@ -520,18 +495,13 @@ export function HomeView({
       {/* ========================================================
           7. LOKASI & KONTAK (id="kontak")
           ======================================================== */}
-      <section id="kontak" className="py-12 md:py-20 scroll-mt-24">
+      <section id="kontak" className="py-12 md:py-20 scroll-mt-20">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="space-y-2">
-            <AnimatedText
-              text="LOKASI & KONTAK"
-              mode="word"
-              as="h2"
-              className="section-title block"
-            />
-            <p className="text-base text-[#5F7A84] font-bold">
+            <H2>LOKASI & KONTAK</H2>
+            <Lead className="text-base text-[#5F7A84] font-bold">
               Kunjungi toko kami atau hubungi nomor layanan untuk konsultasi sewa.
-            </p>
+            </Lead>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -624,18 +594,18 @@ export function HomeView({
           ======================================================== */}
       <section className="w-full bg-[#234E5C] text-white py-16 sm:py-20">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight text-white leading-tight">
+          <H2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight text-white leading-tight">
             SIAP SEWA ALAT?
-          </h2>
+          </H2>
 
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90 leading-relaxed font-normal">
+          <P className="max-w-2xl mx-auto text-base sm:text-lg text-white/90 leading-relaxed font-normal">
             Pilih perlengkapan yang Anda butuhkan sekarang atau hubungi staf kami untuk ketersediaan alat dalam jumlah besar.
-          </p>
+          </P>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <Link href="/alat">
               <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
-                LIHAT KATALOG
+                <HoverRollText text="LIHAT KATALOG" />
               </Button>
             </Link>
 
@@ -650,7 +620,7 @@ export function HomeView({
                 className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2"
               >
                 <MessageCircle className="h-4 w-4" />
-                CHAT ADMIN
+                <HoverRollText text="CHAT ADMIN" />
               </Button>
             </a>
           </div>

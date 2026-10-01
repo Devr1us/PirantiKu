@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wordmark } from "@/components/ui/wordmark";
+import { H1, H2, Lead, P } from "@/components/ui/typography";
+import { HoverRollText } from "@/components/ui/motion";
 import {
   Dialog,
   DialogContent,
@@ -147,12 +149,12 @@ function LoginForm() {
           </div>
 
           <div className="space-y-3 my-auto py-8">
-            <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+            <H2 className="text-xl font-bold uppercase tracking-tight text-white">
               Sewa Alat Praktis & Terpercaya
-            </h2>
-            <p className="text-xs text-white/80 leading-relaxed font-normal">
+            </H2>
+            <P className="text-xs text-white/80 leading-relaxed font-normal">
               Satu akun untuk menyewa seluruh perlengkapan camping, perkakas, olahraga, dan perayaan dengan stok terjamin per tanggal.
-            </p>
+            </P>
           </div>
 
           <div className="text-[11px] text-white/60">
@@ -168,12 +170,12 @@ function LoginForm() {
           </div>
 
           <div className="space-y-1">
-            <h1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+            <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
               Masuk ke Akun
-            </h1>
-            <p className="text-xs text-[#5F7A84]">
+            </H1>
+            <Lead className="text-xs text-[#5F7A84]">
               Gunakan email terdaftar untuk melanjutkan sewa atau cek booking.
-            </p>
+            </Lead>
           </div>
 
           {/* Notifikasi Error Bergetar Halus */}
@@ -262,7 +264,7 @@ function LoginForm() {
                   <span>Memverifikasi...</span>
                 ) : (
                   <>
-                    Masuk Sekarang
+                    <HoverRollText text="Masuk Sekarang" />
                     <ArrowRight className="h-4 w-4" />
                   </>
                 )}

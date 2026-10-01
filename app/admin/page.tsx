@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { AnimatedText, CountUp } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
+import { CountUp, Reveal } from "@/components/ui/motion";
 import type { Booking } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -60,58 +61,63 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-5 space-y-1.5">
-        <AnimatedText
-          text="DASHBOARD PENGELOLA"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 mode="word" className="section-title block">
+          DASHBOARD PENGELOLA
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Ringkasan inventaris peralatan, ketersediaan unit, dan transaksi booking pelanggan PirantiKu.
-        </p>
+        </Lead>
       </div>
 
       {/* Kartu Statistik Sederhana Tanpa Gradasi */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-            Jenis Alat Aktif
-          </span>
-          <div className="text-3xl font-extrabold text-[#234E5C]">
-            <CountUp value={totalEquipment} />
+        <Reveal delay={0.05}>
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+              Jenis Alat Aktif
+            </span>
+            <div className="text-3xl font-extrabold text-[#234E5C]">
+              <CountUp value={totalEquipment} />
+            </div>
+            <p className="text-[11px] text-[#5F7A84]">Katalog terpublikasi</p>
           </div>
-          <p className="text-[11px] text-[#5F7A84]">Katalog terpublikasi</p>
-        </div>
+        </Reveal>
 
-        <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-            Unit Siap Sewa
-          </span>
-          <div className="text-3xl font-extrabold text-[#234E5C]">
-            <CountUp value={totalAvailableUnits} />
+        <Reveal delay={0.1}>
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+              Unit Siap Sewa
+            </span>
+            <div className="text-3xl font-extrabold text-[#234E5C]">
+              <CountUp value={totalAvailableUnits} />
+            </div>
+            <p className="text-[11px] text-[#5F7A84]">Total stok fisik bersih</p>
           </div>
-          <p className="text-[11px] text-[#5F7A84]">Total stok fisik bersih</p>
-        </div>
+        </Reveal>
 
-        <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-            Total Transaksi
-          </span>
-          <div className="text-3xl font-extrabold text-[#A0630F]">
-            <CountUp value={totalBookings} />
+        <Reveal delay={0.15}>
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+              Total Transaksi
+            </span>
+            <div className="text-3xl font-extrabold text-[#A0630F]">
+              <CountUp value={totalBookings} />
+            </div>
+            <p className="text-[11px] text-[#5F7A84]">Pesanan sewa masuk</p>
           </div>
-          <p className="text-[11px] text-[#5F7A84]">Pesanan sewa masuk</p>
-        </div>
+        </Reveal>
 
-        <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-            Kategori Alat
-          </span>
-          <div className="text-3xl font-extrabold text-[#2E5E4E]">
-            <CountUp value={totalCategories} />
+        <Reveal delay={0.2}>
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+              Kategori Alat
+            </span>
+            <div className="text-3xl font-extrabold text-[#2E5E4E]">
+              <CountUp value={totalCategories} />
+            </div>
+            <p className="text-[11px] text-[#5F7A84]">Klasifikasi inventaris</p>
           </div>
-          <p className="text-[11px] text-[#5F7A84]">Klasifikasi inventaris</p>
-        </div>
+        </Reveal>
       </div>
 
       {/* Tabel dalam Kartu Putih: Transaksi Booking Terbaru */}

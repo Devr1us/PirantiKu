@@ -14,7 +14,7 @@ import { APP_NAME, getCategoryIcon } from "@/lib/constants";
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
-import { AnimatedText } from "@/components/ui/motion";
+import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
 
 interface EquipmentDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -139,15 +139,12 @@ export default async function EquipmentDetailPage({
 
       {/* Header Halaman Spesifik Alat */}
       <div className="space-y-1.5 border-b border-[#E8E8E1] pb-5">
-        <AnimatedText
-          text={equipment.nama.toUpperCase()}
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm sm:text-base text-[#5F7A84] font-medium">
+        <H1 className="section-title block">
+          {equipment.nama.toUpperCase()}
+        </H1>
+        <Lead className="text-sm sm:text-base text-[#5F7A84] font-medium">
           Kategori {equipment.category?.nama || "Peralatan"} &bull; Unit siap diambil dan digunakan sesuai tanggal yang Anda tentukan.
-        </p>
+        </Lead>
       </div>
 
       {/* Grid: Detail & Widget Pemesanan */}
@@ -278,7 +275,7 @@ export default async function EquipmentDetailPage({
 
         {/* Kolom Kanan: Rental Booking Widget */}
         <div className="lg:col-span-5 xl:col-span-4">
-          <div className="sticky top-24">
+          <div className="sticky top-[var(--navbar-offset)] transition-[top] duration-300">
             <RentalBookingWidget
               equipment={equipment}
               defaultDpPersen={dpPersen}

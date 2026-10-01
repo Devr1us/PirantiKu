@@ -15,7 +15,8 @@ import { createClient } from "@/lib/supabase/client";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
-import { AnimatedText, Stagger, StaggerItem } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
+import { Stagger, StaggerItem } from "@/components/ui/motion";
 import type { Booking, BookingItem, EquipmentItem, BookingStatusHistory } from "@/types/database";
 
 type BookingWithDetails = Booking & {
@@ -79,15 +80,12 @@ export default function BookingSayaPage() {
     <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <AnimatedText
-          text="BOOKING SAYA"
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-sm text-[#5F7A84] font-medium">
+        <H1 className="section-title block">
+          BOOKING SAYA
+        </H1>
+        <Lead className="text-sm text-[#5F7A84] font-medium">
           Pantau status verifikasi pembayaran uang muka, jadwal pengambilan alat, dan riwayat pengembalian barang sewa Anda.
-        </p>
+        </Lead>
       </div>
 
       {bookings.length > 0 ? (

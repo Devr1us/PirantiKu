@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wordmark } from "@/components/ui/wordmark";
+import { H1, H2, Lead, P } from "@/components/ui/typography";
+import { HoverRollText } from "@/components/ui/motion";
 import { toast } from "sonner";
 
 const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{6,11}$/;
@@ -158,12 +160,12 @@ export default function DaftarPage() {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
             <Mail className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+          <H2 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
             Cek Email Anda
-          </h2>
-          <p className="text-xs text-[#5F7A84] leading-relaxed">
+          </H2>
+          <Lead className="text-xs text-[#5F7A84] leading-relaxed">
             Kami telah mengirimkan tautan konfirmasi pendaftaran ke alamat:
-          </p>
+          </Lead>
           <p className="font-semibold text-xs text-[#234E5C] bg-[#F3F3EF] py-2 px-3 rounded-lg">
             {registeredEmail}
           </p>
@@ -202,12 +204,12 @@ export default function DaftarPage() {
           </div>
 
           <div className="space-y-3 my-auto py-8">
-            <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+            <H2 className="text-xl font-bold uppercase tracking-tight text-white">
               Bergabung dengan PirantiKu
-            </h2>
-            <p className="text-xs text-white/80 leading-relaxed font-normal">
+            </H2>
+            <P className="text-xs text-white/80 leading-relaxed font-normal">
               Daftar sekali untuk menyewa berbagai alat secara transparan dengan jadwal teratur dan jaminan pengembalian deposit utuh.
-            </p>
+            </P>
           </div>
 
           <div className="text-[11px] text-white/60">
@@ -223,12 +225,12 @@ export default function DaftarPage() {
           </div>
 
           <div className="space-y-1">
-            <h1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+            <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
               Buat Akun Penyewa
-            </h1>
-            <p className="text-xs text-[#5F7A84]">
+            </H1>
+            <Lead className="text-xs text-[#5F7A84]">
               Lengkapi data di bawah untuk kemudahan verifikasi jadwal sewa alat.
-            </p>
+            </Lead>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
@@ -396,7 +398,7 @@ export default function DaftarPage() {
                   <span>Memproses Akun...</span>
                 ) : (
                   <>
-                    Daftar Sekarang
+                    <HoverRollText text="Daftar Sekarang" />
                     <ArrowRight className="h-4 w-4" />
                   </>
                 )}

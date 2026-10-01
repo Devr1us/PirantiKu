@@ -27,6 +27,7 @@ import {
   Stagger,
   StaggerItem,
 } from "@/components/ui/motion";
+import { H1, Lead } from "@/components/ui/typography";
 
 interface FilterSidebarProps {
   categories: Category[];
@@ -317,16 +318,13 @@ export function EquipmentCatalog({
     <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="space-y-2 border-b border-[#E8E8E1] pb-6">
-        <AnimatedText
-          text={categoryTitle ? categoryTitle.toUpperCase() : "KATALOG ALAT RENTAL"}
-          mode="word"
-          as="h1"
-          className="section-title block"
-        />
-        <p className="text-base text-[#5F7A84] font-medium leading-relaxed max-w-3xl">
+        <H1 className="section-title block">
+          {categoryTitle ? categoryTitle.toUpperCase() : "KATALOG ALAT RENTAL"}
+        </H1>
+        <Lead className="text-base text-[#5F7A84] font-medium leading-relaxed max-w-3xl">
           {categoryDescription ||
             "Pilihan perlengkapan berkualitas dengan kepastian ketersediaan unit, biaya sewa harian transparan, dan DP ringan mulai 30%."}
-        </p>
+        </Lead>
       </div>
 
       {/* Control Bar: Pencarian & Pengurutan */}
@@ -409,7 +407,7 @@ export function EquipmentCatalog({
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar Filter Desktop: Wadah --panel */}
         <aside className="hidden lg:block lg:col-span-1">
-          <div className="sticky top-24 rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] p-5">
+          <div className="sticky top-[var(--navbar-offset)] rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] p-5 transition-[top] duration-300">
             <div className="flex items-center justify-between pb-3.5 border-b border-[#E8E8E1]">
               <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-[#234E5C]" />

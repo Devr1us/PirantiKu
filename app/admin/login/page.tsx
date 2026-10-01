@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wordmark } from "@/components/ui/wordmark";
+import { H1, Lead } from "@/components/ui/typography";
+import { HoverRollText } from "@/components/ui/motion";
 import { APP_NAME } from "@/lib/constants";
 import { toast } from "sonner";
 
@@ -118,13 +120,13 @@ function AdminLoginForm() {
           <Wordmark />
           <div className="flex items-center gap-2 pt-2">
             <ShieldAlert className="h-5 w-5 text-[#A0630F]" />
-            <h1 className="text-lg font-bold uppercase tracking-tight text-[#234E5C]">
+            <H1 className="text-lg font-bold uppercase tracking-tight text-[#234E5C]">
               Portal Pengelola Admin
-            </h1>
+            </H1>
           </div>
-          <p className="text-xs text-[#5F7A84]">
+          <Lead className="text-xs text-[#5F7A84]">
             Akses internal staf manajemen inventaris & transaksi {APP_NAME}
-          </p>
+          </Lead>
         </div>
 
         {/* Pesan Kesalahan Bergetar Halus */}
@@ -203,7 +205,7 @@ function AdminLoginForm() {
                 <span>Mengautentikasi...</span>
               ) : (
                 <>
-                  Masuk ke Console Admin
+                  <HoverRollText text="Masuk ke Console Admin" />
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
