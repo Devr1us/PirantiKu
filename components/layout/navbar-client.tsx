@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, LayoutGroup, useReducedMotion, type Transition } from "motion/react";
 import {
   ShoppingCart,
   Menu,
@@ -36,6 +36,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { toast } from "sonner";
+import { useActiveNav, setOptimisticNav } from "@/components/layout/use-active-nav";
 
 interface NavbarClientProps {
   user: User | null;
@@ -54,9 +55,44 @@ export function NavbarClient({
   const router = useRouter();
   const { totalItems, isLoaded } = useCart();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
-  const [hoveredNav, setHoveredNav] = React.useState<string | null>(null);
+  const activeNav = useActiveNav();
+  const shouldReduceMotion = useReducedMotion();
+
+  const springTransition: Transition = shouldReduceMotion
+    ? { duration: 0 }
+    : { type: "spring", stiffness: 500, damping: 40 };
 
   const cleanWa = whatsappAdmin.replace(/[^0-9]/g, "");
+
+  const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      if (window.location.hash) {
+        history.replaceState(null, "", "/");
+      }
+      setOptimisticNav("beranda");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      setOptimisticNav("beranda");
+    }
+  };
+
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    target: "cara-sewa" | "kontak"
+  ) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      const el = document.getElementById(target);
+      if (el) {
+        setOptimisticNav(target);
+        history.replaceState(null, "", `/#${target}`);
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      setOptimisticNav(target);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -87,131 +123,139 @@ export function NavbarClient({
         </div>
 
         {/* Tengah: Navigasi Desktop (UPPERCASE, 14px, Medium) */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-          {/* BERANDA */}
-          <Link
-            href="/"
-            onMouseEnter={() => setHoveredNav("beranda")}
-            onMouseLeave={() => setHoveredNav(null)}
-            className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
-              pathname === "/"
-                ? "text-[#234E5C] font-semibold"
-                : "text-[#234E5C]/80 hover:text-[#234E5C]"
-            }`}
-          >
-            BERANDA
-            {(pathname === "/" || hoveredNav === "beranda") && (
-              <motion.div
-                layoutId="navbar-underline"
-                className="absolute inset-x-3.5 bottom-0 h-[2px] bg-[#234E5C]"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </Link>
-
-          {/* KATALOG */}
-          <Link
-            href="/alat"
-            onMouseEnter={() => setHoveredNav("katalog")}
-            onMouseLeave={() => setHoveredNav(null)}
-            className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
-              pathname === "/alat"
-                ? "text-[#234E5C] font-semibold"
-                : "text-[#234E5C]/80 hover:text-[#234E5C]"
-            }`}
-          >
-            KATALOG
-            {(pathname === "/alat" || hoveredNav === "katalog") && (
-              <motion.div
-                layoutId="navbar-underline"
-                className="absolute inset-x-3.5 bottom-0 h-[2px] bg-[#234E5C]"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </Link>
-
-          {/* KATEGORI (Dropdown dari Database) */}
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              onMouseEnter={() => setHoveredNav("kategori")}
-              onMouseLeave={() => setHoveredNav(null)}
-              className={`relative inline-flex items-center gap-1 px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer outline-none ${
-                pathname.startsWith("/kategori")
+        <LayoutGroup id="navbar-desktop">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {/* BERANDA */}
+            <Link
+              href="/"
+              onClick={handleBerandaClick}
+              aria-current={activeNav === "beranda" ? "page" : undefined}
+              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
+                activeNav === "beranda"
                   ? "text-[#234E5C] font-semibold"
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              <span>KATEGORI</span>
-              <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
-              {(pathname.startsWith("/kategori") || hoveredNav === "kategori") && (
-                <motion.div
-                  layoutId="navbar-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] bg-[#234E5C]"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              BERANDA
+              {activeNav === "beranda" && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  transition={springTransition}
                 />
               )}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-lg">
-              <DropdownMenuLabel className="text-xs uppercase tracking-wider text-[#5F7A84] px-3 py-1 font-bold">
-                Pilih Kategori Alat
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-              {categories.map((cat) => (
-                <DropdownMenuItem key={cat.id} asChild>
+            </Link>
+
+            {/* KATALOG */}
+            <Link
+              href="/alat"
+              aria-current={activeNav === "katalog" ? "page" : undefined}
+              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
+                activeNav === "katalog"
+                  ? "text-[#234E5C] font-semibold"
+                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+              }`}
+            >
+              KATALOG
+              {activeNav === "katalog" && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  transition={springTransition}
+                />
+              )}
+            </Link>
+
+            {/* KATEGORI (Dropdown dari Database) */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                aria-current={activeNav === "kategori" ? "page" : undefined}
+                className={`relative inline-flex items-center gap-1 px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer outline-none ${
+                  activeNav === "kategori"
+                    ? "text-[#234E5C] font-semibold"
+                    : "text-[#234E5C]/80 hover:text-[#234E5C]"
+                }`}
+              >
+                <span>KATEGORI</span>
+                <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
+                {activeNav === "kategori" && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                    transition={springTransition}
+                  />
+                )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-lg">
+                <DropdownMenuLabel className="text-xs uppercase tracking-wider text-[#5F7A84] px-3 py-1 font-bold">
+                  Pilih Kategori Alat
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                {categories.map((cat) => (
+                  <DropdownMenuItem key={cat.id} asChild>
+                    <Link
+                      href={`/kategori/${cat.slug}`}
+                      className="flex items-center justify-between px-3 py-2 text-sm font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                    >
+                      <span>{cat.nama}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                <DropdownMenuItem asChild>
                   <Link
-                    href={`/kategori/${cat.slug}`}
-                    className="flex items-center justify-between px-3 py-2 text-sm font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                    href="/alat"
+                    className="flex items-center justify-between px-3 py-2 text-xs font-bold text-[#A0630F] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
                   >
-                    <span>{cat.nama}</span>
+                    <span>Lihat Semua Kategori &rarr;</span>
                   </Link>
                 </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/alat"
-                  className="flex items-center justify-between px-3 py-2 text-xs font-bold text-[#A0630F] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                >
-                  <span>Lihat Semua Kategori &rarr;</span>
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* CARA SEWA (Scroll ke #cara-sewa) */}
-          <Link
-            href="/#cara-sewa"
-            onMouseEnter={() => setHoveredNav("cara-sewa")}
-            onMouseLeave={() => setHoveredNav(null)}
-            className="relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide text-[#234E5C]/80 hover:text-[#234E5C] transition-colors"
-          >
-            CARA SEWA
-            {hoveredNav === "cara-sewa" && (
-              <motion.div
-                layoutId="navbar-underline"
-                className="absolute inset-x-3.5 bottom-0 h-[2px] bg-[#234E5C]"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </Link>
+            {/* CARA SEWA (Scroll ke #cara-sewa) */}
+            <Link
+              href="/#cara-sewa"
+              onClick={(e) => handleAnchorClick(e, "cara-sewa")}
+              aria-current={activeNav === "cara-sewa" ? "location" : undefined}
+              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
+                activeNav === "cara-sewa"
+                  ? "text-[#234E5C] font-semibold"
+                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+              }`}
+            >
+              CARA SEWA
+              {activeNav === "cara-sewa" && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  transition={springTransition}
+                />
+              )}
+            </Link>
 
-          {/* KONTAK (Scroll ke #kontak) */}
-          <Link
-            href="/#kontak"
-            onMouseEnter={() => setHoveredNav("kontak")}
-            onMouseLeave={() => setHoveredNav(null)}
-            className="relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide text-[#234E5C]/80 hover:text-[#234E5C] transition-colors"
-          >
-            KONTAK
-            {hoveredNav === "kontak" && (
-              <motion.div
-                layoutId="navbar-underline"
-                className="absolute inset-x-3.5 bottom-0 h-[2px] bg-[#234E5C]"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-          </Link>
-        </nav>
+            {/* KONTAK (Scroll ke #kontak) */}
+            <Link
+              href="/#kontak"
+              onClick={(e) => handleAnchorClick(e, "kontak")}
+              aria-current={activeNav === "kontak" ? "location" : undefined}
+              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${
+                activeNav === "kontak"
+                  ? "text-[#234E5C] font-semibold"
+                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+              }`}
+            >
+              KONTAK
+              {activeNav === "kontak" && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  transition={springTransition}
+                />
+              )}
+            </Link>
+          </nav>
+        </LayoutGroup>
 
         {/* Sisi Kanan: Keranjang, WhatsApp, Auth (Masuk / Daftar / Avatar) */}
         <div className="flex items-center gap-3">
@@ -341,86 +385,145 @@ export function NavbarClient({
                     <Wordmark />
                   </SheetHeader>
 
-                  <div className="flex flex-col space-y-1.5 pt-2">
-                    <Link
-                      href="/"
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`px-3 py-2.5 rounded-xl text-sm font-bold uppercase ${
-                        pathname === "/"
-                          ? "bg-[#F3F3EF] text-[#234E5C]"
-                          : "text-[#234E5C] hover:bg-[#F3F3EF]"
-                      }`}
-                    >
-                      BERANDA
-                    </Link>
-                    <Link
-                      href="/alat"
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`px-3 py-2.5 rounded-xl text-sm font-bold uppercase ${
-                        pathname === "/alat"
-                          ? "bg-[#F3F3EF] text-[#234E5C]"
-                          : "text-[#234E5C] hover:bg-[#F3F3EF]"
-                      }`}
-                    >
-                      KATALOG ALAT
-                    </Link>
+                  <LayoutGroup id="navbar-mobile">
+                    <div className="flex flex-col space-y-1.5 pt-2">
+                      <Link
+                        href="/"
+                        onClick={(e) => {
+                          setIsMobileOpen(false);
+                          handleBerandaClick(e);
+                        }}
+                        aria-current={activeNav === "beranda" ? "page" : undefined}
+                        className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${
+                          activeNav === "beranda"
+                            ? "bg-[#F3F3EF] text-[#234E5C]"
+                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                        }`}
+                      >
+                        {activeNav === "beranda" && (
+                          <motion.span
+                            layoutId="nav-underline-mobile"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            transition={springTransition}
+                          />
+                        )}
+                        BERANDA
+                      </Link>
 
-                    {/* Submenu Kategori Mobile */}
-                    <div className="pt-2 pb-1">
-                      <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-                        Kategori Alat
-                      </span>
-                      <div className="mt-1 space-y-1 pl-2">
-                        {categories.map((cat) => (
-                          <Link
-                            key={cat.id}
-                            href={`/kategori/${cat.slug}`}
-                            onClick={() => setIsMobileOpen(false)}
-                            className="block px-3 py-1.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-lg"
-                          >
-                            {cat.nama}
-                          </Link>
-                        ))}
+                      <Link
+                        href="/alat"
+                        onClick={() => setIsMobileOpen(false)}
+                        aria-current={activeNav === "katalog" ? "page" : undefined}
+                        className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${
+                          activeNav === "katalog"
+                            ? "bg-[#F3F3EF] text-[#234E5C]"
+                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                        }`}
+                      >
+                        {activeNav === "katalog" && (
+                          <motion.span
+                            layoutId="nav-underline-mobile"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            transition={springTransition}
+                          />
+                        )}
+                        KATALOG ALAT
+                      </Link>
+
+                      {/* Submenu Kategori Mobile */}
+                      <div className="pt-2 pb-1">
+                        <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+                          Kategori Alat
+                        </span>
+                        <div className="mt-1 space-y-1 pl-2">
+                          {categories.map((cat) => {
+                            const isCatActive = pathname === `/kategori/${cat.slug}`;
+                            return (
+                              <Link
+                                key={cat.id}
+                                href={`/kategori/${cat.slug}`}
+                                onClick={() => setIsMobileOpen(false)}
+                                className={`block px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                                  isCatActive
+                                    ? "bg-[#F3F3EF] text-[#234E5C] font-bold"
+                                    : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                                }`}
+                              >
+                                {cat.nama}
+                              </Link>
+                            );
+                          })}
+                        </div>
                       </div>
+
+                      <Link
+                        href="/#cara-sewa"
+                        onClick={(e) => {
+                          setIsMobileOpen(false);
+                          handleAnchorClick(e, "cara-sewa");
+                        }}
+                        aria-current={activeNav === "cara-sewa" ? "location" : undefined}
+                        className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${
+                          activeNav === "cara-sewa"
+                            ? "bg-[#F3F3EF] text-[#234E5C]"
+                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                        }`}
+                      >
+                        {activeNav === "cara-sewa" && (
+                          <motion.span
+                            layoutId="nav-underline-mobile"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            transition={springTransition}
+                          />
+                        )}
+                        CARA SEWA
+                      </Link>
+
+                      <Link
+                        href="/#kontak"
+                        onClick={(e) => {
+                          setIsMobileOpen(false);
+                          handleAnchorClick(e, "kontak");
+                        }}
+                        aria-current={activeNav === "kontak" ? "location" : undefined}
+                        className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${
+                          activeNav === "kontak"
+                            ? "bg-[#F3F3EF] text-[#234E5C]"
+                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                        }`}
+                      >
+                        {activeNav === "kontak" && (
+                          <motion.span
+                            layoutId="nav-underline-mobile"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            transition={springTransition}
+                          />
+                        )}
+                        KONTAK
+                      </Link>
+
+                      {user && (
+                        <Link
+                          href="/booking-saya"
+                          onClick={() => setIsMobileOpen(false)}
+                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
+                        >
+                          BOOKING SAYA
+                        </Link>
+                      )}
+
+                      {isAdmin && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsMobileOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] bg-[#FEF3C7] border border-[#FDE68A]"
+                        >
+                          <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
+                          PANEL ADMIN
+                        </Link>
+                      )}
                     </div>
-
-                    <Link
-                      href="/#cara-sewa"
-                      onClick={() => setIsMobileOpen(false)}
-                      className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
-                    >
-                      CARA SEWA
-                    </Link>
-
-                    <Link
-                      href="/#kontak"
-                      onClick={() => setIsMobileOpen(false)}
-                      className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
-                    >
-                      KONTAK
-                    </Link>
-
-                    {user && (
-                      <Link
-                        href="/booking-saya"
-                        onClick={() => setIsMobileOpen(false)}
-                        className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
-                      >
-                        BOOKING SAYA
-                      </Link>
-                    )}
-
-                    {isAdmin && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setIsMobileOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] bg-[#FEF3C7] border border-[#FDE68A]"
-                      >
-                        <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
-                        PANEL ADMIN
-                      </Link>
-                    )}
-                  </div>
+                  </LayoutGroup>
                 </div>
 
                 {/* Bagian Bawah Menu Mobile */}
