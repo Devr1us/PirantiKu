@@ -1,16 +1,32 @@
 "use client";
 
 import * as React from "react";
-import { motion, useReducedMotion, type Variants } from "motion/react";
 import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
+import {
+  ANIMASI_ULANG,
   EASE,
+  Y_OFFSET,
+  THRESHOLD_ENTER,
+  THRESHOLD_RESET,
   DURATION_BASE,
   DURATION_PARAGRAPH,
-  DURATION_SHORT,
   STAGGER_CHAR,
   STAGGER_WORD,
   STAGGER_LINE,
 } from "@/lib/motion";
+import {
+  useScrollDirection,
+  useProgrammaticScroll,
+  isProgrammaticScrolling,
+  getProgrammaticTarget,
+  getScrollDirection,
+  type ScrollDirection,
+} from "@/components/providers/scroll-direction";
 
 export type AnimatedTextMode = "char" | "word" | "line" | "block";
 
@@ -50,12 +66,76 @@ export function AnimatedText({
   className = "",
   delay = 0,
   stagger,
-  once = true,
-  amount = 0.4,
+  once,
+  amount,
   isHero = false,
 }: AnimatedTextProps) {
   const shouldReduceMotion = useReducedMotion();
   const rawText = extractString(text, children);
+  const containerRef = React.useRef<HTMLElement>(null);
+  const scrollDirRef = useScrollDirection();
+  const { isProgrammatic, target } = useProgrammaticScroll();
+
+  const effectiveOnce = once !== undefined ? once : !ANIMASI_ULANG;
+  const enterAmount = amount ?? THRESHOLD_ENTER;
+
+  // Two useInView observers for hysteresis (enter at 20%, reset at 0%)
+  const isEntering = useInView(containerRef, {
+    amount: enterAmount,
+    once: effectiveOnce,
+  });
+
+  const isExiting = useInView(containerRef, {
+    amount: THRESHOLD_RESET,
+    once: effectiveOnce,
+  });
+
+  const [isVisible, setIsVisible] = React.useState<boolean>(false);
+  const [direction, setDirection] = React.useState<ScrollDirection>("down");
+  const [isInstant, setIsInstant] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (shouldReduceMotion) {
+      setIsVisible(true);
+      return;
+    }
+
+    if (isEntering) {
+      const currentDir = scrollDirRef.current || getScrollDirection();
+      setDirection(currentDir);
+
+      if (isProgrammatic.current || isProgrammaticScrolling()) {
+        const targetId = target.current || getProgrammaticTarget();
+        const isTarget =
+          targetId && containerRef.current?.closest(`#${targetId}`);
+        setIsInstant(!isTarget);
+      } else {
+        setIsInstant(false);
+      }
+
+      setIsVisible(true);
+    } else if (!isExiting && !effectiveOnce) {
+      // Completely out of view
+      const el = containerRef.current;
+      const isFocused =
+        el &&
+        (el.matches(":focus-within") ||
+          (document.activeElement && el.contains(document.activeElement)));
+
+      if (!isFocused) {
+        setIsVisible(false);
+        setIsInstant(false);
+      }
+    }
+  }, [
+    isEntering,
+    isExiting,
+    effectiveOnce,
+    shouldReduceMotion,
+    scrollDirRef,
+    isProgrammatic,
+    target,
+  ]);
 
   // If text is empty or motion is reduced, render immediately without animations
   if (shouldReduceMotion || !rawText) {
@@ -78,8 +158,9 @@ export function AnimatedText({
   if (wordCount > 40) {
     resolvedMode = "block";
   }
-  // Rule 2: Text > 12 characters in "char" mode (unless explicitly marked as hero) -> downgrade to "word"
-  else if (resolvedMode === "char" && charCount > 12 && !isHero) {
+  // Rule 2: "char" mode is strictly for short hero titles <= 12 characters.
+  // Never replay per-character animation on text longer than 12 characters.
+  else if (resolvedMode === "char" && (charCount > 12 || !isHero)) {
     resolvedMode = "word";
   }
 
@@ -92,37 +173,43 @@ export function AnimatedText({
       hidden: {},
       visible: {
         transition: {
-          staggerChildren: charStagger,
-          delayChildren: delay,
+          staggerChildren: isInstant ? 0 : charStagger,
+          delayChildren: isInstant ? 0 : delay,
         },
       },
     };
 
+    const initialY = direction === "down" ? "115%" : "-115%";
+
     const charVariants: Variants = {
       hidden: {
         opacity: 0,
-        y: "115%",
+        y: initialY,
+        transition: { duration: 0 },
       },
       visible: {
         opacity: 1,
         y: "0%",
+        transitionEnd: { transform: "none", willChange: "auto" },
         transition: {
-          duration: DURATION_BASE,
+          duration: isInstant ? 0 : DURATION_BASE,
           ease: EASE,
         },
       },
     };
 
     return (
-      <Component className={className} aria-label={rawText}>
+      <Component
+        ref={containerRef as React.Ref<any>}
+        className={className}
+        aria-label={rawText}
+      >
         <motion.span
           className="inline"
           aria-hidden="true"
           variants={containerVariants}
           initial="hidden"
-          animate={isHero ? "visible" : undefined}
-          whileInView={!isHero ? "visible" : undefined}
-          viewport={!isHero ? { once, amount: 0.1 } : undefined}
+          animate={isVisible ? "visible" : "hidden"}
         >
           {words.map((word, wIdx) => (
             <span key={wIdx} className="inline-block whitespace-nowrap">
@@ -136,6 +223,9 @@ export function AnimatedText({
                     <motion.span
                       variants={charVariants}
                       className="inline-block"
+                      style={{
+                        willChange: isVisible ? "transform, opacity" : "auto",
+                      }}
                     >
                       {char}
                     </motion.span>
@@ -160,44 +250,56 @@ export function AnimatedText({
       hidden: {},
       visible: {
         transition: {
-          staggerChildren: wordStagger,
-          delayChildren: delay,
+          staggerChildren: isInstant ? 0 : wordStagger,
+          delayChildren: isInstant ? 0 : delay,
         },
       },
     };
 
+    const initialY = direction === "down" ? "115%" : "-115%";
+
     const wordVariants: Variants = {
       hidden: {
         opacity: 0,
-        y: "115%",
+        y: initialY,
+        transition: { duration: 0 },
       },
       visible: {
         opacity: 1,
         y: "0%",
+        transitionEnd: { transform: "none", willChange: "auto" },
         transition: {
-          duration: DURATION_BASE,
+          duration: isInstant ? 0 : DURATION_BASE,
           ease: EASE,
         },
       },
     };
 
     return (
-      <Component className={className} aria-label={rawText}>
+      <Component
+        ref={containerRef as React.Ref<any>}
+        className={className}
+        aria-label={rawText}
+      >
         <motion.span
           className="inline"
           aria-hidden="true"
           variants={containerVariants}
           initial="hidden"
-          animate={isHero ? "visible" : undefined}
-          whileInView={!isHero ? "visible" : undefined}
-          viewport={!isHero ? { once, amount } : undefined}
+          animate={isVisible ? "visible" : "hidden"}
         >
           {words.map((word, i) => (
             <span
               key={i}
               className="inline-block overflow-hidden align-top pb-[0.18em] -mb-[0.18em]"
             >
-              <motion.span variants={wordVariants} className="inline-block">
+              <motion.span
+                variants={wordVariants}
+                className="inline-block"
+                style={{
+                  willChange: isVisible ? "transform, opacity" : "auto",
+                }}
+              >
                 {word}
               </motion.span>
               {i < words.length - 1 && (
@@ -218,36 +320,52 @@ export function AnimatedText({
       hidden: {},
       visible: {
         transition: {
-          staggerChildren: stagger ?? STAGGER_LINE,
-          delayChildren: delay,
+          staggerChildren: isInstant ? 0 : (stagger ?? STAGGER_LINE),
+          delayChildren: isInstant ? 0 : delay,
         },
       },
     };
 
+    const initialY = direction === "down" ? Y_OFFSET : -Y_OFFSET;
+
     const lineVariants: Variants = {
-      hidden: { opacity: 0, y: 16 },
+      hidden: {
+        opacity: 0,
+        y: initialY,
+        transition: { duration: 0 },
+      },
       visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: DURATION_BASE, ease: EASE },
+        transitionEnd: { transform: "none", willChange: "auto" },
+        transition: {
+          duration: isInstant ? 0 : DURATION_BASE,
+          ease: EASE,
+        },
       },
     };
 
     return (
-      <Component className={className} aria-label={rawText}>
+      <Component
+        ref={containerRef as React.Ref<any>}
+        className={className}
+        aria-label={rawText}
+      >
         <motion.span
           className="inline-block w-full"
           aria-hidden="true"
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once, amount: 0.2 }}
+          animate={isVisible ? "visible" : "hidden"}
         >
           {lines.map((line, i) => (
             <motion.span
               key={i}
               variants={lineVariants}
               className="block"
+              style={{
+                willChange: isVisible ? "transform, opacity" : "auto",
+              }}
             >
               {line}
             </motion.span>
@@ -258,19 +376,37 @@ export function AnimatedText({
   }
 
   // --- MODE: BLOCK (Single block fade-up 16px, for paragraphs) ---
+  const initialY = direction === "down" ? Y_OFFSET : -Y_OFFSET;
+
   return (
-    <Component className={className} aria-label={rawText}>
+    <Component
+      ref={containerRef as React.Ref<any>}
+      className={className}
+      aria-label={rawText}
+    >
       <motion.span
         className="inline-block w-full"
         aria-hidden="true"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once, amount: 0.15 }}
-        transition={{
-          duration: DURATION_PARAGRAPH,
-          delay,
-          ease: EASE,
-        }}
+        initial={{ opacity: 0, y: initialY }}
+        animate={
+          isVisible
+            ? {
+                opacity: 1,
+                y: 0,
+                transitionEnd: { transform: "none", willChange: "auto" },
+                transition: {
+                  duration: isInstant ? 0 : DURATION_PARAGRAPH,
+                  delay: isInstant ? 0 : delay,
+                  ease: EASE,
+                },
+              }
+            : {
+                opacity: 0,
+                y: initialY,
+                transition: { duration: 0 },
+              }
+        }
+        style={{ willChange: isVisible ? "transform, opacity" : "auto" }}
       >
         {children || rawText}
       </motion.span>
@@ -302,52 +438,49 @@ export function HoverRollText({
 
   return (
     <span
-      className={`relative inline-flex overflow-hidden cursor-pointer select-none leading-none ${className}`}
-      aria-label={text}
+      className={`inline-block relative overflow-hidden select-none ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      aria-label={text}
     >
-      {/* Primary visible character row */}
       <span className="inline-flex" aria-hidden="true">
         {chars.map((char, i) => (
-          <motion.span
-            key={`char-1-${i}`}
-            className="inline-block"
-            animate={{
-              y: isHovered ? "-100%" : "0%",
-            }}
-            transition={{
-              duration: DURATION_SHORT,
-              delay: i * 0.015,
-              ease: EASE,
-            }}
+          <span
+            key={i}
+            className="inline-block relative overflow-hidden align-top"
           >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
-        ))}
-      </span>
+            {/* Primary Char */}
+            <motion.span
+              className="inline-block"
+              initial={false}
+              animate={{
+                y: isHovered ? "-100%" : "0%",
+              }}
+              transition={{
+                duration: 0.22,
+                delay: i * 0.015,
+                ease: EASE,
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
 
-      {/* Duplicate rolling character row (positioned directly underneath) */}
-      <span
-        className="absolute inset-0 inline-flex pointer-events-none"
-        aria-hidden="true"
-      >
-        {chars.map((char, i) => (
-          <motion.span
-            key={`char-2-${i}`}
-            className="inline-block"
-            initial={{ y: "100%" }}
-            animate={{
-              y: isHovered ? "0%" : "100%",
-            }}
-            transition={{
-              duration: DURATION_SHORT,
-              delay: i * 0.015,
-              ease: EASE,
-            }}
-          >
-            {char === " " ? "\u00A0" : char}
-          </motion.span>
+            {/* Duplicate Char Below */}
+            <motion.span
+              className="inline-block absolute top-0 left-0"
+              initial={{ y: "100%" }}
+              animate={{
+                y: isHovered ? "0%" : "100%",
+              }}
+              transition={{
+                duration: 0.22,
+                delay: i * 0.015,
+                ease: EASE,
+              }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </motion.span>
+          </span>
         ))}
       </span>
     </span>

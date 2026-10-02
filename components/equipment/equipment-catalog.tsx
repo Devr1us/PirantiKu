@@ -23,7 +23,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { motion, useReducedMotion } from "motion/react";
-import { AnimatedText } from "@/components/ui/motion";
+import { AnimatedText, Reveal } from "@/components/ui/motion";
+import { getGridColumnDelay } from "@/lib/motion";
 import { H1, Lead } from "@/components/ui/typography";
 
 interface FilterSidebarProps {
@@ -463,41 +464,17 @@ export function EquipmentCatalog({
                     );
                   }
 
-                  const isInitialBatch = index < 12;
-                  const delay = Math.min(index * 0.04, 0.4);
+                  const delay = getGridColumnDelay(index, 3);
 
                   return (
-                    <motion.div
+                    <Reveal
                       key={item.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={
-                        isInitialBatch
-                          ? {
-                              opacity: 1,
-                              y: 0,
-                              transitionEnd: { transform: "none" },
-                            }
-                          : undefined
-                      }
-                      whileInView={
-                        !isInitialBatch
-                          ? {
-                              opacity: 1,
-                              y: 0,
-                              transitionEnd: { transform: "none" },
-                            }
-                          : undefined
-                      }
-                      viewport={!isInitialBatch ? { once: true } : undefined}
-                      transition={{
-                        duration: 0.28,
-                        delay: isInitialBatch ? delay : 0,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
+                      delay={delay}
+                      duration={0.32}
                       className="h-full"
                     >
                       <EquipmentCard equipment={item} />
-                    </motion.div>
+                    </Reveal>
                   );
                 })}
               </div>

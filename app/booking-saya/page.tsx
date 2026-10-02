@@ -16,6 +16,7 @@ import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { H1, Lead } from "@/components/ui/typography";
+import { Reveal } from "@/components/ui/motion";
 import { motion, useReducedMotion } from "motion/react";
 import type { Booking, BookingItem, EquipmentItem, BookingStatusHistory } from "@/types/database";
 
@@ -203,38 +204,8 @@ export default function BookingSayaPage() {
               );
             }
 
-            const isInitial = index < 12;
-            const delay = Math.min(index * 0.04, 0.4);
-
             return (
-              <motion.div
-                key={booking.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={
-                  isInitial
-                    ? {
-                        opacity: 1,
-                        y: 0,
-                        transitionEnd: { transform: "none" },
-                      }
-                    : undefined
-                }
-                whileInView={
-                  !isInitial
-                    ? {
-                        opacity: 1,
-                        y: 0,
-                        transitionEnd: { transform: "none" },
-                      }
-                    : undefined
-                }
-                viewport={!isInitial ? { once: true } : undefined}
-                transition={{
-                  duration: 0.28,
-                  delay: isInitial ? delay : 0,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
+              <Reveal key={booking.id} duration={0.32}>
                 <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
                   {/* Header Kartu Booking */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E8E1] pb-4">
@@ -341,7 +312,7 @@ export default function BookingSayaPage() {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </Reveal>
             );
           })}
         </div>

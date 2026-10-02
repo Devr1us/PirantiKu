@@ -3,6 +3,8 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 
+import { lockProgrammaticScroll } from "@/components/providers/scroll-direction";
+
 export type ActiveNav =
   | "beranda"
   | "katalog"
@@ -17,8 +19,6 @@ type NavListener = (nav: ActiveNav) => void;
 const listeners = new Set<NavListener>();
 let currentActiveNav: ActiveNav = "beranda";
 let isLocked = false;
-let unlockTimeout: ReturnType<typeof setTimeout> | null = null;
-let activeScrollEndHandler: (() => void) | null = null;
 
 // Track intersecting sections for scroll-spy on "/"
 const visibleSections = new Set<string>();
@@ -76,37 +76,15 @@ export function setOptimisticNav(item: ActiveNav) {
   // Immediately set active nav
   notify(item);
 
-  // Lock observer updates during scrolling
+  // Lock observer updates during scrolling via unified programmatic lock
   isLocked = true;
-
-  if (unlockTimeout) {
-    clearTimeout(unlockTimeout);
-    unlockTimeout = null;
-  }
-  if (activeScrollEndHandler) {
-    window.removeEventListener("scrollend", activeScrollEndHandler);
-    activeScrollEndHandler = null;
-  }
-
-  const unlock = () => {
+  lockProgrammaticScroll(item, () => {
     isLocked = false;
-    if (activeScrollEndHandler) {
-      window.removeEventListener("scrollend", activeScrollEndHandler);
-      activeScrollEndHandler = null;
-    }
-    if (unlockTimeout) {
-      clearTimeout(unlockTimeout);
-      unlockTimeout = null;
-    }
     // Re-verify after scroll ends (if on home page)
     if (window.location.pathname === "/") {
       evaluateActiveSection();
     }
-  };
-
-  activeScrollEndHandler = unlock;
-  window.addEventListener("scrollend", unlock, { once: true });
-  unlockTimeout = setTimeout(unlock, 1000);
+  });
 }
 
 /**
@@ -219,12 +197,6 @@ export function useActiveNav(): ActiveNav {
       window.removeEventListener("hashchange", handleHashOrPopState);
       window.removeEventListener("popstate", handleHashOrPopState);
       document.removeEventListener("click", handleDocumentClick, { capture: true });
-      if (activeScrollEndHandler) {
-        window.removeEventListener("scrollend", activeScrollEndHandler);
-      }
-      if (unlockTimeout) {
-        clearTimeout(unlockTimeout);
-      }
     };
   }, [pathname]);
 

@@ -15,6 +15,7 @@ import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
 import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
+import { Reveal } from "@/components/ui/motion";
 
 interface EquipmentDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -214,62 +215,68 @@ export default async function EquipmentDetailPage({
             </div>
 
             {/* Deskripsi dalam Kartu Putih */}
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-2">
-              <h2 className="text-base font-bold text-[#234E5C]">
-                Deskripsi Perlengkapan
-              </h2>
-              <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
-                {equipment.deskripsi ||
-                  "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada penyewa."}
-              </p>
-            </div>
+            <Reveal delay={0.05}>
+              <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-2">
+                <h2 className="text-base font-bold text-[#234E5C]">
+                  Deskripsi Perlengkapan
+                </h2>
+                <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
+                  {equipment.deskripsi ||
+                    "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada penyewa."}
+                </p>
+              </div>
+            </Reveal>
 
             {/* Spesifikasi Teknis */}
             {spesifikasiObj && Object.keys(spesifikasiObj).length > 0 && (
-              <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-[#234E5C]">
-                  Spesifikasi Teknis
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {Object.entries(spesifikasiObj).map(([key, val]) => (
-                    <div
-                      key={key}
-                      className="flex items-center justify-between p-3 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs"
-                    >
-                      <span className="font-semibold text-[#5F7A84]">
-                        {formatSpecKey(key)}
-                      </span>
-                      <span className="font-bold text-[#234E5C]">
-                        {typeof val === "boolean"
-                          ? val
-                            ? "Ya"
-                            : "Tidak"
-                          : String(val)}
-                      </span>
-                    </div>
-                  ))}
+              <Reveal delay={0.1}>
+                <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+                  <h2 className="text-base font-bold text-[#234E5C]">
+                    Spesifikasi Teknis
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {Object.entries(spesifikasiObj).map(([key, val]) => (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between p-3 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs"
+                      >
+                        <span className="font-semibold text-[#5F7A84]">
+                          {formatSpecKey(key)}
+                        </span>
+                        <span className="font-bold text-[#234E5C]">
+                          {typeof val === "boolean"
+                            ? val
+                              ? "Ya"
+                              : "Tidak"
+                            : String(val)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             )}
 
             {/* Ketentuan Sewa */}
-            <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-6 space-y-3">
-              <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
-                Ketentuan & Jaminan Rental di {APP_NAME}
-              </h3>
-              <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
-                <li>
-                  Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
-                </li>
-                <li>
-                  Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal sewa yang Anda pilih.
-                </li>
-                <li>
-                  Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat di toko.
-                </li>
-              </ul>
-            </div>
+            <Reveal delay={0.15}>
+              <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-6 space-y-3">
+                <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
+                  Ketentuan & Jaminan Rental di {APP_NAME}
+                </h3>
+                <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
+                  <li>
+                    Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
+                  </li>
+                  <li>
+                    Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal sewa yang Anda pilih.
+                  </li>
+                  <li>
+                    Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat di toko.
+                  </li>
+                </ul>
+              </div>
+            </Reveal>
           </div>
         </div>
 
@@ -307,8 +314,15 @@ export default async function EquipmentDetailPage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {relatedEquipment.map((item) => (
-              <EquipmentCard key={item.id} equipment={item} />
+            {relatedEquipment.map((item, index) => (
+              <Reveal
+                key={item.id}
+                delay={(index % 4) * 0.05}
+                duration={0.32}
+                className="h-full"
+              >
+                <EquipmentCard equipment={item} />
+              </Reveal>
             ))}
           </div>
         </section>

@@ -256,7 +256,7 @@ export function HomeView({
             </div>
 
             {/* Kolom Kanan: Foto slot public/images/tentang.jpg dengan placeholder datar */}
-            <div className="lg:col-span-5">
+            <Reveal delay={0.1} className="lg:col-span-5">
               <div className="relative aspect-[4/3] sm:aspect-[1/1] w-full rounded-2xl overflow-hidden border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm flex items-center justify-center p-6 text-center">
                 {!tentangImgError ? (
                   <Image
@@ -285,7 +285,7 @@ export function HomeView({
                   </div>
                 )}
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -369,16 +369,19 @@ export function HomeView({
 
           {/* Baris Kartu Foto Persegi (Desktop Grid 3 atau 6, Mobile horizontal snap) */}
           <div className="overflow-x-auto pb-4 pt-1 snap-x snap-mandatory flex gap-5 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 md:overflow-visible">
-            {newestEquipment.map((item) => {
+            {newestEquipment.map((item, index) => {
               const primaryImage =
                 item.images?.find((img) => img.is_utama)?.url ||
                 item.images?.[0]?.url ||
                 null;
               const IconComp = getCategoryIcon(item.category?.ikon);
+              const delay = (index % 6) * 0.05;
 
               return (
-                <div
+                <Reveal
                   key={item.id}
+                  delay={delay}
+                  duration={0.35}
                   className="min-w-[220px] sm:min-w-[240px] md:min-w-0 snap-start flex flex-col justify-between rounded-2xl border border-[#E8E8E1] bg-white p-3 hover:shadow-md transition-all group"
                 >
                   <Link href={`/alat/${item.slug}`} className="block space-y-3">
@@ -415,7 +418,7 @@ export function HomeView({
                       </p>
                     </div>
                   </Link>
-                </div>
+                </Reveal>
               );
             })}
           </div>
@@ -506,7 +509,7 @@ export function HomeView({
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Informasi Alamat & Jam Kerja */}
-            <div className="lg:col-span-5 space-y-6">
+            <Reveal delay={0.05} className="lg:col-span-5 space-y-6">
               <div className="bg-white border border-[#E8E8E1] rounded-xl p-6 space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
@@ -555,10 +558,10 @@ export function HomeView({
                   </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
 
-            {/* Google Maps Embed Iframe */}
-            <div className="lg:col-span-7">
+            {/* Google Maps Embed Iframe - with once: true so it never reloads */}
+            <Reveal once={true} delay={0.1} className="lg:col-span-7">
               {mapsEmbedUrl ? (
                 <div className="w-full h-[320px] sm:h-[380px] rounded-xl overflow-hidden border border-[#E8E8E1] bg-white shadow-sm">
                   <iframe
@@ -584,7 +587,7 @@ export function HomeView({
                   </p>
                 </div>
               )}
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -602,28 +605,30 @@ export function HomeView({
             Pilih perlengkapan yang Anda butuhkan sekarang atau hubungi staf kami untuk ketersediaan alat dalam jumlah besar.
           </P>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link href="/alat">
-              <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
-                <HoverRollText text="LIHAT KATALOG" />
-              </Button>
-            </Link>
+          <Reveal delay={0.15}>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+              <Link href="/alat">
+                <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
+                  <HoverRollText text="LIHAT KATALOG" />
+                </Button>
+              </Link>
 
-            <a
-              href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20sewa%20alat`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="warm"
-                size="lg"
-                className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2"
+              <a
+                href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20sewa%20alat`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <MessageCircle className="h-4 w-4" />
-                <HoverRollText text="CHAT ADMIN" />
-              </Button>
-            </a>
-          </div>
+                <Button
+                  variant="warm"
+                  size="lg"
+                  className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <HoverRollText text="CHAT ADMIN" />
+                </Button>
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
     </div>

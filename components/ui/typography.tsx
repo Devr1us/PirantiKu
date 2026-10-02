@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { AnimatedText, type AnimatedTextMode } from "./text-motion";
-import { motion, useReducedMotion } from "motion/react";
-import { EASE, DURATION_SHORT } from "@/lib/motion";
+import { Reveal } from "./motion";
+import { DURATION_SHORT } from "@/lib/motion";
 
 interface BaseHeadingProps {
   children: React.ReactNode;
@@ -25,10 +25,12 @@ export function H1({
   delay = 0,
   stagger,
   mode,
-  once = true,
+  once,
 }: H1Props) {
   const chosenMode: AnimatedTextMode = mode ?? (hero ? "char" : "word");
-  const baseClass = hero ? "hero-title block tracking-tight" : "text-2xl sm:text-3xl font-extrabold uppercase text-[#234E5C]";
+  const baseClass = hero
+    ? "hero-title block tracking-tight"
+    : "text-2xl sm:text-3xl font-extrabold uppercase text-[#234E5C]";
 
   return (
     <AnimatedText
@@ -51,7 +53,7 @@ export function H2({
   delay = 0,
   stagger,
   mode = "word",
-  once = true,
+  once,
 }: BaseHeadingProps) {
   return (
     <AnimatedText
@@ -60,7 +62,7 @@ export function H2({
       delay={delay}
       stagger={stagger}
       once={once}
-      amount={0.35}
+      amount={0.2}
       className={`section-title block ${className}`}
     >
       {children}
@@ -74,7 +76,7 @@ export function H3({
   delay = 0,
   stagger,
   mode = "word",
-  once = true,
+  once,
 }: BaseHeadingProps) {
   return (
     <AnimatedText
@@ -83,7 +85,7 @@ export function H3({
       delay={delay}
       stagger={stagger}
       once={once}
-      amount={0.3}
+      amount={0.2}
       className={`text-lg sm:text-xl font-bold text-[#234E5C] ${className}`}
     >
       {children}
@@ -95,7 +97,7 @@ export function Lead({
   children,
   className = "",
   delay = 0.1,
-  once = true,
+  once,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -119,7 +121,7 @@ export function P({
   children,
   className = "",
   delay = 0,
-  once = true,
+  once,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -143,30 +145,22 @@ export function Eyebrow({
   children,
   className = "",
   delay = 0,
+  once,
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
+  once?: boolean;
 }) {
-  const shouldReduceMotion = useReducedMotion();
-
-  if (shouldReduceMotion) {
-    return (
-      <span className={`text-xs font-bold uppercase tracking-wider text-[#5F7A84] ${className}`}>
-        {children}
-      </span>
-    );
-  }
-
   return (
-    <motion.span
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: DURATION_SHORT, delay, ease: EASE }}
+    <Reveal
+      delay={delay}
+      duration={DURATION_SHORT}
+      y={8}
+      once={once}
       className={`inline-block text-xs font-bold uppercase tracking-wider text-[#5F7A84] ${className}`}
     >
       {children}
-    </motion.span>
+    </Reveal>
   );
 }
