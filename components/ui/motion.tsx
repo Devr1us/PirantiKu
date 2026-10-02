@@ -32,7 +32,7 @@ export function Reveal({
   return (
     <motion.div
       initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0, transitionEnd: { transform: "none" } }}
       viewport={{ once, margin: "-30px" }}
       transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
@@ -95,6 +95,7 @@ export function StaggerItem({
     visible: {
       opacity: 1,
       y: 0,
+      transitionEnd: { transform: "none" },
       transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
     },
   };

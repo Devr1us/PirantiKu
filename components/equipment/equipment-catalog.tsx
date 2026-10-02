@@ -22,11 +22,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  AnimatedText,
-  Stagger,
-  StaggerItem,
-} from "@/components/ui/motion";
+import { motion, useReducedMotion } from "motion/react";
+import { AnimatedText } from "@/components/ui/motion";
 import { H1, Lead } from "@/components/ui/typography";
 
 interface FilterSidebarProps {
@@ -179,6 +176,8 @@ export function EquipmentCatalog({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = React.useTransition();
+  const shouldReduceMotion = useReducedMotion();
 
   // Ambil state dari URL search params
   const currentQ = searchParams.get("q") || "";
@@ -192,6 +191,19 @@ export function EquipmentCatalog({
   const [maxPrice, setMaxPrice] = React.useState(currentMaxPrice);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
+  // Sinkronisasi state lokal jika URL berubah (misal tombol Back / Forward browser)
+  React.useEffect(() => {
+    setSearchQuery(currentQ);
+  }, [currentQ]);
+
+  React.useEffect(() => {
+    setMinPrice(currentMinPrice);
+  }, [currentMinPrice]);
+
+  React.useEffect(() => {
+    setMaxPrice(currentMaxPrice);
+  }, [currentMaxPrice]);
+
   const applyFilters = (newParams: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(newParams).forEach(([key, val]) => {
@@ -203,7 +215,12 @@ export function EquipmentCatalog({
     });
 
     const targetPath = selectedCategorySlug ? pathname : "/alat";
-    router.push(`${targetPath}?${params.toString()}`);
+    const queryString = params.toString();
+    const url = queryString ? `${targetPath}?${queryString}` : targetPath;
+
+    startTransition(() => {
+      router.replace(url, { scroll: false });
+    });
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -213,7 +230,9 @@ export function EquipmentCatalog({
 
   const handleCategorySelect = (slug: string) => {
     if (selectedCategorySlug) {
-      router.push(`/kategori/${slug}`);
+      startTransition(() => {
+        router.replace(`/kategori/${slug}`, { scroll: false });
+      });
     } else {
       const targetSlug = currentCategory === slug ? "" : slug;
       applyFilters({ kategori: targetSlug });
@@ -233,11 +252,10 @@ export function EquipmentCatalog({
     setSearchQuery("");
     setMinPrice("");
     setMaxPrice("");
-    if (selectedCategorySlug) {
-      router.push(pathname);
-    } else {
-      router.push("/alat");
-    }
+    const targetPath = selectedCategorySlug ? pathname : "/alat";
+    startTransition(() => {
+      router.replace(targetPath, { scroll: false });
+    });
     setIsMobileFilterOpen(false);
   };
 
@@ -313,6 +331,8 @@ export function EquipmentCatalog({
     handleResetFilters,
     hasActiveFilters,
   };
+
+  const filterSignature = `${currentCategory}|${currentMinPrice}|${currentMaxPrice}|${currentSort}|${currentQ}`;
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
@@ -427,16 +447,61 @@ export function EquipmentCatalog({
           </div>
 
           {filteredEquipment.length > 0 ? (
-            <Stagger
-              staggerDelay={0.05}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            <div
+              key={filterSignature}
+              className={`transition-opacity duration-200 ${
+                isPending ? "opacity-60 pointer-events-none" : ""
+              }`}
             >
-              {filteredEquipment.map((item) => (
-                <StaggerItem key={item.id}>
-                  <EquipmentCard equipment={item} />
-                </StaggerItem>
-              ))}
-            </Stagger>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredEquipment.map((item, index) => {
+                  if (shouldReduceMotion) {
+                    return (
+                      <div key={item.id} className="h-full">
+                        <EquipmentCard equipment={item} />
+                      </div>
+                    );
+                  }
+
+                  const isInitialBatch = index < 12;
+                  const delay = Math.min(index * 0.04, 0.4);
+
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={
+                        isInitialBatch
+                          ? {
+                              opacity: 1,
+                              y: 0,
+                              transitionEnd: { transform: "none" },
+                            }
+                          : undefined
+                      }
+                      whileInView={
+                        !isInitialBatch
+                          ? {
+                              opacity: 1,
+                              y: 0,
+                              transitionEnd: { transform: "none" },
+                            }
+                          : undefined
+                      }
+                      viewport={!isInitialBatch ? { once: true } : undefined}
+                      transition={{
+                        duration: 0.28,
+                        delay: isInitialBatch ? delay : 0,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="h-full"
+                    >
+                      <EquipmentCard equipment={item} />
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-dashed border-[#E8E8E1] bg-white">
               <Package className="h-12 w-12 text-[#5F7A84]/50 mb-3" />

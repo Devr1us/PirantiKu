@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { EquipmentWithDetails } from "@/types/database";
 import { formatRupiah } from "@/lib/format";
 import { getCategoryIcon } from "@/lib/constants";
@@ -15,6 +15,7 @@ interface EquipmentCardProps {
 }
 
 export function EquipmentCard({ equipment, priority = false }: EquipmentCardProps) {
+  const shouldReduceMotion = useReducedMotion();
   const availableStock = Math.max(
     0,
     (equipment.stok || 0) - (equipment.stok_rusak || 0)
@@ -30,9 +31,9 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
 
   return (
     <motion.div
-      whileHover={{ y: -4 }}
+      whileHover={shouldReduceMotion ? undefined : { y: -4 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[#E8E8E1] bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[#E8E8E1] bg-white p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow h-full"
     >
       <div className="flex flex-col flex-1 space-y-3">
         {/* Foto Frame: rounded-2xl, Aspect 4:3 atau Square, zoom 1.04 on hover */}
