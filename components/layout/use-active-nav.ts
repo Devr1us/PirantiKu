@@ -20,8 +20,6 @@ const listeners = new Set<NavListener>();
 let currentActiveNav: ActiveNav = "beranda";
 let isLocked = false;
 
-// Track intersecting sections for scroll-spy on "/"
-const visibleSections = new Set<string>();
 
 function notify(nav: ActiveNav) {
   currentActiveNav = nav;
@@ -51,19 +49,41 @@ function evaluateActiveSection() {
   const scrollHeight = document.documentElement.scrollHeight;
   const currentBottom = window.innerHeight + window.scrollY;
 
-  // Bottom edge check (last section can be short or pushed to bottom)
-  if (currentBottom >= scrollHeight - 4) {
+  // 1. Bottom edge check (anywhere near the page bottom is always kontak)
+  if (currentBottom >= scrollHeight - 80) {
     notify("kontak");
     return;
   }
 
-  if (visibleSections.has("kontak")) {
-    notify("kontak");
-  } else if (visibleSections.has("cara-sewa")) {
-    notify("cara-sewa");
-  } else {
+  // 2. If near top of page (hero / header area)
+  if (window.scrollY < 120) {
     notify("beranda");
+    return;
   }
+
+  const kontakEl = document.getElementById("kontak");
+  const caraSewaEl = document.getElementById("cara-sewa");
+
+  // Threshold from viewport top (accounts for 80px sticky header)
+  const navThreshold = 220;
+
+  if (kontakEl) {
+    const kontakRect = kontakEl.getBoundingClientRect();
+    if (kontakRect.top <= navThreshold) {
+      notify("kontak");
+      return;
+    }
+  }
+
+  if (caraSewaEl) {
+    const caraSewaRect = caraSewaEl.getBoundingClientRect();
+    if (caraSewaRect.top <= navThreshold) {
+      notify("cara-sewa");
+      return;
+    }
+  }
+
+  notify("beranda");
 }
 
 /**
@@ -121,22 +141,13 @@ export function useActiveNav(): ActiveNav {
       evaluateActiveSection();
     }
 
-    // Setup IntersectionObserver for sections #cara-sewa and #kontak
-    // rootMargin: "-35% 0px -60% 0px" targets an imaginary line around 35% from viewport top
+    // Observe cara-sewa and kontak to trigger re-evaluation on layout changes
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            visibleSections.add(entry.target.id);
-          } else {
-            visibleSections.delete(entry.target.id);
-          }
-        });
+      () => {
         evaluateActiveSection();
       },
       {
-        rootMargin: "-35% 0px -60% 0px",
-        threshold: 0,
+        threshold: [0, 0.25, 0.5, 0.75, 1],
       }
     );
 
@@ -146,9 +157,16 @@ export function useActiveNav(): ActiveNav {
     if (caraSewaEl) observer.observe(caraSewaEl);
     if (kontakEl) observer.observe(kontakEl);
 
-    // Passive scroll listener for bottom-of-page edge case & manual scrolling
+    // Passive scroll listener for real-time section tracking
+    let isTicking = false;
     const handleScroll = () => {
-      evaluateActiveSection();
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          evaluateActiveSection();
+          isTicking = false;
+        });
+        isTicking = true;
+      }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -192,7 +210,6 @@ export function useActiveNav(): ActiveNav {
     return () => {
       listeners.delete(setActiveNav);
       observer.disconnect();
-      visibleSections.clear();
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("hashchange", handleHashOrPopState);
       window.removeEventListener("popstate", handleHashOrPopState);
