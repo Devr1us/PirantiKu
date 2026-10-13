@@ -253,7 +253,7 @@ export function NavbarClient({
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
               }`}
             >
-              <HoverRollText text="CARA SEWA" />
+              <HoverRollText text="CARA BOOKING" />
               {activeNav === "cara-sewa" && (
                 <motion.span
                   layoutId="nav-underline"
@@ -290,7 +290,7 @@ export function NavbarClient({
         <div className="flex items-center gap-3">
           {/* Tombol Chat WhatsApp Admin */}
           <a
-            href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20sewa%20alat`}
+            href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] hover:text-[#A0630F] transition-all"
@@ -301,7 +301,7 @@ export function NavbarClient({
           </a>
 
           {/* Ikon Keranjang dengan Badge Jumlah */}
-          <Link href="/keranjang" aria-label="Keranjang Sewa" className="relative">
+          <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-all">
               <ShoppingCart className="h-5 w-5" />
               {isLoaded && totalItems > 0 && (
@@ -505,7 +505,7 @@ export function NavbarClient({
                             transition={springTransition}
                           />
                         )}
-                        CARA SEWA
+                        CARA BOOKING
                       </Link>
 
                       <Link
@@ -558,7 +558,7 @@ export function NavbarClient({
                 {/* Bagian Bawah Menu Mobile */}
                 <div className="border-t border-[#E8E8E1] pt-4 space-y-3">
                   <a
-                    href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20sewa%20alat`}
+                    href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#E8E8E1] text-xs font-bold text-[#234E5C] hover:bg-[#F3F3EF]"

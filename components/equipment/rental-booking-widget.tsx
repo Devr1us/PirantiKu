@@ -321,7 +321,7 @@ export function RentalBookingWidget({
         <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 space-y-2 text-xs">
           <div className="flex justify-between text-[#5F7A84]">
             <span>
-              Sewa {qty} unit x {pricing.days} hari
+              Booking {qty} unit x {pricing.days} hari
             </span>
             <span className="font-bold text-[#234E5C]">
               {formatRupiah(pricing.totalSewa)}
@@ -363,7 +363,7 @@ export function RentalBookingWidget({
           </div>
         </div>
 
-        {/* Action Buttons: Tombol Ochre Tambah ke Keranjang & Sewa Sekarang */}
+        {/* Action Buttons: Tombol Ochre Tambah ke Keranjang & Booking Sekarang */}
         <div className="space-y-2.5">
           <Button
             type="button"
@@ -384,7 +384,7 @@ export function RentalBookingWidget({
             className="w-full h-11 text-sm font-bold flex items-center justify-center gap-2"
           >
             <Zap className="h-4 w-4" />
-            Sewa Sekarang
+            Booking Sekarang
           </Button>
         </div>
 
@@ -404,7 +404,7 @@ export function RentalBookingWidget({
       <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E8E8E1] p-3 px-4 shadow-lg flex items-center justify-between">
         <div>
           <span className="text-[10px] text-[#5F7A84] font-semibold block">
-            Total ({pricing.days} hari sewa)
+            Total ({pricing.days} hari booking)
           </span>
           <div className="flex items-baseline gap-1">
             <span className="text-base font-extrabold text-[#A0630F]">
@@ -435,7 +435,7 @@ export function RentalBookingWidget({
             onClick={handleRentNow}
             className="h-10 px-5 text-xs font-bold"
           >
-            Sewa Sekarang
+            Booking Sekarang
           </Button>
         </div>
       </div>

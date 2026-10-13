@@ -198,7 +198,7 @@ export default function CheckoutPage() {
               <p className="text-sm font-bold text-[#234E5C]">{rekeningInfo}</p>
             </div>
             <p className="text-[11px] text-[#5F7A84] leading-relaxed">
-              Setelah transfer, admin akan segera memverifikasi ketersediaan dan menjadwalkan pengambilan alat sesuai tanggal sewa.
+              Setelah transfer, admin akan segera memverifikasi ketersediaan dan menjadwalkan pengambilan alat sesuai tanggal booking.
             </p>
           </div>
 
@@ -356,7 +356,7 @@ export default function CheckoutPage() {
                   <Calendar className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5" />
                   <div className="text-xs space-y-0.5">
                     <span className="font-bold text-[#234E5C]">
-                      Jadwal Sewa Terpilih:
+                      Jadwal Booking Terpilih:
                     </span>
                     <p className="text-[#5F7A84]">
                       {formatDateIndo(startDate, "d MMM yyyy")} s/d {formatDateIndo(endDate, "d MMM yyyy")} ({pricing.days} Hari)
@@ -410,7 +410,7 @@ export default function CheckoutPage() {
                   <h4 className="font-bold text-[#234E5C]">Ketentuan Pengambilan Unit:</h4>
                   <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px]">
                     <li>Membawa KTP atau SIM asli atas nama pemesan.</li>
-                    <li>Melunasi sisa biaya sewa ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
+                    <li>Melunasi sisa biaya booking ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>
                   </ul>
                 </div>
@@ -470,7 +470,7 @@ export default function CheckoutPage() {
 
             <div className="border-t border-[#E8E8E1] pt-3 space-y-2 text-xs">
               <div className="flex justify-between text-[#5F7A84]">
-                <span>Total Sewa Alat</span>
+                <span>Total Booking Alat</span>
                 <span className="font-bold text-[#234E5C]">{formatRupiah(pricing.totalSewa)}</span>
               </div>
               <div className="flex justify-between text-[#5F7A84]">

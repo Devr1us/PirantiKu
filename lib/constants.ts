@@ -16,9 +16,9 @@ import {
 import type { BookingStatus, PaymentStatus } from "@/types/database";
 
 export const APP_NAME = "PirantiKu";
-export const TAGLINE = "SEWA ALAT SERBA ADA";
+export const TAGLINE = "BOOKING ALAT SERBA ADA";
 export const APP_DESCRIPTION =
-  "Platform sewa alat serba ada dengan kepastian stok per tanggal, DP ringan, dan kondisi prima.";
+  "Platform booking alat serba ada dengan kepastian stok per tanggal, DP ringan, dan kondisi prima.";
 
 // Kategori icon fallback mapping
 export const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {

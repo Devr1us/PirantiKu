@@ -257,19 +257,19 @@ export default async function EquipmentDetailPage({
               </Reveal>
             )}
 
-            {/* Ketentuan Sewa */}
+            {/* Ketentuan Booking */}
             <Reveal delay={0.15}>
               <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-6 space-y-3">
                 <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
-                  Ketentuan & Jaminan Rental di {APP_NAME}
+                  Ketentuan & Jaminan Booking di {APP_NAME}
                 </h3>
                 <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
                   <li>
                     Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
                   </li>
                   <li>
-                    Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal sewa yang Anda pilih.
+                    Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal booking yang Anda pilih.
                   </li>
                   <li>
                     Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat di toko.

@@ -340,11 +340,11 @@ export function EquipmentCatalog({
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="space-y-2 border-b border-[#E8E8E1] pb-6">
         <H1 className="section-title block">
-          {categoryTitle ? categoryTitle.toUpperCase() : "KATALOG ALAT RENTAL"}
+          {categoryTitle ? categoryTitle.toUpperCase() : "KATALOG BOOKING ALAT"}
         </H1>
         <Lead className="text-base text-[#5F7A84] font-medium leading-relaxed max-w-3xl">
           {categoryDescription ||
-            "Pilihan perlengkapan berkualitas dengan kepastian ketersediaan unit, biaya sewa harian transparan, dan DP ringan mulai 30%."}
+            "Pilihan perlengkapan berkualitas dengan kepastian ketersediaan unit, biaya booking harian transparan, dan DP ringan mulai 30%."}
         </Lead>
       </div>
 
@@ -444,7 +444,7 @@ export function EquipmentCatalog({
         {/* Grid Kartu Alat */}
         <main className="lg:col-span-3 space-y-6">
           <div className="text-xs font-semibold text-[#5F7A84]">
-            Menampilkan <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap sewa
+            Menampilkan <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
           </div>
 
           {filteredEquipment.length > 0 ? (

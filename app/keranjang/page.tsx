@@ -53,7 +53,7 @@ export default function KeranjangPage() {
 
   const handleCheckout = () => {
     if (items.length === 0) {
-      toast.error("Keranjang sewa Anda masih kosong.");
+      toast.error("Keranjang booking Anda masih kosong.");
       return;
     }
 
@@ -70,7 +70,7 @@ export default function KeranjangPage() {
       <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-          <p className="text-sm text-[#5F7A84]">Memuat keranjang sewa...</p>
+          <p className="text-sm text-[#5F7A84]">Memuat keranjang booking...</p>
         </div>
       </div>
     );
@@ -84,10 +84,10 @@ export default function KeranjangPage() {
             <ShoppingCart className="h-8 w-8 stroke-[1.8]" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-[#234E5C]">
-            Keranjang Sewa Kosong
+            Keranjang Booking Kosong
           </h1>
           <p className="mt-2 text-sm text-[#5F7A84] leading-relaxed">
-            Belum ada peralatan yang dipilih. Buka katalog untuk melihat berbagai pilihan alat dan perkakas yang siap disewa.
+            Belum ada peralatan yang dipilih. Buka katalog untuk melihat berbagai pilihan alat dan perkakas yang siap dibooking.
           </p>
           <div className="mt-6">
             <Link href="/alat">
@@ -124,10 +124,10 @@ export default function KeranjangPage() {
         </div>
 
         <H1 className="section-title block pt-1">
-          KERANJANG SEWA
+          KERANJANG BOOKING
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Tentukan rentang tanggal sewa dan periksa jumlah unit peralatan sebelum melanjutkan ke langkah pembayaran DP.
+          Tentukan rentang tanggal booking dan periksa jumlah unit peralatan sebelum melanjutkan ke langkah pembayaran DP.
         </Lead>
       </div>
 
@@ -140,10 +140,10 @@ export default function KeranjangPage() {
               <div>
                 <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-[#234E5C]" />
-                  Jadwal Rentang Sewa
+                  Jadwal Rentang Booking
                 </h3>
                 <p className="text-xs text-[#5F7A84] mt-0.5">
-                  Tanggal sewa berlaku seragam untuk seluruh barang di keranjang ini
+                  Tanggal booking berlaku seragam untuk seluruh barang di keranjang ini
                 </p>
               </div>
               <span className="text-xs font-bold text-[#A0630F] px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FDE68A]">
@@ -300,19 +300,19 @@ export default function KeranjangPage() {
         <div className="lg:col-span-5 xl:col-span-4">
           <div className="sticky top-[var(--navbar-offset)] rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5 transition-[top] duration-300">
             <h3 className="text-base font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
-              Ringkasan Biaya Sewa
+              Ringkasan Biaya Booking
             </h3>
 
             <div className="space-y-3 text-xs">
               <div className="flex justify-between text-[#5F7A84]">
-                <span>Durasi Masa Sewa</span>
+                <span>Durasi Masa Booking</span>
                 <span className="font-bold text-[#234E5C]">
                   {pricing.days} Hari
                 </span>
               </div>
 
               <div className="flex justify-between text-[#5F7A84]">
-                <span>Subtotal Harga Sewa</span>
+                <span>Subtotal Harga Booking</span>
                 <span className="font-bold text-[#234E5C]">
                   {formatRupiah(pricing.totalSewa)}
                 </span>

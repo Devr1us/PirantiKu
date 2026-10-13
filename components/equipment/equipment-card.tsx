@@ -99,7 +99,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
       <div className="mt-4 pt-3 border-t border-[#E8E8E1] flex items-center justify-between">
         <div>
           <span className="text-[10px] font-medium uppercase tracking-wider text-[#5F7A84] block">
-            Harga Sewa
+            Harga Booking
           </span>
           <div className="flex items-baseline gap-1">
             <span className="text-base font-extrabold text-[#A0630F]">

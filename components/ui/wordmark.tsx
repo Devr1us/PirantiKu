@@ -64,7 +64,7 @@ export function Wordmark({
 
   const content = (
     <div
-      aria-label="PIRANTIKU SEWA ALAT"
+      aria-label="PIRANTIKU BOOKING ALAT"
       className={`inline-flex flex-col items-center justify-center select-none text-center ${className}`}
     >
       <span
@@ -105,10 +105,10 @@ export function Wordmark({
             animate={{ opacity: 1 }}
             transition={{ duration: DURATION_SHORT, delay: 0.35, ease: EASE }}
           >
-            SEWA ALAT
+            BOOKING ALAT
           </motion.span>
         ) : (
-          <span>SEWA ALAT</span>
+          <span>BOOKING ALAT</span>
         )}
       </span>
     </div>

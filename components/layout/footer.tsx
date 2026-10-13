@@ -12,8 +12,8 @@ export async function Footer() {
           <div className="space-y-4 max-w-sm">
             <Wordmark />
             <P className="text-sm text-[#5F7A84] leading-relaxed">
-              Layanan penyewaan perlengkapan serba ada dengan transparansi stok,
-              proses cepat per tanggal sewa, dan kondisi alat prima siap pakai.
+              Layanan booking perlengkapan serba ada dengan transparansi stok,
+              proses cepat per tanggal booking, dan kondisi alat prima siap pakai.
             </P>
           </div>
 
@@ -36,7 +36,7 @@ export async function Footer() {
                 </li>
                 <li>
                   <Link href="/#cara-sewa" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
-                    Cara Sewa
+                    Cara Booking
                   </Link>
                 </li>
                 <li>
@@ -64,7 +64,7 @@ export async function Footer() {
                 </li>
                 <li>
                   <Link href="/keranjang" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
-                    Keranjang Sewa
+                    Keranjang Booking
                   </Link>
                 </li>
                 <li>
