@@ -16,6 +16,7 @@ import type { Category, EquipmentWithDetails } from "@/types/database";
 import {
   getCategoryIcon,
   getCategoryDescription,
+  LOKASI_DEFAULT,
 } from "@/lib/constants";
 import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,11 @@ import {
 } from "@/components/ui/motion";
 import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
 import { HoverRollText } from "@/components/ui/text-motion";
+import {
+  LocationMap,
+  CopyAddressButton,
+  DirectionsButton,
+} from "./LocationMap";
 
 interface HomeViewProps {
   categories: Category[];
@@ -40,6 +46,8 @@ interface HomeViewProps {
   alamat: string;
   jamOperasional: string;
   mapsEmbedUrl: string;
+  lokasiLat?: number;
+  lokasiLng?: number;
 }
 
 export function HomeView({
@@ -53,9 +61,18 @@ export function HomeView({
   alamat,
   jamOperasional,
   mapsEmbedUrl,
+  lokasiLat = LOKASI_DEFAULT.lat,
+  lokasiLng = LOKASI_DEFAULT.lng,
 }: HomeViewProps) {
   const cleanWa = whatsappAdmin.replace(/[^0-9]/g, "");
   const [tentangImgError, setTentangImgError] = React.useState(false);
+
+  const effectiveAlamat =
+    alamat &&
+    alamat !== "Isi alamat pengambilan alat di sini" &&
+    alamat !== "Jl. Raya Rental No. 12, Jakarta"
+      ? alamat
+      : LOKASI_DEFAULT.alamat;
 
   return (
     <div className="flex flex-col w-full bg-[#FAFAF8] text-[#234E5C]">
@@ -507,86 +524,81 @@ export function HomeView({
             </Lead>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Informasi Alamat & Jam Kerja */}
-            <Reveal delay={0.05} className="lg:col-span-5 space-y-6">
-              <div className="bg-white border border-[#E8E8E1] rounded-xl p-6 space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                    <MapPin className="h-5 w-5" />
+            <Reveal delay={0.05} className="lg:col-span-5 h-full">
+              <div className="bg-white border border-[#E8E8E1] rounded-xl p-6 space-y-6 h-full flex flex-col justify-between">
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
+                        Alamat Pengambilan Alat
+                      </h3>
+                      <p
+                        id="alamat-pengambilan-text"
+                        className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed"
+                      >
+                        {effectiveAlamat}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                      Alamat Pengambilan Alat
-                    </h3>
-                    <p className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed">
-                      {alamat || "Jl. Raya Rental No. 12, Jakarta"}
-                    </p>
+
+                  <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
+                      <Clock className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
+                        Jam Operasional
+                      </h3>
+                      <p className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed">
+                        {jamOperasional || "Senin - Minggu: 08.00 - 21.00 WIB"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
+                      <MessageCircle className="h-5 w-5 text-[#A0630F]" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
+                        WhatsApp Pelayanan
+                      </h3>
+                      <a
+                        href={`https://wa.me/${cleanWa}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-bold text-[#A0630F] hover:underline mt-1 block"
+                      >
+                        +{cleanWa}
+                      </a>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                      Jam Operasional
-                    </h3>
-                    <p className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed">
-                      {jamOperasional || "Senin - Minggu: 08.00 - 21.00 WIB"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                    <MessageCircle className="h-5 w-5 text-[#A0630F]" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                      WhatsApp Pelayanan
-                    </h3>
-                    <a
-                      href={`https://wa.me/${cleanWa}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-bold text-[#A0630F] hover:underline mt-1 block"
-                    >
-                      +{cleanWa}
-                    </a>
-                  </div>
+                {/* Dua tombol pill kecil: Petunjuk Arah & Salin Alamat */}
+                <div className="border-t border-[#E8E8E1] pt-6 flex flex-wrap items-center gap-3">
+                  <DirectionsButton lat={lokasiLat} lng={lokasiLng} />
+                  <CopyAddressButton
+                    alamat={effectiveAlamat}
+                    targetElementId="alamat-pengambilan-text"
+                  />
                 </div>
               </div>
             </Reveal>
 
             {/* Google Maps Embed Iframe - with once: true so it never reloads */}
-            <Reveal once={true} delay={0.1} className="lg:col-span-7">
-              {mapsEmbedUrl ? (
-                <div className="w-full h-[320px] sm:h-[380px] rounded-xl overflow-hidden border border-[#E8E8E1] bg-white shadow-sm">
-                  <iframe
-                    src={mapsEmbedUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Peta Lokasi Toko PirantiKu"
-                    className="w-full h-full"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-[320px] rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] flex flex-col items-center justify-center p-6 text-center">
-                  <MapPin className="h-10 w-10 text-[#5F7A84] mb-2" />
-                  <p className="text-sm font-bold text-[#234E5C]">
-                    Peta Lokasi
-                  </p>
-                  <p className="text-xs text-[#5F7A84] mt-1 max-w-sm">
-                    Toko kami berlokasi di {alamat || "Jakarta"}. Silakan hubungi WhatsApp kami untuk panduan rute atau petunjuk arah.
-                  </p>
-                </div>
-              )}
+            <Reveal once={true} delay={0.1} className="lg:col-span-7 h-full">
+              <LocationMap
+                lat={lokasiLat}
+                lng={lokasiLng}
+                embedUrl={mapsEmbedUrl}
+                alamat={effectiveAlamat}
+              />
             </Reveal>
           </div>
         </div>

@@ -180,6 +180,14 @@ export const PAYMENT_STATUS_CONFIG: Record<
   },
 };
 
+// Lokasi Default (Nilai Cadangan Sesuai Sumber Kebenaran)
+export const LOKASI_DEFAULT = {
+  alamat:
+    "Jl. Manggis 5 No. 20, Watuburik, Wonorejo, Kec. Gondangrejo, Kabupaten Karanganyar, Jawa Tengah 57188",
+  lat: -7.526135,
+  lng: 110.834555,
+};
+
 // Default Fallback Settings
 export const DEFAULT_SETTINGS = {
   dp_persen: 30,
@@ -188,6 +196,8 @@ export const DEFAULT_SETTINGS = {
   qris_url: "",
   whatsapp_admin: "6281234567890",
   jam_operasional: "Senin - Minggu: 08.00 - 21.00 WIB",
-  alamat: "Jl. Raya Rental No. 12, Jakarta",
+  alamat: LOKASI_DEFAULT.alamat,
+  lokasi_lat: LOKASI_DEFAULT.lat,
+  lokasi_lng: LOKASI_DEFAULT.lng,
   maps_embed_url: "",
 };

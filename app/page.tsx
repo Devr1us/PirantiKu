@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeView } from "@/components/home/home-view";
-import { DEFAULT_SETTINGS } from "@/lib/constants";
+import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const revalidate = 60; // Revalidate data setiap 60 detik
@@ -14,9 +14,11 @@ export default async function HomePage() {
 
   let whatsappAdmin = DEFAULT_SETTINGS.whatsapp_admin;
   let dpPersen = DEFAULT_SETTINGS.dp_persen;
-  let alamat = DEFAULT_SETTINGS.alamat;
+  let alamat = LOKASI_DEFAULT.alamat;
   let jamOperasional = DEFAULT_SETTINGS.jam_operasional;
   let mapsEmbedUrl = DEFAULT_SETTINGS.maps_embed_url;
+  let lokasiLat: number = LOKASI_DEFAULT.lat;
+  let lokasiLng: number = LOKASI_DEFAULT.lng;
 
   try {
     const supabase = await createClient();
@@ -81,9 +83,19 @@ export default async function HomePage() {
           const parsed = parseInt(s.value, 10);
           if (!isNaN(parsed)) dpPersen = parsed;
         }
-        if (s.key === "alamat" && s.value) alamat = s.value;
+        if (s.key === "alamat" && s.value && s.value.trim() !== "") {
+          alamat = s.value.trim();
+        }
         if (s.key === "jam_operasional" && s.value) jamOperasional = s.value;
-        if (s.key === "maps_embed_url" && s.value) mapsEmbedUrl = s.value;
+        if (s.key === "maps_embed_url" && s.value) mapsEmbedUrl = s.value.trim();
+        if (s.key === "lokasi_lat" && s.value) {
+          const parsed = parseFloat(s.value);
+          if (!isNaN(parsed)) lokasiLat = parsed;
+        }
+        if (s.key === "lokasi_lng" && s.value) {
+          const parsed = parseFloat(s.value);
+          if (!isNaN(parsed)) lokasiLng = parsed;
+        }
       });
     }
   } catch (err: unknown) {
@@ -98,18 +110,57 @@ export default async function HomePage() {
     console.error("Gagal memuat data beranda dari database:", err);
   }
 
+  // Fallback alamat jika kosong atau masih teks default placeholder lama
+  if (
+    !alamat ||
+    alamat === "Isi alamat pengambilan alat di sini" ||
+    alamat === "Jl. Raya Rental No. 12, Jakarta"
+  ) {
+    alamat = LOKASI_DEFAULT.alamat;
+  }
+
+  // JSON-LD LocalBusiness untuk SEO
+  const jsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "PirantiKu",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: alamat,
+      addressCountry: "ID",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: lokasiLat,
+      longitude: lokasiLng,
+    },
+  };
+
+  if (whatsappAdmin) {
+    jsonLd.telephone = whatsappAdmin;
+  }
+
   return (
-    <HomeView
-      categories={categories}
-      newestEquipment={newestEquipment}
-      categoryCounts={categoryCounts}
-      totalActiveTypes={totalActiveTypes}
-      totalAvailableUnits={totalAvailableUnits}
-      whatsappAdmin={whatsappAdmin}
-      dpPersen={dpPersen}
-      alamat={alamat}
-      jamOperasional={jamOperasional}
-      mapsEmbedUrl={mapsEmbedUrl}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HomeView
+        categories={categories}
+        newestEquipment={newestEquipment}
+        categoryCounts={categoryCounts}
+        totalActiveTypes={totalActiveTypes}
+        totalAvailableUnits={totalAvailableUnits}
+        whatsappAdmin={whatsappAdmin}
+        dpPersen={dpPersen}
+        alamat={alamat}
+        jamOperasional={jamOperasional}
+        mapsEmbedUrl={mapsEmbedUrl}
+        lokasiLat={lokasiLat}
+        lokasiLng={lokasiLng}
+      />
+    </>
   );
 }
+
