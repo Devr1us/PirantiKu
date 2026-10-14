@@ -22,7 +22,8 @@ import { Label } from "@/components/ui/label";
 import { H1, H2, H3, Lead, P, Eyebrow } from "@/components/ui/typography";
 import { HoverRollText } from "@/components/ui/motion";
 import { toast } from "sonner";
-import type { Profile } from "@/types/database";
+import { PaymentFlow } from "@/components/payment/payment-flow";
+import type { Profile, Booking } from "@/types/database";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -37,8 +38,11 @@ export default function CheckoutPage() {
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [catatan, setCatatan] = React.useState<string>("");
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
+  const [qrisUrl, setQrisUrl] = React.useState<string>("");
+  const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>("6281234567890");
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
+  const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
 
   // Ambil tanggal sewa dari params atau fallback
   const startDate = mulaiParam || new Date().toISOString().split("T")[0];
@@ -70,14 +74,16 @@ export default function CheckoutPage() {
           setProfile(prof as Profile);
         }
 
-        const { data: setRek } = await supabase
+        const { data: setList } = await supabase
           .from("settings")
-          .select("value")
-          .eq("key", "rekening_bank")
-          .single();
+          .select("key, value");
 
-        if (setRek?.value) {
-          setRekeningInfo(setRek.value);
+        if (setList) {
+          setList.forEach((s) => {
+            if (s.key === "rekening_bank" && s.value) setRekeningInfo(s.value);
+            if (s.key === "qris_url" && s.value) setQrisUrl(s.value);
+            if (s.key === "whatsapp_admin" && s.value) setWhatsappAdmin(s.value);
+          });
         }
       } catch (err) {
         console.error("Gagal inisialisasi checkout:", err);
@@ -125,15 +131,20 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Ambil kode booking yang dibuat
+      // Ambil data booking lengkap yang dibuat
       if (bookingId) {
         const { data: bData } = await supabase
           .from("bookings")
-          .select("kode_booking")
+          .select("*")
           .eq("id", bookingId)
           .single();
 
-        setCreatedBookingCode(bData?.kode_booking || bookingId.slice(0, 8));
+        if (bData) {
+          setCreatedBooking(bData as Booking);
+          setCreatedBookingCode(bData.kode_booking);
+        } else {
+          setCreatedBookingCode(bookingId.slice(0, 8));
+        }
       }
 
       clearCart();
@@ -158,63 +169,52 @@ export default function CheckoutPage() {
     );
   }
 
-  // Tampilan Sukses Checkout
+  // Tampilan Sukses Checkout dengan Alur Pembayaran Lengkap
   if (currentStep === 3 && createdBookingCode) {
+    const bookingForFlow = createdBooking || {
+      id: createdBookingCode,
+      kode_booking: createdBookingCode,
+      status: "menunggu_dp" as const,
+      total_harga: pricing.totalSewa,
+      dp_jumlah: pricing.dpJumlah,
+      deposit: pricing.totalDeposit,
+      tanggal_mulai: startDate,
+      tanggal_selesai: endDate,
+      created_at: new Date().toISOString(),
+      pesan_admin: null,
+      catatan_penyewa: catatan || null,
+    };
+
     return (
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:py-24 text-center space-y-6 bg-[#FAFAF8] text-[#234E5C]">
-        <div className="rounded-xl border border-[#E8E8E1] bg-white p-8 sm:p-12 shadow-sm space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
-            <CheckCircle2 className="h-8 w-8" />
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:py-16 space-y-6 bg-[#FAFAF8] text-[#234E5C]">
+        {/* Banner Sukses Terbuat */}
+        <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 text-center space-y-4 shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
+            <CheckCircle2 className="h-7 w-7" />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Eyebrow className="text-[#2E5E4E]">
-              Pesanan Telah Terdaftar
+              Langkah 3 Selesai: Pesanan Terdaftar
             </Eyebrow>
-            <H1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#234E5C]">
+            <H1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#234E5C]">
               Booking Berhasil Dibuat!
             </H1>
-            <P className="text-sm text-[#5F7A84]">
-              Kode Booking Anda:
-            </P>
-            <div className="inline-block py-2 px-6 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] font-mono text-lg font-bold text-[#234E5C]">
-              {createdBookingCode}
-            </div>
-          </div>
-
-          {/* Rincian Pembayaran DP */}
-          <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-5 text-left space-y-3 text-xs">
-            <h3 className="text-sm font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-2">
-              Langkah Selanjutnya: Pembayaran DP
-            </h3>
-            <p className="text-[#5F7A84]">
-              Silakan transfer uang muka (DP 30%) sejumlah:
+            <p className="text-xs text-[#5F7A84]">
+              Silakan selesaikan pembayaran uang muka (DP 30%) di bawah ini untuk mengunci unit Anda.
             </p>
-            <p className="text-xl font-bold text-[#A0630F]">
-              {formatRupiah(pricing.dpJumlah)}
-            </p>
-            <div className="p-3 rounded-lg bg-white border border-[#E8E8E1] space-y-1">
-              <span className="text-[11px] text-[#5F7A84] font-semibold">Tujuan Rekening:</span>
-              <p className="text-sm font-bold text-[#234E5C]">{rekeningInfo}</p>
-            </div>
-            <p className="text-[11px] text-[#5F7A84] leading-relaxed">
-              Setelah transfer, admin akan segera memverifikasi ketersediaan dan menjadwalkan pengambilan alat sesuai tanggal booking.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link href="/booking-saya" className="flex-1">
-              <Button variant="warm" className="w-full text-xs font-bold">
-                Lihat Status Booking Saya
-              </Button>
-            </Link>
-            <Link href="/alat" className="flex-1">
-              <Button variant="outline" className="w-full text-xs font-bold">
-                Kembali ke Katalog
-              </Button>
-            </Link>
           </div>
         </div>
+
+        {/* Modul Alur Pembayaran Interaktif */}
+        <PaymentFlow
+          booking={bookingForFlow}
+          customerName={profile?.nama || "Penyewa"}
+          rekeningBank={rekeningInfo}
+          qrisUrl={qrisUrl}
+          whatsappAdmin={whatsappAdmin}
+          showBackToHome={true}
+        />
       </div>
     );
   }

@@ -42,11 +42,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(nextUrl, request.url));
   }
 
-  // 2. /checkout, /booking-saya, dan /profil wajib login
+  // 2. /checkout, /booking-saya, /pembayaran, dan /profil wajib login
   if (
     !user &&
     (pathname.startsWith("/checkout") ||
       pathname.startsWith("/booking-saya") ||
+      pathname.startsWith("/pembayaran") ||
       pathname.startsWith("/profil"))
   ) {
     const redirectUrl = new URL("/login", request.url);
