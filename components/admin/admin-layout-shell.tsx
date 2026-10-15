@@ -9,6 +9,7 @@ import {
   CalendarDays,
   Calendar,
   Layers,
+  Settings,
   ArrowLeft,
   Menu,
 } from "lucide-react";
@@ -30,6 +31,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     { label: "Kelola Booking", href: "/admin/booking", icon: CalendarDays },
     { label: "Kalender Rental", href: "/admin/kalender", icon: Calendar },
     { label: "Kategori Alat", href: "/admin/kategori", icon: Layers },
+    { label: "Pengaturan Toko", href: "/admin/pengaturan", icon: Settings },
   ];
 
   const sidebarContent = (
