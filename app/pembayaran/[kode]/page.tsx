@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Clock,
   Phone,
+  Printer,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { PaymentFlow } from "@/components/payment/payment-flow";
@@ -141,8 +142,24 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
               Selesaikan uang muka (DP) untuk mengunci jadwal peminjaman unit alat Anda.
             </Lead>
           </div>
-          <div className="self-start sm:self-auto">
-            <StatusBadge status={booking.status} />
+          <div className="self-start sm:self-auto flex items-center gap-2">
+            {booking.payments?.some((p) => p.status === "menunggu_verifikasi") && booking.status === "menunggu_dp" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide bg-[#FEF3C7] text-[#78350F] border-[#FDE68A]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D97706] animate-pulse" />
+                Menunggu Verifikasi Admin
+              </span>
+            ) : (
+              <StatusBadge status={booking.status} />
+            )}
+            <Link
+              href={`/invoice/${booking.kode_booking}`}
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#E8E8E1] text-[#234E5C] bg-white hover:bg-[#F3F3EF] text-xs font-bold transition-colors"
+              title="Cetak Surat Perjanjian & Invoice"
+            >
+              <Printer className="h-3.5 w-3.5 text-[#234E5C]" />
+              <span>Cetak Invoice</span>
+            </Link>
           </div>
         </div>
       </div>

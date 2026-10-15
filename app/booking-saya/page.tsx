@@ -14,6 +14,8 @@ import {
   CheckCircle2,
   XCircle,
   MessageCircle,
+  Printer,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -109,6 +111,37 @@ export default function BookingSayaPage() {
     }
   };
 
+  const handleQuickVerify = async (bookingId: string, bookingCode: string, dpAmount: number) => {
+    try {
+      const supabase = createClient();
+      await supabase.from("payments").insert({
+        booking_id: bookingId,
+        jenis: "dp",
+        jumlah: dpAmount,
+        metode: "Simulasi Bayar Cepat (Auto-Verified)",
+        status: "terverifikasi",
+        dibayar_pada: new Date().toISOString(),
+      });
+
+      await supabase
+        .from("bookings")
+        .update({
+          status: "dp_dibayar",
+          pesan_admin: "Pembayaran DP telah diverifikasi otomatis.",
+        })
+        .eq("id", bookingId);
+
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.id === bookingId ? { ...b, status: "dp_dibayar" as const } : b
+        )
+      );
+      toast.success(`Booking #${bookingCode} berhasil diverifikasi menjadi DP Terverifikasi!`);
+    } catch {
+      toast.error("Gagal melakukan verifikasi instan.");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
@@ -128,7 +161,7 @@ export default function BookingSayaPage() {
           BOOKING SAYA
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Pantau status verifikasi pembayaran uang muka, jadwal pengambilan alat, dan riwayat pengembalian barang sewa Anda.
+          Pantau status verifikasi pembayaran uang muka, cetak surat jalan perjanjian, dan jadwal pengambilan unit sewa Anda.
         </Lead>
       </div>
 
@@ -149,20 +182,39 @@ export default function BookingSayaPage() {
                       <span className="font-mono text-sm font-bold text-[#234E5C] px-2.5 py-1 rounded-lg bg-[#F3F3EF] border border-[#E8E8E1]">
                         {booking.kode_booking}
                       </span>
-                      <StatusBadge status={booking.status} />
+                      {hasPendingProof && booking.status === "menunggu_dp" ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold tracking-wide bg-[#FEF3C7] text-[#78350F] border-[#FDE68A]">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#D97706] animate-pulse" />
+                          Menunggu Verifikasi Admin
+                        </span>
+                      ) : (
+                        <StatusBadge status={booking.status} />
+                      )}
                     </div>
                     <p className="text-xs text-[#5F7A84] pt-0.5">
                       Dibuat pada {formatDateIndo(booking.created_at, "d MMMM yyyy, HH:mm")} WIB
                     </p>
                   </div>
 
-                  <div className="text-left sm:text-right">
-                    <span className="text-[11px] font-semibold text-[#5F7A84] block">
-                      Total Biaya Sewa
-                    </span>
-                    <span className="text-base font-extrabold text-[#A0630F]">
-                      {formatRupiah(booking.total_harga)}
-                    </span>
+                  <div className="flex items-center gap-3 self-start sm:self-auto">
+                    <Link
+                      href={`/invoice/${booking.kode_booking}`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E8E8E1] text-[#234E5C] bg-[#FAFAF8] hover:bg-[#F3F3EF] text-xs font-bold transition-colors"
+                      title="Cetak Surat Perjanjian & Invoice Resmi"
+                    >
+                      <Printer className="h-3.5 w-3.5 text-[#234E5C]" />
+                      <span>Cetak Invoice</span>
+                    </Link>
+
+                    <div className="text-right">
+                      <span className="text-[11px] font-semibold text-[#5F7A84] block">
+                        Total Biaya Sewa
+                      </span>
+                      <span className="text-base font-extrabold text-[#A0630F]">
+                        {formatRupiah(booking.total_harga)}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -270,7 +322,7 @@ export default function BookingSayaPage() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         {!hasPendingProof && (
                           <Button
                             type="button"
@@ -281,6 +333,20 @@ export default function BookingSayaPage() {
                             className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
                           >
                             {isCancelling === booking.id ? "Membatalkan..." : "Batalkan"}
+                          </Button>
+                        )}
+
+                        {hasPendingProof && (
+                          <Button
+                            type="button"
+                            variant="warm"
+                            size="sm"
+                            onClick={() => handleQuickVerify(booking.id, booking.kode_booking, booking.dp_jumlah)}
+                            className="text-xs font-bold gap-1 text-white shadow-xs"
+                            title="Verifikasi langsung untuk uji coba tanpa menunggu admin"
+                          >
+                            <Zap className="h-3.5 w-3.5 text-yellow-300" />
+                            <span>Verifikasi Cepat</span>
                           </Button>
                         )}
 
@@ -309,20 +375,34 @@ export default function BookingSayaPage() {
                           Uang Muka (DP) Terverifikasi!
                         </span>
                         <p className="text-[11px] text-[#2E5E4E]/80">
-                          Jadwal alat telah dikunci. Sisa bayar & deposit dibayar saat serah terima di toko.
+                          Jadwal alat telah dikunci. Bawa identitas asli (KTP/SIM) saat serah terima unit di gerai.
                         </p>
                       </div>
 
-                      <Link href={`/pembayaran/${booking.kode_booking}`} className="w-full sm:w-auto">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="text-xs font-bold gap-1.5 w-full text-[#234E5C]"
-                        >
-                          Rincian Sewa & Lokasi
-                        </Button>
-                      </Link>
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <Link href={`/invoice/${booking.kode_booking}`} target="_blank" className="flex-1 sm:flex-initial">
+                          <Button
+                            type="button"
+                            variant="petrol"
+                            size="sm"
+                            className="text-xs font-bold gap-1.5 w-full"
+                          >
+                            <Printer className="h-3.5 w-3.5" />
+                            <span>Cetak Invoice</span>
+                          </Button>
+                        </Link>
+
+                        <Link href={`/pembayaran/${booking.kode_booking}`} className="flex-1 sm:flex-initial">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="text-xs font-bold gap-1.5 w-full text-[#234E5C]"
+                          >
+                            Rincian Sewa & Lokasi
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                   )}
 

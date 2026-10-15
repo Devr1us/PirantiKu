@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   CalendarDays,
   Search,
@@ -18,6 +19,7 @@ import {
   Phone,
   AlertTriangle,
   ZoomIn,
+  Printer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -751,6 +753,22 @@ export function AdminBookingManager({ initialBookings }: AdminBookingManagerProp
                       Terima Pengembalian (Selesaikan)
                     </Button>
                   )}
+
+                  {/* Cetak Surat Perjanjian & Invoice */}
+                  <Link
+                    href={`/invoice/${selectedBooking.kode_booking}`}
+                    target="_blank"
+                    className="inline-flex"
+                  >
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="text-xs font-bold gap-1.5 text-[#234E5C] border-[#234E5C] hover:bg-[#234E5C] hover:text-white"
+                    >
+                      <Printer className="h-4 w-4" />
+                      <span>Cetak Surat Jalan & Invoice</span>
+                    </Button>
+                  </Link>
 
                   {/* Batalkan booking jika belum diambil */}
                   {selectedBooking.status === "menunggu_dp" && (

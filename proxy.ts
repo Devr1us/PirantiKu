@@ -48,6 +48,7 @@ export async function proxy(request: NextRequest) {
     (pathname.startsWith("/checkout") ||
       pathname.startsWith("/booking-saya") ||
       pathname.startsWith("/pembayaran") ||
+      pathname.startsWith("/invoice") ||
       pathname.startsWith("/profil"))
   ) {
     const redirectUrl = new URL("/login", request.url);
