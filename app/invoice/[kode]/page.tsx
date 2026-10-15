@@ -30,7 +30,8 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
     .select(`
       *,
       items:booking_items(*, equipment:equipment(*)),
-      payments(*)
+      payments(*),
+      returns:booking_returns(*, damage_reports(*))
     `)
     .eq("kode_booking", kode)
     .single();
@@ -42,7 +43,8 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
       .select(`
         *,
         items:booking_items(*, equipment:equipment(*)),
-        payments(*)
+        payments(*),
+        returns:booking_returns(*, damage_reports(*))
       `)
       .eq("id", kode)
       .single();
@@ -125,6 +127,9 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
       whatsapp_admin: whatsappAdmin,
       jam_operasional: jamOperasional,
     },
+    returnReport: Array.isArray(booking.returns)
+      ? booking.returns[0] || null
+      : booking.returns || null,
   };
 
   return (

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { Wordmark } from "@/components/ui/wordmark";
 import { APP_NAME, TAGLINE, LOKASI_DEFAULT, DEFAULT_SETTINGS } from "@/lib/constants";
-import type { BookingStatus } from "@/types/database";
+import type { BookingStatus, BookingReturn, DamageReport } from "@/types/database";
 
 export interface InvoiceBookingItem {
   id: number;
@@ -42,6 +42,7 @@ export interface RentalInvoiceData {
     whatsapp_admin?: string;
     jam_operasional?: string;
   };
+  returnReport?: (BookingReturn & { damage_reports?: DamageReport[] }) | null;
 }
 
 interface RentalInvoiceProps {
@@ -297,7 +298,86 @@ export function RentalInvoice({
           </ol>
         </div>
 
-        {/* 6. KOLOM TANDA TANGAN SERAH TERIMA */}
+        {/* 6. BERITA ACARA PENGEMBALIAN & PENYELESAIAN JAMINAN DEPOSIT (JIKA SUDAH SELESAI) */}
+        {data.returnReport && (
+          <div className="rounded-lg border-2 border-[#234E5C]/30 p-4 bg-[#FAFAF8] space-y-3 text-xs">
+            <div className="flex items-center justify-between border-b border-[#234E5C]/20 pb-2">
+              <span className="font-bold uppercase tracking-wider text-[#234E5C] text-[11px] flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-[#2E5E4E]" />
+                Berita Acara Pengembalian & Inspeksi Fisik
+              </span>
+              <span className="text-[10px] font-bold text-[#5F7A84]">
+                Dikembalikan: {formatDateIndo(data.returnReport.tanggal_dikembalikan, "d MMMM yyyy, HH:mm")} WIB
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="p-2 rounded bg-white border border-[#E8E8E1]">
+                <span className="text-[#5F7A84] block text-[9px] font-bold uppercase">Keterlambatan</span>
+                <span className="font-extrabold text-[#234E5C] block">
+                  {data.returnReport.hari_terlambat > 0 ? `${data.returnReport.hari_terlambat} Hari` : "Tepat Waktu"}
+                </span>
+                {data.returnReport.denda_terlambat > 0 && (
+                  <span className="text-[9px] font-bold text-[#991B1B] block">
+                    Denda: {formatRupiah(data.returnReport.denda_terlambat)}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-2 rounded bg-white border border-[#E8E8E1]">
+                <span className="text-[#5F7A84] block text-[9px] font-bold uppercase">Kondisi Fisik Unit</span>
+                <span className="font-extrabold text-[#234E5C] block">
+                  {data.returnReport.total_ganti_rugi > 0 ? "Ada Kerusakan/Hilang" : "Lengkap & Prima"}
+                </span>
+                {data.returnReport.total_ganti_rugi > 0 && (
+                  <span className="text-[9px] font-bold text-[#991B1B] block">
+                    Ganti Rugi: {formatRupiah(data.returnReport.total_ganti_rugi)}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-2 rounded bg-white border border-[#E8E8E1]">
+                <span className="text-[#5F7A84] block text-[9px] font-bold uppercase">Deposit Dikembalikan</span>
+                <span className="font-extrabold text-[#2E5E4E] block">
+                  {formatRupiah(data.returnReport.deposit_dikembalikan)}
+                </span>
+                <span className="text-[9px] text-[#5F7A84] block">Lunas Diselesaikan</span>
+              </div>
+            </div>
+
+            {data.returnReport.damage_reports && data.returnReport.damage_reports.length > 0 && (
+              <div className="space-y-1 pt-1">
+                <span className="text-[10px] font-bold text-[#991B1B] block uppercase">
+                  Rincian Kerusakan & Ganti Rugi:
+                </span>
+                {data.returnReport.damage_reports.map((dm) => (
+                  <div
+                    key={dm.id}
+                    className="p-2 rounded bg-white border border-[#FECACA] flex justify-between text-[11px]"
+                  >
+                    <div>
+                      <span className="font-bold text-[#234E5C] uppercase mr-2 text-[10px]">
+                        [{dm.jenis.replace("_", " ")}]
+                      </span>
+                      <span>
+                        {dm.deskripsi} ({dm.jumlah} unit)
+                      </span>
+                    </div>
+                    <span className="font-bold text-[#991B1B]">{formatRupiah(dm.biaya_ganti_rugi)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {data.returnReport.catatan && (
+              <p className="text-[10px] text-[#5F7A84] italic pt-1 border-t border-[#234E5C]/10">
+                Catatan Petugas: &quot;{data.returnReport.catatan}&quot;
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 7. KOLOM TANDA TANGAN SERAH TERIMA */}
         <div className="grid grid-cols-2 gap-8 pt-6 border-t border-[#E8E8E1] text-center text-xs">
           <div className="space-y-16">
             <span className="font-bold text-[#5F7A84] block">

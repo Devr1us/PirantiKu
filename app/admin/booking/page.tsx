@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminBookingsPage() {
   let bookings: AdminBookingWithDetails[] = [];
+  let dendaPerHari = 50000;
 
   try {
     const supabase = await createClient();
@@ -15,12 +16,24 @@ export default async function AdminBookingsPage() {
         *,
         items:booking_items(*, equipment:equipment(*)),
         payments(*),
-        profile:profiles(*)
+        profile:profiles(*),
+        returns:booking_returns(*, damage_reports(*))
       `)
       .order("created_at", { ascending: false });
 
     if (!error && data) {
       bookings = data as AdminBookingWithDetails[];
+    }
+
+    const { data: dendaSetting } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "denda_per_hari")
+      .maybeSingle();
+
+    if (dendaSetting?.value) {
+      const val = Number(dendaSetting.value);
+      if (!isNaN(val) && val > 0) dendaPerHari = val;
     }
   } catch (err) {
     console.error("Gagal memuat data booking admin:", err);
@@ -39,7 +52,7 @@ export default async function AdminBookingsPage() {
       </div>
 
       {/* Komponen Pengelola Booking Interaktif */}
-      <AdminBookingManager initialBookings={bookings} />
+      <AdminBookingManager initialBookings={bookings} dendaPerHari={dendaPerHari} />
     </div>
   );
 }

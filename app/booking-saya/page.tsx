@@ -25,12 +25,24 @@ import { Button } from "@/components/ui/button";
 import { H1, Lead } from "@/components/ui/typography";
 import { Reveal } from "@/components/ui/motion";
 import { useReducedMotion } from "motion/react";
-import type { Booking, BookingItem, EquipmentItem, BookingStatusHistory, Payment } from "@/types/database";
+import type {
+  Booking,
+  BookingItem,
+  EquipmentItem,
+  BookingStatusHistory,
+  Payment,
+  BookingReturn,
+  DamageReport,
+} from "@/types/database";
 
 type BookingWithDetails = Booking & {
   items: (BookingItem & { equipment?: EquipmentItem | null })[];
   history: BookingStatusHistory[];
   payments: Payment[];
+  returns?:
+    | (BookingReturn & { damage_reports?: DamageReport[] })
+    | (BookingReturn & { damage_reports?: DamageReport[] })[]
+    | null;
 };
 
 export default function BookingSayaPage() {
@@ -59,7 +71,8 @@ export default function BookingSayaPage() {
             *,
             items:booking_items(*, equipment:equipment(*)),
             history:booking_status_history(*),
-            payments(*)
+            payments(*),
+            returns:booking_returns(*, damage_reports(*))
           `)
           .eq("user_id", user.id)
           .order("created_at", { ascending: false });
@@ -430,6 +443,92 @@ export default function BookingSayaPage() {
                       </Link>
                     </div>
                   )}
+
+                  {(booking.status === "selesai" ||
+                    booking.status === "bermasalah" ||
+                    booking.status === "dikembalikan") &&
+                    (() => {
+                      const returnRecord = Array.isArray(booking.returns)
+                        ? booking.returns[0]
+                        : booking.returns;
+                      return (
+                        <div className="rounded-xl border border-[#234E5C]/20 bg-[#234E5C]/5 p-4 space-y-3 text-xs">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div className="space-y-0.5">
+                              <span className="font-bold text-[#234E5C] flex items-center gap-1.5">
+                                <CheckCircle2 className="h-4 w-4 text-[#2E5E4E]" />
+                                Unit Telah Dikembalikan & Diinspeksi
+                              </span>
+                              <p className="text-[11px] text-[#5F7A84]">
+                                {returnRecord
+                                  ? `Pengembalian diverifikasi pada ${formatDateIndo(
+                                      returnRecord.tanggal_dikembalikan,
+                                      "d MMM yyyy, HH:mm"
+                                    )} WIB.`
+                                  : "Peminjaman alat ini telah selesai secara penuh."}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-xs font-bold gap-1 text-[#234E5C] border-[#234E5C]/30 hover:bg-[#234E5C]/10"
+                                >
+                                  <Printer className="h-3.5 w-3.5" />
+                                  <span>Cetak Bukti</span>
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+
+                          {returnRecord && (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-[#234E5C]/10">
+                              <div className="p-2 rounded-lg bg-white border border-[#E8E8E1]">
+                                <span className="text-[#5F7A84] block text-[10px] font-medium">
+                                  Keterlambatan:
+                                </span>
+                                <span className="font-bold text-[#234E5C]">
+                                  {returnRecord.hari_terlambat > 0
+                                    ? `${returnRecord.hari_terlambat} Hari (${formatRupiah(
+                                        returnRecord.denda_terlambat
+                                      )})`
+                                    : "Tepat Waktu"}
+                                </span>
+                              </div>
+
+                              <div className="p-2 rounded-lg bg-white border border-[#E8E8E1]">
+                                <span className="text-[#5F7A84] block text-[10px] font-medium">
+                                  Kondisi Alat:
+                                </span>
+                                <span
+                                  className={`font-bold ${
+                                    returnRecord.total_ganti_rugi > 0
+                                      ? "text-[#991B1B]"
+                                      : "text-[#2E5E4E]"
+                                  }`}
+                                >
+                                  {returnRecord.total_ganti_rugi > 0
+                                    ? `Ganti Rugi: ${formatRupiah(returnRecord.total_ganti_rugi)}`
+                                    : "Lengkap & Baik"}
+                                </span>
+                              </div>
+
+                              <div className="p-2 rounded-lg bg-white border border-[#E8E8E1] col-span-2 sm:col-span-1">
+                                <span className="text-[#5F7A84] block text-[10px] font-medium">
+                                  Deposit Dikembalikan:
+                                </span>
+                                <span className="font-bold text-[#2E5E4E]">
+                                  {formatRupiah(returnRecord.deposit_dikembalikan)}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                   {booking.status === "dibatalkan" && (
                     <div className="p-3 rounded-lg bg-[#F1F5F9] text-xs text-[#475569] flex items-center justify-between">
