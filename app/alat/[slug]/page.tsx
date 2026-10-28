@@ -6,7 +6,6 @@ import {
   ChevronRight,
   ShieldCheck,
   Clock,
-  Package,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatSpecKey } from "@/lib/format";
@@ -14,8 +13,13 @@ import { APP_NAME, getCategoryIcon } from "@/lib/constants";
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
-import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
+import { H1, Lead } from "@/components/ui/typography";
 import { Reveal } from "@/components/ui/motion";
+
+function CategoryIcon({ ikonName, className }: { ikonName?: string | null; className?: string }) {
+  const Icon = getCategoryIcon(ikonName);
+  return <Icon className={className} />;
+}
 
 interface EquipmentDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -108,8 +112,6 @@ export default async function EquipmentDetailPage({
     string | number | boolean
   > | null;
 
-  const IconComp = getCategoryIcon(equipment.category?.ikon);
-
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 pb-24 md:pb-12 bg-[#FAFAF8] text-[#234E5C]">
       {/* Breadcrumb Navigation */}
@@ -166,7 +168,10 @@ export default async function EquipmentDetailPage({
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
                   <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
-                    <IconComp className="h-10 w-10 stroke-[1.8]" />
+                    <CategoryIcon
+                      ikonName={equipment.category?.ikon}
+                      className="h-10 w-10 stroke-[1.8]"
+                    />
                   </div>
                   <span className="text-sm font-bold text-[#234E5C]">
                     {equipment.nama}

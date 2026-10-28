@@ -111,7 +111,13 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
       no_hp: customerProfile?.no_hp,
       alamat: customerProfile?.alamat || undefined,
     },
-    items: (booking.items || []).map((it: any) => ({
+    items: ((booking.items || []) as Array<{
+      id: number;
+      qty: number;
+      harga_per_hari: number;
+      subtotal: number;
+      equipment?: { nama: string } | null;
+    }>).map((it) => ({
       id: it.id,
       qty: it.qty,
       harga_per_hari: it.harga_per_hari,

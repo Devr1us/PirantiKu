@@ -19,8 +19,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { H1, H2, H3, Lead, P, Eyebrow } from "@/components/ui/typography";
-import { HoverRollText } from "@/components/ui/motion";
+import { H1, Lead, Eyebrow } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { PaymentFlow } from "@/components/payment/payment-flow";
 import type { Profile, Booking } from "@/types/database";
@@ -44,9 +43,19 @@ export default function CheckoutPage() {
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
 
+  // Fallback tanggal stabil dengan lazy initial state
+  const [defaultDates] = React.useState(() => {
+    const now = new Date();
+    const tomorrow = new Date(now.getTime() + 86400000);
+    return {
+      today: now.toISOString().split("T")[0],
+      tomorrow: tomorrow.toISOString().split("T")[0],
+    };
+  });
+
   // Ambil tanggal sewa dari params atau fallback
-  const startDate = mulaiParam || new Date().toISOString().split("T")[0];
-  const endDate = selesaiParam || new Date(Date.now() + 86400000).toISOString().split("T")[0];
+  const startDate = mulaiParam || defaultDates.today;
+  const endDate = selesaiParam || defaultDates.tomorrow;
 
   // 1. Muat profil user dan pengaturan
   React.useEffect(() => {
