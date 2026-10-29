@@ -138,7 +138,7 @@ export function NavbarClient({
       }}
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
-      className={`sticky top-0 z-40 w-full bg-white transition-[border-color,box-shadow] duration-200 ${
+      className={`sticky top-0 z-40 w-full bg-white transition-[border-color,box-shadow] duration-200 print:hidden ${
         isScrolled
           ? "border-b border-[#E8E8E1] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
           : "border-b border-transparent shadow-none"

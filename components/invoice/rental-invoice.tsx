@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Printer, X, Download, ShieldCheck, CheckCircle2, Clock } from "lucide-react";
+import { Printer, MessageCircle, X, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { Wordmark } from "@/components/ui/wordmark";
@@ -106,6 +106,26 @@ export function RentalInvoice({
               <Printer className="h-3.5 w-3.5" />
               <span>Cetak / Simpan PDF (A4)</span>
             </Button>
+
+            {data.settings?.whatsapp_admin && (
+              <a
+                href={`https://wa.me/${data.settings.whatsapp_admin.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                  `Halo Admin PirantiKu, saya ingin mengonfirmasi booking #${data.kode_booking} atas nama ${customerName}. Status saat ini: ${data.status}. Terima kasih!`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="font-bold text-xs gap-1.5 border-[#E8E8E1] text-[#2E5E4E] hover:bg-[#E2F0D9]"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  <span>WhatsApp Admin</span>
+                </Button>
+              </a>
+            )}
 
             {onClose && (
               <Button

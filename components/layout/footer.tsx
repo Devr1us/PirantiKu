@@ -5,7 +5,7 @@ import { APP_NAME } from "@/lib/constants";
 
 export async function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-[#E8E8E1] text-[#234E5C] mt-auto">
+    <footer className="w-full bg-white border-t border-[#E8E8E1] text-[#234E5C] mt-auto print:hidden">
       <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
           {/* Sisi Kiri: Wordmark & Deskripsi Singkat */}

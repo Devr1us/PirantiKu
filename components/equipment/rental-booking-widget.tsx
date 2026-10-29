@@ -144,6 +144,15 @@ export function RentalBookingWidget({
       equipment.images?.[0]?.url ||
       null;
 
+    try {
+      sessionStorage.setItem(
+        "pirantiku_booking_dates",
+        JSON.stringify({ startDate, endDate })
+      );
+    } catch {
+      // Ignore
+    }
+
     addItem(
       {
         equipmentId: equipment.id,
@@ -168,7 +177,7 @@ export function RentalBookingWidget({
       return;
     }
     handleAddToCart();
-    router.push("/keranjang");
+    router.push(`/keranjang?mulai=${startDate}&selesai=${endDate}`);
   };
 
   return (
