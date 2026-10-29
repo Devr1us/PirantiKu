@@ -90,13 +90,12 @@ export function AnimatedText({
     once: effectiveOnce,
   });
 
-  const [isVisible, setIsVisible] = React.useState<boolean>(false);
+  const [isVisible, setIsVisible] = React.useState<boolean>(Boolean(shouldReduceMotion));
   const [direction, setDirection] = React.useState<ScrollDirection>("down");
   const [isInstant, setIsInstant] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setIsVisible(true);
       return;
     }
 
@@ -200,7 +199,7 @@ export function AnimatedText({
 
     return (
       <Component
-        ref={containerRef as React.Ref<any>}
+        ref={containerRef as unknown as React.Ref<never>}
         className={className}
         aria-label={rawText}
       >
@@ -277,7 +276,7 @@ export function AnimatedText({
 
     return (
       <Component
-        ref={containerRef as React.Ref<any>}
+        ref={containerRef as unknown as React.Ref<never>}
         className={className}
         aria-label={rawText}
       >
@@ -347,7 +346,7 @@ export function AnimatedText({
 
     return (
       <Component
-        ref={containerRef as React.Ref<any>}
+        ref={containerRef as unknown as React.Ref<never>}
         className={className}
         aria-label={rawText}
       >
@@ -380,7 +379,7 @@ export function AnimatedText({
 
   return (
     <Component
-      ref={containerRef as React.Ref<any>}
+      ref={containerRef as unknown as React.Ref<never>}
       className={className}
       aria-label={rawText}
     >

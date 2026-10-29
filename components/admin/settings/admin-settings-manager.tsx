@@ -14,8 +14,6 @@ import {
   ExternalLink,
   Upload,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
   Building,
   DollarSign,
   Compass,

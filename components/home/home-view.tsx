@@ -21,7 +21,6 @@ import {
 import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import {
-  AnimatedText,
   Reveal,
   Stagger,
   StaggerItem,

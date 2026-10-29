@@ -1,27 +1,17 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Package,
   Plus,
   Search,
-  Filter,
   Edit2,
   Trash2,
-  Check,
   X,
   Upload,
-  AlertCircle,
-  Eye,
   CheckCircle2,
-  AlertTriangle,
-  RefreshCw,
-  Layers,
-  DollarSign,
-  Tag,
   Wrench,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -293,7 +283,7 @@ export function AdminEquipmentManager({
         if (eqErr) throw eqErr;
 
         // Tambah Gambar jika diisi
-        let insertedImages: any[] = [];
+        let insertedImages: Array<{ id: number; equipment_id: number; url: string; is_utama: boolean; urutan: number }> = [];
         if (newEq && imageUrl.trim()) {
           const { data: imgData } = await supabase
             .from("equipment_images")

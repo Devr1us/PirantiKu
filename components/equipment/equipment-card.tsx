@@ -27,8 +27,6 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
     equipment.images?.[0]?.url ||
     null;
 
-  const IconComp = getCategoryIcon(equipment.category?.ikon);
-
   return (
     <motion.div
       whileHover={shouldReduceMotion ? undefined : { y: -4 }}
@@ -50,7 +48,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
           ) : (
             // Placeholder datar krem + ikon petrol (tanpa gradasi)
             <div className="flex h-full w-full flex-col items-center justify-center p-4 text-[#234E5C]">
-              <IconComp className="h-10 w-10 stroke-[1.8]" />
+              {React.createElement(getCategoryIcon(equipment.category?.ikon), { className: "h-10 w-10 stroke-[1.8]" })}
               <span className="mt-2 text-[11px] font-semibold text-[#5F7A84]">
                 {equipment.category?.nama || "Peralatan"}
               </span>

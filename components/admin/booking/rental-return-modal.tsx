@@ -5,16 +5,11 @@ import {
   RotateCcw,
   CheckCircle2,
   AlertTriangle,
-  XCircle,
   Clock,
   DollarSign,
   Upload,
-  X,
-  ShieldCheck,
   Package,
   Wrench,
-  AlertCircle,
-  FileCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -30,10 +25,10 @@ import {
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { compressImage } from "@/lib/payment-utils";
 import type {
-  Booking,
   BookingItem,
   EquipmentItem,
   DamageJenis,
+  BookingStatus,
 } from "@/types/database";
 
 export interface ReturnInspectionItemState {
@@ -110,8 +105,10 @@ export function RentalReturnModal({
       })) || []
   );
 
-  // Sync state if booking items change
-  React.useEffect(() => {
+  // Sync state if booking items change (React 19 render-time adjustment)
+  const [prevSyncKey, setPrevSyncKey] = React.useState(booking.id);
+  if (prevSyncKey !== booking.id) {
+    setPrevSyncKey(booking.id);
     if (booking.items) {
       setItemsInspection(
         booking.items.map((it) => ({
@@ -127,7 +124,7 @@ export function RentalReturnModal({
     }
     setLateDays(calculatedLateDays);
     setLateFee(calculatedLateDays * dendaPerHari);
-  }, [booking, calculatedLateDays, dendaPerHari]);
+  }
 
   // Update item condition
   const handleUpdateItem = (
@@ -281,7 +278,7 @@ export function RentalReturnModal({
       try {
         await supabase.from("booking_status_history").insert({
           booking_id: booking.id,
-          status_lama: booking.status as any,
+          status_lama: booking.status as BookingStatus,
           status_baru: "selesai",
         });
       } catch {

@@ -66,13 +66,12 @@ export function Reveal({
     once: effectiveOnce,
   });
 
-  const [isVisible, setIsVisible] = React.useState<boolean>(false);
+  const [isVisible, setIsVisible] = React.useState<boolean>(Boolean(shouldReduceMotion));
   const [direction, setDirection] = React.useState<ScrollDirection>("down");
   const [isInstant, setIsInstant] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setIsVisible(true);
       return;
     }
 
@@ -201,13 +200,12 @@ export function RevealGroup({
     once: effectiveOnce,
   });
 
-  const [isVisible, setIsVisible] = React.useState<boolean>(false);
+  const [isVisible, setIsVisible] = React.useState<boolean>(Boolean(shouldReduceMotion));
   const [direction, setDirection] = React.useState<ScrollDirection>("down");
   const [isInstant, setIsInstant] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setIsVisible(true);
       return;
     }
 
@@ -346,7 +344,7 @@ export function CountUp({
   className = "",
 }: CountUpProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [displayValue, setDisplayValue] = React.useState<number>(0);
+  const [displayValue, setDisplayValue] = React.useState<number>(shouldReduceMotion ? value : 0);
   const [hasStarted, setHasStarted] = React.useState<boolean>(false);
   const elementRef = React.useRef<HTMLSpanElement>(null);
 
@@ -355,7 +353,6 @@ export function CountUp({
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setDisplayValue(value);
       return;
     }
 
@@ -390,7 +387,6 @@ export function CountUp({
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setDisplayValue(value);
       return;
     }
 

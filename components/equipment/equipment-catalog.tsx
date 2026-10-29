@@ -22,8 +22,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { motion, useReducedMotion } from "motion/react";
-import { AnimatedText, Reveal } from "@/components/ui/motion";
+import { useReducedMotion } from "motion/react";
+import { Reveal } from "@/components/ui/motion";
 import { getGridColumnDelay } from "@/lib/motion";
 import { H1, Lead } from "@/components/ui/typography";
 
@@ -192,18 +192,23 @@ export function EquipmentCatalog({
   const [maxPrice, setMaxPrice] = React.useState(currentMaxPrice);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
-  // Sinkronisasi state lokal jika URL berubah (misal tombol Back / Forward browser)
-  React.useEffect(() => {
+  // Sinkronisasi state lokal jika URL berubah (mengikuti rekomendasi React 19 tanpa cascading effect)
+  const [prevParams, setPrevParams] = React.useState({
+    q: currentQ,
+    min: currentMinPrice,
+    max: currentMaxPrice,
+  });
+
+  if (
+    prevParams.q !== currentQ ||
+    prevParams.min !== currentMinPrice ||
+    prevParams.max !== currentMaxPrice
+  ) {
+    setPrevParams({ q: currentQ, min: currentMinPrice, max: currentMaxPrice });
     setSearchQuery(currentQ);
-  }, [currentQ]);
-
-  React.useEffect(() => {
     setMinPrice(currentMinPrice);
-  }, [currentMinPrice]);
-
-  React.useEffect(() => {
     setMaxPrice(currentMaxPrice);
-  }, [currentMaxPrice]);
+  }
 
   const applyFilters = (newParams: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());

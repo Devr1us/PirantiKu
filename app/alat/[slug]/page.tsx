@@ -1,3 +1,4 @@
+import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,8 +18,7 @@ import { H1, Lead } from "@/components/ui/typography";
 import { Reveal } from "@/components/ui/motion";
 
 function CategoryIcon({ ikonName, className }: { ikonName?: string | null; className?: string }) {
-  const Icon = getCategoryIcon(ikonName);
-  return <Icon className={className} />;
+  return React.createElement(getCategoryIcon(ikonName), { className });
 }
 
 interface EquipmentDetailPageProps {

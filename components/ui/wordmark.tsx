@@ -17,19 +17,29 @@ export function Wordmark({
   asLink = true,
 }: WordmarkProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [shouldAnimate, setShouldAnimate] = React.useState(false);
+  const emptySub = () => () => {};
+  const isAlreadyAnimated = React.useSyncExternalStore(
+    emptySub,
+    () => {
+      try {
+        return sessionStorage.getItem("pirantiku_wordmark_animated") === "true";
+      } catch {
+        return true;
+      }
+    },
+    () => true
+  );
+  const shouldAnimate = !isAlreadyAnimated && !shouldReduceMotion;
 
   React.useEffect(() => {
-    try {
-      const hasAnimated = sessionStorage.getItem("pirantiku_wordmark_animated");
-      if (!hasAnimated && !shouldReduceMotion) {
-        setShouldAnimate(true);
+    if (shouldAnimate) {
+      try {
         sessionStorage.setItem("pirantiku_wordmark_animated", "true");
+      } catch {
+        // Ignore
       }
-    } catch {
-      // Ignore if sessionStorage is not accessible
     }
-  }, [shouldReduceMotion]);
+  }, [shouldAnimate]);
 
   const isWhite = variant === "white";
   const mainColor = isWhite ? "text-white" : "text-[#234E5C]";

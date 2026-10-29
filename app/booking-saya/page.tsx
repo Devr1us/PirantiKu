@@ -12,8 +12,6 @@ import {
   AlertCircle,
   CreditCard,
   CheckCircle2,
-  XCircle,
-  MessageCircle,
   Printer,
   Zap,
 } from "lucide-react";

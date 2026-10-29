@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   CreditCard,
@@ -13,16 +12,13 @@ import {
   FileCheck,
   AlertCircle,
   MessageCircle,
-  ExternalLink,
   ShieldCheck,
-  ArrowRight,
   ZoomIn,
   RefreshCw,
   X,
   Banknote,
   Zap,
   Printer,
-  Building,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -712,7 +708,7 @@ export function PaymentFlow({
 
           <Tabs
             value={activeTab}
-            onValueChange={(val) => setActiveTab(val as any)}
+            onValueChange={(val) => setActiveTab(val as "transfer" | "qris" | "cod" | "instant")}
             className="w-full"
           >
             <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
