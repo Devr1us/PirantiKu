@@ -1,7 +1,7 @@
 import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/safe-image";
 import { Metadata } from "next";
 import {
   ChevronRight,
@@ -157,30 +157,29 @@ export default async function EquipmentDetailPage({
           {/* Galeri Gambar: rounded-2xl */}
           <div className="space-y-3">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm">
-              {primaryImage ? (
-                <Image
-                  src={primaryImage}
-                  alt={equipment.nama}
-                  fill
-                  priority
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
-                    <CategoryIcon
-                      ikonName={equipment.category?.ikon}
-                      className="h-10 w-10 stroke-[1.8]"
-                    />
+              <SafeImage
+                src={primaryImage || ""}
+                alt={equipment.nama}
+                fill
+                priority
+                className="object-cover"
+                fallback={
+                  <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
+                      <CategoryIcon
+                        ikonName={equipment.category?.ikon}
+                        className="h-10 w-10 stroke-[1.8]"
+                      />
+                    </div>
+                    <span className="text-sm font-bold text-[#234E5C]">
+                      {equipment.nama}
+                    </span>
+                    <span className="text-xs text-[#5F7A84] mt-1">
+                      Foto produk siap disewa dengan kondisi prima
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-[#234E5C]">
-                    {equipment.nama}
-                  </span>
-                  <span className="text-xs text-[#5F7A84] mt-1">
-                    Foto produk akan diperbarui oleh pengelola
-                  </span>
-                </div>
-              )}
+                }
+              />
             </div>
 
             {/* Thumbnail jika ada lebih dari 1 foto */}
@@ -191,11 +190,16 @@ export default async function EquipmentDetailPage({
                     key={img.id}
                     className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-[#E8E8E1] bg-[#F5F3EB] cursor-pointer hover:border-[#234E5C] transition-all"
                   >
-                    <Image
+                    <SafeImage
                       src={img.url}
                       alt={equipment.nama}
                       fill
                       className="object-cover"
+                      fallback={
+                        <div className="flex h-full w-full items-center justify-center bg-[#F3F3EF] text-[#5F7A84] text-[10px]">
+                          Foto
+                        </div>
+                      }
                     />
                   </div>
                 ))}
