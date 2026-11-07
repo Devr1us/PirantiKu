@@ -111,9 +111,22 @@ export default function KeranjangPage() {
     return calculateRentalPrice(pricingItems, startDate, endDate, 30);
   }, [items, startDate, endDate]);
 
+  // Validasi jika tanggal sewa tidak valid (misal: selesai lebih awal dari mulai)
+  const isDateInvalid = React.useMemo(() => {
+    if (!startDate || !endDate) return true;
+    return startDate > endDate || pricing.days <= 0;
+  }, [startDate, endDate, pricing.days]);
+
   const handleCheckout = () => {
     if (items.length === 0) {
       toast.error("Keranjang booking Anda masih kosong.");
+      return;
+    }
+
+    if (isDateInvalid) {
+      toast.error(
+        "Rentang tanggal sewa tidak valid. Tanggal selesai tidak boleh mendahului tanggal mulai."
+      );
       return;
     }
 
@@ -210,9 +223,16 @@ export default function KeranjangPage() {
                   Tanggal booking berlaku seragam untuk seluruh barang di keranjang ini
                 </p>
               </div>
-              <span className="text-xs font-bold text-[#A0630F] px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FDE68A]">
-                {pricing.days} Hari Durasi
-              </span>
+              {isDateInvalid ? (
+                <span className="text-xs font-bold text-[#991B1B] px-3 py-1 rounded-full bg-[#FEE2E2] border border-[#FECACA] flex items-center gap-1.5">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  Tanggal Tidak Valid
+                </span>
+              ) : (
+                <span className="text-xs font-bold text-[#A0630F] px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FDE68A]">
+                  {pricing.days} Hari Durasi
+                </span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -273,8 +293,21 @@ export default function KeranjangPage() {
               })}
             </div>
 
+            {/* Alert Peringatan Tanggal Terbalik / Tidak Valid */}
+            {isDateInvalid && (
+              <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-[#FEE2E2] border border-[#FECACA] text-[#991B1B] text-xs font-semibold">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-[#DC2626]" />
+                <div>
+                  <p className="font-bold">Rentang Tanggal Tidak Valid</p>
+                  <p className="font-normal text-[11px] text-[#7F1D1D] mt-0.5 leading-relaxed">
+                    Tanggal selesai sewa tidak boleh mendahului tanggal mulai. Silakan sesuaikan tanggal selesai atau klik salah satu tombol durasi sewa di atas.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Banner Diskon Mingguan Aktif */}
-            {pricing.days >= 7 && (
+            {!isDateInvalid && pricing.days >= 7 && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[#E2F0D9] border border-[#C5E1A5] text-[#2E5E4E] text-xs font-semibold">
                 <Sparkles className="h-4 w-4 shrink-0" />
                 <span>Paket Mingguan Aktif! Tarif sewa otomatis dihitung dengan harga mingguan yang lebih hemat.</span>
@@ -408,11 +441,17 @@ export default function KeranjangPage() {
             </h3>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between text-[#5F7A84]">
+              <div className="flex justify-between items-center text-[#5F7A84]">
                 <span>Total Durasi Sewa</span>
-                <span className="font-bold text-[#234E5C]">
-                  {pricing.days} Hari
-                </span>
+                {isDateInvalid ? (
+                  <span className="font-bold text-[#991B1B] bg-[#FEE2E2] px-2 py-0.5 rounded text-[11px]">
+                    Tanggal Tidak Valid
+                  </span>
+                ) : (
+                  <span className="font-bold text-[#234E5C]">
+                    {pricing.days} Hari
+                  </span>
+                )}
               </div>
 
               <div className="flex justify-between text-[#5F7A84]">
@@ -463,10 +502,11 @@ export default function KeranjangPage() {
               <Button
                 type="button"
                 variant="warm"
+                disabled={isDateInvalid || items.length === 0}
                 onClick={handleCheckout}
-                className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2"
+                className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Lanjut ke Checkout
+                {isDateInvalid ? "Periksa Rentang Tanggal" : "Lanjut ke Checkout"}
                 <ArrowRight className="h-4 w-4" />
               </Button>
 

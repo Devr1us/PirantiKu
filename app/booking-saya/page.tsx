@@ -14,12 +14,21 @@ import {
   CheckCircle2,
   Printer,
   Zap,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { H1, Lead } from "@/components/ui/typography";
 import { Reveal } from "@/components/ui/motion";
 import { useReducedMotion } from "motion/react";
@@ -49,6 +58,7 @@ export default function BookingSayaPage() {
   const [bookings, setBookings] = React.useState<BookingWithDetails[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isCancelling, setIsCancelling] = React.useState<string | null>(null);
+  const [bookingToCancel, setBookingToCancel] = React.useState<{ id: string; kode: string } | null>(null);
 
   React.useEffect(() => {
     async function loadBookings() {
@@ -88,10 +98,9 @@ export default function BookingSayaPage() {
     loadBookings();
   }, [router]);
 
-  const handleCancelBooking = async (bookingId: string, bookingCode: string) => {
-    if (!confirm(`Apakah Anda yakin ingin membatalkan pesanan booking #${bookingCode}?`)) {
-      return;
-    }
+  const handleConfirmCancel = async () => {
+    if (!bookingToCancel) return;
+    const { id: bookingId, kode: bookingCode } = bookingToCancel;
 
     setIsCancelling(bookingId);
     try {
@@ -114,6 +123,7 @@ export default function BookingSayaPage() {
       );
 
       toast.success(`Booking #${bookingCode} berhasil dibatalkan.`);
+      setBookingToCancel(null);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membatalkan pesanan.";
       toast.error(msg);
@@ -340,7 +350,7 @@ export default function BookingSayaPage() {
                             variant="ghost"
                             size="sm"
                             disabled={isCancelling === booking.id}
-                            onClick={() => handleCancelBooking(booking.id, booking.kode_booking)}
+                            onClick={() => setBookingToCancel({ id: booking.id, kode: booking.kode_booking })}
                             className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
                           >
                             {isCancelling === booking.id ? "Membatalkan..." : "Batalkan"}
@@ -582,6 +592,51 @@ export default function BookingSayaPage() {
           Butuh konfirmasi cepat atau ada pertanyaan terkait pesanan Anda? Silakan hubungi admin kami via WhatsApp dengan menyertakan kode booking.
         </p>
       </div>
+
+      {/* Modal Konfirmasi Pembatalan Booking */}
+      <Dialog
+        open={!!bookingToCancel}
+        onOpenChange={(open) => {
+          if (!open) setBookingToCancel(null);
+        }}
+      >
+        <DialogContent className="max-w-md bg-white border border-[#E8E8E1] p-6 rounded-2xl shadow-xl">
+          <DialogHeader className="space-y-2 text-left">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FEE2E2] text-[#DC2626]">
+              <AlertTriangle className="h-6 w-6 stroke-[2]" />
+            </div>
+            <DialogTitle className="text-lg font-bold text-[#234E5C]">
+              Batalkan Pesanan Sewa?
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#5F7A84] leading-relaxed">
+              Apakah Anda yakin ingin membatalkan pesanan booking{" "}
+              <strong className="text-[#234E5C]">#{bookingToCancel?.kode}</strong>? Jadwal
+              dan unit alat yang telah Anda amankan akan dilepaskan kembali ke katalog umum.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-4 border-t border-[#E8E8E1]">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setBookingToCancel(null)}
+              disabled={!!isCancelling}
+              className="text-xs font-semibold h-10 flex-1"
+            >
+              Jangan Batalkan
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleConfirmCancel}
+              disabled={!!isCancelling}
+              className="text-xs font-bold h-10 flex-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white"
+            >
+              {isCancelling ? "Membatalkan..." : "Ya, Batalkan"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
