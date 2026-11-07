@@ -22,12 +22,44 @@ const libreBaskerville = Libre_Baskerville({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.id";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: `${APP_NAME} | ${TAGLINE}`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
+  applicationName: APP_NAME,
+  authors: [{ name: APP_NAME }],
+  keywords: [
+    "rental alat",
+    "sewa alat camping",
+    "sewa kamera",
+    "sewa genset",
+    "sewa bor listrik",
+    "sewa kursi roda",
+    "rental perkakas",
+    "pirantiku",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: siteUrl,
+    siteName: APP_NAME,
+    title: `${APP_NAME} | ${TAGLINE}`,
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${APP_NAME} | ${TAGLINE}`,
+    description: APP_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
