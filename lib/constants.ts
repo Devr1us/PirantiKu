@@ -205,6 +205,11 @@ export const DEFAULT_SETTINGS = {
 // Pemetaan Foto Produk Lokal di public/images/alat/
 export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
   // Outdoor & Pendakian
+  "tenda-dome-4-orang": "/images/alat/tenda-dome-4-orang.png",
+  "tenda-4-orang": "/images/alat/tenda-dome-4-orang.png",
+  tendadome4orang: "/images/alat/tenda-dome-4-orang.png",
+  tenda4orang: "/images/alat/tenda-dome-4-orang.png",
+  "1": "/images/alat/tenda-dome-4-orang.png",
   "carrier-60-liter": "/images/alat/carrier-60-liter.png",
   carrier60liter: "/images/alat/carrier-60-liter.png",
   "2": "/images/alat/carrier-60-liter.png",
@@ -226,6 +231,11 @@ export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
   "7": "/images/alat/cangkul.png",
   sekop: "/images/alat/sekop.png",
   "8": "/images/alat/sekop.png",
+  "tangga-lipat": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-lipat-4-meter": "/images/alat/tangga-lipat-4-meter.png",
+  tanggalipat: "/images/alat/tangga-lipat-4-meter.png",
+  tanggalipat4meter: "/images/alat/tangga-lipat-4-meter.png",
+  "9": "/images/alat/tangga-lipat-4-meter.png",
   "mesin-las-inverter": "/images/alat/mesin-las-inverter.png",
   mesinlasinverter: "/images/alat/mesin-las-inverter.png",
   "27": "/images/alat/mesin-las-inverter.png",
@@ -274,6 +284,9 @@ export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
   "steamer-garmen": "/images/alat/steamer-garmen.png",
   steamergarmen: "/images/alat/steamer-garmen.png",
   "37": "/images/alat/steamer-garmen.png",
+  "dispenser-air-galon": "/images/alat/dispenser-air-galon.png",
+  dispenserairgalon: "/images/alat/dispenser-air-galon.png",
+  "38": "/images/alat/dispenser-air-galon.png",
 
   // Pesta & Acara
   "tenda-event": "/images/alat/tenda-event.png",

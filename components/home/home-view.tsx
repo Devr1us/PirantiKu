@@ -66,7 +66,6 @@ export function HomeView({
   lokasiLng = LOKASI_DEFAULT.lng,
 }: HomeViewProps) {
   const cleanWa = whatsappAdmin.replace(/[^0-9]/g, "");
-  const [tentangImgError, setTentangImgError] = React.useState(false);
 
   const effectiveAlamat =
     alamat &&
@@ -118,7 +117,7 @@ export function HomeView({
               </Reveal>
             </div>
 
-            {/* Kolom Kanan: Ilustrasi Vektor Datar Buatan Sendiri */}
+            {/* Kolom Kanan: Ilustrasi Hero */}
             <div className="lg:col-span-5 flex justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.96 }}
@@ -132,15 +131,15 @@ export function HomeView({
                   scale: { duration: 0.5, ease: "easeOut" },
                   y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
                 }}
-                className="relative w-full max-w-[420px] aspect-square rounded-full border border-[#E8E8E1] bg-[#F3F3EF] p-4 flex items-center justify-center shadow-sm"
+                className="relative w-full max-w-[460px] sm:max-w-[480px] lg:max-w-[500px] aspect-square flex items-center justify-center"
               >
                 <Image
-                  src="/images/hero-illustration.svg"
+                  src="/images/HeroIlustration2.svg"
                   alt="Ilustrasi PirantiKu"
-                  width={420}
-                  height={420}
+                  width={500}
+                  height={500}
                   priority
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain drop-shadow-sm"
                 />
               </motion.div>
             </div>
@@ -273,35 +272,31 @@ export function HomeView({
               </div>
             </div>
 
-            {/* Kolom Kanan: Foto slot public/images/tentang.jpg dengan placeholder datar */}
+            {/* Kolom Kanan: Foto slot Tentang PirantiKu */}
             <Reveal delay={0.1} className="lg:col-span-5">
               <div className="relative aspect-[4/3] sm:aspect-[1/1] w-full rounded-2xl overflow-hidden border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm flex items-center justify-center p-6 text-center">
-                {!tentangImgError ? (
-                  <Image
-                    src="/images/tentang.jpg"
-                    alt="Operasional PirantiKu"
-                    fill
-                    className="object-cover"
-                    onError={() => setTentangImgError(true)}
-                  />
-                ) : null}
-
-                {/* Flat Placeholder jika tentang.jpg belum ada */}
-                {tentangImgError && (
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C]">
-                      <Package className="h-8 w-8 stroke-[1.8]" />
+                <SafeImage
+                  src="/images/TentangPirantiKu.png"
+                  alt="Tentang PirantiKu"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                  fallback={
+                    <div className="flex flex-col items-center justify-center space-y-3">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C]">
+                        <Package className="h-8 w-8 stroke-[1.8]" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-[#234E5C]">
+                          Gudang & Workshop PirantiKu
+                        </p>
+                        <p className="text-xs text-[#5F7A84] mt-1 max-w-xs">
+                          Pemeriksaan ketat dan perawatan rutin untuk memastikan alat selalu siap dipakai.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-[#234E5C]">
-                        Gudang & Workshop PirantiKu
-                      </p>
-                      <p className="text-xs text-[#5F7A84] mt-1 max-w-xs">
-                        Pemeriksaan ketat dan perawatan rutin untuk memastikan alat selalu siap dipakai.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                  }
+                />
               </div>
             </Reveal>
           </div>
