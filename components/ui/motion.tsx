@@ -126,20 +126,20 @@ export function Reveal({
       animate={
         isVisible
           ? {
-            opacity: 1,
-            y: 0,
-            transitionEnd: { transform: "none", willChange: "auto" },
-            transition: {
-              duration: isInstant ? 0 : duration,
-              delay: isInstant ? 0 : delay,
-              ease: EASE,
-            },
-          }
+              opacity: 1,
+              y: 0,
+              transitionEnd: { transform: "none", willChange: "auto" },
+              transition: {
+                duration: isInstant ? 0 : duration,
+                delay: isInstant ? 0 : delay,
+                ease: EASE,
+              },
+            }
           : {
-            opacity: 0,
-            y: initialY,
-            transition: { duration: 0 },
-          }
+              opacity: 0,
+              y: initialY,
+              transition: { duration: 0 },
+            }
       }
       style={{ willChange: isVisible ? "transform, opacity" : "auto" }}
       className={className}

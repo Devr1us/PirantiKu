@@ -1,11 +1,7 @@
 "use client";
 
 import * as React from "react";
-<<<<<<< HEAD
 import { Printer, MessageCircle, X, CheckCircle2 } from "lucide-react";
-=======
-import { Printer, X, CheckCircle2 } from "lucide-react";
->>>>>>> d524333 (fixing error lint)
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { Wordmark } from "@/components/ui/wordmark";

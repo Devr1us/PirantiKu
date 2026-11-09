@@ -32,21 +32,11 @@ export function Wordmark({
   const shouldAnimate = !isAlreadyAnimated && !shouldReduceMotion;
 
   React.useEffect(() => {
-<<<<<<< HEAD
     if (shouldAnimate) {
       try {
         sessionStorage.setItem("pirantiku_wordmark_animated", "true");
       } catch {
         // Ignore
-=======
-    try {
-      const hasAnimated = sessionStorage.getItem("pirantiku_wordmark_animated");
-      if (!hasAnimated && !shouldReduceMotion) {
-        sessionStorage.setItem("pirantiku_wordmark_animated", "true");
-        requestAnimationFrame(() => {
-          setShouldAnimate(true);
-        });
->>>>>>> d524333 (fixing error lint)
       }
     }
   }, [shouldAnimate]);

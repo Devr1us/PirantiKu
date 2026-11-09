@@ -36,7 +36,6 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
       <div className="flex flex-col flex-1 space-y-3">
         {/* Foto Frame: rounded-2xl, Aspect 4:3 atau Square, zoom 1.04 on hover */}
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-[#F5F3EB] border border-[#E8E8E1]/70">
-<<<<<<< HEAD
           <SafeImage
             src={primaryImage || ""}
             alt={equipment.nama}
@@ -58,28 +57,6 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
               </div>
             }
           />
-=======
-          {primaryImage ? (
-            <Image
-              src={primaryImage}
-              alt={equipment.nama}
-              fill
-              priority={priority}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-            />
-          ) : (
-            // Placeholder datar krem + ikon petrol (tanpa gradasi)
-            <div className="flex h-full w-full flex-col items-center justify-center p-4 text-[#234E5C]">
-              {React.createElement(getCategoryIcon(equipment.category?.ikon), {
-                className: "h-10 w-10 stroke-[1.8]",
-              })}
-              <span className="mt-2 text-[11px] font-semibold text-[#5F7A84]">
-                {equipment.category?.nama || "Peralatan"}
-              </span>
-            </div>
-          )}
->>>>>>> d524333 (fixing error lint)
 
           {/* Badge Stok di Sudut Kiri Atas */}
           <div className="absolute left-2.5 top-2.5 z-10">

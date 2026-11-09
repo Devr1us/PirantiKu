@@ -72,7 +72,7 @@ export function AnimatedText({
 }: AnimatedTextProps) {
   const shouldReduceMotion = useReducedMotion();
   const rawText = extractString(text, children);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLElement>(null);
   const scrollDirRef = useScrollDirection();
   const { isProgrammatic, target } = useProgrammaticScroll();
 
@@ -199,11 +199,7 @@ export function AnimatedText({
 
     return (
       <Component
-<<<<<<< HEAD
         ref={containerRef as unknown as React.Ref<never>}
-=======
-        ref={containerRef as unknown as React.Ref<HTMLDivElement>}
->>>>>>> d524333 (fixing error lint)
         className={className}
         aria-label={rawText}
       >
@@ -280,11 +276,7 @@ export function AnimatedText({
 
     return (
       <Component
-<<<<<<< HEAD
         ref={containerRef as unknown as React.Ref<never>}
-=======
-        ref={containerRef as unknown as React.Ref<HTMLDivElement>}
->>>>>>> d524333 (fixing error lint)
         className={className}
         aria-label={rawText}
       >
@@ -354,11 +346,7 @@ export function AnimatedText({
 
     return (
       <Component
-<<<<<<< HEAD
         ref={containerRef as unknown as React.Ref<never>}
-=======
-        ref={containerRef as unknown as React.Ref<HTMLDivElement>}
->>>>>>> d524333 (fixing error lint)
         className={className}
         aria-label={rawText}
       >
@@ -391,11 +379,7 @@ export function AnimatedText({
 
   return (
     <Component
-<<<<<<< HEAD
       ref={containerRef as unknown as React.Ref<never>}
-=======
-      ref={containerRef as unknown as React.Ref<HTMLDivElement>}
->>>>>>> d524333 (fixing error lint)
       className={className}
       aria-label={rawText}
     >

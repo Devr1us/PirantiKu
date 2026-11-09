@@ -10,6 +10,8 @@ import {
   Edit2,
   Trash2,
   Check,
+  X,
+  AlertCircle,
   ExternalLink,
   Package,
   Mountain,
@@ -36,7 +38,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCategoryIcon } from "@/lib/constants";
+import { getCategoryIcon, getCategoryDescription } from "@/lib/constants";
 import type { Category } from "@/types/database";
 
 export type CategoryWithCount = Category & {
