@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatRupiah } from "@/lib/format";
 import { compressImage } from "@/lib/payment-utils";
+import { getProductImage } from "@/lib/constants";
 import type { EquipmentWithDetails, Category, EquipmentImage } from "@/types/database";
 
 interface AdminEquipmentManagerProps {
@@ -543,18 +544,22 @@ export function AdminEquipmentManager({
               {filteredEquipment.length > 0 ? (
                 filteredEquipment.map((item) => {
                   const bersih = Math.max(0, (item.stok || 0) - (item.stok_rusak || 0));
-                  const mainImg = item.images?.find((img) => img.is_utama) || item.images?.[0];
+                  const dbImg = item.images?.find((img) => img.is_utama)?.url || item.images?.[0]?.url || "";
+                  const displayImg = getProductImage(item.slug, dbImg) || getProductImage(item.id, dbImg) || dbImg;
 
                   return (
                     <tr key={item.id} className="hover:bg-[#F3F3EF]/50 transition-colors">
                       {/* Foto Thumbnail */}
                       <td className="py-3 px-4 text-center">
                         <div className="h-10 w-10 rounded-lg overflow-hidden border border-[#E8E8E1] bg-[#FAFAF8] relative mx-auto flex items-center justify-center">
-                          {mainImg?.url ? (
+                          {displayImg ? (
                             <img
-                              src={mainImg.url}
+                              src={displayImg}
                               alt={item.nama}
                               className="h-full w-full object-cover"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = "none";
+                              }}
                             />
                           ) : (
                             <Package className="h-5 w-5 text-[#5F7A84]/60" />

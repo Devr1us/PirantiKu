@@ -18,6 +18,7 @@ import type { EquipmentWithDetails } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { getProductImage } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
@@ -139,10 +140,15 @@ export function RentalBookingWidget({
       return;
     }
 
-    const primaryImage =
+    const dbImage =
       equipment.images?.find((img) => img.is_utama)?.url ||
       equipment.images?.[0]?.url ||
       null;
+
+    const primaryImage =
+      getProductImage(equipment.slug, dbImage) ||
+      getProductImage(equipment.id, dbImage) ||
+      dbImage;
 
     try {
       sessionStorage.setItem(

@@ -23,6 +23,8 @@ import { format, addDays } from "date-fns";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { getProductImage } from "@/lib/constants";
+import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
 import { H1, Lead } from "@/components/ui/typography";
@@ -349,18 +351,25 @@ export default function KeranjangPage() {
                     <div className="flex items-center gap-4 w-full sm:w-auto">
                       {/* Thumbnail Alat */}
                       <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-xl border border-[#E8E8E1] bg-[#F5F3EB]">
-                        {item.foto_url ? (
-                          <Image
-                            src={item.foto_url}
-                            alt={item.nama}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-[#5F7A84]">
-                            <Package className="h-6 w-6 stroke-[1.8]" />
-                          </div>
-                        )}
+                        {(() => {
+                          const imgUrl =
+                            getProductImage(item.slug, item.foto_url) ||
+                            getProductImage(item.equipmentId, item.foto_url) ||
+                            item.foto_url;
+                          return (
+                            <SafeImage
+                              src={imgUrl || ""}
+                              alt={item.nama}
+                              fill
+                              className="object-cover"
+                              fallback={
+                                <div className="flex h-full w-full items-center justify-center text-[#5F7A84]">
+                                  <Package className="h-6 w-6 stroke-[1.8]" />
+                                </div>
+                              }
+                            />
+                          );
+                        })()}
                       </div>
 
                       {/* Detail Teks */}

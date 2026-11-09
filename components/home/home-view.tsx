@@ -16,8 +16,10 @@ import type { Category, EquipmentWithDetails } from "@/types/database";
 import {
   getCategoryIcon,
   getCategoryDescription,
+  getProductImage,
   LOKASI_DEFAULT,
 } from "@/lib/constants";
+import { SafeImage } from "@/components/ui/safe-image";
 import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import {
@@ -386,10 +388,14 @@ export function HomeView({
           {/* Baris Kartu Foto Persegi (Desktop Grid 3 atau 6, Mobile horizontal snap) */}
           <div className="overflow-x-auto pb-4 pt-1 snap-x snap-mandatory flex gap-5 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 md:overflow-visible">
             {newestEquipment.map((item, index) => {
-              const primaryImage =
+              const dbImage =
                 item.images?.find((img) => img.is_utama)?.url ||
                 item.images?.[0]?.url ||
                 null;
+              const primaryImage =
+                getProductImage(item.slug, dbImage) ||
+                getProductImage(item.id, dbImage) ||
+                dbImage;
               const IconComp = getCategoryIcon(item.category?.ikon);
               const delay = (index % 6) * 0.05;
 
@@ -403,22 +409,21 @@ export function HomeView({
                   <Link href={`/alat/${item.slug}`} className="block space-y-3">
                     {/* Foto Persegi rounded-2xl dengan overflow hidden dan hover zoom 1.04 */}
                     <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F5F3EB] border border-[#E8E8E1]/60">
-                      {primaryImage ? (
-                        <Image
-                          src={primaryImage}
-                          alt={item.nama}
-                          fill
-                          sizes="(max-width: 768px) 240px, 200px"
-                          className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full w-full p-4 text-[#234E5C]">
-                          <IconComp className="h-10 w-10 stroke-[1.8]" />
-                          <span className="text-[10px] text-[#5F7A84] mt-2 font-medium">
-                            {item.category?.nama || "Peralatan"}
-                          </span>
-                        </div>
-                      )}
+                      <SafeImage
+                        src={primaryImage || ""}
+                        alt={item.nama}
+                        fill
+                        sizes="(max-width: 768px) 240px, 200px"
+                        className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                        fallback={
+                          <div className="flex flex-col items-center justify-center h-full w-full p-4 text-[#234E5C]">
+                            <IconComp className="h-10 w-10 stroke-[1.8]" />
+                            <span className="text-[10px] text-[#5F7A84] mt-2 font-medium">
+                              {item.category?.nama || "Peralatan"}
+                            </span>
+                          </div>
+                        }
+                      />
                     </div>
 
                     <div className="space-y-1 px-1">

@@ -204,14 +204,151 @@ export const DEFAULT_SETTINGS = {
 
 // Pemetaan Foto Produk Lokal di public/images/alat/
 export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
-  cangkul: "/images/alat/cangkul.png",
-  "chafing-dish": "/images/alat/chafing-dish.png",
+  // Outdoor & Pendakian
+  "carrier-60-liter": "/images/alat/carrier-60-liter.png",
+  carrier60liter: "/images/alat/carrier-60-liter.png",
+  "2": "/images/alat/carrier-60-liter.png",
+  "trekking-pole": "/images/alat/trekking-pole.png",
+  trekkingpole: "/images/alat/trekking-pole.png",
+  "23": "/images/alat/trekking-pole.png",
+  "headlamp-led": "/images/alat/headlamp-led.png",
+  headlampled: "/images/alat/headlamp-led.png",
+  "24": "/images/alat/headlamp-led.png",
+  "hammock-camping": "/images/alat/hammock-camping.png",
+  hammockcamping: "/images/alat/hammock-camping.png",
+  "25": "/images/alat/hammock-camping.png",
   "kursi-camping-lipat": "/images/alat/kursi-camping-lipat.png",
-  "resistance-band-set": "/images/alat/resistance-band-set.png",
-  "7": "/images/alat/cangkul.png",
+  kursicampinglipat: "/images/alat/kursi-camping-lipat.png",
   "26": "/images/alat/kursi-camping-lipat.png",
+
+  // Konstruksi & Perkakas
+  cangkul: "/images/alat/cangkul.png",
+  "7": "/images/alat/cangkul.png",
+  sekop: "/images/alat/sekop.png",
+  "8": "/images/alat/sekop.png",
+  "mesin-las-inverter": "/images/alat/mesin-las-inverter.png",
+  mesinlasinverter: "/images/alat/mesin-las-inverter.png",
+  "27": "/images/alat/mesin-las-inverter.png",
+  "bor-beton": "/images/alat/bor-beton.png",
+  "bor-beton-rotary-hammer": "/images/alat/bor-beton.png",
+  borbeton: "/images/alat/bor-beton.png",
+  "28": "/images/alat/bor-beton.png",
+  "gergaji-circular": "/images/alat/gergaji-circular.png",
+  gergajicircular: "/images/alat/gergaji-circular.png",
+  gergajicilcular: "/images/alat/gergaji-circular.png",
+  "29": "/images/alat/gergaji-circular.png",
+
+  // Olahraga & Fitness
+  "net-voli-tiang": "/images/alat/net-voli-dan-tiang.png",
+  "net-voli-dan-tiang": "/images/alat/net-voli-dan-tiang.png",
+  netvolidantiang: "/images/alat/net-voli-dan-tiang.png",
+  "13": "/images/alat/net-voli-dan-tiang.png",
+  "sepeda-lipat": "/images/alat/sepeda-lipat.png",
+  sepedalipat: "/images/alat/sepeda-lipat.png",
+  "31": "/images/alat/sepeda-lipat.png",
+  "set-badminton-portable": "/images/alat/set-badminton-portable.png",
+  setbadmintonportable: "/images/alat/set-badminton-portable.png",
+  "32": "/images/alat/set-badminton-portable.png",
+  "resistance-band-set": "/images/alat/resistance-band-set.png",
+  resistancebandset: "/images/alat/resistance-band-set.png",
   "33": "/images/alat/resistance-band-set.png",
+
+  // Rumah Tangga & Kebersihan
+  "steam-cleaner": "/images/alat/steam-cleaner.png",
+  steamcleaner: "/images/alat/steam-cleaner.png",
+  "15": "/images/alat/steam-cleaner.png",
+  "mesin-potong-rambut": "/images/alat/mesin-potong-rambut.png",
+  "mesin-potong-rumput": "/images/alat/mesin-potong-rambut.png",
+  mesinpotongrambut: "/images/alat/mesin-potong-rambut.png",
+  mesinpotongrumput: "/images/alat/mesin-potong-rambut.png",
+  "16": "/images/alat/mesin-potong-rambut.png",
+  "pompa-air": "/images/alat/pompa-air.png",
+  pompaair: "/images/alat/pompa-air.png",
+  "17": "/images/alat/pompa-air.png",
+  "kipas-angin-standing": "/images/alat/kipas-angin-standing.png",
+  kipasanginstanding: "/images/alat/kipas-angin-standing.png",
+  "35": "/images/alat/kipas-angin-standing.png",
+  "mesin-cuci-portable": "/images/alat/mesin-cuci-portable.png",
+  mesincuciportable: "/images/alat/mesin-cuci-portable.png",
+  "36": "/images/alat/mesin-cuci-portable.png",
+  "steamer-garmen": "/images/alat/steamer-garmen.png",
+  steamergarmen: "/images/alat/steamer-garmen.png",
+  "37": "/images/alat/steamer-garmen.png",
+
+  // Pesta & Acara
+  "tenda-event": "/images/alat/tenda-event.png",
+  "tenda-event-3x3": "/images/alat/tenda-event.png",
+  tendaevent: "/images/alat/tenda-event.png",
+  "18": "/images/alat/tenda-event.png",
+  "sound-system-portable": "/images/alat/sound-system-portable.png",
+  soundsystemportable: "/images/alat/sound-system-portable.png",
+  "21": "/images/alat/sound-system-portable.png",
+  proyektor: "/images/alat/proyektor.png",
+  projector: "/images/alat/proyektor.png",
+  "22": "/images/alat/proyektor.png",
+  "genset-portable": "/images/alat/genset-portable.png",
+  "genset-portable-1000w": "/images/alat/genset-portable.png",
+  gensetportable: "/images/alat/genset-portable.png",
+  "39": "/images/alat/genset-portable.png",
+  "lampu-sorot-led": "/images/alat/lampu-sorot-led.png",
+  lampusorotled: "/images/alat/lampu-sorot-led.png",
+  "40": "/images/alat/lampu-sorot-led.png",
+  "backdrop-stand": "/images/alat/backdrop-stand.png",
+  backdropstand: "/images/alat/backdrop-stand.png",
+  "41": "/images/alat/backdrop-stand.png",
+  "chafing-dish": "/images/alat/chafing-dish.png",
+  chafingdish: "/images/alat/chafing-dish.png",
   "42": "/images/alat/chafing-dish.png",
+
+  // Kamera & Elektronik
+  "tripod-profesional": "/images/alat/tripod-profesional.png",
+  tripodprofesional: "/images/alat/tripod-profesional.png",
+  "44": "/images/alat/tripod-profesional.png",
+  "ring-light-stand": "/images/alat/ring-light-and-stand.png",
+  "ring-light-and-stand": "/images/alat/ring-light-and-stand.png",
+  ringlightandstand: "/images/alat/ring-light-and-stand.png",
+  "45": "/images/alat/ring-light-and-stand.png",
+  "gimbal-smartphone": "/images/alat/gimbal-smartphone.png",
+  gimbalsmartphone: "/images/alat/gimbal-smartphone.png",
+  "46": "/images/alat/gimbal-smartphone.png",
+  "action-cam-4k": "/images/alat/action-cam-4k.png",
+  actioncam4k: "/images/alat/action-cam-4k.png",
+  "47": "/images/alat/action-cam-4k.png",
+
+  // Otomotif & Bengkel
+  "dongkrak-buaya": "/images/alat/dongkrak-buaya.png",
+  "dongkrak-buaya-2-ton": "/images/alat/dongkrak-buaya.png",
+  dongkrakbuaya: "/images/alat/dongkrak-buaya.png",
+  "48": "/images/alat/dongkrak-buaya.png",
+  "kompresor-udara": "/images/alat/kompresor-udara.png",
+  "kompresor-udara-24l": "/images/alat/kompresor-udara.png",
+  kompresorudara: "/images/alat/kompresor-udara.png",
+  "49": "/images/alat/kompresor-udara.png",
+  "toolbox-kunci": "/images/alat/toolbox-kunci.png",
+  "toolbox-kunci-108-pcs": "/images/alat/toolbox-kunci.png",
+  toolboxkunci: "/images/alat/toolbox-kunci.png",
+  "50": "/images/alat/toolbox-kunci.png",
+  "jet-cleaner": "/images/alat/jet-cleaner.png",
+  "jet-cleaner-cuci-kendaraan": "/images/alat/jet-cleaner.png",
+  jetcleaner: "/images/alat/jet-cleaner.png",
+  "52": "/images/alat/jet-cleaner.png",
+
+  // Kesehatan & Mobilitas
+  "kursi-roda-lipat": "/images/alat/kursi-roda-lipat.png",
+  kursirodalipat: "/images/alat/kursi-roda-lipat.png",
+  "53": "/images/alat/kursi-roda-lipat.png",
+  "walker-lansia": "/images/alat/walker-lansia.png",
+  walkerlansia: "/images/alat/walker-lansia.png",
+  "54": "/images/alat/walker-lansia.png",
+  "kruk-ketiak": "/images/alat/kruk-ketiak.png",
+  krukketiak: "/images/alat/kruk-ketiak.png",
+  "55": "/images/alat/kruk-ketiak.png",
+  "tensimeter-digital": "/images/alat/tensimeter-digital.png",
+  tensimeterdigital: "/images/alat/tensimeter-digital.png",
+  "56": "/images/alat/tensimeter-digital.png",
+  "kasur-anti-dekubitus": "/images/alat/kasur-anti-dekubitus.png",
+  kasurantidekubitus: "/images/alat/kasur-anti-dekubitus.png",
+  "57": "/images/alat/kasur-anti-dekubitus.png",
 };
 
 export function getProductImage(
@@ -219,9 +356,13 @@ export function getProductImage(
   dbUrl?: string | null
 ): string | null {
   if (slugOrId !== undefined && slugOrId !== null) {
-    const key = String(slugOrId).toLowerCase().trim();
-    if (LOCAL_PRODUCT_IMAGES[key]) {
-      return LOCAL_PRODUCT_IMAGES[key];
+    const raw = String(slugOrId).toLowerCase().trim();
+    if (LOCAL_PRODUCT_IMAGES[raw]) {
+      return LOCAL_PRODUCT_IMAGES[raw];
+    }
+    const simplified = raw.replace(/[^a-z0-9]/g, "");
+    if (LOCAL_PRODUCT_IMAGES[simplified]) {
+      return LOCAL_PRODUCT_IMAGES[simplified];
     }
   }
   return dbUrl || null;
