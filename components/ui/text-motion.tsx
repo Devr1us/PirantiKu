@@ -34,7 +34,7 @@ interface AnimatedTextProps {
   text?: string;
   children?: React.ReactNode;
   mode?: AnimatedTextMode;
-  as?: "h1" | "h2" | "h3" | "h4" | "p" | "span" | "div";
+  as?: "h1" | "h2" | "h3" | "h4" | "p" | "span" | "div" | React.ElementType;
   className?: string;
   delay?: number;
   stagger?: number;
@@ -62,7 +62,7 @@ export function AnimatedText({
   text,
   children,
   mode = "word",
-  as: Component = "span",
+  as: Tag = "span",
   className = "",
   delay = 0,
   stagger,
@@ -139,9 +139,9 @@ export function AnimatedText({
   // If text is empty or motion is reduced, render immediately without animations
   if (shouldReduceMotion || !rawText) {
     return (
-      <Component className={className} aria-label={rawText}>
+      <Tag className={className} aria-label={rawText}>
         {children || text}
-      </Component>
+      </Tag>
     );
   }
 
@@ -162,8 +162,6 @@ export function AnimatedText({
   else if (resolvedMode === "char" && (charCount > 12 || !isHero)) {
     resolvedMode = "word";
   }
-
-  const Tag = Component as React.ElementType;
 
   // --- MODE: CHAR (Split per character with mask) ---
   if (resolvedMode === "char") {
