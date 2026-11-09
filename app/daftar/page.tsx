@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -15,7 +15,6 @@ import {
   User,
   Phone,
   ArrowRight,
-  AlertCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -91,7 +90,7 @@ export default function DaftarPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -105,7 +104,7 @@ export default function DaftarPage() {
     },
   });
 
-  const passwordVal = watch("password", "");
+  const passwordVal = useWatch({ control, name: "password", defaultValue: "" });
   const strength = getPasswordStrength(passwordVal);
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -327,9 +326,8 @@ export default function DaftarPage() {
                     {[1, 2, 3, 4].map((step) => (
                       <div
                         key={step}
-                        className={`h-full flex-1 transition-all ${
-                          step <= strength.score ? strength.color : "bg-[#E8E8E1]"
-                        }`}
+                        className={`h-full flex-1 transition-all ${step <= strength.score ? strength.color : "bg-[#E8E8E1]"
+                          }`}
                       />
                     ))}
                   </div>

@@ -3,21 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  CalendarDays,
   Search,
-  Filter,
   CheckCircle2,
   XCircle,
   Clock,
   Eye,
   MessageCircle,
-  ExternalLink,
-  ShieldCheck,
   Package,
-  Calendar,
   User,
-  Phone,
-  AlertTriangle,
   ZoomIn,
   Printer,
   RotateCcw,
@@ -50,9 +43,9 @@ export type AdminBookingWithDetails = Booking & {
   payments?: Payment[];
   profile?: Profile | null;
   returns?:
-    | (BookingReturn & { damage_reports?: DamageReport[] })
-    | (BookingReturn & { damage_reports?: DamageReport[] })[]
-    | null;
+  | (BookingReturn & { damage_reports?: DamageReport[] })
+  | (BookingReturn & { damage_reports?: DamageReport[] })[]
+  | null;
 };
 
 interface AdminBookingManagerProps {
@@ -325,11 +318,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("semua")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "semua"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "semua"
                 ? "bg-[#234E5C] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-            }`}
+              }`}
           >
             Semua ({bookings.length})
           </button>
@@ -337,11 +329,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("perlu_verifikasi")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-              statusFilter === "perlu_verifikasi"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${statusFilter === "perlu_verifikasi"
                 ? "bg-[#A0630F] text-white"
                 : "bg-[#FEF3C7] border border-[#FDE68A] text-[#78350F] hover:bg-[#FDE68A]"
-            }`}
+              }`}
           >
             <Clock className="h-3 w-3" />
             <span>Perlu Cek Bukti</span>
@@ -355,11 +346,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("menunggu_dp")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "menunggu_dp"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "menunggu_dp"
                 ? "bg-[#234E5C] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-            }`}
+              }`}
           >
             Menunggu DP
           </button>
@@ -367,11 +357,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("dp_dibayar")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "dp_dibayar"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "dp_dibayar"
                 ? "bg-[#234E5C] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-            }`}
+              }`}
           >
             DP Terverifikasi
           </button>
@@ -379,11 +368,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("diambil")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "diambil"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "diambil"
                 ? "bg-[#234E5C] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-            }`}
+              }`}
           >
             Sedang Disewa
           </button>
@@ -391,11 +379,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("selesai")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "selesai"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "selesai"
                 ? "bg-[#2E5E4E] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#2E5E4E]"
-            }`}
+              }`}
           >
             Selesai Dikembalikan
           </button>
@@ -403,11 +390,10 @@ export function AdminBookingManager({
           <button
             type="button"
             onClick={() => setStatusFilter("bermasalah")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === "bermasalah"
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "bermasalah"
                 ? "bg-[#991B1B] text-white"
                 : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#991B1B]"
-            }`}
+              }`}
           >
             Bermasalah
           </button>
@@ -455,9 +441,8 @@ export function AdminBookingManager({
                   return (
                     <tr
                       key={b.id}
-                      className={`hover:bg-[#F3F3EF]/60 transition-colors ${
-                        hasPendingProof ? "bg-[#FEF3C7]/20" : ""
-                      }`}
+                      className={`hover:bg-[#F3F3EF]/60 transition-colors ${hasPendingProof ? "bg-[#FEF3C7]/20" : ""
+                        }`}
                     >
                       <td className="py-3.5 px-4 font-mono font-bold text-[#234E5C]">
                         {b.kode_booking}
@@ -755,9 +740,8 @@ export function AdminBookingManager({
                           Status Fisik Alat
                         </span>
                         <span
-                          className={`font-extrabold text-sm block ${
-                            hasDamages ? "text-[#991B1B]" : "text-[#2E5E4E]"
-                          }`}
+                          className={`font-extrabold text-sm block ${hasDamages ? "text-[#991B1B]" : "text-[#2E5E4E]"
+                            }`}
                         >
                           {hasDamages ? `${damageReports.length} Kerusakan/Hilang` : "Lengkap & Prima"}
                         </span>

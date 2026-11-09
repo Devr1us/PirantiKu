@@ -10,8 +10,6 @@ import {
   Edit2,
   Trash2,
   Check,
-  X,
-  AlertCircle,
   ExternalLink,
   Package,
   Mountain,
@@ -38,7 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCategoryIcon, getCategoryDescription } from "@/lib/constants";
+import { getCategoryIcon } from "@/lib/constants";
 import type { Category } from "@/types/database";
 
 export type CategoryWithCount = Category & {
@@ -162,9 +160,9 @@ export function AdminCategoryManager({
           prev.map((c) =>
             c.id === editingId
               ? {
-                  ...c,
-                  ...(updatedCat as Category),
-                }
+                ...c,
+                ...(updatedCat as Category),
+              }
               : c
           )
         );
@@ -483,11 +481,10 @@ export function AdminCategoryManager({
                       key={item.key}
                       type="button"
                       onClick={() => setIkon(item.key)}
-                      className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-all ${
-                        isSel
+                      className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-all ${isSel
                           ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
                           : "bg-[#FAFAF8] text-[#5F7A84] border-[#E8E8E1] hover:text-[#234E5C] hover:bg-white"
-                      }`}
+                        }`}
                     >
                       <Icon className="h-5 w-5 mb-1" />
                       <span className="text-[10px] font-bold truncate max-w-full">

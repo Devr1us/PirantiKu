@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -27,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatRupiah } from "@/lib/format";
 import { compressImage } from "@/lib/payment-utils";
-import type { EquipmentWithDetails, Category } from "@/types/database";
+import type { EquipmentWithDetails, Category, EquipmentImage } from "@/types/database";
 
 interface AdminEquipmentManagerProps {
   initialEquipment: EquipmentWithDetails[];
@@ -250,11 +251,11 @@ export function AdminEquipmentManager({
           prev.map((item) =>
             item.id === editingId
               ? ({
-                  ...(updatedEq as EquipmentWithDetails),
-                  images: imageUrl.trim()
-                    ? [{ id: 999, equipment_id: editingId, url: imageUrl.trim(), is_utama: true, urutan: 1 }]
-                    : item.images,
-                } as EquipmentWithDetails)
+                ...(updatedEq as EquipmentWithDetails),
+                images: imageUrl.trim()
+                  ? [{ id: 999, equipment_id: editingId, url: imageUrl.trim(), is_utama: true, urutan: 1 }]
+                  : item.images,
+              } as EquipmentWithDetails)
               : item
           )
         );
@@ -283,7 +284,7 @@ export function AdminEquipmentManager({
         if (eqErr) throw eqErr;
 
         // Tambah Gambar jika diisi
-        let insertedImages: Array<{ id: number; equipment_id: number; url: string; is_utama: boolean; urutan: number }> = [];
+        let insertedImages: EquipmentImage[] = [];
         if (newEq && imageUrl.trim()) {
           const { data: imgData } = await supabase
             .from("equipment_images")
@@ -498,11 +499,10 @@ export function AdminEquipmentManager({
                 key={st}
                 type="button"
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1 rounded-lg font-bold capitalize transition-all ${
-                  statusFilter === st
-                    ? "bg-[#234E5C] text-white"
-                    : "text-[#5F7A84] hover:text-[#234E5C]"
-                }`}
+                className={`px-3 py-1 rounded-lg font-bold capitalize transition-all ${statusFilter === st
+                  ? "bg-[#234E5C] text-white"
+                  : "text-[#5F7A84] hover:text-[#234E5C]"
+                  }`}
               >
                 {st}
               </button>
@@ -594,11 +594,10 @@ export function AdminEquipmentManager({
                       {/* Stok Bersih */}
                       <td className="py-3 px-4 text-center">
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-full font-bold text-[11px] ${
-                            bersih > 0
-                              ? "bg-[#E2F0D9] text-[#2E5E4E]"
-                              : "bg-[#FEE2E2] text-[#991B1B]"
-                          }`}
+                          className={`inline-block px-2 py-0.5 rounded-full font-bold text-[11px] ${bersih > 0
+                            ? "bg-[#E2F0D9] text-[#2E5E4E]"
+                            : "bg-[#FEE2E2] text-[#991B1B]"
+                            }`}
                         >
                           {bersih} unit
                         </span>
@@ -620,11 +619,10 @@ export function AdminEquipmentManager({
                         <button
                           type="button"
                           onClick={() => handleToggleAktif(item)}
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${
-                            item.aktif
-                              ? "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5] hover:bg-[#C5E1A5]"
-                              : "bg-[#F3F4F6] text-[#4B5563] border-[#E5E7EB] hover:bg-[#E5E7EB]"
-                          }`}
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors cursor-pointer ${item.aktif
+                            ? "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5] hover:bg-[#C5E1A5]"
+                            : "bg-[#F3F4F6] text-[#4B5563] border-[#E5E7EB] hover:bg-[#E5E7EB]"
+                            }`}
                           title="Klik untuk ubah status aktif"
                         >
                           {item.aktif ? "Aktif" : "Nonaktif"}

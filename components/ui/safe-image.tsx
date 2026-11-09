@@ -8,11 +8,13 @@ interface SafeImageProps extends Omit<ImageProps, "onError"> {
 }
 
 export function SafeImage({ fallback, src, alt, ...props }: SafeImageProps) {
+  const [prevSrc, setPrevSrc] = React.useState(src);
   const [hasError, setHasError] = React.useState(false);
 
-  React.useEffect(() => {
+  if (prevSrc !== src) {
+    setPrevSrc(src);
     setHasError(false);
-  }, [src]);
+  }
 
   if (hasError || !src) {
     return <>{fallback}</>;
@@ -27,4 +29,3 @@ export function SafeImage({ fallback, src, alt, ...props }: SafeImageProps) {
     />
   );
 }
-

@@ -7,8 +7,6 @@ import {
   ShieldCheck,
   MapPin,
   ArrowLeft,
-  Clock,
-  Phone,
   Printer,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";

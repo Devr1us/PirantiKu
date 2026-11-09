@@ -68,11 +68,10 @@ function FilterSidebar({
             <button
               type="button"
               onClick={() => handleCategorySelect("")}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                !currentCategory
-                  ? "bg-[#234E5C] text-white"
-                  : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-              }`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${!currentCategory
+                ? "bg-[#234E5C] text-white"
+                : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
+                }`}
             >
               <span>Semua Kategori</span>
               <span className="text-[11px] opacity-80">{initialEquipment.length}</span>
@@ -89,11 +88,10 @@ function FilterSidebar({
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategorySelect(cat.slug)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#234E5C] text-white font-bold"
-                      : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-                  }`}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${isSelected
+                    ? "bg-[#234E5C] text-white font-bold"
+                    : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
+                    }`}
                 >
                   <span className="truncate">{cat.nama}</span>
                   <span className="text-[11px] opacity-80">{count}</span>
@@ -192,19 +190,23 @@ export function EquipmentCatalog({
   const [maxPrice, setMaxPrice] = React.useState(currentMaxPrice);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
-  // Sinkronisasi state lokal jika URL berubah (mengikuti rekomendasi React 19 tanpa cascading effect)
-  const [prevParams, setPrevParams] = React.useState({
+  // Sinkronisasi state lokal jika URL berubah (misal tombol Back / Forward browser)
+  const [prevUrlParams, setPrevUrlParams] = React.useState({
     q: currentQ,
     min: currentMinPrice,
     max: currentMaxPrice,
   });
 
   if (
-    prevParams.q !== currentQ ||
-    prevParams.min !== currentMinPrice ||
-    prevParams.max !== currentMaxPrice
+    prevUrlParams.q !== currentQ ||
+    prevUrlParams.min !== currentMinPrice ||
+    prevUrlParams.max !== currentMaxPrice
   ) {
-    setPrevParams({ q: currentQ, min: currentMinPrice, max: currentMaxPrice });
+    setPrevUrlParams({
+      q: currentQ,
+      min: currentMinPrice,
+      max: currentMaxPrice,
+    });
     setSearchQuery(currentQ);
     setMinPrice(currentMinPrice);
     setMaxPrice(currentMaxPrice);
@@ -317,10 +319,10 @@ export function EquipmentCatalog({
 
   const hasActiveFilters = Boolean(
     currentQ ||
-      (!selectedCategorySlug && currentCategory) ||
-      currentMinPrice ||
-      currentMaxPrice ||
-      currentSort !== "populer"
+    (!selectedCategorySlug && currentCategory) ||
+    currentMinPrice ||
+    currentMaxPrice ||
+    currentSort !== "populer"
   );
 
   const filterProps: FilterSidebarProps = {
@@ -455,9 +457,8 @@ export function EquipmentCatalog({
           {filteredEquipment.length > 0 ? (
             <div
               key={filterSignature}
-              className={`transition-opacity duration-200 ${
-                isPending ? "opacity-60 pointer-events-none" : ""
-              }`}
+              className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""
+                }`}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredEquipment.map((item, index) => {
