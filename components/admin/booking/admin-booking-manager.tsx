@@ -3,21 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  CalendarDays,
   Search,
-  Filter,
   CheckCircle2,
   XCircle,
   Clock,
   Eye,
   MessageCircle,
-  ExternalLink,
-  ShieldCheck,
   Package,
-  Calendar,
   User,
-  Phone,
-  AlertTriangle,
   ZoomIn,
   Printer,
   RotateCcw,
@@ -668,6 +661,7 @@ export function AdminBookingManager({
                             }}
                             className="relative h-44 w-36 sm:w-44 rounded-xl overflow-hidden border border-[#E8E8E1] shadow-xs cursor-pointer group bg-black/5 shrink-0"
                           >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={dpPayment.bukti_url}
                               alt="Bukti Transfer"
@@ -986,6 +980,7 @@ export function AdminBookingManager({
           </DialogHeader>
           <div className="mt-2 max-h-[80vh] overflow-auto rounded-xl border border-[#E8E8E1] p-2 flex items-center justify-center bg-[#F3F3EF]">
             {zoomImageSrc && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={zoomImageSrc}
                 alt="Zoom"

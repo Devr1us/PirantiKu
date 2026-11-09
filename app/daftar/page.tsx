@@ -4,7 +4,11 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
+<<<<<<< HEAD
 import { useForm } from "react-hook-form";
+=======
+import { useForm, useWatch } from "react-hook-form";
+>>>>>>> d524333 (fixing error lint)
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -15,7 +19,6 @@ import {
   User,
   Phone,
   ArrowRight,
-  AlertCircle,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -91,7 +94,7 @@ export default function DaftarPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -105,7 +108,7 @@ export default function DaftarPage() {
     },
   });
 
-  const passwordVal = watch("password", "");
+  const passwordVal = useWatch({ control, name: "password", defaultValue: "" });
   const strength = getPasswordStrength(passwordVal);
 
   const onSubmit = async (data: RegisterFormData) => {

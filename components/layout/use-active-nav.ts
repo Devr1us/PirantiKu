@@ -17,12 +17,9 @@ type NavListener = (nav: ActiveNav) => void;
 
 // Module-level state & listener subscriptions
 const listeners = new Set<NavListener>();
-let currentActiveNav: ActiveNav = "beranda";
 let isLocked = false;
 
-
 function notify(nav: ActiveNav) {
-  currentActiveNav = nav;
   listeners.forEach((listener) => listener(nav));
 }
 

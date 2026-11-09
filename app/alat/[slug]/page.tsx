@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import * as React from "react";
+=======
+import React from "react";
+>>>>>>> d524333 (fixing error lint)
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/safe-image";
@@ -157,6 +161,7 @@ export default async function EquipmentDetailPage({
           {/* Galeri Gambar: rounded-2xl */}
           <div className="space-y-3">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm">
+<<<<<<< HEAD
               <SafeImage
                 src={primaryImage || ""}
                 alt={equipment.nama}
@@ -177,6 +182,22 @@ export default async function EquipmentDetailPage({
                     <span className="text-xs text-[#5F7A84] mt-1">
                       Foto produk siap disewa dengan kondisi prima
                     </span>
+=======
+              {primaryImage ? (
+                <Image
+                  src={primaryImage}
+                  alt={equipment.nama}
+                  fill
+                  priority
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
+                    {React.createElement(getCategoryIcon(equipment.category?.ikon), {
+                      className: "h-10 w-10 stroke-[1.8]",
+                    })}
+>>>>>>> d524333 (fixing error lint)
                   </div>
                 }
               />

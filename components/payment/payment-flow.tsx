@@ -81,7 +81,7 @@ export function PaymentFlow({
   const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
   const [payments, setPayments] = React.useState<Payment[]>(initialPayments);
   const [currentBookingStatus, setCurrentBookingStatus] = React.useState<BookingStatus>(booking.status);
-  
+
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [namaPengirim, setNamaPengirim] = React.useState<string>("");
@@ -440,9 +440,8 @@ export function PaymentFlow({
               Batas Waktu:
             </span>
             <span
-              className={`font-mono text-xs font-bold ${
-                countdown.isExpired ? "text-[#DC2626]" : "text-[#A0630F]"
-              }`}
+              className={`font-mono text-xs font-bold ${countdown.isExpired ? "text-[#DC2626]" : "text-[#A0630F]"
+                }`}
             >
               {countdown.formatted}
             </span>
@@ -535,7 +534,7 @@ export function PaymentFlow({
               <p className="leading-relaxed text-[11px]">
                 Bukti transfer Anda sudah masuk ke sistem pengelola PirantiKu. Petugas kami sedang mencocokkan mutasi bank. Anda tidak perlu membayar ulang.
               </p>
-              
+
               {/* Tombol Bypass Simulasi untuk Pengujian */}
               <div className="pt-2 border-t border-[#FDE68A] flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[10px] text-[#78350F]/80">
@@ -565,7 +564,7 @@ export function PaymentFlow({
               <p className="leading-relaxed text-[11px]">
                 Uang muka Anda telah diterima. Jadwal sewa unit telah terkunci aman. Silakan bawa KTP/SIM asli saat pengambilan alat di lokasi.
               </p>
-              
+
               <div className="pt-2 border-t border-[#C5E1A5] flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#2E5E4E]">
                   Surat perjanjian sewa telah terbit
@@ -609,6 +608,7 @@ export function PaymentFlow({
                   }}
                   className="relative h-14 w-14 rounded-lg overflow-hidden border border-[#E8E8E1] cursor-pointer group shrink-0"
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={latestDpPayment.bukti_url}
                     alt="Bukti Transfer"
@@ -708,7 +708,13 @@ export function PaymentFlow({
 
           <Tabs
             value={activeTab}
+<<<<<<< HEAD
             onValueChange={(val) => setActiveTab(val as "transfer" | "qris" | "cod" | "instant")}
+=======
+            onValueChange={(val) =>
+              setActiveTab(val as "transfer" | "qris" | "cod" | "instant")
+            }
+>>>>>>> d524333 (fixing error lint)
             className="w-full"
           >
             <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
@@ -757,11 +763,10 @@ export function PaymentFlow({
                       key={bKey}
                       type="button"
                       onClick={() => setSelectedBank(bKey)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                        isSel
-                          ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
-                          : "bg-white text-[#234E5C] border-[#E8E8E1] hover:bg-[#FAFAF8]"
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${isSel
+                        ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
+                        : "bg-white text-[#234E5C] border-[#E8E8E1] hover:bg-[#FAFAF8]"
+                        }`}
                     >
                       {b.bank}
                     </button>
@@ -863,6 +868,7 @@ export function PaymentFlow({
 
                   {qrisUrl ? (
                     <div className="relative h-48 w-48 rounded-lg overflow-hidden border border-[#E8E8E1]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={qrisUrl}
                         alt="QRIS PirantiKu"
@@ -996,15 +1002,15 @@ export function PaymentFlow({
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
-                  previewUrl
-                    ? "border-[#2E5E4E] bg-[#E2F0D9]/20"
-                    : "border-[#E8E8E1] hover:border-[#234E5C] bg-[#FAFAF8]"
-                }`}
+                className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${previewUrl
+                  ? "border-[#2E5E4E] bg-[#E2F0D9]/20"
+                  : "border-[#E8E8E1] hover:border-[#234E5C] bg-[#FAFAF8]"
+                  }`}
               >
                 {previewUrl ? (
                   <div className="space-y-3">
                     <div className="relative inline-block max-w-xs mx-auto rounded-xl overflow-hidden border border-[#E8E8E1] shadow-sm">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={previewUrl}
                         alt="Preview Bukti"
@@ -1144,6 +1150,7 @@ export function PaymentFlow({
           </DialogHeader>
           {activeZoomImage && (
             <div className="mt-2 max-h-[75vh] overflow-auto rounded-xl border border-[#E8E8E1] flex items-center justify-center p-2 bg-[#F3F3EF]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={activeZoomImage}
                 alt="Bukti Transfer Penuh"

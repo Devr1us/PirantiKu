@@ -25,6 +25,10 @@ import {
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { compressImage } from "@/lib/payment-utils";
 import type {
+<<<<<<< HEAD
+=======
+  BookingStatus,
+>>>>>>> d524333 (fixing error lint)
   BookingItem,
   EquipmentItem,
   DamageJenis,
@@ -105,6 +109,7 @@ export function RentalReturnModal({
       })) || []
   );
 
+<<<<<<< HEAD
   // Sync state if booking items change (React 19 render-time adjustment)
   const [prevSyncKey, setPrevSyncKey] = React.useState(booking.id);
   if (prevSyncKey !== booking.id) {
@@ -122,6 +127,23 @@ export function RentalReturnModal({
         }))
       );
     }
+=======
+  // Sync state if booking changes (React recommended pattern without useEffect)
+  const [prevBookingId, setPrevBookingId] = React.useState(booking.id);
+  if (booking.id !== prevBookingId) {
+    setPrevBookingId(booking.id);
+    setItemsInspection(
+      booking.items?.map((it) => ({
+        bookingItemId: it.id,
+        equipmentNama: it.equipment?.nama || "Alat Rental",
+        maxQty: it.qty,
+        condition: "baik",
+        damageQty: 1,
+        deskripsi: "",
+        biayaGantiRugi: 0,
+      })) || []
+    );
+>>>>>>> d524333 (fixing error lint)
     setLateDays(calculatedLateDays);
     setLateFee(calculatedLateDays * dendaPerHari);
   }
@@ -326,11 +348,10 @@ export function RentalReturnModal({
                 Pemeriksaan Batas Waktu Sewa
               </span>
               <span
-                className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
-                  lateDays > 0
+                className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${lateDays > 0
                     ? "bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]"
                     : "bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]"
-                }`}
+                  }`}
               >
                 {lateDays > 0 ? `Terlambat ${lateDays} Hari` : "Tepat Waktu (On Time)"}
               </span>
@@ -397,11 +418,10 @@ export function RentalReturnModal({
                 return (
                   <div
                     key={item.bookingItemId}
-                    className={`p-4 rounded-xl border transition-all ${
-                      isDamaged
+                    className={`p-4 rounded-xl border transition-all ${isDamaged
                         ? "border-[#FDE68A] bg-[#FEF3C7]/20 space-y-3"
                         : "border-[#E8E8E1] bg-white space-y-2"
-                    }`}
+                      }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -437,11 +457,10 @@ export function RentalReturnModal({
                                   biayaGantiRugi: cond.key === "baik" ? 0 : item.biayaGantiRugi || 50000,
                                 })
                               }
-                              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${
-                                isSel
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border ${isSel
                                   ? `${cond.color} border-current shadow-xs`
                                   : "bg-white text-[#5F7A84] border-[#E8E8E1] hover:bg-[#FAFAF8]"
-                              }`}
+                                }`}
                             >
                               {cond.label}
                             </button>
@@ -571,11 +590,10 @@ export function RentalReturnModal({
 
               {/* Hasil Akhir Deposit */}
               <div
-                className={`p-3.5 rounded-xl border mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
-                  netRefund >= 0
+                className={`p-3.5 rounded-xl border mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${netRefund >= 0
                     ? "bg-[#E2F0D9] border-[#C5E1A5] text-[#2E5E4E]"
                     : "bg-[#FEE2E2] border-[#FECACA] text-[#991B1B]"
-                }`}
+                  }`}
               >
                 <div>
                   <span className="font-extrabold text-sm block">

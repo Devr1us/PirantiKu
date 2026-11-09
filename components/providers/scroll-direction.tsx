@@ -92,8 +92,6 @@ export function ScrollDirectionProvider({
   children: React.ReactNode;
 }) {
   const directionRef = React.useRef<ScrollDirection>("down");
-  const isProgrammaticScrollRef = React.useRef<boolean>(false);
-  const targetRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     let lastScrollY = window.scrollY;

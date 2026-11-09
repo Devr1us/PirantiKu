@@ -54,8 +54,17 @@ export default function CheckoutPage() {
   });
 
   // Ambil tanggal sewa dari params atau fallback
+<<<<<<< HEAD
   const startDate = mulaiParam || defaultDates.today;
   const endDate = selesaiParam || defaultDates.tomorrow;
+=======
+  const [startDate] = React.useState<string>(
+    () => mulaiParam || new Date().toISOString().split("T")[0]
+  );
+  const [endDate] = React.useState<string>(
+    () => selesaiParam || new Date(Date.now() + 86400000).toISOString().split("T")[0]
+  );
+>>>>>>> d524333 (fixing error lint)
 
   // 1. Muat profil user dan pengaturan
   React.useEffect(() => {
@@ -251,11 +260,10 @@ export default function CheckoutPage() {
           {/* Step 1 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 1
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 1
                   ? "bg-[#234E5C] text-white"
                   : "border border-[#234E5C] text-[#234E5C]"
-              }`}
+                }`}
             >
               1
             </div>
@@ -269,11 +277,10 @@ export default function CheckoutPage() {
           {/* Step 2 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 2
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 2
                   ? "bg-[#234E5C] text-white"
                   : "border border-[#234E5C]/40 text-[#5F7A84]"
-              }`}
+                }`}
             >
               2
             </div>
@@ -287,11 +294,10 @@ export default function CheckoutPage() {
           {/* Step 3 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 3
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 3
                   ? "bg-[#234E5C] text-white"
                   : "border border-[#234E5C]/40 text-[#5F7A84]"
-              }`}
+                }`}
             >
               3
             </div>

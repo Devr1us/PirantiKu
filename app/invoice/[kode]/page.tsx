@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { RentalInvoice, type RentalInvoiceData } from "@/components/invoice/rental-invoice";
+import { RentalInvoice, type RentalInvoiceData, type InvoiceBookingItem } from "@/components/invoice/rental-invoice";
 import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
 import type { BookingStatus } from "@/types/database";
 
@@ -111,6 +111,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
       no_hp: customerProfile?.no_hp,
       alamat: customerProfile?.alamat || undefined,
     },
+<<<<<<< HEAD
     items: ((booking.items || []) as Array<{
       id: number;
       qty: number;
@@ -118,14 +119,17 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
       subtotal: number;
       equipment?: { nama: string } | null;
     }>).map((it) => ({
+=======
+    items: (booking.items || []).map((it: InvoiceBookingItem) => ({
+>>>>>>> d524333 (fixing error lint)
       id: it.id,
       qty: it.qty,
       harga_per_hari: it.harga_per_hari,
       subtotal: it.subtotal,
       equipment: it.equipment
         ? {
-            nama: it.equipment.nama,
-          }
+          nama: it.equipment.nama,
+        }
         : null,
     })),
     settings: {
