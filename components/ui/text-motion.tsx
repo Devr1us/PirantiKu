@@ -90,7 +90,7 @@ export function AnimatedText({
     once: effectiveOnce,
   });
 
-  const [isVisible, setIsVisible] = React.useState<boolean>(Boolean(shouldReduceMotion));
+  const [isVisible, setIsVisible] = React.useState<boolean>(false);
   const [direction, setDirection] = React.useState<ScrollDirection>("down");
   const [isInstant, setIsInstant] = React.useState<boolean>(false);
 
@@ -163,6 +163,8 @@ export function AnimatedText({
     resolvedMode = "word";
   }
 
+  const Tag = Component as React.ElementType;
+
   // --- MODE: CHAR (Split per character with mask) ---
   if (resolvedMode === "char") {
     const charStagger = stagger ?? (isHero ? 0.022 : STAGGER_CHAR);
@@ -198,8 +200,8 @@ export function AnimatedText({
     };
 
     return (
-      <Component
-        ref={containerRef as unknown as React.Ref<never>}
+      <Tag
+        ref={containerRef}
         className={className}
         aria-label={rawText}
       >
@@ -237,7 +239,7 @@ export function AnimatedText({
             </span>
           ))}
         </motion.span>
-      </Component>
+      </Tag>
     );
   }
 
@@ -275,8 +277,8 @@ export function AnimatedText({
     };
 
     return (
-      <Component
-        ref={containerRef as unknown as React.Ref<never>}
+      <Tag
+        ref={containerRef}
         className={className}
         aria-label={rawText}
       >
@@ -307,7 +309,7 @@ export function AnimatedText({
             </span>
           ))}
         </motion.span>
-      </Component>
+      </Tag>
     );
   }
 
@@ -345,8 +347,8 @@ export function AnimatedText({
     };
 
     return (
-      <Component
-        ref={containerRef as unknown as React.Ref<never>}
+      <Tag
+        ref={containerRef}
         className={className}
         aria-label={rawText}
       >
@@ -370,7 +372,7 @@ export function AnimatedText({
             </motion.span>
           ))}
         </motion.span>
-      </Component>
+      </Tag>
     );
   }
 
@@ -378,8 +380,8 @@ export function AnimatedText({
   const initialY = direction === "down" ? Y_OFFSET : -Y_OFFSET;
 
   return (
-    <Component
-      ref={containerRef as unknown as React.Ref<never>}
+    <Tag
+      ref={containerRef}
       className={className}
       aria-label={rawText}
     >
@@ -390,26 +392,26 @@ export function AnimatedText({
         animate={
           isVisible
             ? {
-                opacity: 1,
-                y: 0,
-                transitionEnd: { transform: "none", willChange: "auto" },
-                transition: {
-                  duration: isInstant ? 0 : DURATION_PARAGRAPH,
-                  delay: isInstant ? 0 : delay,
-                  ease: EASE,
-                },
-              }
+              opacity: 1,
+              y: 0,
+              transitionEnd: { transform: "none", willChange: "auto" },
+              transition: {
+                duration: isInstant ? 0 : DURATION_PARAGRAPH,
+                delay: isInstant ? 0 : delay,
+                ease: EASE,
+              },
+            }
             : {
-                opacity: 0,
-                y: initialY,
-                transition: { duration: 0 },
-              }
+              opacity: 0,
+              y: initialY,
+              transition: { duration: 0 },
+            }
         }
         style={{ willChange: isVisible ? "transform, opacity" : "auto" }}
       >
         {children || rawText}
       </motion.span>
-    </Component>
+    </Tag>
   );
 }
 
