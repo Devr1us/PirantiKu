@@ -6,7 +6,7 @@ import { SafeImage } from "@/components/ui/safe-image";
 import { motion, useReducedMotion } from "motion/react";
 import type { EquipmentWithDetails } from "@/types/database";
 import { formatRupiah } from "@/lib/format";
-import { getCategoryIcon } from "@/lib/constants";
+import { getCategoryIcon, getProductImage } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 
 interface EquipmentCardProps {
@@ -22,10 +22,15 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
   );
   const isAvailable = availableStock > 0;
 
-  const primaryImage =
+  const dbImage =
     equipment.images?.find((img) => img.is_utama)?.url ||
     equipment.images?.[0]?.url ||
     null;
+
+  const primaryImage =
+    getProductImage(equipment.slug, dbImage) ||
+    getProductImage(equipment.id, dbImage) ||
+    dbImage;
 
   return (
     <motion.div

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatSpecKey } from "@/lib/format";
-import { APP_NAME, getCategoryIcon } from "@/lib/constants";
+import { APP_NAME, getCategoryIcon, getProductImage } from "@/lib/constants";
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
@@ -102,10 +102,15 @@ export default async function EquipmentDetailPage({
     }
   }
 
-  const primaryImage =
+  const dbImage =
     equipment.images?.find((img) => img.is_utama)?.url ||
     equipment.images?.[0]?.url ||
     null;
+
+  const primaryImage =
+    getProductImage(equipment.slug, dbImage) ||
+    getProductImage(equipment.id, dbImage) ||
+    dbImage;
 
   const spesifikasiObj = equipment.spesifikasi as Record<
     string,

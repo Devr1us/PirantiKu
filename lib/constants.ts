@@ -201,3 +201,29 @@ export const DEFAULT_SETTINGS = {
   lokasi_lng: LOKASI_DEFAULT.lng,
   maps_embed_url: "",
 };
+
+// Pemetaan Foto Produk Lokal di public/images/alat/
+export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
+  cangkul: "/images/alat/cangkul.png",
+  "chafing-dish": "/images/alat/chafing-dish.png",
+  "kursi-camping-lipat": "/images/alat/kursi-camping-lipat.png",
+  "resistance-band-set": "/images/alat/resistance-band-set.png",
+  "7": "/images/alat/cangkul.png",
+  "26": "/images/alat/kursi-camping-lipat.png",
+  "33": "/images/alat/resistance-band-set.png",
+  "42": "/images/alat/chafing-dish.png",
+};
+
+export function getProductImage(
+  slugOrId?: string | number | null,
+  dbUrl?: string | null
+): string | null {
+  if (slugOrId !== undefined && slugOrId !== null) {
+    const key = String(slugOrId).toLowerCase().trim();
+    if (LOCAL_PRODUCT_IMAGES[key]) {
+      return LOCAL_PRODUCT_IMAGES[key];
+    }
+  }
+  return dbUrl || null;
+}
+
