@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { EquipmentCatalog } from "@/components/equipment/equipment-catalog";
 import { APP_NAME } from "@/lib/constants";
+import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const metadata: Metadata = {
@@ -31,7 +32,12 @@ export default async function AlatPage() {
     `)
     .eq("aktif", true);
 
-  const initialEquipment = (equipmentData || []) as EquipmentWithDetails[];
+  // 3. Ambil rekap unit yang sedang disewa dan perkaya data alat
+  const rentedMap = await fetchRentedUnitsSummary(supabase);
+  const initialEquipment = enrichEquipmentWithStock(
+    (equipmentData || []) as EquipmentWithDetails[],
+    rentedMap
+  );
 
   return (
     <React.Suspense

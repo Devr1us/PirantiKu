@@ -16,8 +16,6 @@ import {
   ZoomIn,
   RefreshCw,
   X,
-  Banknote,
-  Zap,
   Printer,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -78,8 +76,8 @@ export function PaymentFlow({
 }: PaymentFlowProps) {
   const supabase = createClient();
 
-  // Tab: transfer | qris | cod | instant
-  const [activeTab, setActiveTab] = React.useState<"transfer" | "qris" | "cod" | "instant">("transfer");
+  // Tab: transfer | qris
+  const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">("transfer");
   const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
   const [payments, setPayments] = React.useState<Payment[]>(initialPayments);
   const [currentBookingStatus, setCurrentBookingStatus] = React.useState<BookingStatus>(booking.status);
@@ -312,102 +310,6 @@ export function PaymentFlow({
     }
   };
 
-  // AKSI 1: Bayar Tunai di Gerai (COD on Pickup)
-  const handleSelectCashOnPickup = async () => {
-    if (!confirm("Pilih bayar DP secara tunai saat mengambil alat di toko PirantiKu?")) {
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const { data: newPayment, error: insertErr } = await supabase
-        .from("payments")
-        .insert({
-          booking_id: booking.id,
-          jenis: "dp",
-          jumlah: booking.dp_jumlah,
-          metode: "Tunai di Gerai (COD)",
-          status: "menunggu_verifikasi",
-          dibayar_pada: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (insertErr) throw insertErr;
-
-      if (newPayment) {
-        setPayments((prev) => [newPayment as Payment, ...prev]);
-      }
-
-      toast.success("Metode bayar tunai di toko berhasil dipilih. Silakan siapkan uang pas saat serah terima.");
-      onPaymentSuccess?.();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menyimpan pilihan pembayaran.";
-      toast.error(msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // AKSI 2: Simulasi Bayar Cepat & Auto-Verifikasi (Instant Approval untuk Demo / Uji Coba)
-  const handleInstantVerifyPayment = async () => {
-    setIsSubmitting(true);
-    try {
-      // 1. Catat pembayaran terverifikasi
-      const { data: newPayment, error: pErr } = await supabase
-        .from("payments")
-        .insert({
-          booking_id: booking.id,
-          jenis: "dp",
-          jumlah: booking.dp_jumlah,
-          metode: "Simulasi Bayar Cepat (Auto-Verified)",
-          status: "terverifikasi",
-          dibayar_pada: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (pErr) throw pErr;
-
-      // 2. Update status booking ke dp_dibayar
-      const { error: bErr } = await supabase
-        .from("bookings")
-        .update({
-          status: "dp_dibayar",
-          pesan_admin: "Pembayaran DP telah diverifikasi. Jadwal unit aman dan siap diambil.",
-        })
-        .eq("id", booking.id);
-
-      if (bErr) throw bErr;
-
-      // 3. Catat history (jika tabel mendukung)
-      try {
-        await supabase.from("booking_status_history").insert({
-          booking_id: booking.id,
-          status_lama: currentBookingStatus,
-          status_baru: "dp_dibayar",
-        });
-      } catch {
-        // optional
-      }
-
-      if (newPayment) {
-        setPayments((prev) => [newPayment as Payment, ...prev]);
-      }
-      setCurrentBookingStatus("dp_dibayar");
-      setIsEditingProof(false);
-
-      toast.success("Selamat! Pembayaran DP berhasil diverifikasi otomatis!");
-      onPaymentSuccess?.();
-    } catch (err: unknown) {
-      console.error("Gagal auto-verifikasi:", err);
-      const msg = err instanceof Error ? err.message : "Gagal memproses verifikasi instan.";
-      toast.error(msg);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const waPaymentUrl = createWhatsAppLink(
     whatsappAdmin,
     generateWhatsAppPaymentMessage({
@@ -433,7 +335,7 @@ export function PaymentFlow({
                 Selesaikan Pembayaran Uang Muka (DP 30%)
               </span>
               <span className="text-[11px] text-[#78350F]/90">
-                Pilih metode transfer, QRIS, atau bayar tunai di toko untuk mengamankan ketersediaan stok unit.
+                Transfer uang muka (DP 30%) via Bank atau QRIS & E-Wallet untuk mengunci ketersediaan stok unit alat Anda.
               </span>
             </div>
           </div>
@@ -538,24 +440,6 @@ export function PaymentFlow({
               <p className="leading-relaxed text-[11px]">
                 Bukti transfer Anda sudah masuk ke sistem pengelola PirantiKu. Petugas kami sedang mencocokkan mutasi bank. Anda tidak perlu membayar ulang.
               </p>
-              
-              {/* Tombol Bypass Simulasi untuk Pengujian */}
-              <div className="pt-2 border-t border-[#FDE68A] flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[10px] text-[#78350F]/80">
-                  Sedang menguji coba alur aplikasi?
-                </span>
-                <Button
-                  type="button"
-                  variant="warm"
-                  size="sm"
-                  onClick={handleInstantVerifyPayment}
-                  disabled={isSubmitting}
-                  className="text-xs font-bold gap-1.5 h-8 px-3"
-                >
-                  <Zap className="h-3 w-3 text-yellow-300" />
-                  <span>Verifikasi Sekarang (Simulasi Langsung)</span>
-                </Button>
-              </div>
             </div>
           )}
 
@@ -693,7 +577,7 @@ export function PaymentFlow({
                 Pilihan Metode Pembayaran Uang Muka (DP)
               </h3>
               <p className="text-xs text-[#5F7A84] mt-0.5">
-                Tersedia 4 opsi pembayaran: Transfer Bank, QRIS, Bayar Tunai, atau Simulasi Instan
+                Tersedia 2 metode transfer online resmi: Transfer Bank dan QRIS & E-Wallet
               </p>
             </div>
             {isEditingProof && (
@@ -711,10 +595,10 @@ export function PaymentFlow({
 
           <Tabs
             value={activeTab}
-            onValueChange={(val) => setActiveTab(val as "transfer" | "qris" | "cod" | "instant")}
+            onValueChange={(val) => setActiveTab(val as "transfer" | "qris")}
             className="w-full"
           >
-            <TabsList className="grid grid-cols-2 sm:grid-cols-4 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
+            <TabsList className="grid grid-cols-2 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
               <TabsTrigger
                 value="transfer"
                 className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
@@ -728,20 +612,6 @@ export function PaymentFlow({
               >
                 <QrCode className="h-3.5 w-3.5" />
                 <span>QRIS & E-Wallet</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="cod"
-                className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
-              >
-                <Banknote className="h-3.5 w-3.5" />
-                <span>Tunai di Gerai</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="instant"
-                className="rounded-xl text-xs font-bold data-[state=active]:bg-[#A0630F] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all text-[#A0630F]"
-              >
-                <Zap className="h-3.5 w-3.5" />
-                <span>Bayar Cepat</span>
               </TabsTrigger>
             </TabsList>
 
@@ -897,95 +767,10 @@ export function PaymentFlow({
                 </div>
               </div>
             </TabsContent>
-
-            {/* TAB 3: Bayar Tunai di Gerai (COD on Pickup) */}
-            <TabsContent value="cod" className="space-y-4 pt-2">
-              <div className="p-6 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center shrink-0">
-                    <Banknote className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#234E5C]">
-                      Bayar Tunai Langsung Saat Pengambilan Alat (COD)
-                    </h4>
-                    <p className="text-xs text-[#5F7A84]">
-                      Anda dapat membayar uang muka DP dan pelunasan langsung di toko kami saat serah terima unit fisik.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white border border-[#E8E8E1] text-xs space-y-2 text-[#5F7A84]">
-                  <span className="font-bold text-[#234E5C] block">
-                    Syarat & Ketentuan Bayar di Tempat:
-                  </span>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Wajib membawa kartu identitas asli (KTP / SIM / KTM) yang masih berlaku.</li>
-                    <li>Menyiapkan uang pas sejumlah <strong>{formatRupiah(booking.dp_jumlah)}</strong> untuk DP.</li>
-                    <li>Unit alat akan disiapkan di gerai kami sesuai jadwal sewa.</li>
-                  </ul>
-                </div>
-
-                <div className="pt-2">
-                  <Button
-                    type="button"
-                    variant="warm"
-                    size="sm"
-                    onClick={handleSelectCashOnPickup}
-                    disabled={isSubmitting}
-                    className="font-bold text-xs gap-2"
-                  >
-                    <Banknote className="h-4 w-4" />
-                    <span>Pilih Bayar Tunai di Toko (COD)</span>
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* TAB 4: Simulasi Bayar Cepat (Auto-Verifikasi Langsung) */}
-            <TabsContent value="instant" className="space-y-4 pt-2">
-              <div className="p-6 rounded-xl border border-[#FDE68A] bg-[#FEF3C7]/40 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-[#A0630F] text-white flex items-center justify-center shrink-0">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#78350F]">
-                      Simulasi Pembayaran Cepat (Auto-Verifikasi)
-                    </h4>
-                    <p className="text-xs text-[#78350F]/80">
-                      Fitur instan untuk menguji coba alur aplikasi. Sistem akan langsung memverifikasi DP dan mengunci status booking ke &quot;DP Terverifikasi&quot; tanpa perlu menunggu admin manual.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-xl bg-white border border-[#FDE68A] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div>
-                    <span className="text-[#5F7A84] block">Nominal DP Terverifikasi:</span>
-                    <span className="text-lg font-bold text-[#A0630F]">
-                      {formatRupiah(booking.dp_jumlah)}
-                    </span>
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="warm"
-                    size="sm"
-                    onClick={handleInstantVerifyPayment}
-                    disabled={isSubmitting}
-                    className="font-bold text-xs gap-2 shadow-sm"
-                  >
-                    <Zap className="h-3.5 w-3.5 text-yellow-300" />
-                    <span>Konfirmasi Pembayaran Instan Sekarang</span>
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
           </Tabs>
 
           {/* FORMULIR UNGGAH BUKTI TRANSFER (Untuk Tab Transfer & QRIS) */}
-          {(activeTab === "transfer" || activeTab === "qris") && (
-            <form onSubmit={handleSubmitPayment} className="space-y-5 border-t border-[#E8E8E1] pt-6">
+          <form onSubmit={handleSubmitPayment} className="space-y-5 border-t border-[#E8E8E1] pt-6">
               <div className="space-y-1">
                 <h4 className="text-sm font-bold text-[#234E5C]">
                   Unggah Foto Bukti Transfer
@@ -1114,9 +899,8 @@ export function PaymentFlow({
                 </Button>
               </div>
             </form>
-          )}
-        </div>
-      )}
+          </div>
+        )}
 
       {/* 5. Navigasi Tambahan */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-2">

@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "motion/react";
 import type { EquipmentWithDetails } from "@/types/database";
 import { formatRupiah } from "@/lib/format";
 import { getCategoryIcon, getProductImage } from "@/lib/constants";
+import { calculateAvailableStock } from "@/lib/inventory";
 import { Button } from "@/components/ui/button";
 
 interface EquipmentCardProps {
@@ -16,10 +17,7 @@ interface EquipmentCardProps {
 
 export function EquipmentCard({ equipment, priority = false }: EquipmentCardProps) {
   const shouldReduceMotion = useReducedMotion();
-  const availableStock = Math.max(
-    0,
-    (equipment.stok || 0) - (equipment.stok_rusak || 0)
-  );
+  const availableStock = calculateAvailableStock(equipment);
   const isAvailable = availableStock > 0;
 
   const dbImage =

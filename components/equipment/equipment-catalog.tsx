@@ -26,6 +26,7 @@ import { useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/ui/motion";
 import { getGridColumnDelay } from "@/lib/motion";
 import { H1, Lead } from "@/components/ui/typography";
+import { calculateAvailableStock } from "@/lib/inventory";
 
 interface FilterSidebarProps {
   categories: Category[];
@@ -306,7 +307,7 @@ export function EquipmentCatalog({
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
         }
-        return b.stok - a.stok;
+        return calculateAvailableStock(b) - calculateAvailableStock(a);
       });
   }, [
     initialEquipment,

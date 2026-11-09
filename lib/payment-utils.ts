@@ -140,6 +140,7 @@ export function createWhatsAppLink(phone: string, text: string): string {
 
 /**
  * Generator pesan WhatsApp otomatis untuk notifikasi booking baru satu-klik
+ * Format ringkas, bersih, rapi, dan bebas karakter/emoji rusak.
  */
 export function generateWhatsAppBookingMessage({
   bookingCode,
@@ -148,9 +149,7 @@ export function generateWhatsAppBookingMessage({
   itemsList,
   startDate,
   endDate,
-  totalSewa,
   dpAmount,
-  totalDeposit,
   catatan,
 }: {
   bookingCode: string;
@@ -159,28 +158,24 @@ export function generateWhatsAppBookingMessage({
   itemsList?: string;
   startDate: string;
   endDate: string;
-  totalSewa: number;
+  totalSewa?: number;
   dpAmount: number;
-  totalDeposit: number;
+  totalDeposit?: number;
   catatan?: string | null;
 }): string {
   const phoneInfo = customerPhone ? ` (${customerPhone})` : "";
-  const itemsInfo = itemsList ? `\n\n📦 *Daftar Alat:*\n${itemsList}` : "";
-  const notesInfo = catatan ? `\n\n📝 *Catatan:* ${catatan}` : "";
+  const itemsInfo = itemsList ? `\n- Alat: ${itemsList}` : "";
+  const notesInfo = catatan ? `\n- Catatan: ${catatan}` : "";
 
   return `Halo Admin PirantiKu,
-Saya baru saja membuat pesanan rental alat di website PirantiKu:
+Saya ingin konfirmasi pesanan sewa:
 
-📋 *Kode Booking:* *${bookingCode}*
-👤 *Nama Penyewa:* *${customerName}*${phoneInfo}
-📅 *Jadwal Sewa:* ${startDate} s/d ${endDate}${itemsInfo}
+- Kode Booking: *${bookingCode}*
+- Penyewa: *${customerName}*${phoneInfo}
+- Jadwal: ${startDate} s/d ${endDate}${itemsInfo}
+- Tagihan DP: *${formatRupiah(dpAmount)}*${notesInfo}
 
-💰 *Rincian Biaya:*
-- Total Biaya Sewa: *${formatRupiah(totalSewa)}*
-- Uang Muka (DP 30%): *${formatRupiah(dpAmount)}*
-- Deposit Jaminan: *${formatRupiah(totalDeposit)}* (dibayar saat serah terima)${notesInfo}
-
-Mohon konfirmasi ketersediaan unit dan panduan pembayaran DP. Terima kasih!`;
+Mohon dicek ya, terima kasih!`;
 }
 
 /**
@@ -191,9 +186,6 @@ export function generateWhatsAppPaymentMessage({
   customerName,
   dpAmount,
   method,
-  senderName,
-  startDate,
-  endDate,
 }: {
   bookingCode: string;
   customerName: string;
@@ -203,16 +195,6 @@ export function generateWhatsAppPaymentMessage({
   startDate?: string;
   endDate?: string;
 }): string {
-  const dateInfo = startDate && endDate ? `\n- Periode Sewa: ${startDate} s/d ${endDate}` : "";
-  const senderInfo = senderName ? `\n- Pengirim: ${senderName}` : "";
-
   return `Halo Admin PirantiKu,
-Saya ingin konfirmasi pembayaran Uang Muka (DP) untuk booking alat:
-
-- Kode Booking: *${bookingCode}*
-- Nama Pemesan: *${customerName}*
-- Nominal DP: *${formatRupiah(dpAmount)}*
-- Metode Pembayaran: *${method}*${senderInfo}${dateInfo}
-
-Bukti transfer sudah saya unggah melalui website PirantiKu. Mohon bantuannya untuk diperiksa dan diverifikasi. Terima kasih!`;
+Saya sudah transfer DP untuk booking *${bookingCode}* a/n *${customerName}* sebesar *${formatRupiah(dpAmount)}* via ${method}. Bukti transfer sudah saya unggah di website. Mohon dicek ya, terima kasih!`;
 }

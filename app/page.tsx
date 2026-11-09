@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeView } from "@/components/home/home-view";
 import { DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
+import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const revalidate = 60; // Revalidate data setiap 60 detik
@@ -33,7 +34,10 @@ export default async function HomePage() {
       categories = catData as Category[];
     }
 
-    // 2. Ambil 6 Alat Terbaru (aktif = true, created_at desc)
+    // 2. Ambil ringkasan unit disewa
+    const rentedMap = await fetchRentedUnitsSummary(supabase);
+
+    // 3. Ambil 6 Alat Terbaru (aktif = true, created_at desc)
     const { data: eqData, error: eqError } = await supabase
       .from("equipment")
       .select(`
@@ -46,10 +50,13 @@ export default async function HomePage() {
       .limit(6);
 
     if (eqData && !eqError) {
-      newestEquipment = eqData as EquipmentWithDetails[];
+      newestEquipment = enrichEquipmentWithStock(
+        eqData as EquipmentWithDetails[],
+        rentedMap
+      );
     }
 
-    // 3. Ambil data inventaris aktif untuk statistik nyata & hitungan per kategori
+    // 4. Ambil data inventaris aktif untuk statistik nyata & hitungan per kategori
     const { data: allActiveEq } = await supabase
       .from("equipment")
       .select("id, category_id, stok, stok_rusak")
@@ -57,10 +64,13 @@ export default async function HomePage() {
 
     if (allActiveEq) {
       totalActiveTypes = allActiveEq.length;
-      totalAvailableUnits = allActiveEq.reduce((acc, item) => {
+      const totalRented = Object.values(rentedMap).reduce((a, b) => a + b, 0);
+      const physicalCleanTotal = allActiveEq.reduce((acc, item) => {
         const available = Math.max(0, (item.stok || 0) - (item.stok_rusak || 0));
         return acc + available;
       }, 0);
+
+      totalAvailableUnits = Math.max(0, physicalCleanTotal - totalRented);
 
       // Hitung jumlah alat aktif per category_id
       categoryCounts = allActiveEq.reduce((acc, item) => {

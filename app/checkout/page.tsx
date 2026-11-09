@@ -48,7 +48,8 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
-  const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
+  const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("" );
+  const [savedPricing, setSavedPricing] = React.useState<{ totalSewa: number; dpJumlah: number; totalDeposit: number } | null>(null);
 
   // Fallback tanggal stabil dengan lazy initial state
   const [defaultDates] = React.useState(() => {
@@ -148,6 +149,7 @@ export default function CheckoutPage() {
       }
 
       // Ambil data booking lengkap yang dibuat
+      let createdBookingRecord: Booking | null = null;
       if (bookingId) {
         const { data: bData } = await supabase
           .from("bookings")
@@ -156,6 +158,7 @@ export default function CheckoutPage() {
           .single();
 
         if (bData) {
+          createdBookingRecord = bData as Booking;
           setCreatedBooking(bData as Booking);
           setCreatedBookingCode(bData.kode_booking);
         } else {
@@ -163,11 +166,16 @@ export default function CheckoutPage() {
         }
       }
 
-      // Simpan ringkasan barang untuk notifikasi WhatsApp satu-klik
+      // Simpan ringkasan barang dan nominal DP sebelum keranjang dikosongkan
       const summaryText = items
-        .map((i) => `• ${i.nama} (${i.qty} unit) - ${formatRupiah(i.harga_per_hari)}/hari`)
-        .join("\n");
+        .map((i) => `${i.nama} (${i.qty} unit)`)
+        .join(", ");
       setBookedItemsSummary(summaryText);
+      setSavedPricing({
+        totalSewa: createdBookingRecord?.total_harga ?? pricing.totalSewa,
+        dpJumlah: createdBookingRecord?.dp_jumlah ?? pricing.dpJumlah,
+        totalDeposit: createdBookingRecord?.deposit ?? pricing.totalDeposit,
+      });
 
       clearCart();
       setCurrentStep(3);
@@ -193,13 +201,17 @@ export default function CheckoutPage() {
 
   // Tampilan Sukses Checkout dengan Alur Pembayaran Lengkap
   if (currentStep === 3 && createdBookingCode) {
+    const finalTotalSewa = createdBooking?.total_harga ?? savedPricing?.totalSewa ?? pricing.totalSewa;
+    const finalDpJumlah = createdBooking?.dp_jumlah ?? savedPricing?.dpJumlah ?? pricing.dpJumlah;
+    const finalDeposit = createdBooking?.deposit ?? savedPricing?.totalDeposit ?? pricing.totalDeposit;
+
     const bookingForFlow = createdBooking || {
       id: createdBookingCode,
       kode_booking: createdBookingCode,
       status: "menunggu_dp" as const,
-      total_harga: pricing.totalSewa,
-      dp_jumlah: pricing.dpJumlah,
-      deposit: pricing.totalDeposit,
+      total_harga: finalTotalSewa,
+      dp_jumlah: finalDpJumlah,
+      deposit: finalDeposit,
       tanggal_mulai: startDate,
       tanggal_selesai: endDate,
       created_at: new Date().toISOString(),
@@ -214,9 +226,9 @@ export default function CheckoutPage() {
       itemsList: bookedItemsSummary,
       startDate: formatDateIndo(startDate, "d MMMM yyyy"),
       endDate: formatDateIndo(endDate, "d MMMM yyyy"),
-      totalSewa: pricing.totalSewa,
-      dpAmount: pricing.dpJumlah,
-      totalDeposit: pricing.totalDeposit,
+      totalSewa: finalTotalSewa,
+      dpAmount: finalDpJumlah,
+      totalDeposit: finalDeposit,
       catatan: catatan,
     });
     const waBookingUrl = createWhatsAppLink(whatsappAdmin, waOrderMessage);

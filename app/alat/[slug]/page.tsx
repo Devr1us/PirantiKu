@@ -11,6 +11,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { formatSpecKey } from "@/lib/format";
 import { APP_NAME, getCategoryIcon, getProductImage } from "@/lib/constants";
+import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
@@ -67,7 +68,10 @@ export default async function EquipmentDetailPage({
     notFound();
   }
 
-  const equipment = equipmentData as EquipmentWithDetails;
+  // 2. Ambil ringkasan unit disewa
+  const rentedMap = await fetchRentedUnitsSummary(supabase);
+  const enrichedList = enrichEquipmentWithStock([equipmentData as EquipmentWithDetails], rentedMap);
+  const equipment = enrichedList[0];
 
   // 2. Ambil nilai dp_persen dari settings
   let dpPersen = 30;
@@ -98,7 +102,10 @@ export default async function EquipmentDetailPage({
       .limit(4);
 
     if (relatedData) {
-      relatedEquipment = relatedData as EquipmentWithDetails[];
+      relatedEquipment = enrichEquipmentWithStock(
+        relatedData as EquipmentWithDetails[],
+        rentedMap
+      );
     }
   }
 

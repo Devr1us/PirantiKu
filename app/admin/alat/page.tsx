@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { H1, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { AdminEquipmentManager } from "@/components/admin/equipment/admin-equipment-manager";
+import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { EquipmentWithDetails, Category } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -29,8 +30,13 @@ export default async function AdminEquipmentPage() {
       `)
       .order("created_at", { ascending: false });
 
+    const rentedMap = await fetchRentedUnitsSummary(supabase);
+
     if (!eqErr && eqData) {
-      equipment = eqData as EquipmentWithDetails[];
+      equipment = enrichEquipmentWithStock(
+        eqData as EquipmentWithDetails[],
+        rentedMap
+      );
     }
 
     // 2. Ambil daftar kategori untuk dropdown form

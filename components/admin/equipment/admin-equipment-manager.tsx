@@ -411,16 +411,18 @@ export function AdminEquipmentManager({
 
   // Statistics
   const totalJenis = equipmentList.length;
-  const totalUnitBersih = equipmentList.reduce(
+  const totalUnitFisik = equipmentList.reduce(
     (sum, e) => sum + Math.max(0, (e.stok || 0) - (e.stok_rusak || 0)),
     0
   );
+  const totalUnitDisewa = equipmentList.reduce((sum, e) => sum + (e.stok_disewa || 0), 0);
+  const totalUnitSiapSewa = Math.max(0, totalUnitFisik - totalUnitDisewa);
   const totalUnitRusak = equipmentList.reduce((sum, e) => sum + (e.stok_rusak || 0), 0);
 
   return (
     <div className="space-y-6">
       {/* 1. Bar Statistik Singkat */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
@@ -438,10 +440,10 @@ export function AdminEquipmentManager({
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Unit Siap Disewa
+              Unit Siap Sewa
             </span>
             <span className="text-2xl font-extrabold text-[#2E5E4E]">
-              {totalUnitBersih} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
+              {totalUnitSiapSewa} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
             </span>
           </div>
           <div className="h-10 w-10 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center">
@@ -452,7 +454,21 @@ export function AdminEquipmentManager({
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Unit Sedang Servis / Rusak
+              Sedang Disewa
+            </span>
+            <span className="text-2xl font-extrabold text-[#2B6CB0]">
+              {totalUnitDisewa} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
+            </span>
+          </div>
+          <div className="h-10 w-10 rounded-full bg-[#EBF8FF] text-[#2B6CB0] flex items-center justify-center">
+            <Package className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
+              Unit Rusak / Servis
             </span>
             <span className="text-2xl font-extrabold text-[#991B1B]">
               {totalUnitRusak} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
@@ -535,6 +551,8 @@ export function AdminEquipmentManager({
                 <th className="py-3 px-4 text-right">Tarif / Hari</th>
                 <th className="py-3 px-4 text-right">Deposit</th>
                 <th className="py-3 px-4 text-center">Stok Bersih</th>
+                <th className="py-3 px-4 text-center">Disewa</th>
+                <th className="py-3 px-4 text-center">Siap Sewa</th>
                 <th className="py-3 px-4 text-center">Rusak</th>
                 <th className="py-3 px-4 text-center">Status</th>
                 <th className="py-3 px-4 text-center w-28">Aksi</th>
@@ -597,15 +615,40 @@ export function AdminEquipmentManager({
                       </td>
 
                       {/* Stok Bersih */}
+                      <td className="py-3 px-4 text-center font-semibold text-[#5F7A84]">
+                        {bersih} unit
+                      </td>
+
+                      {/* Disewa */}
                       <td className="py-3 px-4 text-center">
-                        <span
-                          className={`inline-block px-2 py-0.5 rounded-full font-bold text-[11px] ${bersih > 0
-                            ? "bg-[#E2F0D9] text-[#2E5E4E]"
-                            : "bg-[#FEE2E2] text-[#991B1B]"
-                            }`}
-                        >
-                          {bersih} unit
-                        </span>
+                        {(item.stok_disewa || 0) > 0 ? (
+                          <span className="inline-block px-2 py-0.5 rounded-full font-bold text-[11px] bg-[#EBF8FF] text-[#2B6CB0]">
+                            {item.stok_disewa} unit
+                          </span>
+                        ) : (
+                          <span className="text-[#5F7A84]">0</span>
+                        )}
+                      </td>
+
+                      {/* Siap Sewa */}
+                      <td className="py-3 px-4 text-center">
+                        {(() => {
+                          const siap =
+                            item.stok_tersedia !== undefined
+                              ? item.stok_tersedia
+                              : Math.max(0, bersih - (item.stok_disewa || 0));
+                          return (
+                            <span
+                              className={`inline-block px-2 py-0.5 rounded-full font-bold text-[11px] ${
+                                siap > 0
+                                  ? "bg-[#E2F0D9] text-[#2E5E4E]"
+                                  : "bg-[#FEE2E2] text-[#991B1B]"
+                              }`}
+                            >
+                              {siap} unit
+                            </span>
+                          );
+                        })()}
                       </td>
 
                       {/* Stok Rusak */}

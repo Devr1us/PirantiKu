@@ -13,7 +13,6 @@ import {
   CreditCard,
   CheckCircle2,
   Printer,
-  Zap,
   AlertTriangle,
   MessageCircle,
 } from "lucide-react";
@@ -146,37 +145,6 @@ export default function BookingSayaPage() {
       toast.error(msg);
     } finally {
       setIsCancelling(null);
-    }
-  };
-
-  const handleQuickVerify = async (bookingId: string, bookingCode: string, dpAmount: number) => {
-    try {
-      const supabase = createClient();
-      await supabase.from("payments").insert({
-        booking_id: bookingId,
-        jenis: "dp",
-        jumlah: dpAmount,
-        metode: "Simulasi Bayar Cepat (Auto-Verified)",
-        status: "terverifikasi",
-        dibayar_pada: new Date().toISOString(),
-      });
-
-      await supabase
-        .from("bookings")
-        .update({
-          status: "dp_dibayar",
-          pesan_admin: "Pembayaran DP telah diverifikasi otomatis.",
-        })
-        .eq("id", bookingId);
-
-      setBookings((prev) =>
-        prev.map((b) =>
-          b.id === bookingId ? { ...b, status: "dp_dibayar" as const } : b
-        )
-      );
-      toast.success(`Booking #${bookingCode} berhasil diverifikasi menjadi DP Terverifikasi!`);
-    } catch {
-      toast.error("Gagal melakukan verifikasi instan.");
     }
   };
 
@@ -371,20 +339,6 @@ export default function BookingSayaPage() {
                             className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
                           >
                             {isCancelling === booking.id ? "Membatalkan..." : "Batalkan"}
-                          </Button>
-                        )}
-
-                        {hasPendingProof && (
-                          <Button
-                            type="button"
-                            variant="warm"
-                            size="sm"
-                            onClick={() => handleQuickVerify(booking.id, booking.kode_booking, booking.dp_jumlah)}
-                            className="text-xs font-bold gap-1 text-white shadow-xs"
-                            title="Verifikasi langsung untuk uji coba tanpa menunggu admin"
-                          >
-                            <Zap className="h-3.5 w-3.5 text-yellow-300" />
-                            <span>Verifikasi Cepat</span>
                           </Button>
                         )}
 

@@ -450,6 +450,18 @@ export interface Database {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      get_all_equipment_stock: {
+        Args: {
+          p_tanggal?: string;
+        };
+        Returns: {
+          equipment_id: number;
+          stok_total: number;
+          stok_rusak: number;
+          stok_disewa: number;
+          sisa_stok: number;
+        }[];
+      };
     };
   };
 }
@@ -471,4 +483,6 @@ export type AdminLog = Database["public"]["Tables"]["admin_logs"]["Row"];
 export type EquipmentWithDetails = EquipmentItem & {
   category?: Category | null;
   images?: EquipmentImage[];
+  stok_disewa?: number;
+  stok_tersedia?: number;
 };

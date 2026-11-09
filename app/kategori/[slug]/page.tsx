@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { EquipmentCatalog } from "@/components/equipment/equipment-catalog";
 import { APP_NAME, getCategoryDescription } from "@/lib/constants";
+import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 interface CategoryPageProps {
@@ -67,7 +68,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     .eq("category_id", currentCategory.id)
     .eq("aktif", true);
 
-  const initialEquipment = (equipmentData || []) as EquipmentWithDetails[];
+  // 4. Rekap unit sedang disewa untuk kategori ini
+  const rentedMap = await fetchRentedUnitsSummary(supabase);
+  const initialEquipment = enrichEquipmentWithStock(
+    (equipmentData || []) as EquipmentWithDetails[],
+    rentedMap
+  );
   const desc = getCategoryDescription(currentCategory.slug);
 
   return (

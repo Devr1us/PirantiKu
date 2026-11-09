@@ -17,6 +17,7 @@ import { format, addDays } from "date-fns";
 import type { EquipmentWithDetails } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { calculateRentalPrice } from "@/lib/pricing";
+import { calculateAvailableStock } from "@/lib/inventory";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { getProductImage } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
@@ -45,7 +46,9 @@ export function RentalBookingWidget({
 
   const [disabledDates, setDisabledDates] = React.useState<string[]>([]);
   const [sisaStok, setSisaStok] = React.useState<number>(
-    Math.max(0, (equipment.stok || 0) - (equipment.stok_rusak || 0))
+    equipment.stok_tersedia !== undefined
+      ? equipment.stok_tersedia
+      : calculateAvailableStock(equipment)
   );
   const [isLoadingStock, setIsLoadingStock] = React.useState<boolean>(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
@@ -96,6 +99,35 @@ export function RentalBookingWidget({
             if (qty > data) {
               setQty(Math.max(1, data));
             }
+          } else {
+            // Fallback jika RPC error (misal overload bentrok PGRST203 di database)
+            const cleanStock = Math.max(0, (equipment.stok || 0) - (equipment.stok_rusak || 0));
+            const { data: bookedItems } = await supabase
+              .from("booking_items")
+              .select("qty, booking:bookings!inner(status, tanggal_mulai, tanggal_selesai)")
+              .eq("equipment_id", equipment.id)
+              .in("booking.status", ["diambil", "terlambat", "dp_dibayar", "lunas"]);
+
+            if (bookedItems && Array.isArray(bookedItems)) {
+              let overlapQty = 0;
+              for (const item of bookedItems) {
+                const rawBooking = item.booking as unknown;
+                const b = Array.isArray(rawBooking)
+                  ? rawBooking[0]
+                  : (rawBooking as { status: string; tanggal_mulai: string; tanggal_selesai: string } | null);
+
+                if (!b) continue;
+                // Cek overlap: NOT (selesai < startDate OR mulai > endDate)
+                if (!(b.tanggal_selesai < startDate || b.tanggal_mulai > endDate)) {
+                  overlapQty += item.qty || 1;
+                }
+              }
+              const calculated = Math.max(0, cleanStock - overlapQty);
+              setSisaStok(calculated);
+              if (qty > calculated) {
+                setQty(Math.max(1, calculated));
+              }
+            }
           }
         }
       } catch (err) {
@@ -112,7 +144,7 @@ export function RentalBookingWidget({
     return () => {
       isCancelled = true;
     };
-  }, [equipment.id, startDate, endDate, qty]);
+  }, [equipment, startDate, endDate, qty]);
 
   // Hitung ringkasan harga
   const pricing = React.useMemo(() => {

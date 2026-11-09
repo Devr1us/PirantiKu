@@ -3,6 +3,7 @@ import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { H1, Lead } from "@/components/ui/typography";
 import { CountUp, Reveal } from "@/components/ui/motion";
+import { fetchRentedUnitsSummary } from "@/lib/inventory";
 import type { Booking } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   let totalEquipment = 0;
   let totalAvailableUnits = 0;
+  let totalRentedUnits = 0;
   let totalBookings = 0;
   let totalCategories = 0;
   let recentBookings: Booking[] = [];
@@ -17,7 +19,11 @@ export default async function AdminDashboardPage() {
   try {
     const supabase = await createClient();
 
-    // 1. Hitung total alat & unit
+    // 1. Ambil rekap unit yang sedang disewa
+    const rentedMap = await fetchRentedUnitsSummary(supabase);
+    totalRentedUnits = Object.values(rentedMap).reduce((a, b) => a + b, 0);
+
+    // 2. Hitung total jenis alat & unit fisik bersih
     const { data: eqData } = await supabase
       .from("equipment")
       .select("stok, stok_rusak")
@@ -25,10 +31,11 @@ export default async function AdminDashboardPage() {
 
     if (eqData) {
       totalEquipment = eqData.length;
-      totalAvailableUnits = eqData.reduce(
+      const physicalCleanTotal = eqData.reduce(
         (sum, item) => sum + Math.max(0, (item.stok || 0) - (item.stok_rusak || 0)),
         0
       );
+      totalAvailableUnits = Math.max(0, physicalCleanTotal - totalRentedUnits);
     }
 
     // 2. Hitung total kategori
@@ -91,7 +98,11 @@ export default async function AdminDashboardPage() {
             <div className="text-3xl font-extrabold text-[#234E5C]">
               <CountUp value={totalAvailableUnits} />
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Total stok fisik bersih</p>
+            <p className="text-[11px] text-[#5F7A84]">
+              {totalRentedUnits > 0
+                ? `${totalRentedUnits} unit sedang disewa`
+                : "Semua unit siap di gudang"}
+            </p>
           </div>
         </Reveal>
 
