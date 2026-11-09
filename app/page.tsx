@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeView } from "@/components/home/home-view";
-import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
+import { DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const revalidate = 60; // Revalidate data setiap 60 detik
@@ -78,7 +78,7 @@ export default async function HomePage() {
 
     if (settingsData) {
       settingsData.forEach((s) => {
-        if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = s.value;
+        if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = normalizeAdminPhone(s.value);
         if (s.key === "dp_persen" && s.value) {
           const parsed = parseInt(s.value, 10);
           if (!isNaN(parsed)) dpPersen = parsed;

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatRupiah } from "@/lib/format";
-import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
+import { DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
 import { compressImage } from "@/lib/payment-utils";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ export function AdminSettingsManager({
     initialSettings.denda_per_hari || String(DEFAULT_SETTINGS.denda_per_hari)
   );
   const [whatsappAdmin, setWhatsappAdmin] = React.useState(
-    initialSettings.whatsapp_admin || DEFAULT_SETTINGS.whatsapp_admin
+    normalizeAdminPhone(initialSettings.whatsapp_admin) || DEFAULT_SETTINGS.whatsapp_admin
   );
   const [jamOperasional, setJamOperasional] = React.useState(
     initialSettings.jam_operasional || DEFAULT_SETTINGS.jam_operasional
@@ -584,7 +584,7 @@ export function AdminSettingsManager({
                     <Input
                       value={whatsappAdmin}
                       onChange={(e) => setWhatsappAdmin(e.target.value.replace(/\D/g, ""))}
-                      placeholder="6281234567890"
+                      placeholder="6285701516287"
                       className="h-10 text-xs font-mono font-bold pl-7"
                     />
                   </div>
@@ -599,7 +599,7 @@ export function AdminSettingsManager({
                   </a>
                 </div>
                 <span className="text-[11px] text-[#5F7A84]">
-                  Gunakan format internasional tanpa tanda plus atau spasi, contoh: <strong>6281234567890</strong>.
+                  Gunakan format internasional tanpa tanda plus atau spasi, contoh: <strong>6285701516287</strong>.
                 </span>
               </div>
             </div>
@@ -652,7 +652,7 @@ export function AdminSettingsManager({
                       WhatsApp Resmi
                     </span>
                     <p className="text-xs font-bold text-[#234E5C]">
-                      +{whatsappAdmin || "6281234567890"}
+                      +{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}
                     </p>
                     <p className="text-[11px] text-[#2E5E4E] font-medium">
                       Aktif untuk konfirmasi sewa & panduan alat

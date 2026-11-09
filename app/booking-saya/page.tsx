@@ -15,9 +15,12 @@ import {
   Printer,
   Zap,
   AlertTriangle,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
+import { createWhatsAppLink } from "@/lib/payment-utils";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
@@ -59,11 +62,25 @@ export default function BookingSayaPage() {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isCancelling, setIsCancelling] = React.useState<string | null>(null);
   const [bookingToCancel, setBookingToCancel] = React.useState<{ id: string; kode: string } | null>(null);
+  const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
 
   React.useEffect(() => {
     async function loadBookings() {
       try {
         const supabase = createClient();
+
+        // Ambil nomor WhatsApp admin aktif dari settings
+        supabase
+          .from("settings")
+          .select("value")
+          .eq("key", "whatsapp_admin")
+          .single()
+          .then(({ data: waData }) => {
+            if (waData?.value) {
+              setWhatsappAdmin(normalizeAdminPhone(waData.value));
+            }
+          });
+
         const {
           data: { user },
         } = await supabase.auth.getUser();
@@ -384,6 +401,20 @@ export default function BookingSayaPage() {
                             </span>
                           </Button>
                         </Link>
+
+                        <a
+                          href={createWhatsAppLink(
+                            whatsappAdmin,
+                            `Halo Admin PirantiKu, saya ingin konfirmasi terkait booking alat dengan kode: *${booking.kode_booking}*.`
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
+                          title="Chat WhatsApp Admin"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
+                          <span>Chat WA</span>
+                        </a>
                       </div>
                     </div>
                   )}
@@ -423,6 +454,20 @@ export default function BookingSayaPage() {
                             Rincian Sewa & Lokasi
                           </Button>
                         </Link>
+
+                        <a
+                          href={createWhatsAppLink(
+                            whatsappAdmin,
+                            `Halo Admin PirantiKu, DP untuk booking *${booking.kode_booking}* sudah terverifikasi. Kapan jadwal serah terima unit di gerai?`
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
+                          title="Chat WhatsApp Admin"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
+                          <span>Chat WA</span>
+                        </a>
                       </div>
                     </div>
                   )}
@@ -586,11 +631,22 @@ export default function BookingSayaPage() {
       )}
 
       {/* Info Bantuan */}
-      <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 flex items-start sm:items-center gap-3 text-xs text-[#5F7A84]">
-        <ShieldCheck className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5 sm:mt-0" />
-        <p>
-          Butuh konfirmasi cepat atau ada pertanyaan terkait pesanan Anda? Silakan hubungi admin kami via WhatsApp dengan menyertakan kode booking.
-        </p>
+      <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-[#5F7A84]">
+        <div className="flex items-start sm:items-center gap-3">
+          <ShieldCheck className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5 sm:mt-0" />
+          <p>
+            Butuh konfirmasi cepat atau ada pertanyaan terkait pesanan Anda? Silakan hubungi admin kami via WhatsApp langsung.
+          </p>
+        </div>
+        <a
+          href={createWhatsAppLink(whatsappAdmin, "Halo Admin PirantiKu, saya ingin bertanya tentang pesanan booking alat saya.")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs shrink-0 transition-colors w-full sm:w-auto"
+        >
+          <MessageCircle className="h-4 w-4" />
+          <span>Chat WhatsApp Admin (0857-0151-6287)</span>
+        </a>
       </div>
 
       {/* Modal Konfirmasi Pembatalan Booking */}

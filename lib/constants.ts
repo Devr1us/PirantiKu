@@ -188,13 +188,38 @@ export const LOKASI_DEFAULT = {
   lng: 110.834555,
 };
 
+// Nomor WhatsApp Resmi Admin PirantiKu
+export const ADMIN_WHATSAPP_NUMBER = "6285701516287";
+
+/**
+ * Normalisasi nomor WhatsApp Admin:
+ * Menjamin nomor yang dipakai SELALU nomor admin resmi (6285701516287),
+ * dan mencegah nilai dummy lama ('6281234567890') dari database menimpa nomor resmi.
+ */
+export function normalizeAdminPhone(phone?: string | null): string {
+  if (!phone) return ADMIN_WHATSAPP_NUMBER;
+  const clean = phone.replace(/[^0-9]/g, "");
+  if (
+    !clean ||
+    clean === "6281234567890" ||
+    clean === "081234567890" ||
+    clean === "81234567890" ||
+    clean.length < 8
+  ) {
+    return ADMIN_WHATSAPP_NUMBER;
+  }
+  if (clean.startsWith("0")) return "62" + clean.slice(1);
+  if (!clean.startsWith("62")) return "62" + clean;
+  return clean;
+}
+
 // Default Fallback Settings
 export const DEFAULT_SETTINGS = {
   dp_persen: 30,
   denda_per_hari: 50000,
   rekening_bank: "BCA 1234567890 a/n PirantiKu",
   qris_url: "",
-  whatsapp_admin: "6281234567890",
+  whatsapp_admin: ADMIN_WHATSAPP_NUMBER,
   jam_operasional: "Senin - Minggu: 08.00 - 21.00 WIB",
   alamat: LOKASI_DEFAULT.alamat,
   lokasi_lat: LOKASI_DEFAULT.lat,

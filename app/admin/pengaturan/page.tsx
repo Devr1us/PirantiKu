@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { H1, Lead } from "@/components/ui/typography";
 import { AdminSettingsManager } from "@/components/admin/settings/admin-settings-manager";
-import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
+import { DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +39,8 @@ export default async function AdminSettingsPage() {
   if (settingsData) {
     settingsData.forEach((item) => {
       if (item.key && item.value !== null && item.value !== undefined) {
-        settingsMap[item.key] = item.value;
+        settingsMap[item.key] =
+          item.key === "whatsapp_admin" ? normalizeAdminPhone(item.value) : item.value;
       }
     });
   }

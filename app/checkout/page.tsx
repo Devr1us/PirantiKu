@@ -11,11 +11,17 @@ import {
   Calendar,
   CreditCard,
   User as UserIcon,
+  MessageCircle,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
+import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
+import {
+  createWhatsAppLink,
+  generateWhatsAppBookingMessage,
+} from "@/lib/payment-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,10 +44,11 @@ export default function CheckoutPage() {
   const [catatan, setCatatan] = React.useState<string>("");
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
-  const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>("6281234567890");
+  const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
+  const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
 
   // Fallback tanggal stabil dengan lazy initial state
   const [defaultDates] = React.useState(() => {
@@ -91,7 +98,7 @@ export default function CheckoutPage() {
           setList.forEach((s) => {
             if (s.key === "rekening_bank" && s.value) setRekeningInfo(s.value);
             if (s.key === "qris_url" && s.value) setQrisUrl(s.value);
-            if (s.key === "whatsapp_admin" && s.value) setWhatsappAdmin(s.value);
+            if (s.key === "whatsapp_admin" && s.value) setWhatsappAdmin(normalizeAdminPhone(s.value));
           });
         }
       } catch (err) {
@@ -156,6 +163,12 @@ export default function CheckoutPage() {
         }
       }
 
+      // Simpan ringkasan barang untuk notifikasi WhatsApp satu-klik
+      const summaryText = items
+        .map((i) => `• ${i.nama} (${i.qty} unit) - ${formatRupiah(i.harga_per_hari)}/hari`)
+        .join("\n");
+      setBookedItemsSummary(summaryText);
+
       clearCart();
       setCurrentStep(3);
       toast.success("Pesanan booking berhasil dibuat!");
@@ -194,6 +207,20 @@ export default function CheckoutPage() {
       catatan_penyewa: catatan || null,
     };
 
+    const waOrderMessage = generateWhatsAppBookingMessage({
+      bookingCode: createdBookingCode,
+      customerName: profile?.nama || "Penyewa",
+      customerPhone: profile?.no_hp,
+      itemsList: bookedItemsSummary,
+      startDate: formatDateIndo(startDate, "d MMMM yyyy"),
+      endDate: formatDateIndo(endDate, "d MMMM yyyy"),
+      totalSewa: pricing.totalSewa,
+      dpAmount: pricing.dpJumlah,
+      totalDeposit: pricing.totalDeposit,
+      catatan: catatan,
+    });
+    const waBookingUrl = createWhatsAppLink(whatsappAdmin, waOrderMessage);
+
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 sm:py-16 space-y-6 bg-[#FAFAF8] text-[#234E5C]">
         {/* Banner Sukses Terbuat */}
@@ -210,8 +237,38 @@ export default function CheckoutPage() {
               Booking Berhasil Dibuat!
             </H1>
             <p className="text-xs text-[#5F7A84]">
-              Silakan selesaikan pembayaran uang muka (DP 30%) di bawah ini untuk mengunci unit Anda.
+              Kode Booking Anda:{" "}
+              <span className="font-mono font-bold text-[#234E5C] text-sm bg-[#F5F3EB] px-2 py-0.5 rounded border border-[#E8E8E1]">
+                {createdBookingCode}
+              </span>
             </p>
+          </div>
+
+          {/* Kartu Aksi Satu-Klik Kirim ke WhatsApp Admin */}
+          <div className="mt-4 p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#F0FDF4] to-[#DCFCE7] border border-[#86EFAC] text-left sm:flex sm:items-center sm:justify-between gap-4 shadow-xs">
+            <div className="space-y-1 mb-3 sm:mb-0">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#25D366]"></span>
+                </span>
+                <span className="text-xs font-bold text-[#166534] uppercase tracking-wider">
+                  Notifikasi Instan ke Admin
+                </span>
+              </div>
+              <p className="text-xs text-[#15803D] leading-relaxed">
+                Kirim rincian sewa langsung ke WhatsApp Admin (<strong>0857-0151-6287</strong>) hanya dalam 1 klik untuk konfirmasi kilat!
+              </p>
+            </div>
+            <a
+              href={waBookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-bold text-xs shadow-md transition-all whitespace-nowrap w-full sm:w-auto"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>Kirim ke WhatsApp Admin</span>
+            </a>
           </div>
         </div>
 

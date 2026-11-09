@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { useActiveNav, setOptimisticNav } from "@/components/layout/use-active-nav";
 import { useNavbarVisibility } from "@/components/layout/use-navbar-visibility";
 import { HoverRollText } from "@/components/ui/text-motion";
+import { normalizeAdminPhone } from "@/lib/constants";
 
 interface NavbarClientProps {
   user: User | null;
@@ -74,7 +75,7 @@ export function NavbarClient({
     ? { duration: 0 }
     : { type: "spring", stiffness: 500, damping: 40 };
 
-  const cleanWa = whatsappAdmin.replace(/[^0-9]/g, "");
+  const cleanWa = normalizeAdminPhone(whatsappAdmin);
 
   const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname === "/") {

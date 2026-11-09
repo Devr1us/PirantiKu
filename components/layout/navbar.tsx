@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NavbarClient } from "./navbar-client";
-import { DEFAULT_SETTINGS } from "@/lib/constants";
+import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
 import type { Profile, Category } from "@/types/database";
 
 export async function Navbar() {
@@ -43,7 +43,7 @@ export async function Navbar() {
       .single();
 
     if (waData?.value) {
-      whatsappAdmin = waData.value;
+      whatsappAdmin = normalizeAdminPhone(waData.value);
     }
   } catch (err: unknown) {
     if (

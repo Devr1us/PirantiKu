@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { RentalInvoice, type RentalInvoiceData } from "@/components/invoice/rental-invoice";
-import { DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
+import { DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
 import type { BookingStatus } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -89,7 +89,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
   if (setList) {
     setList.forEach((s) => {
       if (s.key === "alamat" && s.value) storeAddress = s.value;
-      if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = s.value;
+      if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = normalizeAdminPhone(s.value);
       if (s.key === "jam_operasional" && s.value) jamOperasional = s.value;
     });
   }

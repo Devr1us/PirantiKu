@@ -18,6 +18,7 @@ import {
   getCategoryDescription,
   getProductImage,
   LOKASI_DEFAULT,
+  normalizeAdminPhone,
 } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { formatRupiah } from "@/lib/format";
@@ -65,7 +66,7 @@ export function HomeView({
   lokasiLat = LOKASI_DEFAULT.lat,
   lokasiLng = LOKASI_DEFAULT.lng,
 }: HomeViewProps) {
-  const cleanWa = whatsappAdmin.replace(/[^0-9]/g, "");
+  const cleanWa = normalizeAdminPhone(whatsappAdmin);
 
   const effectiveAlamat =
     alamat &&
@@ -573,7 +574,7 @@ export function HomeView({
                         rel="noopener noreferrer"
                         className="text-sm font-bold text-[#A0630F] hover:underline mt-1 block"
                       >
-                        +{cleanWa}
+                        {cleanWa === "6285701516287" ? "+62 857-0151-6287" : `+${cleanWa}`}
                       </a>
                     </div>
                   </div>

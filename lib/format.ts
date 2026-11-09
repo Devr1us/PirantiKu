@@ -69,11 +69,20 @@ export function formatSpecKey(key: string): string {
 }
 
 /**
- * Menstandarkan nomor HP Indonesia (08xx -> 628xx untuk link WA)
+ * Menstandarkan nomor HP Indonesia (08xx -> 628xx untuk link WA).
+ * Otomatis mengganti dummy placeholder lama jika ada.
  */
 export function formatWhatsAppNumber(phone: string): string {
-  if (!phone) return "";
+  if (!phone) return "6285701516287";
   let cleaned = phone.replace(/[^0-9]/g, "");
+  if (
+    !cleaned ||
+    cleaned === "6281234567890" ||
+    cleaned === "081234567890" ||
+    cleaned === "81234567890"
+  ) {
+    return "6285701516287";
+  }
   if (cleaned.startsWith("0")) {
     cleaned = "62" + cleaned.slice(1);
   } else if (!cleaned.startsWith("62")) {

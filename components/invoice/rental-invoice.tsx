@@ -4,8 +4,9 @@ import * as React from "react";
 import { Printer, MessageCircle, X, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { createWhatsAppLink } from "@/lib/payment-utils";
 import { Wordmark } from "@/components/ui/wordmark";
-import { APP_NAME, TAGLINE, LOKASI_DEFAULT, DEFAULT_SETTINGS } from "@/lib/constants";
+import { APP_NAME, TAGLINE, LOKASI_DEFAULT, DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
 import type { BookingStatus, BookingReturn, DamageReport } from "@/types/database";
 
 export interface InvoiceBookingItem {
@@ -65,7 +66,7 @@ export function RentalInvoice({
   const customerAddress = data.customer?.alamat || "Alamat belum dilengkapi";
 
   const storeAddress = data.settings?.alamat || LOKASI_DEFAULT.alamat;
-  const storePhone = data.settings?.whatsapp_admin || DEFAULT_SETTINGS.whatsapp_admin;
+  const storePhone = normalizeAdminPhone(data.settings?.whatsapp_admin);
   const storeHours = data.settings?.jam_operasional || DEFAULT_SETTINGS.jam_operasional;
 
   // Hitung durasi hari
@@ -107,11 +108,12 @@ export function RentalInvoice({
               <span>Cetak / Simpan PDF (A4)</span>
             </Button>
 
-            {data.settings?.whatsapp_admin && (
+            {storePhone && (
               <a
-                href={`https://wa.me/${data.settings.whatsapp_admin.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                href={createWhatsAppLink(
+                  storePhone,
                   `Halo Admin PirantiKu, saya ingin mengonfirmasi booking #${data.kode_booking} atas nama ${customerName}. Status saat ini: ${data.status}. Terima kasih!`
-                )}`}
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -14,7 +14,7 @@ import { PaymentFlow } from "@/components/payment/payment-flow";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { H1, Lead } from "@/components/ui/typography";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
-import { APP_NAME, DEFAULT_SETTINGS, LOKASI_DEFAULT } from "@/lib/constants";
+import { APP_NAME, DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
 import type { Booking, BookingItem, EquipmentItem, Payment } from "@/types/database";
 
 interface PembayaranPageProps {
@@ -111,7 +111,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
     setList.forEach((s) => {
       if (s.key === "rekening_bank" && s.value) rekeningBank = s.value;
       if (s.key === "qris_url" && s.value) qrisUrl = s.value;
-      if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = s.value;
+      if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = normalizeAdminPhone(s.value);
       if (s.key === "alamat" && s.value) alamat = s.value;
     });
   }

@@ -38,7 +38,9 @@ import {
   parseBankAccount,
   getPaymentCountdown,
   generateWhatsAppPaymentMessage,
+  createWhatsAppLink,
 } from "@/lib/payment-utils";
+import { DEFAULT_SETTINGS } from "@/lib/constants";
 import type { BookingStatus, Payment } from "@/types/database";
 
 export interface PaymentFlowProps {
@@ -70,7 +72,7 @@ export function PaymentFlow({
   initialPayments = [],
   rekeningBank = "BCA 1234567890 a/n PirantiKu",
   qrisUrl = "",
-  whatsappAdmin = "6281234567890",
+  whatsappAdmin = DEFAULT_SETTINGS.whatsapp_admin,
   onPaymentSuccess,
   showBackToHome = false,
 }: PaymentFlowProps) {
@@ -406,7 +408,8 @@ export function PaymentFlow({
     }
   };
 
-  const waPaymentUrl = `https://wa.me/${whatsappAdmin}?text=${encodeURIComponent(
+  const waPaymentUrl = createWhatsAppLink(
+    whatsappAdmin,
     generateWhatsAppPaymentMessage({
       bookingCode: booking.kode_booking,
       customerName,
@@ -416,7 +419,7 @@ export function PaymentFlow({
       startDate: formatDateIndo(booking.tanggal_mulai, "d MMM yyyy"),
       endDate: formatDateIndo(booking.tanggal_selesai, "d MMM yyyy"),
     })
-  )}`;
+  );
 
   return (
     <div className="space-y-6">
