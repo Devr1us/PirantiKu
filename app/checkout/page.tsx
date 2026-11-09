@@ -88,6 +88,11 @@ export default function CheckoutPage() {
           .single();
 
         if (prof) {
+          if (prof.role === "admin") {
+            toast.error("Akun Administrator bertugas untuk mengelola rental dan tidak dapat melakukan booking rental.");
+            router.replace("/admin");
+            return;
+          }
           setProfile(prof as Profile);
         }
 

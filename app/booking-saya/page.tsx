@@ -89,6 +89,19 @@ export default function BookingSayaPage() {
           return;
         }
 
+        // Cek role pengguna: jika admin, arahkan ke panel Kelola Booking
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (prof?.role === "admin") {
+          toast.info("Sebagai Administrator, Anda mengelola seluruh pesanan di menu Kelola Booking.");
+          router.replace("/admin/booking");
+          return;
+        }
+
         const { data: bData, error } = await supabase
           .from("bookings")
           .select(`

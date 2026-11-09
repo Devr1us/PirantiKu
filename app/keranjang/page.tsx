@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
 import { H1, Lead } from "@/components/ui/typography";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 
 export default function KeranjangPage() {
   const router = useRouter();
@@ -119,7 +120,28 @@ export default function KeranjangPage() {
     return startDate > endDate || pricing.days <= 0;
   }, [startDate, endDate, pricing.days]);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+        if (prof?.role === "admin") {
+          toast.error("Akun Administrator bertugas untuk mengelola rental dan tidak dapat melakukan booking rental.");
+          router.replace("/admin");
+          return;
+        }
+      }
+    } catch {
+      // Abaikan
+    }
+
     if (items.length === 0) {
       toast.error("Keranjang booking Anda masih kosong.");
       return;

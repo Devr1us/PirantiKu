@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -8,6 +9,7 @@ import {
   ShoppingCart,
   Zap,
   ShieldCheck,
+  ShieldAlert,
   Info,
   Plus,
   Minus,
@@ -45,6 +47,7 @@ export function RentalBookingWidget({
   const [qty, setQty] = React.useState<number>(1);
 
   const [disabledDates, setDisabledDates] = React.useState<string[]>([]);
+  const [isAdminUser, setIsAdminUser] = React.useState<boolean>(false);
   const [sisaStok, setSisaStok] = React.useState<number>(
     equipment.stok_tersedia !== undefined
       ? equipment.stok_tersedia
@@ -52,6 +55,31 @@ export function RentalBookingWidget({
   );
   const [isLoadingStock, setIsLoadingStock] = React.useState<boolean>(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
+
+  // Cek apakah pengguna saat ini adalah admin
+  React.useEffect(() => {
+    async function checkRole() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
+          if (prof?.role === "admin") {
+            setIsAdminUser(true);
+          }
+        }
+      } catch {
+        // Abaikan
+      }
+    }
+    checkRole();
+  }, []);
 
   // 1. Ambil daftar tanggal_penuh saat komponen dimuat
   React.useEffect(() => {
@@ -167,6 +195,10 @@ export function RentalBookingWidget({
   const isAvailable = sisaStok > 0;
 
   const handleAddToCart = () => {
+    if (isAdminUser) {
+      toast.info("Anda login sebagai Administrator. Pemesanan rental dikhususkan untuk akun pelanggan.");
+      return;
+    }
     if (!isAvailable) {
       toast.error("Maaf, stok alat tidak tersedia pada tanggal tersebut.");
       return;
@@ -410,30 +442,52 @@ export function RentalBookingWidget({
           </div>
         </div>
 
-        {/* Action Buttons: Tombol Ochre Tambah ke Keranjang & Booking Sekarang */}
-        <div className="space-y-2.5">
-          <Button
-            type="button"
-            variant="warm"
-            disabled={!isAvailable}
-            onClick={handleAddToCart}
-            className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Tambah ke Keranjang
-          </Button>
+        {/* Action Buttons: Khusus User Tambah ke Keranjang / Khusus Admin Tombol Kelola */}
+        {isAdminUser ? (
+          <div className="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-4 space-y-2.5 text-center">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#A0630F]">
+              <ShieldAlert className="h-4 w-4" />
+              <span>Mode Administrator</span>
+            </div>
+            <p className="text-[11px] text-[#234E5C] leading-relaxed">
+              Anda sedang masuk sebagai Pengelola / Admin PirantiKu. Pemesanan sewa alat dikhususkan untuk akun pelanggan.
+            </p>
+            <Link href="/admin/alat" className="block pt-0.5">
+              <Button
+                type="button"
+                variant="petrol"
+                size="sm"
+                className="w-full text-xs font-bold gap-1.5 h-10"
+              >
+                Kelola Data & Stok Alat di Panel Admin &rarr;
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            <Button
+              type="button"
+              variant="warm"
+              disabled={!isAvailable}
+              onClick={handleAddToCart}
+              className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Tambah ke Keranjang
+            </Button>
 
-          <Button
-            type="button"
-            variant="petrol"
-            disabled={!isAvailable}
-            onClick={handleRentNow}
-            className="w-full h-11 text-sm font-bold flex items-center justify-center gap-2"
-          >
-            <Zap className="h-4 w-4" />
-            Booking Sekarang
-          </Button>
-        </div>
+            <Button
+              type="button"
+              variant="petrol"
+              disabled={!isAvailable}
+              onClick={handleRentNow}
+              className="w-full h-11 text-sm font-bold flex items-center justify-center gap-2"
+            >
+              <Zap className="h-4 w-4" />
+              Booking Sekarang
+            </Button>
+          </div>
+        )}
 
         <div className="flex items-center justify-center gap-4 text-[11px] text-[#5F7A84] pt-1">
           <span className="flex items-center gap-1">
@@ -463,28 +517,41 @@ export function RentalBookingWidget({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            disabled={!isAvailable}
-            onClick={handleAddToCart}
-            className="h-10 w-10 border-[#E8E8E1]"
-            aria-label="Tambah ke keranjang"
-          >
-            <ShoppingCart className="h-4 w-4 text-[#234E5C]" />
-          </Button>
-          <Button
-            type="button"
-            variant="warm"
-            disabled={!isAvailable}
-            onClick={handleRentNow}
-            className="h-10 px-5 text-xs font-bold"
-          >
-            Booking Sekarang
-          </Button>
-        </div>
+        {isAdminUser ? (
+          <Link href="/admin/alat">
+            <Button
+              type="button"
+              variant="petrol"
+              className="h-10 px-4 text-xs font-bold gap-1.5"
+            >
+              <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
+              Kelola di Admin
+            </Button>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={!isAvailable}
+              onClick={handleAddToCart}
+              className="h-10 w-10 border-[#E8E8E1]"
+              aria-label="Tambah ke keranjang"
+            >
+              <ShoppingCart className="h-4 w-4 text-[#234E5C]" />
+            </Button>
+            <Button
+              type="button"
+              variant="warm"
+              disabled={!isAvailable}
+              onClick={handleRentNow}
+              className="h-10 px-5 text-xs font-bold"
+            >
+              Booking Sekarang
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );

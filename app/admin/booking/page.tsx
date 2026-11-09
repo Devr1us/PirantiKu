@@ -1,3 +1,4 @@
+import * as React from "react";
 import { createClient } from "@/lib/supabase/server";
 import { H1, Lead } from "@/components/ui/typography";
 import { AdminBookingManager, type AdminBookingWithDetails } from "@/components/admin/booking/admin-booking-manager";
@@ -52,7 +53,9 @@ export default async function AdminBookingsPage() {
       </div>
 
       {/* Komponen Pengelola Booking Interaktif */}
-      <AdminBookingManager initialBookings={bookings} dendaPerHari={dendaPerHari} />
+      <React.Suspense fallback={<div className="p-8 text-center text-sm text-[#5F7A84]">Memuat kelola booking...</div>}>
+        <AdminBookingManager initialBookings={bookings} dendaPerHari={dendaPerHari} />
+      </React.Suspense>
     </div>
   );
 }

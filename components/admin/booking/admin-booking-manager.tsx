@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   CheckCircle2,
@@ -58,12 +59,28 @@ export function AdminBookingManager({
   dendaPerHari = 50000,
 }: AdminBookingManagerProps) {
   const supabase = createClient();
+  const searchParams = useSearchParams();
+  const qParam = searchParams.get("q") || "";
 
   const [bookings, setBookings] = React.useState<AdminBookingWithDetails[]>(initialBookings);
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [searchQuery, setSearchQuery] = React.useState<string>(qParam);
   const [statusFilter, setStatusFilter] = React.useState<string>("semua");
   const [selectedBooking, setSelectedBooking] = React.useState<AdminBookingWithDetails | null>(null);
   const [isDetailOpen, setIsDetailOpen] = React.useState<boolean>(false);
+
+  // Auto-buka modal jika ada parameter kode booking di URL (misal klik Detail dari Dashboard)
+  React.useEffect(() => {
+    if (qParam) {
+      setSearchQuery(qParam);
+      const match = bookings.find(
+        (b) => b.kode_booking.toLowerCase() === qParam.toLowerCase()
+      );
+      if (match) {
+        setSelectedBooking(match);
+        setIsDetailOpen(true);
+      }
+    }
+  }, [qParam, bookings]);
   const [isReturnModalOpen, setIsReturnModalOpen] = React.useState<boolean>(false);
   const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
   const [rejectReason, setRejectReason] = React.useState<string>("");

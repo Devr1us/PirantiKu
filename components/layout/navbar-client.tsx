@@ -300,17 +300,19 @@ export function NavbarClient({
             <MessageCircle className="h-5 w-5" />
           </a>
 
-          {/* Ikon Keranjang dengan Badge Jumlah */}
-          <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-all">
-              <ShoppingCart className="h-5 w-5" />
-              {isLoaded && totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A0630F] px-1 text-[11px] font-bold text-white shadow-sm">
-                  {totalItems}
-                </span>
-              )}
-            </div>
-          </Link>
+          {/* Ikon Keranjang dengan Badge Jumlah (Khusus Pelanggan, disembunyikan untuk Admin) */}
+          {!isAdmin && (
+            <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-all">
+                <ShoppingCart className="h-5 w-5" />
+                {isLoaded && totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A0630F] px-1 text-[11px] font-bold text-white shadow-sm">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
+            </Link>
+          )}
 
           {/* Tombol Auth Desktop */}
           <div className="hidden sm:flex items-center gap-2">
@@ -341,24 +343,17 @@ export function NavbarClient({
                     )}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/booking-saya"
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                    >
-                      <Calendar className="h-4 w-4 text-[#5F7A84]" />
-                      <span>Booking Saya</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/profil"
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                    >
-                      <UserIcon className="h-4 w-4 text-[#5F7A84]" />
-                      <span>Profil Akun</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  {!isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/booking-saya"
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                      >
+                        <Calendar className="h-4 w-4 text-[#5F7A84]" />
+                        <span>Booking Saya</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link
@@ -370,6 +365,15 @@ export function NavbarClient({
                       </Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/profil"
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                    >
+                      <UserIcon className="h-4 w-4 text-[#5F7A84]" />
+                      <span>Profil Akun</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-[#E8E8E1]" />
                   <DropdownMenuItem
                     onClick={handleSignOut}
@@ -531,7 +535,7 @@ export function NavbarClient({
                         KONTAK
                       </Link>
 
-                      {user && (
+                      {user && !isAdmin && (
                         <Link
                           href="/booking-saya"
                           onClick={() => setIsMobileOpen(false)}
