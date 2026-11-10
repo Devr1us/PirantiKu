@@ -27,7 +27,6 @@ import { Reveal } from "@/components/ui/motion";
 import { getGridColumnDelay } from "@/lib/motion";
 import { H1, Lead } from "@/components/ui/typography";
 import { calculateAvailableStock } from "@/lib/inventory";
-import { formatRupiah } from "@/lib/format";
 
 export interface PricePreset {
   id: string;
@@ -42,18 +41,11 @@ interface FilterSidebarProps {
   currentCategory: string;
   selectedCategorySlug?: string;
   initialEquipment: EquipmentWithDetails[];
-  minPrice: string;
-  maxPrice: string;
-  setMinPrice: (val: string) => void;
-  setMaxPrice: (val: string) => void;
   handleCategorySelect: (slug: string) => void;
-  handlePriceApply: () => void;
   handlePresetSelect: (min: string, max: string) => void;
   handleResetPriceFilter: () => void;
   handleResetFilters: () => void;
   hasActiveFilters: boolean;
-  minProductPrice: number;
-  maxProductPrice: number;
   pricePresets: PricePreset[];
   currentMinPrice: string;
   currentMaxPrice: string;
@@ -64,18 +56,11 @@ function FilterSidebar({
   currentCategory,
   selectedCategorySlug,
   initialEquipment,
-  minPrice,
-  maxPrice,
-  setMinPrice,
-  setMaxPrice,
   handleCategorySelect,
-  handlePriceApply,
   handlePresetSelect,
   handleResetPriceFilter,
   handleResetFilters,
   hasActiveFilters,
-  minProductPrice,
-  maxProductPrice,
   pricePresets,
   currentMinPrice,
   currentMaxPrice,
@@ -150,7 +135,7 @@ function FilterSidebar({
       )}
 
       {/* Rentang Harga (Rp/hari) */}
-      <div className="space-y-4 border-t border-[#E8E8E1] pt-5">
+      <div className="space-y-3 border-t border-[#E8E8E1] pt-5">
         <div className="flex items-center justify-between">
           <h4 className="text-xs font-bold text-[#234E5C] uppercase tracking-wider flex items-center gap-1.5">
             Rentang Harga (Rp/hari)
@@ -159,7 +144,8 @@ function FilterSidebar({
             <button
               type="button"
               onClick={handleResetPriceFilter}
-              className="text-[11px] font-semibold text-[#DC2626] hover:underline cursor-pointer flex items-center gap-1 transition-colors"
+              className="text-[11px] font-semibold text-[#5F7A84] hover:text-[#DC2626] transition-colors cursor-pointer flex items-center gap-1"
+              title="Reset filter harga"
             >
               <RotateCcw className="h-3 w-3" />
               Reset
@@ -167,106 +153,27 @@ function FilterSidebar({
           )}
         </div>
 
-        {/* Ringkasan Rentang Harga Katalog */}
-        {minProductPrice > 0 && (
-          <div className="text-[11px] text-[#5F7A84] bg-white px-3 py-1.5 rounded-xl border border-[#E8E8E1] flex items-center justify-between shadow-2xs">
-            <span>Rentang Katalog:</span>
-            <span className="font-bold text-[#234E5C]">
-              {formatRupiah(minProductPrice)} - {formatRupiah(maxProductPrice)}
-            </span>
-          </div>
-        )}
+        {/* Pilihan Opsi Rentang Harga */}
+        <div className="space-y-1">
+          {pricePresets.map((preset) => {
+            const isActive = isPresetActive(preset.min, preset.max);
 
-        {/* Pilihan Cepat Rentang Harga */}
-        <div className="space-y-2">
-          <span className="text-[10px] font-bold text-[#5F7A84] uppercase tracking-wider block">
-            Pilihan Cepat
-          </span>
-          <div className="space-y-1.5">
-            {pricePresets.map((preset) => {
-              const isActive = isPresetActive(preset.min, preset.max);
-
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => handlePresetSelect(preset.min, preset.max)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-[#234E5C] text-white font-bold shadow-xs"
-                      : "bg-white text-[#234E5C] border border-[#E8E8E1] hover:border-[#234E5C]/40 hover:bg-[#F8F9FA]"
-                  }`}
-                >
-                  <span className="truncate">{preset.label}</span>
-                  <span
-                    className={`text-[11px] px-2 py-0.5 rounded-full font-semibold shrink-0 ml-1.5 transition-colors ${
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-[#F3F3EF] text-[#5F7A84]"
-                    }`}
-                  >
-                    {preset.count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Atur Rentang Manual Min & Maks */}
-        <div className="space-y-2 pt-2 border-t border-dashed border-[#E8E8E1]">
-          <span className="text-[10px] font-bold text-[#5F7A84] uppercase tracking-wider block">
-            Atur Rentang Manual
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="text-[10px] font-medium text-[#5F7A84] block mb-1">
-                Min
-              </label>
-              <div className="relative">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#5F7A84] pointer-events-none select-none">
-                  Rp
-                </span>
-                <Input
-                  type="number"
-                  placeholder={String(minProductPrice || 0)}
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handlePriceApply();
-                  }}
-                  className="h-9 pl-8 pr-2 text-xs bg-white border-[#E8E8E1] rounded-xl"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="text-[10px] font-medium text-[#5F7A84] block mb-1">
-                Maks
-              </label>
-              <div className="relative">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#5F7A84] pointer-events-none select-none">
-                  Rp
-                </span>
-                <Input
-                  type="number"
-                  placeholder={String(maxProductPrice || 500000)}
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handlePriceApply();
-                  }}
-                  className="h-9 pl-8 pr-2 text-xs bg-white border-[#E8E8E1] rounded-xl"
-                />
-              </div>
-            </div>
-          </div>
-          <Button
-            type="button"
-            onClick={handlePriceApply}
-            className="w-full text-xs font-bold h-9 bg-[#234E5C] hover:bg-[#1b3e4a] text-white rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
-          >
-            Terapkan Harga
-          </Button>
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handlePresetSelect(preset.min, preset.max)}
+                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-[#234E5C] text-white font-bold"
+                    : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
+                }`}
+              >
+                <span className="truncate">{preset.label}</span>
+                <span className="text-[11px] opacity-80">{preset.count}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -316,30 +223,14 @@ export function EquipmentCatalog({
   const currentMaxPrice = searchParams.get("max_harga") || "";
 
   const [searchQuery, setSearchQuery] = React.useState(currentQ);
-  const [minPrice, setMinPrice] = React.useState(currentMinPrice);
-  const [maxPrice, setMaxPrice] = React.useState(currentMaxPrice);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
-  // Sinkronisasi state lokal jika URL berubah (misal tombol Back / Forward browser)
-  const [prevUrlParams, setPrevUrlParams] = React.useState({
-    q: currentQ,
-    min: currentMinPrice,
-    max: currentMaxPrice,
-  });
+  // Sinkronisasi state pencarian jika URL berubah
+  const [prevQ, setPrevQ] = React.useState(currentQ);
 
-  if (
-    prevUrlParams.q !== currentQ ||
-    prevUrlParams.min !== currentMinPrice ||
-    prevUrlParams.max !== currentMaxPrice
-  ) {
-    setPrevUrlParams({
-      q: currentQ,
-      min: currentMinPrice,
-      max: currentMaxPrice,
-    });
+  if (prevQ !== currentQ) {
+    setPrevQ(currentQ);
     setSearchQuery(currentQ);
-    setMinPrice(currentMinPrice);
-    setMaxPrice(currentMaxPrice);
   }
 
   const applyFilters = (newParams: Record<string, string>) => {
@@ -381,15 +272,8 @@ export function EquipmentCatalog({
     applyFilters({ sort: sortVal });
   };
 
-  const handlePriceApply = () => {
-    applyFilters({ min_harga: minPrice, max_harga: maxPrice });
-    setIsMobileFilterOpen(false);
-  };
-
   const handleResetFilters = () => {
     setSearchQuery("");
-    setMinPrice("");
-    setMaxPrice("");
     const targetPath = selectedCategorySlug ? pathname : "/alat";
     startTransition(() => {
       router.replace(targetPath, { scroll: false });
@@ -398,8 +282,6 @@ export function EquipmentCatalog({
   };
 
   const handleResetPriceFilter = () => {
-    setMinPrice("");
-    setMaxPrice("");
     applyFilters({ min_harga: "", max_harga: "" });
   };
 
@@ -415,25 +297,14 @@ export function EquipmentCatalog({
       Boolean(curMin || curMax);
 
     if (isCurrentActive) {
-      setMinPrice("");
-      setMaxPrice("");
       applyFilters({ min_harga: "", max_harga: "" });
     } else {
-      setMinPrice(presetMin);
-      setMaxPrice(presetMax);
       applyFilters({ min_harga: presetMin, max_harga: presetMax });
     }
   };
 
-  // Analisis harga riil dari katalog untuk preset dan rentang
-  const { minProductPrice, maxProductPrice, pricePresets } = React.useMemo(() => {
-    const prices = initialEquipment
-      .map((e) => Number(e.harga_per_hari))
-      .filter((p) => !isNaN(p) && p > 0);
-
-    const minP = prices.length > 0 ? Math.min(...prices) : 0;
-    const maxP = prices.length > 0 ? Math.max(...prices) : 500000;
-
+  // Preset harga riil dari katalog
+  const pricePresets = React.useMemo(() => {
     // Scope alat berdasarkan kategori aktif
     const scopeEquipment = currentCategory
       ? initialEquipment.filter((e) => e.category?.slug === currentCategory)
@@ -491,11 +362,7 @@ export function EquipmentCatalog({
       };
     });
 
-    return {
-      minProductPrice: minP,
-      maxProductPrice: maxP,
-      pricePresets: presetsWithCount,
-    };
+    return presetsWithCount;
   }, [initialEquipment, currentCategory]);
 
   // Filter dan sorting lokal
@@ -561,18 +428,11 @@ export function EquipmentCatalog({
     currentCategory,
     selectedCategorySlug,
     initialEquipment,
-    minPrice,
-    maxPrice,
-    setMinPrice,
-    setMaxPrice,
     handleCategorySelect,
-    handlePriceApply,
     handlePresetSelect,
     handleResetPriceFilter,
     handleResetFilters,
     hasActiveFilters,
-    minProductPrice,
-    maxProductPrice,
     pricePresets,
     currentMinPrice,
     currentMaxPrice,
