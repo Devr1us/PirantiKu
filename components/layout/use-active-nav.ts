@@ -128,11 +128,59 @@ export function useActiveNav(): ActiveNav {
     }
 
     // --- On home page ("/"): initialize scroll-spy and hash tracking ---
-    const hash = window.location.hash;
-    if (hash === "#cara-sewa") {
-      setOptimisticNav("cara-sewa");
-    } else if (hash === "#kontak") {
-      setOptimisticNav("kontak");
+    let targetSection: "cara-sewa" | "kontak" | null = null;
+    try {
+      const stored = sessionStorage.getItem("pirantiku_scroll_target");
+      if (
+        stored === "cara-sewa" ||
+        stored === "kontak" ||
+        stored === "cara-booking"
+      ) {
+        targetSection =
+          stored === "cara-booking"
+            ? "cara-sewa"
+            : (stored as "cara-sewa" | "kontak");
+        sessionStorage.removeItem("pirantiku_scroll_target");
+      }
+    } catch {}
+
+    if (!targetSection) {
+      const currentHash = window.location.hash.toLowerCase();
+      if (currentHash === "#cara-sewa" || currentHash === "#cara-booking") {
+        targetSection = "cara-sewa";
+      } else if (currentHash === "#kontak") {
+        targetSection = "kontak";
+      }
+    }
+
+    let scrollTimeout: NodeJS.Timeout | null = null;
+
+    if (targetSection) {
+      setOptimisticNav(targetSection);
+
+      const scrollToTarget = (retryCount = 0) => {
+        const el =
+          document.getElementById(targetSection!) ||
+          (targetSection === "cara-sewa"
+            ? document.getElementById("cara-booking")
+            : null);
+
+        if (el) {
+          requestAnimationFrame(() => {
+            el.scrollIntoView({ behavior: "smooth" });
+          });
+        } else if (retryCount < 15) {
+          scrollTimeout = setTimeout(
+            () => scrollToTarget(retryCount + 1),
+            50
+          );
+        }
+      };
+
+      // Berikan jeda sejenak agar transisi router Next.js dan reset scroll default selesai
+      scrollTimeout = setTimeout(() => {
+        scrollToTarget();
+      }, 100);
     } else {
       // Evaluate initial position after mount
       evaluateActiveSection();
@@ -170,11 +218,17 @@ export function useActiveNav(): ActiveNav {
     // Synchronize browser back/forward and hash changes
     const handleHashOrPopState = () => {
       if (window.location.pathname !== "/") return;
-      const currentHash = window.location.hash;
-      if (currentHash === "#cara-sewa") {
+      const currentHash = window.location.hash.toLowerCase();
+      if (currentHash === "#cara-sewa" || currentHash === "#cara-booking") {
         setOptimisticNav("cara-sewa");
+        const el =
+          document.getElementById("cara-sewa") ||
+          document.getElementById("cara-booking");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
       } else if (currentHash === "#kontak") {
         setOptimisticNav("kontak");
+        const el = document.getElementById("kontak");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
       } else if (!currentHash || currentHash === "#") {
         if (window.scrollY < 120) {
           setOptimisticNav("beranda");
@@ -192,10 +246,25 @@ export function useActiveNav(): ActiveNav {
       const anchor = (e.target as HTMLElement)?.closest?.("a");
       if (!anchor) return;
       const href = anchor.getAttribute("href");
-      if (href === "/#cara-sewa" || href === "#cara-sewa") {
+      if (
+        href === "/#cara-sewa" ||
+        href === "#cara-sewa" ||
+        href === "/#cara-booking" ||
+        href === "#cara-booking"
+      ) {
         setOptimisticNav("cara-sewa");
+        try {
+          if (window.location.pathname !== "/") {
+            sessionStorage.setItem("pirantiku_scroll_target", "cara-sewa");
+          }
+        } catch {}
       } else if (href === "/#kontak" || href === "#kontak") {
         setOptimisticNav("kontak");
+        try {
+          if (window.location.pathname !== "/") {
+            sessionStorage.setItem("pirantiku_scroll_target", "kontak");
+          }
+        } catch {}
       } else if (href === "/" && window.location.pathname === "/") {
         setOptimisticNav("beranda");
       }
@@ -205,6 +274,7 @@ export function useActiveNav(): ActiveNav {
 
     // Cleanup all observers, timers, and event listeners on unmount
     return () => {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
       listeners.delete(setActiveNav);
       observer.disconnect();
       window.removeEventListener("scroll", handleScroll);

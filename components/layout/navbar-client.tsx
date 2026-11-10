@@ -78,6 +78,9 @@ export function NavbarClient({
   const cleanWa = normalizeAdminPhone(whatsappAdmin);
 
   const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    try {
+      sessionStorage.removeItem("pirantiku_scroll_target");
+    } catch {}
     if (pathname === "/") {
       e.preventDefault();
       if (window.location.hash) {
@@ -96,13 +99,21 @@ export function NavbarClient({
   ) => {
     if (pathname === "/") {
       e.preventDefault();
-      const el = document.getElementById(target);
+      try {
+        sessionStorage.removeItem("pirantiku_scroll_target");
+      } catch {}
+      const el =
+        document.getElementById(target) ||
+        (target === "cara-sewa" ? document.getElementById("cara-booking") : null);
       if (el) {
         setOptimisticNav(target);
         history.replaceState(null, "", `/#${target}`);
         el.scrollIntoView({ behavior: "smooth" });
       }
     } else {
+      try {
+        sessionStorage.setItem("pirantiku_scroll_target", target);
+      } catch {}
       setOptimisticNav(target);
     }
   };

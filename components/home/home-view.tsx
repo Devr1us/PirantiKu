@@ -445,7 +445,8 @@ export function HomeView({
       {/* ========================================================
           6. CARA SEWA (id="cara-sewa", 3 Langkah Bernomor Besar)
           ======================================================== */}
-      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20">
+      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20 relative">
+        <span id="cara-booking" className="scroll-mt-20 pointer-events-none absolute top-0" />
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="space-y-2">
             <H2>CARA BOOKING</H2>
