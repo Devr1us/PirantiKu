@@ -8,3 +8,4 @@
 *.sql linguist-vendored=true
 supabase/** linguist-detectable=false
 supabase/** linguist-vendored=true
+
