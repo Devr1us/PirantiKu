@@ -27,6 +27,15 @@ import { Reveal } from "@/components/ui/motion";
 import { getGridColumnDelay } from "@/lib/motion";
 import { H1, Lead } from "@/components/ui/typography";
 import { calculateAvailableStock } from "@/lib/inventory";
+import { formatRupiah } from "@/lib/format";
+
+export interface PricePreset {
+  id: string;
+  label: string;
+  min: string;
+  max: string;
+  count: number;
+}
 
 interface FilterSidebarProps {
   categories: Category[];
@@ -39,8 +48,15 @@ interface FilterSidebarProps {
   setMaxPrice: (val: string) => void;
   handleCategorySelect: (slug: string) => void;
   handlePriceApply: () => void;
+  handlePresetSelect: (min: string, max: string) => void;
+  handleResetPriceFilter: () => void;
   handleResetFilters: () => void;
   hasActiveFilters: boolean;
+  minProductPrice: number;
+  maxProductPrice: number;
+  pricePresets: PricePreset[];
+  currentMinPrice: string;
+  currentMaxPrice: string;
 }
 
 function FilterSidebar({
@@ -54,9 +70,35 @@ function FilterSidebar({
   setMaxPrice,
   handleCategorySelect,
   handlePriceApply,
+  handlePresetSelect,
+  handleResetPriceFilter,
   handleResetFilters,
   hasActiveFilters,
+  minProductPrice,
+  maxProductPrice,
+  pricePresets,
+  currentMinPrice,
+  currentMaxPrice,
 }: FilterSidebarProps) {
+  const isPresetActive = (pMin: string, pMax: string) => {
+    const curMin = (currentMinPrice || "").trim();
+    const curMax = (currentMaxPrice || "").trim();
+    const targetMin = (pMin || "").trim();
+    const targetMax = (pMax || "").trim();
+
+    if (!curMin && !curMax) return false;
+
+    const minMatches =
+      targetMin === ""
+        ? curMin === "" || curMin === "0"
+        : curMin === targetMin;
+
+    const maxMatches =
+      targetMax === "" ? curMax === "" : curMax === targetMax;
+
+    return minMatches && maxMatches;
+  };
+
   return (
     <div className="space-y-6">
       {/* Kategori Alat */}
@@ -69,13 +111,16 @@ function FilterSidebar({
             <button
               type="button"
               onClick={() => handleCategorySelect("")}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${!currentCategory
-                ? "bg-[#234E5C] text-white"
-                : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-                }`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                !currentCategory
+                  ? "bg-[#234E5C] text-white"
+                  : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
+              }`}
             >
               <span>Semua Kategori</span>
-              <span className="text-[11px] opacity-80">{initialEquipment.length}</span>
+              <span className="text-[11px] opacity-80">
+                {initialEquipment.length}
+              </span>
             </button>
 
             {categories.map((cat) => {
@@ -89,10 +134,11 @@ function FilterSidebar({
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategorySelect(cat.slug)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${isSelected
-                    ? "bg-[#234E5C] text-white font-bold"
-                    : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-                    }`}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-[#234E5C] text-white font-bold"
+                      : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
+                  }`}
                 >
                   <span className="truncate">{cat.nama}</span>
                   <span className="text-[11px] opacity-80">{count}</span>
@@ -104,41 +150,124 @@ function FilterSidebar({
       )}
 
       {/* Rentang Harga (Rp/hari) */}
-      <div className="space-y-3 border-t border-[#E8E8E1] pt-5">
-        <h4 className="text-xs font-bold text-[#234E5C] uppercase tracking-wider">
-          Rentang Harga (Rp/hari)
-        </h4>
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="text-[11px] text-[#5F7A84] block mb-1">Min</label>
-            <Input
-              type="number"
-              placeholder="0"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="h-9 text-xs"
-            />
+      <div className="space-y-4 border-t border-[#E8E8E1] pt-5">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-bold text-[#234E5C] uppercase tracking-wider flex items-center gap-1.5">
+            Rentang Harga (Rp/hari)
+          </h4>
+          {(currentMinPrice || currentMaxPrice) && (
+            <button
+              type="button"
+              onClick={handleResetPriceFilter}
+              className="text-[11px] font-semibold text-[#DC2626] hover:underline cursor-pointer flex items-center gap-1 transition-colors"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset
+            </button>
+          )}
+        </div>
+
+        {/* Ringkasan Rentang Harga Katalog */}
+        {minProductPrice > 0 && (
+          <div className="text-[11px] text-[#5F7A84] bg-white px-3 py-1.5 rounded-xl border border-[#E8E8E1] flex items-center justify-between shadow-2xs">
+            <span>Rentang Katalog:</span>
+            <span className="font-bold text-[#234E5C]">
+              {formatRupiah(minProductPrice)} - {formatRupiah(maxProductPrice)}
+            </span>
           </div>
-          <div>
-            <label className="text-[11px] text-[#5F7A84] block mb-1">Maks</label>
-            <Input
-              type="number"
-              placeholder="500000"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="h-9 text-xs"
-            />
+        )}
+
+        {/* Pilihan Cepat Rentang Harga */}
+        <div className="space-y-2">
+          <span className="text-[10px] font-bold text-[#5F7A84] uppercase tracking-wider block">
+            Pilihan Cepat
+          </span>
+          <div className="space-y-1.5">
+            {pricePresets.map((preset) => {
+              const isActive = isPresetActive(preset.min, preset.max);
+
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => handlePresetSelect(preset.min, preset.max)}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-[#234E5C] text-white font-bold shadow-xs"
+                      : "bg-white text-[#234E5C] border border-[#E8E8E1] hover:border-[#234E5C]/40 hover:bg-[#F8F9FA]"
+                  }`}
+                >
+                  <span className="truncate">{preset.label}</span>
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full font-semibold shrink-0 ml-1.5 transition-colors ${
+                      isActive
+                        ? "bg-white/20 text-white"
+                        : "bg-[#F3F3EF] text-[#5F7A84]"
+                    }`}
+                  >
+                    {preset.count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handlePriceApply}
-          className="w-full text-xs font-bold h-8"
-        >
-          Terapkan Harga
-        </Button>
+
+        {/* Atur Rentang Manual Min & Maks */}
+        <div className="space-y-2 pt-2 border-t border-dashed border-[#E8E8E1]">
+          <span className="text-[10px] font-bold text-[#5F7A84] uppercase tracking-wider block">
+            Atur Rentang Manual
+          </span>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-[10px] font-medium text-[#5F7A84] block mb-1">
+                Min
+              </label>
+              <div className="relative">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#5F7A84] pointer-events-none select-none">
+                  Rp
+                </span>
+                <Input
+                  type="number"
+                  placeholder={String(minProductPrice || 0)}
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handlePriceApply();
+                  }}
+                  className="h-9 pl-8 pr-2 text-xs bg-white border-[#E8E8E1] rounded-xl"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-medium text-[#5F7A84] block mb-1">
+                Maks
+              </label>
+              <div className="relative">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#5F7A84] pointer-events-none select-none">
+                  Rp
+                </span>
+                <Input
+                  type="number"
+                  placeholder={String(maxProductPrice || 500000)}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handlePriceApply();
+                  }}
+                  className="h-9 pl-8 pr-2 text-xs bg-white border-[#E8E8E1] rounded-xl"
+                />
+              </div>
+            </div>
+          </div>
+          <Button
+            type="button"
+            onClick={handlePriceApply}
+            className="w-full text-xs font-bold h-9 bg-[#234E5C] hover:bg-[#1b3e4a] text-white rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
+          >
+            Terapkan Harga
+          </Button>
+        </div>
       </div>
 
       {/* Reset Filter Button */}
@@ -268,6 +397,107 @@ export function EquipmentCatalog({
     setIsMobileFilterOpen(false);
   };
 
+  const handleResetPriceFilter = () => {
+    setMinPrice("");
+    setMaxPrice("");
+    applyFilters({ min_harga: "", max_harga: "" });
+  };
+
+  const handlePresetSelect = (presetMin: string, presetMax: string) => {
+    const curMin = (currentMinPrice || "").trim();
+    const curMax = (currentMaxPrice || "").trim();
+    const targetMin = (presetMin || "").trim();
+    const targetMax = (presetMax || "").trim();
+
+    const isCurrentActive =
+      (targetMin === "" ? curMin === "" || curMin === "0" : curMin === targetMin) &&
+      (targetMax === "" ? curMax === "" : curMax === targetMax) &&
+      Boolean(curMin || curMax);
+
+    if (isCurrentActive) {
+      setMinPrice("");
+      setMaxPrice("");
+      applyFilters({ min_harga: "", max_harga: "" });
+    } else {
+      setMinPrice(presetMin);
+      setMaxPrice(presetMax);
+      applyFilters({ min_harga: presetMin, max_harga: presetMax });
+    }
+  };
+
+  // Analisis harga riil dari katalog untuk preset dan rentang
+  const { minProductPrice, maxProductPrice, pricePresets } = React.useMemo(() => {
+    const prices = initialEquipment
+      .map((e) => Number(e.harga_per_hari))
+      .filter((p) => !isNaN(p) && p > 0);
+
+    const minP = prices.length > 0 ? Math.min(...prices) : 0;
+    const maxP = prices.length > 0 ? Math.max(...prices) : 500000;
+
+    // Scope alat berdasarkan kategori aktif
+    const scopeEquipment = currentCategory
+      ? initialEquipment.filter((e) => e.category?.slug === currentCategory)
+      : initialEquipment;
+
+    const candidateConfigs: Array<{
+      id: string;
+      label: string;
+      min: string;
+      max: string;
+    }> = [
+      {
+        id: "under-10k",
+        label: "Di bawah Rp 10.000",
+        min: "",
+        max: "10000",
+      },
+      {
+        id: "above-10k",
+        label: "Di atas Rp 10.000",
+        min: "10000",
+        max: "",
+      },
+      {
+        id: "10k-50k",
+        label: "Rp 10.000 - Rp 50.000",
+        min: "10000",
+        max: "50000",
+      },
+      {
+        id: "50k-100k",
+        label: "Rp 50.000 - Rp 100.000",
+        min: "50000",
+        max: "100000",
+      },
+      {
+        id: "above-100k",
+        label: "Di atas Rp 100.000",
+        min: "100000",
+        max: "",
+      },
+    ];
+
+    const presetsWithCount: PricePreset[] = candidateConfigs.map((cfg) => {
+      const count = scopeEquipment.filter((item) => {
+        const p = Number(item.harga_per_hari);
+        if (cfg.min && p < Number(cfg.min)) return false;
+        if (cfg.max && p > Number(cfg.max)) return false;
+        return true;
+      }).length;
+
+      return {
+        ...cfg,
+        count,
+      };
+    });
+
+    return {
+      minProductPrice: minP,
+      maxProductPrice: maxP,
+      pricePresets: presetsWithCount,
+    };
+  }, [initialEquipment, currentCategory]);
+
   // Filter dan sorting lokal
   const filteredEquipment = React.useMemo(() => {
     return initialEquipment
@@ -337,8 +567,15 @@ export function EquipmentCatalog({
     setMaxPrice,
     handleCategorySelect,
     handlePriceApply,
+    handlePresetSelect,
+    handleResetPriceFilter,
     handleResetFilters,
     hasActiveFilters,
+    minProductPrice,
+    maxProductPrice,
+    pricePresets,
+    currentMinPrice,
+    currentMaxPrice,
   };
 
   const filterSignature = `${currentCategory}|${currentMinPrice}|${currentMaxPrice}|${currentSort}|${currentQ}`;
@@ -401,14 +638,14 @@ export function EquipmentCatalog({
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[85vw] max-w-xs bg-white p-6">
-                <SheetHeader className="text-left border-b border-[#E8E8E1] pb-4 mb-4">
+              <SheetContent side="left" className="w-[85vw] max-w-xs bg-white p-0 flex flex-col h-full">
+                <SheetHeader className="text-left border-b border-[#E8E8E1] p-5 pb-4 shrink-0">
                   <SheetTitle className="text-base font-bold text-[#234E5C] flex items-center gap-2">
                     <SlidersHorizontal className="h-4 w-4 text-[#234E5C]" />
                     Filter Katalog
                   </SheetTitle>
                 </SheetHeader>
-                <div className="py-2">
+                <div className="p-5 pt-3 overflow-y-auto flex-1 overscroll-contain">
                   <FilterSidebar {...filterProps} />
                 </div>
               </SheetContent>
@@ -434,16 +671,30 @@ export function EquipmentCatalog({
 
       {/* Konten Utama: Filter di Wadah --panel + Grid Kartu Alat */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Sidebar Filter Desktop: Wadah --panel */}
+        {/* Sidebar Filter Desktop: Wadah --panel dengan scrolling mandiri */}
         <aside className="hidden lg:block lg:col-span-1">
-          <div className="sticky top-[var(--navbar-offset)] rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] p-5 transition-[top] duration-300">
-            <div className="flex items-center justify-between pb-3.5 border-b border-[#E8E8E1]">
+          <div className="sticky top-[calc(var(--navbar-offset)+1rem)] max-h-[calc(100vh-var(--navbar-offset)-2rem)] flex flex-col rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] shadow-xs transition-[top] duration-300 overflow-hidden">
+            {/* Header Sticky Card */}
+            <div className="flex items-center justify-between p-4 px-5 border-b border-[#E8E8E1] shrink-0 bg-[#F3F3EF]">
               <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4 text-[#234E5C]" />
                 Filter Alat
               </h3>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs font-semibold text-[#5F7A84] hover:text-[#DC2626] flex items-center gap-1 transition-colors cursor-pointer"
+                  title="Reset semua filter"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Reset
+                </button>
+              )}
             </div>
-            <div className="pt-4">
+
+            {/* Scrollable Card Body: Bebas scroll down dan scroll up tanpa terikat scroll produk */}
+            <div className="p-5 overflow-y-auto flex-1 overscroll-contain">
               <FilterSidebar {...filterProps} />
             </div>
           </div>
