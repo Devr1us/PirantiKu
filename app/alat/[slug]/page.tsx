@@ -33,7 +33,7 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: item } = await supabase
     .from("equipment")
-    .select("nama, deskripsi")
+    .select("nama, deskripsi, slug, images:equipment_images(url, is_utama)")
     .eq("slug", slug)
     .single();
 
@@ -41,9 +41,35 @@ export async function generateMetadata({
     return { title: "Alat Tidak Ditemukan" };
   }
 
+  const primaryImage = Array.isArray(item.images)
+    ? item.images.find((img) => img.is_utama)?.url || item.images[0]?.url
+    : null;
+  const imageUrl = getProductImage(slug, primaryImage) || "/logo.png";
+
+  const title = `${item.nama} | ${APP_NAME}`;
+  const description =
+    item.deskripsi ||
+    `Sewa ${item.nama} di ${APP_NAME}. Kualitas prima, DP ringan, dan stok siap pakai.`;
+
   return {
-    title: `${item.nama} | ${APP_NAME}`,
-    description: item.deskripsi || `Sewa ${item.nama} di ${APP_NAME}. Kualitas prima, DP ringan.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: imageUrl,
+          alt: item.nama,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 

@@ -43,6 +43,10 @@ export const metadata: Metadata = {
     "rental perkakas",
     "pirantiku",
   ],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -50,11 +54,20 @@ export const metadata: Metadata = {
     siteName: APP_NAME,
     title: `${APP_NAME} | ${TAGLINE}`,
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: `${APP_NAME} Logo`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${APP_NAME} | ${TAGLINE}`,
     description: APP_DESCRIPTION,
+    images: ["/logo.png"],
   },
   robots: {
     index: true,

@@ -31,7 +31,7 @@ import { H1, Lead } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 
-export default function KeranjangPage() {
+function KeranjangContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, updateQty, removeItem, clearCart, isLoaded } = useCart();
@@ -582,5 +582,22 @@ export default function KeranjangPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function KeranjangPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+            <p className="text-sm text-[#5F7A84]">Memuat keranjang sewa...</p>
+          </div>
+        </div>
+      }
+    >
+      <KeranjangContent />
+    </React.Suspense>
   );
 }
