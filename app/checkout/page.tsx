@@ -45,6 +45,7 @@ export default function CheckoutPage() {
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
+  const [dpPersen, setDpPersen] = React.useState<number>(DEFAULT_SETTINGS.dp_persen);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
@@ -105,6 +106,10 @@ export default function CheckoutPage() {
             if (s.key === "rekening_bank" && s.value) setRekeningInfo(s.value);
             if (s.key === "qris_url" && s.value) setQrisUrl(s.value);
             if (s.key === "whatsapp_admin" && s.value) setWhatsappAdmin(normalizeAdminPhone(s.value));
+            if (s.key === "dp_persen" && s.value) {
+              const parsed = parseInt(s.value, 10);
+              if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) setDpPersen(parsed);
+            }
           });
         }
       } catch (err) {
@@ -124,8 +129,8 @@ export default function CheckoutPage() {
       deposit: i.deposit,
     }));
 
-    return calculateRentalPrice(pricingItems, startDate, endDate, 30);
-  }, [items, startDate, endDate]);
+    return calculateRentalPrice(pricingItems, startDate, endDate, dpPersen);
+  }, [items, startDate, endDate, dpPersen]);
 
   const handleProcessBooking = async () => {
     if (items.length === 0) {
@@ -482,7 +487,7 @@ export default function CheckoutPage() {
                     {rekeningInfo}
                   </p>
                   <p className="text-[11px] text-[#5F7A84]">
-                    Jumlah Uang Muka (DP 30%):{" "}
+                    Jumlah Uang Muka (DP {pricing.dpPersen}%):{" "}
                     <strong className="text-[#A0630F] font-bold text-sm">
                       {formatRupiah(pricing.dpJumlah)}
                     </strong>
@@ -561,7 +566,7 @@ export default function CheckoutPage() {
                 <span className="font-bold text-[#234E5C]">{formatRupiah(pricing.totalDeposit)}</span>
               </div>
               <div className="flex justify-between text-[#A0630F] font-bold border-t border-[#E8E8E1] pt-2">
-                <span>DP 30% (Dibayar Sekarang)</span>
+                <span>DP {pricing.dpPersen}% (Dibayar Sekarang)</span>
                 <span>{formatRupiah(pricing.dpJumlah)}</span>
               </div>
               <div className="flex justify-between text-[#5F7A84] text-[11px]">

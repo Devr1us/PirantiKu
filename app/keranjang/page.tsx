@@ -23,7 +23,7 @@ import { format, addDays } from "date-fns";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
-import { getProductImage } from "@/lib/constants";
+import { getProductImage, DEFAULT_SETTINGS } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
@@ -73,6 +73,32 @@ export default function KeranjangPage() {
   });
 
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
+  const [dpPersen, setDpPersen] = React.useState<number>(DEFAULT_SETTINGS.dp_persen);
+
+  // Ambil pengaturan persentase DP dari database settings
+  React.useEffect(() => {
+    async function loadDpSetting() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("settings")
+          .select("value")
+          .eq("key", "dp_persen")
+          .single();
+
+        if (data?.value) {
+          const parsed = parseInt(data.value, 10);
+          if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) {
+            setDpPersen(parsed);
+          }
+        }
+      } catch {
+        // Gunakan fallback default 30%
+      }
+    }
+
+    loadDpSetting();
+  }, []);
 
   // Sync perubahan tanggal ke sessionStorage
   const handleDateChange = (start: string, end: string) => {
@@ -101,7 +127,7 @@ export default function KeranjangPage() {
     }
   };
 
-  // Kalkulasi harga seluruh keranjang
+  // Kalkulasi harga seluruh keranjang secara dinamis sesuai dpPersen
   const pricing = React.useMemo(() => {
     const pricingItems = items.map((i) => ({
       equipmentId: i.equipmentId,
@@ -111,8 +137,8 @@ export default function KeranjangPage() {
       deposit: i.deposit,
     }));
 
-    return calculateRentalPrice(pricingItems, startDate, endDate, 30);
-  }, [items, startDate, endDate]);
+    return calculateRentalPrice(pricingItems, startDate, endDate, dpPersen);
+  }, [items, startDate, endDate, dpPersen]);
 
   // Validasi jika tanggal sewa tidak valid (misal: selesai lebih awal dari mulai)
   const isDateInvalid = React.useMemo(() => {
@@ -505,11 +531,11 @@ export default function KeranjangPage() {
               {/* Rincian DP */}
               <div className="rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] p-3.5 space-y-1.5 mt-2">
                 <div className="flex justify-between text-[#A0630F] font-bold text-xs">
-                  <span>Uang Muka / DP (30%)</span>
+                  <span>Uang Muka / DP ({pricing.dpPersen}%)</span>
                   <span>{formatRupiah(pricing.dpJumlah)}</span>
                 </div>
                 <p className="text-[11px] text-[#5F7A84] leading-relaxed">
-                  Cukup bayar DP 30% untuk mengunci stok alat pada tanggal pilihan Anda.
+                  Cukup bayar DP {pricing.dpPersen}% untuk mengunci stok alat pada tanggal pilihan Anda.
                 </p>
               </div>
 
