@@ -45,35 +45,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const supabase = createClient(supabaseUrl, supabaseKey);
 
       // 2. Fetch Kategori
-      const { data: categories } = await supabase
+      const { data: categories, error: catError } = await supabase
         .from("categories")
-        .select("slug, updated_at");
+        .select("slug")
+        .order("urutan", { ascending: true });
 
-      if (categories && categories.length > 0) {
+      if (catError) {
+        console.error("Gagal mengambil data kategori untuk sitemap:", catError);
+      } else if (categories && categories.length > 0) {
         categoryRoutes = categories.map((cat) => ({
           url: `${baseUrl}/kategori/${cat.slug}`,
-          lastModified: cat.updated_at ? new Date(cat.updated_at) : now,
+          lastModified: now,
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }));
       }
 
-      // 3. Fetch Alat Aktif
-      const { data: equipmentList } = await supabase
+      // 3. Fetch Seluruh Alat yang Aktif
+      const { data: equipmentList, error: eqError } = await supabase
         .from("equipment")
-        .select("slug, updated_at")
-        .eq("is_aktif", true);
+        .select("slug, created_at")
+        .eq("aktif", true)
+        .order("id", { ascending: true });
 
-      if (equipmentList && equipmentList.length > 0) {
+      if (eqError) {
+        console.error("Gagal mengambil data alat untuk sitemap:", eqError);
+      } else if (equipmentList && equipmentList.length > 0) {
         equipmentRoutes = equipmentList.map((eq) => ({
           url: `${baseUrl}/alat/${eq.slug}`,
-          lastModified: eq.updated_at ? new Date(eq.updated_at) : now,
+          lastModified: eq.created_at ? new Date(eq.created_at) : now,
           changeFrequency: "weekly" as const,
           priority: 0.8,
         }));
       }
-    } catch {
-      // Fallback jika database tidak dapat dijangkau
+    } catch (err) {
+      console.error("Error sitemap generator:", err);
     }
   }
 
