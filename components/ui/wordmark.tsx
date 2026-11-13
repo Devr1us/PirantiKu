@@ -77,7 +77,7 @@ export function Wordmark({
     },
   };
 
-  const logoSrc = isWhite ? "/logo-white.svg" : "/logo.svg";
+  const logoSrc = isWhite ? "/logo-white.png" : "/logo.png";
 
   const content = (
     <div

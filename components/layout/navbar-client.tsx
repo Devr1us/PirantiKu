@@ -15,7 +15,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
-import type { Profile, Category } from "@/types/database";
+import type { Profile } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/wordmark";
 import { useCart } from "@/lib/cart-context";
@@ -43,21 +43,18 @@ import { normalizeAdminPhone } from "@/lib/constants";
 interface NavbarClientProps {
   user: User | null;
   profile: Profile | null;
-  categories: Category[];
   whatsappAdmin: string;
 }
 
 export function NavbarClient({
   user,
   profile,
-  categories,
   whatsappAdmin,
 }: NavbarClientProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { totalItems, isLoaded } = useCart();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const headerRef = React.useRef<HTMLElement | null>(null);
 
@@ -66,7 +63,7 @@ export function NavbarClient({
 
   const { isVisible, isScrolled } = useNavbarVisibility({
     isMobileOpen,
-    isDropdownOpen,
+    isDropdownOpen: false,
     isHovered,
     headerRef,
   });
@@ -206,53 +203,6 @@ export function NavbarClient({
               )}
             </Link>
 
-            {/* KATEGORI (Dropdown dari Database) */}
-            <DropdownMenu onOpenChange={setIsDropdownOpen}>
-              <DropdownMenuTrigger
-                aria-current={activeNav === "kategori" ? "page" : undefined}
-                className={`relative inline-flex items-center gap-1 px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer outline-none ${
-                  activeNav === "kategori"
-                    ? "text-[#234E5C] font-semibold"
-                    : "text-[#234E5C]/80 hover:text-[#234E5C]"
-                }`}
-              >
-                <HoverRollText text="KATEGORI" />
-                <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
-                {activeNav === "kategori" && (
-                  <motion.span
-                    layoutId="nav-underline"
-                    className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
-                    transition={springTransition}
-                  />
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-lg">
-                <DropdownMenuLabel className="text-xs uppercase tracking-wider text-[#5F7A84] px-3 py-1 font-bold">
-                  Pilih Kategori Alat
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-                {categories.map((cat) => (
-                  <DropdownMenuItem key={cat.id} asChild>
-                    <Link
-                      href={`/kategori/${cat.slug}`}
-                      className="flex items-center justify-between px-3 py-2 text-sm font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                    >
-                      <span>{cat.nama}</span>
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/alat"
-                    className="flex items-center justify-between px-3 py-2 text-xs font-bold text-[#A0630F] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                  >
-                    <span>Lihat Semua Kategori &rarr;</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             {/* CARA SEWA (Scroll ke #cara-sewa) */}
             <Link
               href="/#cara-sewa"
@@ -328,7 +278,7 @@ export function NavbarClient({
           {/* Tombol Auth Desktop */}
           <div className="hidden sm:flex items-center gap-2">
             {user ? (
-              <DropdownMenu onOpenChange={setIsDropdownOpen}>
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
@@ -473,32 +423,6 @@ export function NavbarClient({
                         )}
                         KATALOG ALAT
                       </Link>
-
-                      {/* Submenu Kategori Mobile */}
-                      <div className="pt-2 pb-1">
-                        <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-                          Kategori Alat
-                        </span>
-                        <div className="mt-1 space-y-1 pl-2">
-                          {categories.map((cat) => {
-                            const isCatActive = pathname === `/kategori/${cat.slug}`;
-                            return (
-                              <Link
-                                key={cat.id}
-                                href={`/kategori/${cat.slug}`}
-                                onClick={() => setIsMobileOpen(false)}
-                                className={`block px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                                  isCatActive
-                                    ? "bg-[#F3F3EF] text-[#234E5C] font-bold"
-                                    : "text-[#234E5C] hover:bg-[#F3F3EF]"
-                                }`}
-                              >
-                                {cat.nama}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
 
                       <Link
                         href="/#cara-sewa"

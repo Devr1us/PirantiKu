@@ -1,12 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { NavbarClient } from "./navbar-client";
 import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
-import type { Profile, Category } from "@/types/database";
+import type { Profile } from "@/types/database";
 
 export async function Navbar() {
   let user = null;
   let profile: Profile | null = null;
-  let categories: Category[] = [];
   let whatsappAdmin = DEFAULT_SETTINGS.whatsapp_admin;
 
   try {
@@ -23,16 +22,6 @@ export async function Navbar() {
         .eq("id", user.id)
         .single();
       profile = profileData as Profile | null;
-    }
-
-    // Ambil daftar kategori dari database untuk dropdown
-    const { data: catData } = await supabase
-      .from("categories")
-      .select("*")
-      .order("urutan", { ascending: true });
-
-    if (catData) {
-      categories = catData as Category[];
     }
 
     // Ambil kontak WhatsApp dari settings
@@ -61,7 +50,6 @@ export async function Navbar() {
     <NavbarClient
       user={user}
       profile={profile}
-      categories={categories}
       whatsappAdmin={whatsappAdmin}
     />
   );
