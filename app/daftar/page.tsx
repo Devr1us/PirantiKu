@@ -129,9 +129,8 @@ export default function DaftarPage() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
 
-      const { data: authData, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
