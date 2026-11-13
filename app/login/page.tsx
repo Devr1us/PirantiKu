@@ -33,7 +33,12 @@ import {
 import { toast } from "sonner";
 
 const loginSchema = z.object({
-  email: z.string().email("Format email tidak valid"),
+  email: z
+    .string()
+    .email("Format email tidak valid")
+    .refine((val) => val.toLowerCase().endsWith("@gmail.com"), {
+      message: "Hanya email @gmail.com yang diizinkan",
+    }),
   password: z.string().min(1, "Password wajib diisi"),
 });
 
@@ -46,10 +51,32 @@ function LoginForm() {
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = React.useState(false);
   const [resetEmail, setResetEmail] = React.useState("");
   const [isResetting, setIsResetting] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    setAuthError(null);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${nextParam}`,
+        },
+      });
+      if (error) {
+        setAuthError(error.message);
+        setIsGoogleLoading(false);
+      }
+    } catch {
+      setAuthError("Gagal masuk dengan Google.");
+      setIsGoogleLoading(false);
+    }
+  };
 
   const {
     register,
@@ -110,25 +137,25 @@ function LoginForm() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!resetEmail || !resetEmail.includes("@")) {
-      toast.error("Masukkan alamat email yang valid");
+    if (!resetEmail || !resetEmail.toLowerCase().endsWith("@gmail.com")) {
+      toast.error("Masukkan alamat Gmail yang valid (@gmail.com)");
       return;
     }
     setIsResetting(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/profil`,
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail);
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success("Email pemulihan kata sandi telah dikirim.");
+        toast.success("Kode OTP telah dikirim ke Gmail Anda.");
         setIsForgotPasswordOpen(false);
+        // Redirect ke halaman verify OTP untuk recovery
+        router.push(`/auth/verify-otp?email=${encodeURIComponent(resetEmail)}&type=recovery`);
         setResetEmail("");
       }
     } catch {
-      toast.error("Gagal mengirim email reset kata sandi.");
+      toast.error("Gagal mengirim kode reset password.");
     } finally {
       setIsResetting(false);
     }
@@ -197,6 +224,33 @@ function LoginForm() {
             )}
           </AnimatePresence>
 
+          {/* Tombol Login Google */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isGoogleLoading || isLoading}
+            className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#E8E8E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            {isGoogleLoading ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+            ) : (
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            )}
+            <span>{isGoogleLoading ? "Menghubungkan..." : "Masuk dengan Google"}</span>
+          </button>
+
+          {/* Pemisah */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+            <span className="text-[11px] text-[#5F7A84] font-medium">atau masuk dengan email</span>
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs font-semibold text-[#234E5C]">
@@ -207,7 +261,7 @@ function LoginForm() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="nama@email.com"
+                  placeholder="nama@gmail.com"
                   className="pl-10 text-xs"
                   {...register("email")}
                 />
@@ -272,7 +326,34 @@ function LoginForm() {
             </div>
           </form>
 
-          <div className="text-center pt-2 border-t border-[#E8E8E1]">
+          {/* Pemisah */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+            <span className="text-[11px] text-[#5F7A84] font-medium">atau masuk dengan</span>
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+          </div>
+
+          {/* Tombol Login Google */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isGoogleLoading || isLoading}
+            className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#E8E8E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            {isGoogleLoading ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+            ) : (
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            )}
+            <span>{isGoogleLoading ? "Menghubungkan..." : "Masuk dengan Google"}</span>
+          </button>
+
+          <div className="text-center border-t border-[#E8E8E1] pt-4">
             <p className="text-xs text-[#5F7A84]">
               Belum punya akun?{" "}
               <Link
@@ -298,7 +379,7 @@ function LoginForm() {
               Atur Ulang Kata Sandi
             </DialogTitle>
             <DialogDescription className="text-xs text-[#5F7A84]">
-              Masukkan alamat email Anda untuk menerima instruksi reset kata sandi.
+              Masukkan Gmail Anda. Kami akan mengirimkan kode OTP 6 digit untuk mereset password.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleResetPassword} className="space-y-4 pt-2">
@@ -309,7 +390,7 @@ function LoginForm() {
               <Input
                 id="reset-email"
                 type="email"
-                placeholder="nama@email.com"
+                placeholder="nama@gmail.com"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required
@@ -333,7 +414,7 @@ function LoginForm() {
                 disabled={isResetting}
                 className="text-xs font-bold"
               >
-                {isResetting ? "Mengirim..." : "Kirim Tautan"}
+                {isResetting ? "Mengirim..." : "Kirim Kode OTP"}
               </Button>
             </div>
           </form>

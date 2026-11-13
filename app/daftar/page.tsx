@@ -13,7 +13,6 @@ import {
   Mail,
   Lock,
   User,
-  Phone,
   ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -25,18 +24,18 @@ import { H1, H2, Lead, P } from "@/components/ui/typography";
 import { HoverRollText } from "@/components/ui/motion";
 import { toast } from "sonner";
 
-const phoneRegex = /^(\+62|62|0)8[1-9][0-9]{6,11}$/;
-
 const registerSchema = z
   .object({
     nama: z
       .string()
       .min(3, "Nama lengkap minimal 3 karakter")
       .max(100, "Nama terlalu panjang"),
-    no_hp: z
+    email: z
       .string()
-      .regex(phoneRegex, "Format no. HP tidak valid (contoh: 081234567890)"),
-    email: z.string().email("Format email tidak valid"),
+      .email("Format email tidak valid")
+      .refine((val) => val.toLowerCase().endsWith("@gmail.com"), {
+        message: "Hanya email @gmail.com yang diizinkan",
+      }),
     password: z
       .string()
       .min(8, "Password minimal 8 karakter")
@@ -84,8 +83,27 @@ export default function DaftarPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isSuccessEmailCheck, setIsSuccessEmailCheck] = React.useState(false);
-  const [registeredEmail, setRegisteredEmail] = React.useState("");
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
+
+  const handleGoogleSignUp = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/`,
+        },
+      });
+      if (error) {
+        toast.error(error.message);
+        setIsGoogleLoading(false);
+      }
+    } catch {
+      toast.error("Gagal mendaftar dengan Google.");
+      setIsGoogleLoading(false);
+    }
+  };
 
   const {
     register,
@@ -96,7 +114,6 @@ export default function DaftarPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       nama: "",
-      no_hp: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -105,6 +122,7 @@ export default function DaftarPage() {
   });
 
   const passwordVal = useWatch({ control, name: "password", defaultValue: "" });
+  const agreeTermsVal = useWatch({ control, name: "agreeTerms", defaultValue: false });
   const strength = getPasswordStrength(passwordVal);
 
   const onSubmit = async (data: RegisterFormData) => {
@@ -113,20 +131,13 @@ export default function DaftarPage() {
       const supabase = createClient();
       const origin = window.location.origin;
 
-      let sanitizedPhone = data.no_hp.replace(/[^0-9]/g, "");
-      if (sanitizedPhone.startsWith("0")) {
-        sanitizedPhone = "62" + sanitizedPhone.slice(1);
-      }
-
       const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           data: {
             nama: data.nama.trim(),
-            no_hp: sanitizedPhone,
           },
-          emailRedirectTo: `${origin}/auth/callback`,
         },
       });
 
@@ -135,14 +146,8 @@ export default function DaftarPage() {
         return;
       }
 
-      if (authData.session) {
-        toast.success("Pendaftaran berhasil! Selamat datang di PirantiKu");
-        router.refresh();
-        router.push("/");
-      } else {
-        setRegisteredEmail(data.email);
-        setIsSuccessEmailCheck(true);
-      }
+      // Redirect ke halaman OTP verifikasi
+      router.push(`/auth/verify-otp?email=${encodeURIComponent(data.email)}&type=signup`);
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
@@ -151,42 +156,6 @@ export default function DaftarPage() {
       setIsLoading(false);
     }
   };
-
-  if (isSuccessEmailCheck) {
-    return (
-      <div className="flex min-h-[80vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
-        <div className="w-full max-w-md rounded-2xl border border-[#E8E8E1] bg-white p-8 text-center shadow-sm space-y-4">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
-            <Mail className="h-7 w-7" />
-          </div>
-          <H2 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
-            Cek Email Anda
-          </H2>
-          <Lead className="text-xs text-[#5F7A84] leading-relaxed">
-            Kami telah mengirimkan tautan konfirmasi pendaftaran ke alamat:
-          </Lead>
-          <p className="font-semibold text-xs text-[#234E5C] bg-[#F3F3EF] py-2 px-3 rounded-lg">
-            {registeredEmail}
-          </p>
-          <p className="text-[11px] text-[#5F7A84]">
-            Silakan klik tautan di email tersebut untuk mengaktifkan akun dan mulai menyewa alat di PirantiKu.
-          </p>
-          <div className="pt-4 flex flex-col gap-2">
-            <Link href="/login">
-              <Button variant="warm" className="w-full text-xs font-bold">
-                Masuk ke Akun
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" className="w-full text-xs font-bold">
-                Kembali ke Beranda
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
@@ -228,7 +197,7 @@ export default function DaftarPage() {
               Buat Akun Penyewa
             </H1>
             <Lead className="text-xs text-[#5F7A84]">
-              Lengkapi data di bawah untuk kemudahan verifikasi jadwal sewa alat.
+              Gunakan akun Gmail Anda untuk mendaftar dan mulai sewa alat.
             </Lead>
           </div>
 
@@ -253,37 +222,17 @@ export default function DaftarPage() {
               )}
             </div>
 
-            {/* Nomor WhatsApp */}
-            <div className="space-y-1">
-              <Label htmlFor="no_hp" className="text-xs font-semibold text-[#234E5C]">
-                Nomor WhatsApp Aktif
-              </Label>
-              <div className="relative">
-                <Phone className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
-                <Input
-                  id="no_hp"
-                  type="tel"
-                  placeholder="081234567890"
-                  className="pl-10 text-xs"
-                  {...register("no_hp")}
-                />
-              </div>
-              {errors.no_hp && (
-                <p className="text-[11px] text-[#DC2626] font-medium">{errors.no_hp.message}</p>
-              )}
-            </div>
-
             {/* Email */}
             <div className="space-y-1">
               <Label htmlFor="email" className="text-xs font-semibold text-[#234E5C]">
-                Alamat Email
+                Alamat Email Gmail
               </Label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="nama@email.com"
+                  placeholder="nama@gmail.com"
                   className="pl-10 text-xs"
                   {...register("email")}
                 />
@@ -369,18 +318,24 @@ export default function DaftarPage() {
 
             {/* Syarat & Ketentuan */}
             <div className="pt-1">
-              <label className="flex items-start gap-2 text-xs text-[#5F7A84] cursor-pointer">
+              <label className={`flex items-start gap-2 text-xs cursor-pointer ${agreeTermsVal ? "text-[#234E5C]" : "text-[#5F7A84]"}`}>
                 <input
                   type="checkbox"
                   className="mt-0.5 h-3.5 w-3.5 rounded border-[#E8E8E1] text-[#234E5C] focus:ring-[#234E5C] accent-[#234E5C]"
                   {...register("agreeTerms")}
                 />
                 <span>
-                  Saya menyetujui ketentuan peminjaman dan bersedia menjaga kondisi alat selama masa sewa.
+                  Saya menyetujui{" "}
+                  <span className="font-semibold text-[#234E5C]">ketentuan peminjaman</span>{" "}
+                  dan bersedia menjaga kondisi alat selama masa sewa.{" "}
+                  <span className="text-[#DC2626] font-bold">*</span>
                 </span>
               </label>
               {errors.agreeTerms && (
                 <p className="text-[11px] text-[#DC2626] font-medium mt-1">{errors.agreeTerms.message}</p>
+              )}
+              {!agreeTermsVal && !errors.agreeTerms && (
+                <p className="text-[11px] text-[#5F7A84] mt-1">Wajib disetujui untuk melanjutkan pendaftaran.</p>
               )}
             </div>
 
@@ -389,8 +344,8 @@ export default function DaftarPage() {
               <Button
                 type="submit"
                 variant="warm"
-                disabled={isLoading}
-                className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                disabled={isLoading || !agreeTermsVal}
+                className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <span>Memproses Akun...</span>
@@ -404,7 +359,34 @@ export default function DaftarPage() {
             </div>
           </form>
 
-          <div className="text-center pt-2 border-t border-[#E8E8E1]">
+          {/* Pemisah */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+            <span className="text-[11px] text-[#5F7A84] font-medium">atau daftar dengan</span>
+            <div className="flex-1 h-px bg-[#E8E8E1]" />
+          </div>
+
+          {/* Tombol Daftar Google */}
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={isGoogleLoading || isLoading}
+            className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#E8E8E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+          >
+            {isGoogleLoading ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+            ) : (
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            )}
+            <span>{isGoogleLoading ? "Menghubungkan..." : "Daftar dengan Google"}</span>
+          </button>
+
+          <div className="text-center border-t border-[#E8E8E1] pt-4">
             <p className="text-xs text-[#5F7A84]">
               Sudah punya akun?{" "}
               <Link
