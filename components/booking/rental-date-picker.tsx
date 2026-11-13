@@ -130,7 +130,8 @@ export function RentalDatePicker({
             variant="ghost"
             size="icon"
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            disabled={isBefore(currentMonth, today)}
+            // BUG-DP1: Bandingkan startOfMonth agar bulan ini tidak ikut disabled di pertengahan bulan
+            disabled={isBefore(startOfMonth(currentMonth), startOfMonth(today))}
             className="h-8 w-8 rounded-full"
             aria-label="Bulan sebelumnya"
           >
@@ -214,7 +215,17 @@ export function RentalDatePicker({
           </span>
           {startDate && endDate && (
             <span className="text-[#A0630F] font-bold">
-              {startDate === endDate ? "1 Hari Sewa" : `${startDate} s.d ${endDate}`}
+              {/* BUG-DP2: Tampilkan jumlah hari, bukan raw ISO string */}
+              {(() => {
+                try {
+                  const start = parseISO(startDate);
+                  const end = parseISO(endDate);
+                  const diff = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
+                  return diff <= 1 ? "1 Hari Sewa" : `${diff} Hari Sewa`;
+                } catch {
+                  return "1 Hari Sewa";
+                }
+              })()}
             </span>
           )}
         </div>

@@ -68,14 +68,17 @@ export function AdminBookingManager({
   const [selectedBooking, setSelectedBooking] = React.useState<AdminBookingWithDetails | null>(null);
   const [isDetailOpen, setIsDetailOpen] = React.useState<boolean>(false);
 
-  // Auto-buka modal jika ada parameter kode booking di URL (misal klik Detail dari Dashboard)
+  // BUG-17: Auto-buka modal hanya sekali saat qParam pertama kali ada,
+  // bukan setiap kali bookings berubah (hindari re-open loop setelah verifikasi)
+  const hasAutoOpenedRef = React.useRef(false);
   React.useEffect(() => {
-    if (qParam) {
+    if (qParam && !hasAutoOpenedRef.current) {
       setSearchQuery(qParam);
       const match = bookings.find(
         (b) => b.kode_booking.toLowerCase() === qParam.toLowerCase()
       );
       if (match) {
+        hasAutoOpenedRef.current = true;
         setSelectedBooking(match);
         setIsDetailOpen(true);
       }
@@ -129,15 +132,17 @@ export function AdminBookingManager({
         (p) => p.jenis === "dp" && p.status === "menunggu_verifikasi"
       );
 
-      // 1. Update status pembayaran ke terverifikasi
+      // BUG-06: Cek error update payments dulu sebelum lanjut update booking
       if (latestPayment) {
-        await supabase
+        const { error: payErr } = await supabase
           .from("payments")
           .update({
             status: "terverifikasi",
             diverifikasi_oleh: user?.id || null,
           })
           .eq("id", latestPayment.id);
+
+        if (payErr) throw new Error("Gagal memperbarui status pembayaran: " + payErr.message);
       }
 
       // 2. Update status booking ke dp_dibayar
@@ -162,24 +167,23 @@ export function AdminBookingManager({
         // Abaikan jika trigger db sudah menangani
       }
 
-      // Update state lokal
+      // BUG-05: Update state lokal dan juga selectedBooking agar dialog tidak stale
+      const updatedBooking: AdminBookingWithDetails = {
+        ...booking,
+        status: "dp_dibayar",
+        pesan_admin: "Pembayaran DP telah diverifikasi admin. Pesanan siap dijadwalkan.",
+        payments: booking.payments?.map((p) =>
+          latestPayment && p.id === latestPayment.id
+            ? { ...p, status: "terverifikasi" as const }
+            : p
+        ),
+      };
+
       setBookings((prev) =>
-        prev.map((item) => {
-          if (item.id === booking.id) {
-            return {
-              ...item,
-              status: "dp_dibayar",
-              pesan_admin: "Pembayaran DP telah diverifikasi admin. Pesanan siap dijadwalkan.",
-              payments: item.payments?.map((p) =>
-                latestPayment && p.id === latestPayment.id
-                  ? { ...p, status: "terverifikasi" as const }
-                  : p
-              ),
-            };
-          }
-          return item;
-        })
+        prev.map((item) => item.id === booking.id ? updatedBooking : item)
       );
+      // Sync selectedBooking agar dialog menampilkan data terbaru
+      setSelectedBooking(updatedBooking);
 
       toast.success(`Pembayaran DP booking #${booking.kode_booking} berhasil diverifikasi!`);
       setIsDetailOpen(false);

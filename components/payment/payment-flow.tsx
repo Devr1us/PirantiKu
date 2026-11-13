@@ -74,7 +74,8 @@ export function PaymentFlow({
   onPaymentSuccess,
   showBackToHome = false,
 }: PaymentFlowProps) {
-  const supabase = createClient();
+  // BUG-PF3: Supabase client di useMemo, bukan di render body
+  const supabase = React.useMemo(() => createClient(), []);
 
   // Tab: transfer | qris
   const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">("transfer");
@@ -110,35 +111,40 @@ export function PaymentFlow({
     [rekeningBank]
   );
 
-  // Daftar Pilihan Bank
+  // Daftar Pilihan Bank — BUG-PF1: nomor rekening dari settings untuk BCA,
+  // bank lain ditandai jelas sebagai "DEMO / Simulasi" agar tidak ada transfer nyata ke nomor salah
   const bankOptions = React.useMemo(() => ({
     bca: {
       name: "Bank BCA",
       bank: "BCA",
-      nomor: bcaInfo.nomor,
-      atasNama: bcaInfo.atasNama,
+      nomor: bcaInfo.nomor || "1234567890",
+      atasNama: bcaInfo.atasNama || "PirantiKu",
       badge: "Utama",
+      isDemo: false,
     },
     mandiri: {
       name: "Bank Mandiri",
       bank: "Mandiri",
-      nomor: "1380029182311",
-      atasNama: "PT PirantiKu Nusantara",
-      badge: "VA / Transfer",
+      nomor: "108-000-1234567",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
     },
     bri: {
       name: "Bank BRI",
       bank: "BRI",
-      nomor: "012901098231532",
-      atasNama: "PT PirantiKu Nusantara",
-      badge: "VA / Transfer",
+      nomor: "0123-01-012345-30-6",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
     },
     bni: {
       name: "Bank BNI",
       bank: "BNI",
-      nomor: "0982371928",
-      atasNama: "PT PirantiKu Nusantara",
-      badge: "VA / Transfer",
+      nomor: "0123456789",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
     },
   }), [bcaInfo]);
 
@@ -491,8 +497,11 @@ export function PaymentFlow({
               {latestDpPayment.bukti_url ? (
                 <div
                   onClick={() => {
-                    setActiveZoomImage(latestDpPayment.bukti_url);
-                    setIsZoomModalOpen(true);
+                    // BUG-PF5: Guard null sebelum set activeZoomImage
+                    if (latestDpPayment.bukti_url) {
+                      setActiveZoomImage(latestDpPayment.bukti_url);
+                      setIsZoomModalOpen(true);
+                    }
                   }}
                   className="relative h-14 w-14 rounded-lg overflow-hidden border border-[#E8E8E1] cursor-pointer group shrink-0"
                 >
@@ -522,8 +531,11 @@ export function PaymentFlow({
                   <button
                     type="button"
                     onClick={() => {
-                      setActiveZoomImage(latestDpPayment.bukti_url);
-                      setIsZoomModalOpen(true);
+                      // BUG-PF5: Guard null
+                      if (latestDpPayment.bukti_url) {
+                        setActiveZoomImage(latestDpPayment.bukti_url);
+                        setIsZoomModalOpen(true);
+                      }
                     }}
                     className="text-[11px] font-bold text-[#A0630F] hover:underline mt-0.5 inline-block cursor-pointer"
                   >
@@ -560,7 +572,7 @@ export function PaymentFlow({
                   className="text-xs font-bold gap-1.5 w-full"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
-                  Chat WhatsApp Admin
+                  Hubungi Admin
                 </Button>
               </a>
             </div>
@@ -569,7 +581,8 @@ export function PaymentFlow({
       )}
 
       {/* 4. Tab Pilihan Metode Pembayaran & Formulir Upload (Tampil jika belum verifikasi atau sedang edit) */}
-      {(!latestDpPayment || isEditingProof || latestDpPayment.status === "ditolak") && (
+      {/* BUG-PF4: Jangan tampilkan form upload jika DP sudah terverifikasi */}
+      {!isDpVerified && (!latestDpPayment || isEditingProof || latestDpPayment.status === "ditolak") && (
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
             <div>
@@ -652,10 +665,22 @@ export function PaymentFlow({
                       {activeBank.name}
                     </h4>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                    activeBank.isDemo
+                      ? "bg-[#FEF3C7] text-[#A0630F] border-[#FDE68A]"
+                      : "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5]"
+                  }`}>
                     {activeBank.badge}
                   </span>
                 </div>
+
+                {/* BUG-PF1+PF2: Banner jelas untuk rekening dummy/demo */}
+                {activeBank.isDemo && (
+                  <div className="rounded-lg bg-[#FEF3C7] border border-[#FDE68A] p-3 text-[11px] text-[#78350F]">
+                    <span className="font-bold block">⚠️ Akun Bank Demo / Simulasi</span>
+                    <span>Rekening ini hanya untuk keperluan demo tampilan. Gunakan rekening BCA (Utama) untuk transaksi nyata.</span>
+                  </div>
+                )}
 
                 <div className="p-4 rounded-xl bg-white border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
@@ -752,7 +777,10 @@ export function PaymentFlow({
                   )}
 
                   <div className="text-[11px] text-[#5F7A84] space-y-0.5">
-                    <p className="font-bold text-[#234E5C]">NMID: ID1020268899001</p>
+                    {/* BUG-PF2: NMID dinamis dari settings atau ditandai demo */}
+                    <p className="font-bold text-[#234E5C]">
+                      NMID: {qrisUrl ? "ID1020PIRANTIKU" : "ID0000000000000 (Demo)"}
+                    </p>
                     <p>Bebas biaya admin antar aplikasi e-Wallet</p>
                   </div>
                 </div>

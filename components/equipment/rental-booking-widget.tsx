@@ -56,6 +56,19 @@ export function RentalBookingWidget({
   const [isLoadingStock, setIsLoadingStock] = React.useState<boolean>(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
 
+  // BUG-RBW3: Tutup date picker saat klik di luar widget
+  const widgetRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (!isDatePickerOpen) return;
+    function handleOutsideClick(e: MouseEvent) {
+      if (widgetRef.current && !widgetRef.current.contains(e.target as Node)) {
+        setIsDatePickerOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isDatePickerOpen]);
+
   // Cek apakah pengguna saat ini adalah admin
   React.useEffect(() => {
     async function checkRole() {
@@ -107,6 +120,10 @@ export function RentalBookingWidget({
   }, [equipment.id]);
 
   // 2. Ambil sisa_stok real-time setiap rentang tanggal berubah
+  // BUG-RBW1: qty dikeluarkan dari dependency array — qty bukan input, tapi output dari cek stok
+  const qtyRef = React.useRef(qty);
+  qtyRef.current = qty;
+
   React.useEffect(() => {
     let isCancelled = false;
 
@@ -124,11 +141,11 @@ export function RentalBookingWidget({
         if (!isCancelled) {
           if (!error && typeof data === "number") {
             setSisaStok(data);
-            if (qty > data) {
+            if (qtyRef.current > data) {
               setQty(Math.max(1, data));
             }
           } else {
-            // Fallback jika RPC error (misal overload bentrok PGRST203 di database)
+            // Fallback jika RPC error
             const cleanStock = Math.max(0, (equipment.stok || 0) - (equipment.stok_rusak || 0));
             const { data: bookedItems } = await supabase
               .from("booking_items")
@@ -145,14 +162,13 @@ export function RentalBookingWidget({
                   : (rawBooking as { status: string; tanggal_mulai: string; tanggal_selesai: string } | null);
 
                 if (!b) continue;
-                // Cek overlap: NOT (selesai < startDate OR mulai > endDate)
                 if (!(b.tanggal_selesai < startDate || b.tanggal_mulai > endDate)) {
                   overlapQty += item.qty || 1;
                 }
               }
               const calculated = Math.max(0, cleanStock - overlapQty);
               setSisaStok(calculated);
-              if (qty > calculated) {
+              if (qtyRef.current > calculated) {
                 setQty(Math.max(1, calculated));
               }
             }
@@ -172,7 +188,7 @@ export function RentalBookingWidget({
     return () => {
       isCancelled = true;
     };
-  }, [equipment, startDate, endDate, qty]);
+  }, [equipment, startDate, endDate]); // qty sengaja tidak ada di sini
 
   // Hitung ringkasan harga
   const pricing = React.useMemo(() => {
@@ -242,17 +258,22 @@ export function RentalBookingWidget({
   };
 
   const handleRentNow = () => {
+    if (isAdminUser) {
+      toast.info("Anda login sebagai Administrator. Pemesanan rental dikhususkan untuk akun pelanggan.");
+      return;
+    }
     if (!isAvailable) {
       toast.error("Maaf, stok alat tidak tersedia pada tanggal tersebut.");
       return;
     }
+    // BUG-RBW2: Panggil handleAddToCart hanya sekali, lalu navigasi ke keranjang
     handleAddToCart();
     router.push(`/keranjang?mulai=${startDate}&selesai=${endDate}`);
   };
 
   return (
     <>
-      <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-6 text-[#234E5C]">
+      <div ref={widgetRef} className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-6 text-[#234E5C]">
         {/* Header Widget: Harga Sewa & Stok */}
         <div className="flex items-start justify-between border-b border-[#E8E8E1] pb-4">
           <div>

@@ -57,6 +57,14 @@ export default async function AdminSettingsPage() {
         </Lead>
       </div>
 
+      {/* BUG-13: Tampilkan banner error jika settings gagal dimuat dari DB */}
+      {error && (
+        <div className="rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-4 text-xs text-[#991B1B] flex items-start gap-2.5">
+          <span className="font-bold">⚠️ Gagal memuat data pengaturan dari database.</span>
+          <span>Form di bawah menampilkan nilai default sistem. Jangan simpan sebelum memastikan koneksi database normal, karena data nyata bisa tertimpa.</span>
+        </div>
+      )}
+
       {/* Komponen Pengelola Pengaturan Interaktif */}
       <AdminSettingsManager initialSettings={settingsMap} />
     </div>

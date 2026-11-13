@@ -38,7 +38,9 @@ function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error");
-  const nextParam = searchParams.get("next") || "/admin";
+  const rawNext = searchParams.get("next") || "/admin";
+  // BUG-04: Validasi open redirect — hanya izinkan path internal
+  const nextParam = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/admin";
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -96,7 +98,7 @@ function AdminLoginForm() {
         }
 
         toast.success("Otorisasi admin berhasil.");
-        router.refresh();
+        // BUG-03: Hapus router.refresh() — push sudah cukup untuk reload state
         router.push(nextParam);
       }
     } catch (err: unknown) {

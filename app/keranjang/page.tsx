@@ -23,15 +23,22 @@ import { format, addDays } from "date-fns";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
-import { getProductImage, DEFAULT_SETTINGS } from "@/lib/constants";
+import { getProductImage } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
 import { H1, Lead } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
-function KeranjangContent() {
+export default function KeranjangPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, updateQty, removeItem, clearCart, isLoaded } = useCart();
@@ -73,41 +80,20 @@ function KeranjangContent() {
   });
 
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
-  const [dpPersen, setDpPersen] = React.useState<number>(DEFAULT_SETTINGS.dp_persen);
+  // BUG-K4: Konfirmasi sebelum kosongkan keranjang
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = React.useState<boolean>(false);
 
-  // Ambil pengaturan persentase DP dari database settings
-  React.useEffect(() => {
-    async function loadDpSetting() {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from("settings")
-          .select("value")
-          .eq("key", "dp_persen")
-          .single();
-
-        if (data?.value) {
-          const parsed = parseInt(data.value, 10);
-          if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) {
-            setDpPersen(parsed);
-          }
-        }
-      } catch {
-        // Gunakan fallback default 30%
-      }
-    }
-
-    loadDpSetting();
-  }, []);
-
-  // Sync perubahan tanggal ke sessionStorage
+  // BUG-K3: Validasi tanggal di sessionStorage — reset jika sudah lewat
   const handleDateChange = (start: string, end: string) => {
-    setStartDate(start);
-    setEndDate(end);
+    const today = format(new Date(), "yyyy-MM-dd");
+    const validStart = start >= today ? start : today;
+    const validEnd = end >= validStart ? end : validStart;
+    setStartDate(validStart);
+    setEndDate(validEnd);
     try {
       sessionStorage.setItem(
         "pirantiku_booking_dates",
-        JSON.stringify({ startDate: start, endDate: end })
+        JSON.stringify({ startDate: validStart, endDate: validEnd })
       );
     } catch {
       // Ignore
@@ -117,8 +103,11 @@ function KeranjangContent() {
   // Preset Durasi Cepat
   const applyPresetDays = (days: number) => {
     try {
+      // BUG-K2: Validasi format startDate sebelum diproses
+      if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return;
       const [y, m, d] = startDate.split("-").map(Number);
       const start = new Date(y, m - 1, d);
+      if (isNaN(start.getTime())) return;
       const newEnd = addDays(start, Math.max(0, days - 1));
       const newEndStr = format(newEnd, "yyyy-MM-dd");
       handleDateChange(startDate, newEndStr);
@@ -127,7 +116,7 @@ function KeranjangContent() {
     }
   };
 
-  // Kalkulasi harga seluruh keranjang secara dinamis sesuai dpPersen
+  // Kalkulasi harga seluruh keranjang
   const pricing = React.useMemo(() => {
     const pricingItems = items.map((i) => ({
       equipmentId: i.equipmentId,
@@ -137,8 +126,8 @@ function KeranjangContent() {
       deposit: i.deposit,
     }));
 
-    return calculateRentalPrice(pricingItems, startDate, endDate, dpPersen);
-  }, [items, startDate, endDate, dpPersen]);
+    return calculateRentalPrice(pricingItems, startDate, endDate, 30);
+  }, [items, startDate, endDate]);
 
   // Validasi jika tanggal sewa tidak valid (misal: selesai lebih awal dari mulai)
   const isDateInvalid = React.useMemo(() => {
@@ -242,7 +231,7 @@ function KeranjangContent() {
           </Link>
           <button
             type="button"
-            onClick={clearCart}
+            onClick={() => setIsClearConfirmOpen(true)}
             className="text-xs text-[#5F7A84] hover:text-[#DC2626] font-semibold flex items-center gap-1 cursor-pointer transition-colors"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -531,11 +520,11 @@ function KeranjangContent() {
               {/* Rincian DP */}
               <div className="rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] p-3.5 space-y-1.5 mt-2">
                 <div className="flex justify-between text-[#A0630F] font-bold text-xs">
-                  <span>Uang Muka / DP ({pricing.dpPersen}%)</span>
+                  <span>Uang Muka / DP (30%)</span>
                   <span>{formatRupiah(pricing.dpJumlah)}</span>
                 </div>
                 <p className="text-[11px] text-[#5F7A84] leading-relaxed">
-                  Cukup bayar DP {pricing.dpPersen}% untuk mengunci stok alat pada tanggal pilihan Anda.
+                  Cukup bayar DP 30% untuk mengunci stok alat pada tanggal pilihan Anda.
                 </p>
               </div>
 
@@ -581,23 +570,43 @@ function KeranjangContent() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-export default function KeranjangPage() {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-            <p className="text-sm text-[#5F7A84]">Memuat keranjang sewa...</p>
+      {/* BUG-K4: Dialog konfirmasi kosongkan keranjang */}
+      <Dialog open={isClearConfirmOpen} onOpenChange={setIsClearConfirmOpen}>
+        <DialogContent className="sm:max-w-sm bg-white border-[#E8E8E1] rounded-2xl p-6">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-[#234E5C]">
+              <Trash2 className="h-5 w-5 text-[#DC2626]" />
+              Kosongkan Keranjang?
+            </DialogTitle>
+            <DialogDescription className="text-xs text-[#5F7A84] mt-1">
+              Semua alat yang sudah dipilih akan dihapus dari keranjang. Tindakan ini tidak bisa dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 pt-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsClearConfirmOpen(false)}
+              className="text-xs font-bold"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="text-xs font-bold bg-[#DC2626] hover:bg-[#B91C1C] text-white"
+              onClick={() => {
+                clearCart();
+                setIsClearConfirmOpen(false);
+              }}
+            >
+              Ya, Kosongkan
+            </Button>
           </div>
-        </div>
-      }
-    >
-      <KeranjangContent />
-    </React.Suspense>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

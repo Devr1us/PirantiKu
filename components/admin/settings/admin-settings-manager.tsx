@@ -44,13 +44,16 @@ export function AdminSettingsManager({
   const [activeTab, setActiveTab] = React.useState<TabType>("pembayaran");
   const [isSaving, setIsSaving] = React.useState(false);
 
-  // Parse existing rekening_bank into bank, no_rek, and atas_nama for friendlier editing
+  // BUG-10: Parse rekening dengan fallback yang aman, tampilkan warning jika format tidak dikenali
   const initialRekening = initialSettings.rekening_bank || DEFAULT_SETTINGS.rekening_bank;
   const rekMatch = initialRekening.match(/^([A-Za-z0-9\s]+?)\s+(\d+)\s+a\/n\s+(.+)$/i);
-  
-  const [bankName, setBankName] = React.useState(rekMatch ? rekMatch[1] : "BCA");
-  const [bankNumber, setBankNumber] = React.useState(rekMatch ? rekMatch[2] : "1234567890");
-  const [bankHolder, setBankHolder] = React.useState(rekMatch ? rekMatch[3] : "PirantiKu");
+
+  // Jika regex gagal parse, gunakan data dari initialSettings secara terpisah jika tersedia,
+  // bukan langsung fallback ke default yang bisa menimpa data nyata
+  const [rekParseWarning] = React.useState(!rekMatch && !!initialSettings.rekening_bank);
+  const [bankName, setBankName] = React.useState(rekMatch ? rekMatch[1].trim() : (rekParseWarning ? "" : "BCA"));
+  const [bankNumber, setBankNumber] = React.useState(rekMatch ? rekMatch[2].trim() : (rekParseWarning ? "" : "1234567890"));
+  const [bankHolder, setBankHolder] = React.useState(rekMatch ? rekMatch[3].trim() : (rekParseWarning ? "" : "PirantiKu"));
 
   // Other settings states
   const [qrisUrl, setQrisUrl] = React.useState(initialSettings.qris_url || DEFAULT_SETTINGS.qris_url);
@@ -222,6 +225,13 @@ export function AdminSettingsManager({
 
   return (
     <div className="space-y-8">
+      {/* BUG-10: Warning jika format rekening dari DB tidak terbaca */}
+      {rekParseWarning && (
+        <div className="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-4 text-xs text-[#78350F] flex items-start gap-2.5">
+          <span className="font-bold">⚠️ Format rekening bank tidak dikenali.</span>
+          <span>Data lama di database: <code className="font-mono bg-white/60 px-1 rounded">{initialRekening}</code>. Silakan isi ulang field bank, nomor rekening, dan atas nama di bawah, lalu simpan.</span>
+        </div>
+      )}
       {/* Tombol Navigasi Tab */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E8E8E1] pb-3">
         <div className="flex gap-2">

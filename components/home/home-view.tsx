@@ -70,8 +70,8 @@ export function HomeView({
 
   const effectiveAlamat =
     alamat &&
-    alamat !== "Isi alamat pengambilan alat di sini" &&
-    alamat !== "Jl. Raya Rental No. 12, Jakarta"
+      alamat !== "Isi alamat pengambilan alat di sini" &&
+      alamat !== "Jl. Raya Rental No. 12, Jakarta"
       ? alamat
       : LOKASI_DEFAULT.alamat;
 
@@ -111,7 +111,7 @@ export function HomeView({
                   >
                     <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2">
                       <MessageCircle className="h-4 w-4" />
-                      <HoverRollText text="CHAT ADMIN" />
+                      <HoverRollText text="HUBUNGI ADMIN" />
                     </Button>
                   </a>
                 </div>
@@ -445,8 +445,7 @@ export function HomeView({
       {/* ========================================================
           6. CARA SEWA (id="cara-sewa", 3 Langkah Bernomor Besar)
           ======================================================== */}
-      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20 relative">
-        <span id="cara-booking" className="scroll-mt-20 pointer-events-none absolute top-0" />
+      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="space-y-2">
             <H2>CARA BOOKING</H2>
@@ -637,7 +636,7 @@ export function HomeView({
                   className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  <HoverRollText text="CHAT ADMIN" />
+                  <HoverRollText text="HUBUNGI ADMIN" />
                 </Button>
               </a>
             </div>

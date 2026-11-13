@@ -1,7 +1,6 @@
 import * as React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { SafeImage } from "@/components/ui/safe-image";
 import { Metadata } from "next";
 import {
   ChevronRight,
@@ -15,6 +14,7 @@ import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/invento
 import type { EquipmentWithDetails } from "@/types/database";
 import { RentalBookingWidget } from "@/components/equipment/rental-booking-widget";
 import { EquipmentCard } from "@/components/equipment/equipment-card";
+import { EquipmentGallery } from "@/components/equipment/equipment-gallery";
 import { H1, Lead } from "@/components/ui/typography";
 import { Reveal } from "@/components/ui/motion";
 
@@ -192,58 +192,18 @@ export default async function EquipmentDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-8">
-          {/* Galeri Gambar: rounded-2xl */}
-          <div className="space-y-3">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#E8E8E1] bg-[#F5F3EB] shadow-sm">
-              <SafeImage
-                src={primaryImage || ""}
-                alt={equipment.nama}
-                fill
-                priority
-                className="object-cover"
-                fallback={
-                  <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white border border-[#E8E8E1] text-[#234E5C] mb-3">
-                      <CategoryIcon
-                        ikonName={equipment.category?.ikon}
-                        className="h-10 w-10 stroke-[1.8]"
-                      />
-                    </div>
-                    <span className="text-sm font-bold text-[#234E5C]">
-                      {equipment.nama}
-                    </span>
-                    <span className="text-xs text-[#5F7A84] mt-1">
-                      Foto produk siap disewa dengan kondisi prima
-                    </span>
-                  </div>
-                }
+          {/* Galeri Gambar: BUG-A2 — gunakan EquipmentGallery agar thumbnail bisa diklik */}
+          <EquipmentGallery
+            images={equipment.images || []}
+            primaryImage={primaryImage}
+            nama={equipment.nama}
+            categoryIconEl={
+              <CategoryIcon
+                ikonName={equipment.category?.ikon}
+                className="h-10 w-10 stroke-[1.8]"
               />
-            </div>
-
-            {/* Thumbnail jika ada lebih dari 1 foto */}
-            {equipment.images && equipment.images.length > 1 && (
-              <div className="flex gap-2.5 overflow-x-auto pb-2">
-                {equipment.images.map((img) => (
-                  <div
-                    key={img.id}
-                    className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border border-[#E8E8E1] bg-[#F5F3EB] cursor-pointer hover:border-[#234E5C] transition-all"
-                  >
-                    <SafeImage
-                      src={img.url}
-                      alt={equipment.nama}
-                      fill
-                      className="object-cover"
-                      fallback={
-                        <div className="flex h-full w-full items-center justify-center bg-[#F3F3EF] text-[#5F7A84] text-[10px]">
-                          Foto
-                        </div>
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+            }
+          />
 
           {/* Informasi Detail */}
           <div className="space-y-6">

@@ -259,12 +259,21 @@ export function EquipmentCatalog({
 
   const handleCategorySelect = (slug: string) => {
     if (selectedCategorySlug) {
-      startTransition(() => {
-        router.replace(`/kategori/${slug}`, { scroll: false });
-      });
+      // BUG-EC1: Jika slug kosong (Semua Kategori), redirect ke /alat bukan /kategori/
+      if (!slug) {
+        startTransition(() => {
+          router.replace("/alat", { scroll: false });
+        });
+      } else {
+        startTransition(() => {
+          router.replace(`/kategori/${slug}`, { scroll: false });
+        });
+      }
     } else {
       const targetSlug = currentCategory === slug ? "" : slug;
-      applyFilters({ kategori: targetSlug });
+      // BUG-EC2: Reset search query saat kategori berubah
+      setSearchQuery("");
+      applyFilters({ kategori: targetSlug, q: "" });
     }
   };
 

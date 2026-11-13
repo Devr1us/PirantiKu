@@ -68,18 +68,6 @@ export default function BookingSayaPage() {
       try {
         const supabase = createClient();
 
-        // Ambil nomor WhatsApp admin aktif dari settings
-        supabase
-          .from("settings")
-          .select("value")
-          .eq("key", "whatsapp_admin")
-          .single()
-          .then(({ data: waData }) => {
-            if (waData?.value) {
-              setWhatsappAdmin(normalizeAdminPhone(waData.value));
-            }
-          });
-
         const {
           data: { user },
         } = await supabase.auth.getUser();
@@ -87,6 +75,16 @@ export default function BookingSayaPage() {
         if (!user) {
           router.push("/login?next=/booking-saya");
           return;
+        }
+
+        // BUG-BS1: Fetch settings dengan await, bukan fire-and-forget
+        const { data: waData } = await supabase
+          .from("settings")
+          .select("value")
+          .eq("key", "whatsapp_admin")
+          .single();
+        if (waData?.value) {
+          setWhatsappAdmin(normalizeAdminPhone(waData.value));
         }
 
         // Cek role pengguna: jika admin, arahkan ke panel Kelola Booking
@@ -377,10 +375,10 @@ export default function BookingSayaPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
-                          title="Chat WhatsApp Admin"
+                          title="Hubungi Admin"
                         >
                           <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
-                          <span>Chat WA</span>
+                          <span>Hubungi Admin</span>
                         </a>
                       </div>
                     </div>
@@ -430,10 +428,10 @@ export default function BookingSayaPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
-                          title="Chat WhatsApp Admin"
+                          title="Hubungi Admin"
                         >
                           <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
-                          <span>Chat WA</span>
+                          <span>Hubungi Admin</span>
                         </a>
                       </div>
                     </div>
@@ -612,7 +610,7 @@ export default function BookingSayaPage() {
           className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs shrink-0 transition-colors w-full sm:w-auto"
         >
           <MessageCircle className="h-4 w-4" />
-          <span>Chat WhatsApp Admin (0857-0151-6287)</span>
+          <span>Hubungi Admin ({whatsappAdmin})</span>
         </a>
       </div>
 

@@ -233,19 +233,34 @@ export function AdminEquipmentManager({
             .limit(1);
 
           if (existingImgs && existingImgs.length > 0) {
-            await supabase
+            // BUG-09: Cek error update gambar, jangan abaikan
+            const { error: imgUpdateErr } = await supabase
               .from("equipment_images")
               .update({ url: imageUrl.trim() })
               .eq("id", existingImgs[0].id);
+
+            if (imgUpdateErr) {
+              toast.error("Alat disimpan, tapi gambar gagal diperbarui: " + imgUpdateErr.message);
+            }
           } else {
-            await supabase.from("equipment_images").insert({
+            const { error: imgInsertErr } = await supabase.from("equipment_images").insert({
               equipment_id: editingId,
               url: imageUrl.trim(),
               is_utama: true,
               urutan: 1,
             });
+
+            if (imgInsertErr) {
+              toast.error("Alat disimpan, tapi gambar gagal ditambahkan: " + imgInsertErr.message);
+            }
           }
         }
+
+        // BUG-08: Ambil gambar terbaru dari DB setelah update, bukan pakai ID dummy 999
+        const { data: freshImgs } = await supabase
+          .from("equipment_images")
+          .select("*")
+          .eq("equipment_id", editingId);
 
         // Perbarui state
         setEquipmentList((prev) =>
@@ -253,9 +268,7 @@ export function AdminEquipmentManager({
             item.id === editingId
               ? ({
                 ...(updatedEq as EquipmentWithDetails),
-                images: imageUrl.trim()
-                  ? [{ id: 999, equipment_id: editingId, url: imageUrl.trim(), is_utama: true, urutan: 1 }]
-                  : item.images,
+                images: freshImgs ?? item.images,
               } as EquipmentWithDetails)
               : item
           )

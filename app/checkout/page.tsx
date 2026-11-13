@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import { PaymentFlow } from "@/components/payment/payment-flow";
 import type { Profile, Booking } from "@/types/database";
 
-function CheckoutContent() {
+export default function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, clearCart, isLoaded } = useCart();
@@ -45,11 +45,10 @@ function CheckoutContent() {
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
-  const [dpPersen, setDpPersen] = React.useState<number>(DEFAULT_SETTINGS.dp_persen);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
-  const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("" );
+  const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
   const [savedPricing, setSavedPricing] = React.useState<{ totalSewa: number; dpJumlah: number; totalDeposit: number } | null>(null);
 
   // Fallback tanggal stabil dengan lazy initial state
@@ -106,10 +105,6 @@ function CheckoutContent() {
             if (s.key === "rekening_bank" && s.value) setRekeningInfo(s.value);
             if (s.key === "qris_url" && s.value) setQrisUrl(s.value);
             if (s.key === "whatsapp_admin" && s.value) setWhatsappAdmin(normalizeAdminPhone(s.value));
-            if (s.key === "dp_persen" && s.value) {
-              const parsed = parseInt(s.value, 10);
-              if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) setDpPersen(parsed);
-            }
           });
         }
       } catch (err) {
@@ -129,8 +124,8 @@ function CheckoutContent() {
       deposit: i.deposit,
     }));
 
-    return calculateRentalPrice(pricingItems, startDate, endDate, dpPersen);
-  }, [items, startDate, endDate, dpPersen]);
+    return calculateRentalPrice(pricingItems, startDate, endDate, 30);
+  }, [items, startDate, endDate]);
 
   const handleProcessBooking = async () => {
     if (items.length === 0) {
@@ -209,6 +204,16 @@ function CheckoutContent() {
     );
   }
 
+  // BUG-C5: Redirect jika keranjang kosong saat halaman checkout diakses langsung
+  if (isLoaded && items.length === 0 && currentStep < 3) {
+    router.replace("/keranjang");
+    return (
+      <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+      </div>
+    );
+  }
+
   // Tampilan Sukses Checkout dengan Alur Pembayaran Lengkap
   if (currentStep === 3 && createdBookingCode) {
     const finalTotalSewa = createdBooking?.total_harga ?? savedPricing?.totalSewa ?? pricing.totalSewa;
@@ -279,7 +284,7 @@ function CheckoutContent() {
                 </span>
               </div>
               <p className="text-xs text-[#15803D] leading-relaxed">
-                Kirim rincian sewa langsung ke WhatsApp Admin (<strong>0857-0151-6287</strong>) hanya dalam 1 klik untuk konfirmasi kilat!
+                Kirim rincian sewa langsung ke WhatsApp Admin (<strong>{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}</strong>) hanya dalam 1 klik untuk konfirmasi kilat!
               </p>
             </div>
             <a
@@ -330,11 +335,10 @@ function CheckoutContent() {
           {/* Step 1 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 1
-                  ? "bg-[#234E5C] text-white"
-                  : "border border-[#234E5C] text-[#234E5C]"
-              }`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 1
+                ? "bg-[#234E5C] text-white"
+                : "border border-[#234E5C] text-[#234E5C]"
+                }`}
             >
               1
             </div>
@@ -348,11 +352,10 @@ function CheckoutContent() {
           {/* Step 2 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 2
-                  ? "bg-[#234E5C] text-white"
-                  : "border border-[#234E5C]/40 text-[#5F7A84]"
-              }`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 2
+                ? "bg-[#234E5C] text-white"
+                : "border border-[#234E5C]/40 text-[#5F7A84]"
+                }`}
             >
               2
             </div>
@@ -366,11 +369,10 @@ function CheckoutContent() {
           {/* Step 3 */}
           <div className="flex items-center gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${
-                currentStep >= 3
-                  ? "bg-[#234E5C] text-white"
-                  : "border border-[#234E5C]/40 text-[#5F7A84]"
-              }`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 3
+                ? "bg-[#234E5C] text-white"
+                : "border border-[#234E5C]/40 text-[#5F7A84]"
+                }`}
             >
               3
             </div>
@@ -457,10 +459,12 @@ function CheckoutContent() {
                 <Button
                   type="button"
                   variant="warm"
+                  // BUG-C2: Jangan lanjut jika profile belum terload
+                  disabled={!profile}
                   onClick={() => setCurrentStep(2)}
-                  className="px-8 text-xs font-bold"
+                  className="px-8 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Lanjut ke Rincian & DP
+                  {!profile ? "Memuat data..." : "Lanjut ke Rincian & DP"}
                   <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </div>
@@ -487,7 +491,7 @@ function CheckoutContent() {
                     {rekeningInfo}
                   </p>
                   <p className="text-[11px] text-[#5F7A84]">
-                    Jumlah Uang Muka (DP {pricing.dpPersen}%):{" "}
+                    Jumlah Uang Muka (DP 30%):{" "}
                     <strong className="text-[#A0630F] font-bold text-sm">
                       {formatRupiah(pricing.dpJumlah)}
                     </strong>
@@ -566,7 +570,7 @@ function CheckoutContent() {
                 <span className="font-bold text-[#234E5C]">{formatRupiah(pricing.totalDeposit)}</span>
               </div>
               <div className="flex justify-between text-[#A0630F] font-bold border-t border-[#E8E8E1] pt-2">
-                <span>DP {pricing.dpPersen}% (Dibayar Sekarang)</span>
+                <span>DP 30% (Dibayar Sekarang)</span>
                 <span>{formatRupiah(pricing.dpJumlah)}</span>
               </div>
               <div className="flex justify-between text-[#5F7A84] text-[11px]">
@@ -587,22 +591,5 @@ function CheckoutContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function CheckoutPage() {
-  return (
-    <React.Suspense
-      fallback={
-        <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-            <p className="text-sm text-[#5F7A84]">Memuat halaman checkout...</p>
-          </div>
-        </div>
-      }
-    >
-      <CheckoutContent />
-    </React.Suspense>
   );
 }

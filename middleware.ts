@@ -38,7 +38,9 @@ export async function middleware(request: NextRequest) {
 
   // 1. User yang sudah login diarahkan menjauh dari /login dan /daftar
   if (user && (pathname === "/login" || pathname === "/daftar")) {
-    const nextUrl = request.nextUrl.searchParams.get("next") || "/";
+    const rawNext = request.nextUrl.searchParams.get("next") || "/";
+    // Validasi open redirect — hanya izinkan path internal
+    const nextUrl = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
     return NextResponse.redirect(new URL(nextUrl, request.url));
   }
 

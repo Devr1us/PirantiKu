@@ -47,7 +47,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextParam = searchParams.get("next") || "/";
+  const rawNext = searchParams.get("next") || "/";
+  // BUG-L1: Validasi open redirect — hanya izinkan path internal
+  const nextParam = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -119,7 +121,7 @@ function LoginForm() {
           .eq("id", authData.user.id)
           .single();
 
-        router.refresh();
+        // BUG-L2: Hapus router.refresh() — push sudah cukup untuk memuat ulang state
         if (profile?.role === "admin") {
           router.push("/admin");
         } else {
