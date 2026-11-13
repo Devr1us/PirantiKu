@@ -15,7 +15,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
-import type { Profile } from "@/types/database";
+import type { Profile, Category } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/wordmark";
 import { useCart } from "@/lib/cart-context";
@@ -44,17 +44,20 @@ interface NavbarClientProps {
   user: User | null;
   profile: Profile | null;
   whatsappAdmin: string;
+  categories?: Category[];
 }
 
 export function NavbarClient({
   user,
   profile,
   whatsappAdmin,
+  categories = [],
 }: NavbarClientProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { totalItems, isLoaded } = useCart();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const headerRef = React.useRef<HTMLElement | null>(null);
 
@@ -63,7 +66,7 @@ export function NavbarClient({
 
   const { isVisible, isScrolled } = useNavbarVisibility({
     isMobileOpen,
-    isDropdownOpen: false,
+    isDropdownOpen,
     isHovered,
     headerRef,
   });
