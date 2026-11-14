@@ -130,7 +130,7 @@ export default function DaftarPage() {
     try {
       const supabase = createClient();
 
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -145,7 +145,15 @@ export default function DaftarPage() {
         return;
       }
 
-      // Redirect ke halaman OTP verifikasi
+      // Jika email confirmation dimatikan di Supabase, user langsung login
+      if (signUpData?.session) {
+        toast.success("Pendaftaran berhasil! Selamat datang di PirantiKu.");
+        router.refresh();
+        router.push("/");
+        return;
+      }
+
+      // Redirect ke halaman OTP verifikasi jika email konfirmasi aktif
       router.push(`/auth/verify-otp?email=${encodeURIComponent(data.email)}&type=signup`);
     } catch (err: unknown) {
       const message =
