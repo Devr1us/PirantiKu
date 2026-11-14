@@ -40,6 +40,8 @@ export default function CheckoutPage() {
 
   const [currentStep, setCurrentStep] = React.useState<number>(1);
   const [profile, setProfile] = React.useState<Profile | null>(null);
+  const [nama, setNama] = React.useState<string>("");
+  const [noHp, setNoHp] = React.useState<string>("");
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [catatan, setCatatan] = React.useState<string>("");
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
@@ -94,6 +96,8 @@ export default function CheckoutPage() {
             return;
           }
           setProfile(prof as Profile);
+          setNama(prof.nama || "");
+          setNoHp(prof.no_hp || "");
         }
 
         const { data: setList } = await supabase
@@ -127,15 +131,59 @@ export default function CheckoutPage() {
     return calculateRentalPrice(pricingItems, startDate, endDate, 30);
   }, [items, startDate, endDate]);
 
+  const handleNextToStep2 = async () => {
+    if (!profile) return;
+    if (!nama.trim()) {
+      toast.error("Nama lengkap tidak boleh kosong.");
+      return;
+    }
+    if (!noHp.trim()) {
+      toast.error("Nomor WhatsApp / HP tidak boleh kosong.");
+      return;
+    }
+
+    // Perbarui profil jika pengguna mengedit nama atau nomor WhatsApp
+    if (nama.trim() !== profile.nama || noHp.trim() !== profile.no_hp) {
+      try {
+        const supabase = createClient();
+        await supabase
+          .from("profiles")
+          .update({ nama: nama.trim(), no_hp: noHp.trim() })
+          .eq("id", profile.id);
+        setProfile((prev) => (prev ? { ...prev, nama: nama.trim(), no_hp: noHp.trim() } : null));
+      } catch (err) {
+        console.error("Gagal sinkronisasi data profil:", err);
+      }
+    }
+
+    setCurrentStep(2);
+  };
+
   const handleProcessBooking = async () => {
     if (items.length === 0) {
       toast.error("Keranjang belanja kosong.");
       return;
     }
 
+    if (!nama.trim() || !noHp.trim()) {
+      toast.error("Mohon lengkapi nama dan nomor WhatsApp penyewa.");
+      setCurrentStep(1);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const supabase = createClient();
+
+      // Pastikan nama dan no HP terbaru tersimpan di database profil
+      if (profile?.id) {
+        await supabase
+          .from("profiles")
+          .update({ nama: nama.trim(), no_hp: noHp.trim() })
+          .eq("id", profile.id);
+        setProfile((prev) => (prev ? { ...prev, nama: nama.trim(), no_hp: noHp.trim() } : null));
+      }
+
       const pItems = items.map((i) => ({
         equipment_id: i.equipmentId,
         qty: i.qty,
@@ -236,8 +284,8 @@ export default function CheckoutPage() {
 
     const waOrderMessage = generateWhatsAppBookingMessage({
       bookingCode: createdBookingCode,
-      customerName: profile?.nama || "Penyewa",
-      customerPhone: profile?.no_hp,
+      customerName: nama.trim() || profile?.nama || "Penyewa",
+      customerPhone: noHp.trim() || profile?.no_hp,
       itemsList: bookedItemsSummary,
       startDate: formatDateIndo(startDate, "d MMMM yyyy"),
       endDate: formatDateIndo(endDate, "d MMMM yyyy"),
@@ -302,7 +350,7 @@ export default function CheckoutPage() {
         {/* Modul Alur Pembayaran Interaktif */}
         <PaymentFlow
           booking={bookingForFlow}
-          customerName={profile?.nama || "Penyewa"}
+          customerName={nama.trim() || profile?.nama || "Penyewa"}
           rekeningBank={rekeningInfo}
           qrisUrl={qrisUrl}
           whatsappAdmin={whatsappAdmin}
@@ -343,7 +391,7 @@ export default function CheckoutPage() {
               1
             </div>
             <span className="text-xs font-bold text-[#234E5C] hidden sm:inline">
-              Data & Jadwal
+              Data Pengguna
             </span>
           </div>
 
@@ -390,7 +438,7 @@ export default function CheckoutPage() {
             <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 shadow-sm space-y-6">
               <h2 className="text-base font-bold text-[#234E5C] flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
                 <UserIcon className="h-5 w-5 text-[#234E5C]" />
-                1. Data Identitas Penyewa
+                1. Data Pengguna
               </h2>
 
               <div className="space-y-4">
@@ -400,9 +448,10 @@ export default function CheckoutPage() {
                       Nama Lengkap
                     </Label>
                     <Input
-                      value={profile?.nama || ""}
-                      disabled
-                      className="bg-[#F3F3EF] cursor-not-allowed"
+                      value={nama}
+                      onChange={(e) => setNama(e.target.value)}
+                      placeholder="Masukkan nama lengkap"
+                      className="bg-white border-[#E8E8E1] focus:ring-[#234E5C]"
                     />
                   </div>
 
@@ -411,9 +460,10 @@ export default function CheckoutPage() {
                       Nomor WhatsApp / HP
                     </Label>
                     <Input
-                      value={profile?.no_hp || ""}
-                      disabled
-                      className="bg-[#F3F3EF] cursor-not-allowed"
+                      value={noHp}
+                      onChange={(e) => setNoHp(e.target.value)}
+                      placeholder="Contoh: 081234567890"
+                      className="bg-white border-[#E8E8E1] focus:ring-[#234E5C]"
                     />
                   </div>
                 </div>
@@ -425,33 +475,11 @@ export default function CheckoutPage() {
                   <Input
                     value={userEmail}
                     disabled
-                    className="bg-[#F3F3EF] cursor-not-allowed"
+                    className="bg-[#F3F3EF] cursor-not-allowed opacity-80"
                   />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-[#5F7A84]">
-                    Catatan Tambahan untuk Admin (Opsional)
-                  </Label>
-                  <textarea
-                    rows={3}
-                    placeholder="Contoh: Perlu adaptor tambahan, atau jam pengambilan sekitar pukul 14.00 WIB..."
-                    value={catatan}
-                    onChange={(e) => setCatatan(e.target.value)}
-                    className="w-full rounded-xl border border-[#E8E8E1] bg-white p-3 text-xs text-[#234E5C] placeholder:text-[#5F7A84]/60 focus:outline-none focus:ring-2 focus:ring-[#234E5C]"
-                  />
-                </div>
-
-                <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 flex items-start gap-3">
-                  <Calendar className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5" />
-                  <div className="text-xs space-y-0.5">
-                    <span className="font-bold text-[#234E5C]">
-                      Jadwal Booking Terpilih:
-                    </span>
-                    <p className="text-[#5F7A84]">
-                      {formatDateIndo(startDate, "d MMM yyyy")} s/d {formatDateIndo(endDate, "d MMM yyyy")} ({pricing.days} Hari)
-                    </p>
-                  </div>
+                  <p className="text-[11px] text-[#5F7A84]">
+                    Alamat email terdaftar sesuai akun login Anda untuk verifikasi identitas.
+                  </p>
                 </div>
               </div>
 
@@ -459,10 +487,9 @@ export default function CheckoutPage() {
                 <Button
                   type="button"
                   variant="warm"
-                  // BUG-C2: Jangan lanjut jika profile belum terload
                   disabled={!profile}
-                  onClick={() => setCurrentStep(2)}
-                  className="px-8 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={handleNextToStep2}
+                  className="w-full sm:w-auto px-8 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {!profile ? "Memuat data..." : "Lanjut ke Rincian & DP"}
                   <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -479,6 +506,19 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="space-y-4 text-xs">
+                {/* Jadwal Booking Terpilih (Dipindahkan ke Step 2) */}
+                <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 flex items-start gap-3">
+                  <Calendar className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5" />
+                  <div className="text-xs space-y-0.5">
+                    <span className="font-bold text-[#234E5C]">
+                      Jadwal Booking Terpilih:
+                    </span>
+                    <p className="text-[#5F7A84]">
+                      {formatDateIndo(startDate, "d MMM yyyy")} s/d {formatDateIndo(endDate, "d MMM yyyy")} ({pricing.days} Hari)
+                    </p>
+                  </div>
+                </div>
+
                 <p className="text-[#5F7A84] leading-relaxed">
                   Pesanan Anda akan tercatat dengan status <strong>Menunggu DP</strong>. Untuk mengunci unit, silakan transfer sejumlah DP ke rekening berikut:
                 </p>
@@ -498,23 +538,37 @@ export default function CheckoutPage() {
                   </p>
                 </div>
 
+                {/* Catatan Tambahan untuk Admin (Dipindahkan ke Step 2) */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-[#5F7A84]">
+                    Catatan Tambahan untuk Admin (Opsional)
+                  </Label>
+                  <textarea
+                    rows={3}
+                    placeholder="Contoh: Perlu adaptor tambahan, atau jam pengambilan sekitar pukul 14.00 WIB..."
+                    value={catatan}
+                    onChange={(e) => setCatatan(e.target.value)}
+                    className="w-full rounded-xl border border-[#E8E8E1] bg-white p-3 text-xs text-[#234E5C] placeholder:text-[#5F7A84]/60 focus:outline-none focus:ring-2 focus:ring-[#234E5C]"
+                  />
+                </div>
+
                 <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 space-y-2">
                   <h4 className="font-bold text-[#234E5C]">Ketentuan Pengambilan Unit:</h4>
                   <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px]">
-                    <li>Membawa KTP atau SIM asli atas nama pemesan.</li>
+                    <li>Membawa KTP atau SIM asli atas nama pemesan ({nama.trim() || profile?.nama || "Penyewa"}).</li>
                     <li>Melunasi sisa biaya booking ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>
                   </ul>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-[#E8E8E1]">
+              <div className="flex items-center justify-between gap-3 pt-4 border-t border-[#E8E8E1]">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentStep(1)}
-                  className="text-xs font-bold"
+                  className="text-xs font-bold px-4 shrink-0"
                 >
                   <ArrowLeft className="h-4 w-4 mr-1.5" />
                   Kembali
@@ -525,9 +579,9 @@ export default function CheckoutPage() {
                   variant="warm"
                   disabled={isSubmitting}
                   onClick={handleProcessBooking}
-                  className="px-8 text-xs font-bold"
+                  className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center"
                 >
-                  {isSubmitting ? "Memproses..." : "Konfirmasi & Buat Booking"}
+                  {isSubmitting ? "Memproses..." : "Konfirmasi"}
                 </Button>
               </div>
             </div>
