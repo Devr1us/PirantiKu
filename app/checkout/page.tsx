@@ -249,7 +249,7 @@ export default function CheckoutPage() {
     const waBookingUrl = createWhatsAppLink(whatsappAdmin, waOrderMessage);
 
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:py-16 space-y-6 bg-[#FAFAF8] text-[#234E5C]">
+      <div className="mx-auto max-w-3xl px-4 pt-6 pb-24 sm:pt-12 sm:pb-32 space-y-6 bg-[#FAFAF8] text-[#234E5C]">
         {/* Banner Sukses Terbuat */}
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 text-center space-y-4 shadow-sm">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
@@ -313,7 +313,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Header Halaman */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <Link

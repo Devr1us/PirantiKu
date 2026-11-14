@@ -169,6 +169,13 @@ export function PaymentFlow({
     currentBookingStatus === "diambil" ||
     latestDpPayment?.status === "terverifikasi";
 
+  // Cek apakah customer sudah berhasil submit bukti pembayaran (menunggu verifikasi / terverifikasi) dan tidak sedang edit ulang
+  const isPaymentSubmitted = Boolean(
+    latestDpPayment && latestDpPayment.status !== "ditolak" && !isEditingProof
+  );
+  // Status banner instruksi bayar hanya perlu muncul jika belum bayar / bukti ditolak / sedang unggah ulang
+  const needsPaymentAction = !isDpVerified && !isPaymentSubmitted;
+
   // File selection & preview
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -331,8 +338,8 @@ export function PaymentFlow({
 
   return (
     <div className="space-y-6">
-      {/* 1. Header Banner Batas Waktu Pembayaran */}
-      {!isDpVerified && (
+      {/* 1. Header Banner Batas Waktu Pembayaran (Hanya tampil jika belum transfer / belum kirim bukti) */}
+      {needsPaymentAction && (
         <div className="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-4 text-xs text-[#78350F] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-center gap-2.5">
             <Clock className="h-4 w-4 shrink-0 text-[#A0630F] animate-pulse" />
@@ -366,7 +373,7 @@ export function PaymentFlow({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E8E1] pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Tagihan Uang Muka (DP 30%)
+              {isPaymentSubmitted || isDpVerified ? "Rincian Pembayaran Uang Muka (DP 30%)" : "Tagihan Uang Muka (DP 30%)"}
             </span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-[#A0630F]">
@@ -930,21 +937,21 @@ export function PaymentFlow({
           </div>
         )}
 
-      {/* 5. Navigasi Tambahan */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs pt-2">
+      {/* 5. Navigasi Tambahan - Tombol Aksi Responsif Mobile & Desktop */}
+      <div className="pt-6 pb-6 border-t border-[#E8E8E1] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <Link
           href="/booking-saya"
-          className="text-[#234E5C] font-semibold hover:underline flex items-center gap-1"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-[#234E5C] text-[#234E5C] font-bold text-xs hover:bg-[#234E5C] hover:text-white transition-all shadow-xs active:scale-[0.98] text-center"
         >
-          &larr; Lihat Seluruh Booking Saya
+          <span>&larr; Lihat Seluruh Booking Saya</span>
         </Link>
 
         {showBackToHome && (
           <Link
             href="/alat"
-            className="text-[#5F7A84] hover:text-[#234E5C] font-medium"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C] hover:border-[#234E5C] font-semibold text-xs transition-all shadow-xs active:scale-[0.98] text-center"
           >
-            Kembali ke Katalog Alat
+            <span>Kembali ke Katalog Alat &rarr;</span>
           </Link>
         )}
       </div>

@@ -6,7 +6,7 @@ import { APP_NAME } from "@/lib/constants";
 export async function Footer() {
   return (
     <footer className="w-full bg-white border-t border-[#E8E8E1] text-[#234E5C] mt-auto print:hidden">
-      <div className="mx-auto max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1200px] px-4 pt-12 pb-20 sm:pt-16 sm:pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
           {/* Sisi Kiri: Wordmark & Deskripsi Singkat */}
           <div className="space-y-4 max-w-sm">
@@ -78,9 +78,9 @@ export async function Footer() {
         </div>
 
         {/* Baris Hak Cipta */}
-        <div className="mt-12 pt-6 border-t border-[#E8E8E1] flex flex-col sm:flex-row items-center justify-between text-xs text-[#5F7A84] gap-3">
-          <p>&copy; {new Date().getFullYear()} {APP_NAME}. Hak cipta dilindungi undang-undang.</p>
-          <p className="text-[11px] text-[#5F7A84]/80">
+        <div className="mt-12 pt-6 border-t border-[#E8E8E1] flex flex-col sm:flex-row items-center justify-between text-xs text-[#5F7A84] gap-3 pb-8 sm:pb-2">
+          <p className="text-center sm:text-left">&copy; {new Date().getFullYear()} {APP_NAME}. Hak cipta dilindungi undang-undang.</p>
+          <p className="text-[11px] text-[#5F7A84]/80 text-center sm:text-right">
             Rental alat praktis & transparan untuk segala kebutuhan Anda.
           </p>
         </div>

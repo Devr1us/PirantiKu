@@ -119,7 +119,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
   const customerName = profile?.nama || "Penyewa";
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Breadcrumbs & Header */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
