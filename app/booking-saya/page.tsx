@@ -392,7 +392,7 @@ export default function BookingSayaPage() {
                           Uang Muka (DP) Terverifikasi!
                         </span>
                         <p className="text-[11px] text-[#2E5E4E]/80">
-                          Jadwal alat telah dikunci. Bawa identitas asli (KTP/SIM) saat serah terima unit di gerai.
+                          Jadwal alat telah dikunci. Bawa identitas asli (Kartu Pelajar / KIA / KTP / SIM) saat serah terima unit di gerai.
                         </p>
                       </div>
 

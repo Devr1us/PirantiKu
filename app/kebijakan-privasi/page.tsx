@@ -54,7 +54,7 @@ export default function KebijakanPrivasiPage() {
           <ul className="list-disc pl-5 space-y-1 text-[#5F7A84]">
             <li><strong>Data Akun:</strong> Nama lengkap, alamat email terdaftar, dan nomor WhatsApp / handphone.</li>
             <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, dan bukti pembayaran (transfer bank atau QRIS).</li>
-            <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas asli (KTP atau SIM) yang diperiksa saat serah terima alat di toko untuk verifikasi keamanan unit.</li>
+            <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas fisik asli (Kartu Pelajar, KIA, KTP, atau SIM) yang ditunjukkan/dijaminkan saat serah terima alat di toko demi keamanan unit rental.</li>
           </ul>
         </section>
 

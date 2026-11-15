@@ -296,7 +296,7 @@ export default async function EquipmentDetailPage({
                     Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal booking yang Anda pilih.
                   </li>
                   <li>
-                    Wajib membawa kartu identitas (KTP/SIM asli) saat serah terima alat di toko.
+                    Wajib membawa kartu identitas asli (Kartu Pelajar / KIA / KTP / SIM) saat serah terima alat di toko.
                   </li>
                 </ul>
               </div>

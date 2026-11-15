@@ -537,7 +537,7 @@ export default function KeranjangPage() {
                     Transfer Bank (BCA) & QRIS Otomatis
                   </p>
                   <p className="text-[10px] text-[#5F7A84]">
-                    Pengambilan unit mandiri di toko dengan membawa KTP/SIM asli.
+                    Pengambilan unit mandiri di toko dengan membawa identitas fisik asli (Kartu Pelajar / KTP / SIM).
                   </p>
                 </div>
               </div>

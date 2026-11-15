@@ -61,7 +61,7 @@ export default function SyaratKetentuanPage() {
           <H2 className="text-lg font-bold text-[#234E5C]">2. Pengambilan Unit & Identitas Penyewa</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li>Pengambilan alat dilakukan langsung di workshop/toko kami sesuai jam operasional (08.00 - 21.00 WIB).</li>
-            <li>Penyewa <strong>wajib membawa kartu identitas asli</strong> (KTP atau SIM) yang masih berlaku dengan nama sesuai akun booking untuk proses verifikasi serah terima.</li>
+            <li>Penyewa berusia minimal 13 tahun dan <strong>wajib membawa kartu identitas asli</strong> (Kartu Pelajar, KIA, KTP, atau SIM) yang masih aktif sebagai jaminan verifikasi fisik serah terima unit.</li>
             <li>Pelunasan sisa biaya sewa serta <strong>deposit jaminan</strong> dibayarkan saat pengambilan unit.</li>
             <li>Penyewa dan petugas kami akan melakukan pemeriksaan fisik dan uji fungsi alat bersama sebelum unit dibawa.</li>
           </ul>
