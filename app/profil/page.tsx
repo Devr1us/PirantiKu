@@ -184,10 +184,10 @@ export default function ProfilPage() {
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <H1 className="section-title block">
-          PROFIL PENYEWA
+          PROFIL AKUN
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Kelola informasi nama dan nomor WhatsApp untuk kelancaran verifikasi booking serta pengambilan unit.
+          Kelola informasi nama, nomor WhatsApp, dan alamat domisili akun Anda di PirantiKu.
         </Lead>
       </div>
 
@@ -201,7 +201,7 @@ export default function ProfilPage() {
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-[#234E5C]">
-                  {profile?.nama || "Penyewa"}
+                  {profile?.nama || (isAdmin ? "Administrator" : "Pengguna")}
                 </h2>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F3F3EF] border border-[#E8E8E1] text-[#234E5C]">
                   {isAdmin ? "Admin" : "Penyewa"}

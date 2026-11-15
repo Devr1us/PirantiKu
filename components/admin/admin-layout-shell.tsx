@@ -157,7 +157,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
           className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
         >
           <User className="h-4 w-4 shrink-0 text-[#E8E8E1]" />
-          <span>Profil Penyewa</span>
+          <span>Profil Akun</span>
         </Link>
 
         <button

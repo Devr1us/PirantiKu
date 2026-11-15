@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profil Penyewa",
+  title: "Profil Akun | PirantiKu",
   description:
-    "Kelola informasi data diri, nomor WhatsApp, dan alamat domisili akun penyewa PirantiKu.",
+    "Kelola informasi data diri, nomor WhatsApp, dan alamat domisili akun PirantiKu.",
   robots: { index: false, follow: false },
 };
 
