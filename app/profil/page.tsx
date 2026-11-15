@@ -13,6 +13,7 @@ import {
   Shield,
   Save,
   Calendar,
+  LogOut,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -148,6 +149,20 @@ export default function ProfilPage() {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      toast.success("Berhasil keluar.");
+    } catch (err) {
+      console.error("Gagal keluar:", err);
+    } finally {
+      // Hard navigation ke /login agar sesi dan cookie terhapus bersih tanpa terhambat cache client
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/login";
+    }
+  };
+
   if (isLoading) {
     return (
       <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
@@ -201,6 +216,17 @@ export default function ProfilPage() {
               )}
             </div>
           </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleSignOut}
+            className="text-xs font-bold text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 gap-1.5 self-start sm:self-center"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span>Keluar Akun</span>
+          </Button>
         </div>
 
         {/* Formulir Ubah Profil */}

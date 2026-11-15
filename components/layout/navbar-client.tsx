@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, LayoutGroup, useReducedMotion, type Transition } from "motion/react";
 import {
   ShoppingCart,
@@ -54,7 +54,6 @@ export function NavbarClient({
   categories = [],
 }: NavbarClientProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { totalItems, isLoaded } = useCart();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -117,10 +116,12 @@ export function NavbarClient({
       const supabase = createClient();
       await supabase.auth.signOut();
       toast.success("Berhasil keluar.");
-      router.refresh();
-      router.push("/");
-    } catch {
-      toast.error("Gagal keluar. Silakan coba lagi.");
+    } catch (err) {
+      console.error("Gagal keluar:", err);
+    } finally {
+      // Hard navigation ke /login agar sesi dan cookie terhapus bersih tanpa terhambat cache client
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/login";
     }
   };
 

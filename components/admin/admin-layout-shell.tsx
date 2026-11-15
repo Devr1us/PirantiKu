@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -22,7 +22,6 @@ import { toast } from "sonner";
 
 export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [adminUser, setAdminUser] = React.useState<{ name: string; email: string } | null>(null);
 
@@ -55,11 +54,13 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      toast.success("Berhasil keluar dari akun pengelola.");
-      router.push("/admin/login");
-      router.refresh();
-    } catch {
-      toast.error("Gagal keluar akun.");
+      toast.success("Berhasil keluar.");
+    } catch (err) {
+      console.error("Gagal keluar akun admin:", err);
+    } finally {
+      // Hard navigation ke /login agar sesi dan cookie terhapus bersih tanpa terhambat cache client
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/login";
     }
   };
 
