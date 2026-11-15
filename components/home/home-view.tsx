@@ -250,7 +250,7 @@ export function HomeView({
                   src="/images/TentangPirantiKu.png"
                   alt="Tentang PirantiKu"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
                   fallback={
                     <div className="flex flex-col items-center justify-center space-y-3">

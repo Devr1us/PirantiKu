@@ -22,7 +22,7 @@ export function SafeImage({ fallback, src, alt, ...props }: SafeImageProps) {
 
   const effectiveSizes =
     props.fill && !props.sizes
-      ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+      ? "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
       : props.sizes;
 
   return (

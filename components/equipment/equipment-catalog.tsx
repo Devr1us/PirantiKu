@@ -445,6 +445,19 @@ export function EquipmentCatalog({
 
   const filterSignature = `${currentCategory}|${currentMinPrice}|${currentMaxPrice}|${currentSort}|${currentQ}`;
 
+  const [visibleCount, setVisibleCount] = React.useState(12);
+  const [prevFilterSignature, setPrevFilterSignature] = React.useState(filterSignature);
+
+  // Reset pagination saat filter atau kata kunci berubah (render-phase state adjustment)
+  if (prevFilterSignature !== filterSignature) {
+    setPrevFilterSignature(filterSignature);
+    setVisibleCount(12);
+  }
+
+  const displayedEquipment = React.useMemo(() => {
+    return filteredEquipment.slice(0, visibleCount);
+  }, [filteredEquipment, visibleCount]);
+
   return (
     <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
@@ -569,18 +582,25 @@ export function EquipmentCatalog({
 
         {/* Grid Kartu Alat */}
         <main className="lg:col-span-3 space-y-6">
-          <div className="text-xs font-semibold text-[#5F7A84]">
-            Menampilkan <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
+          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between">
+            <span>
+              Menampilkan <strong className="text-[#234E5C] font-bold">{Math.min(visibleCount, filteredEquipment.length)}</strong> dari <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
+            </span>
+            {filteredEquipment.length > 12 && (
+              <span className="text-[11px] text-[#5F7A84]/80 hidden sm:inline">
+                Optimasi loading bertahap
+              </span>
+            )}
           </div>
 
           {filteredEquipment.length > 0 ? (
             <div
               key={filterSignature}
-              className={`transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""
+              className={`space-y-8 transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""
                 }`}
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEquipment.map((item, index) => {
+                {displayedEquipment.map((item, index) => {
                   if (shouldReduceMotion) {
                     return (
                       <div key={item.id} className="h-full">
@@ -603,6 +623,26 @@ export function EquipmentCatalog({
                   );
                 })}
               </div>
+
+              {/* Tombol Muat Lebih Banyak (Pagination / Progressive Loading untuk HP) */}
+              {filteredEquipment.length > visibleCount && (
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-[#E8E8E1]">
+                  <Button
+                    variant="outline"
+                    onClick={() => setVisibleCount((prev) => prev + 12)}
+                    className="w-full sm:w-auto text-xs font-bold px-6 h-11 border-[#234E5C] text-[#234E5C] hover:bg-[#234E5C] hover:text-white transition-colors"
+                  >
+                    Muat Lebih Banyak ({filteredEquipment.length - visibleCount} alat lagi)
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setVisibleCount(filteredEquipment.length)}
+                    className="w-full sm:w-auto text-xs font-semibold text-[#5F7A84] hover:text-[#234E5C]"
+                  >
+                    Tampilkan Semua ({filteredEquipment.length})
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-dashed border-[#E8E8E1] bg-white">

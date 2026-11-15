@@ -341,9 +341,6 @@ export default function DaftarPage() {
               {errors.agreeTerms && (
                 <p className="text-[11px] text-[#DC2626] font-medium mt-1">{errors.agreeTerms.message}</p>
               )}
-              {!agreeTermsVal && !errors.agreeTerms && (
-                <p className="text-[11px] text-[#5F7A84] mt-1">Wajib disetujui untuk melanjutkan pendaftaran.</p>
-              )}
             </div>
 
             {/* Tombol Daftar Ochre */}

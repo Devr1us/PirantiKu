@@ -442,6 +442,10 @@ export function HoverRollText({
       onMouseLeave={() => setIsHovered(false)}
       aria-label={text}
     >
+      {/* Teks bersih satu kali untuk pembaca layar (Screen Reader) */}
+      <span className="sr-only">{text}</span>
+
+      {/* Layer visual animasi digulung, disembunyikan dari pembaca layar agar tidak terbaca ganda */}
       <span className="inline-flex" aria-hidden="true">
         {chars.map((char, i) => (
           <span
@@ -464,8 +468,9 @@ export function HoverRollText({
               {char === " " ? "\u00A0" : char}
             </motion.span>
 
-            {/* Duplicate Char Below */}
+            {/* Duplicate Char Below (Hidden dari accessibility tree) */}
             <motion.span
+              aria-hidden="true"
               className="inline-block absolute top-0 left-0"
               initial={{ y: "100%" }}
               animate={{
