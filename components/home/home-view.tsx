@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "motion/react";
 import {
   ArrowRight,
@@ -83,68 +82,38 @@ export function HomeView({
           ======================================================== */}
       <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Kolom Kiri: Judul, Sub-judul, Deskripsi, Tombol Aksi */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="space-y-2">
-                <H1 hero>PIRANTIKU</H1>
-                <H2 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide text-[#234E5C]">
-                  BOOKING ALAT SERBA ADA
-                </H2>
+          <div className="max-w-3xl space-y-6">
+            <div className="space-y-2">
+              <H1 hero>PIRANTIKU</H1>
+              <H2 className="text-xl sm:text-2xl md:text-3xl font-extrabold uppercase tracking-wide text-[#234E5C]">
+                BOOKING ALAT SERBA ADA
+              </H2>
+            </div>
+
+            <Lead>
+              Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai 30%.
+            </Lead>
+
+            <Reveal delay={0.25} className="pt-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <Link href="/alat">
+                  <Button variant="petrol" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
+                    <HoverRollText text="LIHAT KATALOG" />
+                  </Button>
+                </Link>
+
+                <a
+                  href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4" />
+                    <HoverRollText text="HUBUNGI ADMIN" />
+                  </Button>
+                </a>
               </div>
-
-              <Lead>
-                Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai 30%.
-              </Lead>
-
-              <Reveal delay={0.25} className="pt-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Link href="/alat">
-                    <Button variant="petrol" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
-                      <HoverRollText text="LIHAT KATALOG" />
-                    </Button>
-                  </Link>
-
-                  <a
-                    href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2">
-                      <MessageCircle className="h-4 w-4" />
-                      <HoverRollText text="HUBUNGI ADMIN" />
-                    </Button>
-                  </a>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* Kolom Kanan: Ilustrasi Hero */}
-            <div className="lg:col-span-5 flex justify-center">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                  y: [-3, 3, -3],
-                }}
-                transition={{
-                  opacity: { duration: 0.5, ease: "easeOut" },
-                  scale: { duration: 0.5, ease: "easeOut" },
-                  y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-                }}
-                className="relative w-full max-w-[460px] sm:max-w-[480px] lg:max-w-[500px] aspect-square flex items-center justify-center"
-              >
-                <Image
-                  src="/images/HeroIlustration2.svg"
-                  alt="Ilustrasi PirantiKu"
-                  width={500}
-                  height={500}
-                  priority
-                  className="w-full h-full object-contain drop-shadow-sm"
-                />
-              </motion.div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
