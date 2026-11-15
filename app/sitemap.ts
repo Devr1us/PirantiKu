@@ -14,7 +14,7 @@ const FALLBACK_CATEGORIES = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.id";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.web.id";
   const now = new Date();
 
   // 1. Rute Statis Utama

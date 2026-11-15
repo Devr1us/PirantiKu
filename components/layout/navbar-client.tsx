@@ -534,6 +534,16 @@ export function NavbarClient({
                         </Link>
                       )}
 
+                      {user && (
+                        <Link
+                          href="/profil"
+                          onClick={() => setIsMobileOpen(false)}
+                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
+                        >
+                          PROFIL AKUN
+                        </Link>
+                      )}
+
                       {isAdmin && (
                         <Link
                           href="/admin"
@@ -562,19 +572,29 @@ export function NavbarClient({
 
                   {user ? (
                     <div className="space-y-2">
-                      <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-[#F3F3EF]">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
-                          {userInitials}
+                      <Link
+                        href="/profil"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="flex items-center justify-between p-2.5 rounded-2xl bg-[#F3F3EF] hover:bg-[#E8E8E1] transition-colors group cursor-pointer"
+                        title="Buka Profil Akun"
+                      >
+                        <div className="flex items-center gap-3 truncate">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
+                            {userInitials}
+                          </div>
+                          <div className="flex flex-col truncate">
+                            <span className="text-xs font-bold text-[#234E5C] truncate">
+                              {displayName}
+                            </span>
+                            <span className="text-[11px] text-[#5F7A84] truncate">
+                              {user.email}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-col truncate">
-                          <span className="text-xs font-bold text-[#234E5C] truncate">
-                            {displayName}
-                          </span>
-                          <span className="text-[11px] text-[#5F7A84] truncate">
-                            {user.email}
-                          </span>
-                        </div>
-                      </div>
+                        <span className="text-[10px] font-bold text-[#234E5C] group-hover:underline pl-2 shrink-0">
+                          Profil &rarr;
+                        </span>
+                      </Link>
                       <Button
                         variant="destructive"
                         size="sm"

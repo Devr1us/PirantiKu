@@ -22,7 +22,7 @@ const libreBaskerville = Libre_Baskerville({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.id";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.web.id";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

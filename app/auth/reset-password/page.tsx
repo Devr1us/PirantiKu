@@ -36,6 +36,16 @@ export default function ResetPasswordPage() {
   const [showConfirm, setShowConfirm] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  React.useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        toast.error("Sesi reset password tidak valid atau telah berakhir. Silakan minta tautan baru.");
+        router.replace("/login");
+      }
+    });
+  }, [router]);
+
   const {
     register,
     handleSubmit,

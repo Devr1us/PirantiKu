@@ -146,7 +146,10 @@ function LoginForm() {
     setIsResetting(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail);
+      const redirectUrl = `${window.location.origin}/auth/callback?next=/auth/reset-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: redirectUrl,
+      });
       if (error) {
         toast.error(error.message);
       } else {
