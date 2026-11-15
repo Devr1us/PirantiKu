@@ -164,7 +164,7 @@ export default function BookingSayaPage() {
       <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-          <p className="text-sm text-[#5F7A84]">Memuat daftar pesanan sewa Anda...</p>
+          <p data-nosnippet aria-hidden="true" className="text-sm text-[#5F7A84]">Memuat daftar pesanan sewa Anda...</p>
         </div>
       </div>
     );
@@ -392,7 +392,7 @@ export default function BookingSayaPage() {
                           Uang Muka (DP) Terverifikasi!
                         </span>
                         <p className="text-[11px] text-[#2E5E4E]/80">
-                          Jadwal alat telah dikunci. Bawa identitas asli (Kartu Pelajar / KIA / KTP / SIM) saat serah terima unit di gerai.
+                          Jadwal alat telah dikunci. Bawa identitas asli (KTP/SIM) untuk verifikasi saat serah terima unit di gerai.
                         </p>
                       </div>
 

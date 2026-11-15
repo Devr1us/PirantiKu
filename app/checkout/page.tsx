@@ -243,7 +243,7 @@ export default function CheckoutPage() {
       <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-          <p className="text-sm text-[#5F7A84]">Memuat informasi checkout...</p>
+          <p data-nosnippet aria-hidden="true" className="text-sm text-[#5F7A84]">Memuat informasi checkout...</p>
         </div>
       </div>
     );
@@ -552,7 +552,7 @@ export default function CheckoutPage() {
                 <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 space-y-2">
                   <h4 className="font-bold text-[#234E5C]">Ketentuan Pengambilan Unit:</h4>
                   <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px]">
-                    <li>Membawa kartu identitas asli (Kartu Pelajar, KIA, KTP, atau SIM) atas nama pemesan ({nama.trim() || profile?.nama || "Penyewa"}).</li>
+                    <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan ({nama.trim() || profile?.nama || "Penyewa"}) untuk verifikasi saat serah terima.</li>
                     <li>Melunasi sisa biaya booking ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>
                   </ul>

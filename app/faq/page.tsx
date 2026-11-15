@@ -53,7 +53,7 @@ export default function FAQPage() {
     },
     {
       q: "Apa saja syarat dokumen saat pengambilan alat?",
-      a: "Penyewa wajib membawa dan menunjukkan kartu identitas asli yang masih berlaku sebagai jaminan verifikasi fisik (seperti Kartu Pelajar, KIA, KTP, atau SIM) sesuai dengan nama pada akun booking, serta menyelesaikan pelunasan sisa biaya sewa dan deposit jaminan.",
+      a: "Penyewa wajib membawa dan menunjukkan kartu identitas resmi yang masih aktif (KTP atau SIM asli) yang sesuai dengan nama pada akun booking untuk verifikasi fisik saat serah terima, serta menyelesaikan pelunasan sisa biaya sewa dan deposit jaminan.",
     },
     {
       q: "Bagaimana jika saya terlambat mengembalikan alat?",
@@ -69,7 +69,7 @@ export default function FAQPage() {
     },
     {
       q: "Berapa batas usia minimal untuk menyewa alat?",
-      a: "Batas usia minimal untuk menyewa alat di PirantiKu adalah 13 tahun. Penyewa wajib memberikan kartu identitas resmi yang masih aktif (seperti Kartu Pelajar, KIA, KTP, atau SIM) sebagai jaminan verifikasi saat serah terima alat. Khusus untuk peralatan pertukangan bermesin besar yang memiliki risiko tinggi (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), penyewa usia pelajar / di bawah 17 tahun wajib didampingi orang tua, wali, atau teknisi dewasa demi keselamatan kerja.",
+      a: "Penyewa wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM asli) yang masih aktif untuk ditunjukkan dalam proses verifikasi serah terima unit. Khusus untuk peralatan pertukangan bermesin besar yang memiliki risiko tinggi (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), penyewa pemula disarankan didampingi teknisi atau orang dewasa berpengalaman demi keselamatan kerja.",
     },
     {
       q: "Bisakah saya memperpanjang masa sewa (extend)?",

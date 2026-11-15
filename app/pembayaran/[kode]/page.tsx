@@ -263,7 +263,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
               Ketentuan Pengambilan Alat:
             </h4>
             <ul className="space-y-1.5 text-[#5F7A84] list-disc list-inside text-[11px] leading-relaxed">
-              <li>Membawa kartu identitas asli (Kartu Pelajar, KIA, KTP, atau SIM) atas nama pemesan untuk jaminan identitas fisik.</li>
+              <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan untuk verifikasi fisik saat serah terima.</li>
               <li>Sisa biaya sewa & deposit jaminan dilunasi di toko saat serah terima unit.</li>
               <li>Pengecekan fungsi & kondisi alat dilakukan bersama sebelum serah terima.</li>
               <li>Deposit akan dikembalikan 100% penuh saat alat kembali tepat waktu dan dalam kondisi baik.</li>

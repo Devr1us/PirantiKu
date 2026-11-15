@@ -212,7 +212,7 @@ export default function DaftarPage() {
             {/* Nama Lengkap */}
             <div className="space-y-1">
               <Label htmlFor="nama" className="text-xs font-semibold text-[#234E5C]">
-                Nama Lengkap (sesuai Kartu Pelajar / KTP / SIM)
+                Nama Lengkap (sesuai KTP / SIM)
               </Label>
               <div className="relative">
                 <User className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />

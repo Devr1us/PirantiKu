@@ -504,7 +504,7 @@ export function HomeView({
                     Ambil alat, pakai, lalu kembalikan
                   </h3>
                   <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Pengambilan unit dilakukan langsung di workshop/toko kami (wajib bawa kartu identitas fisik asli seperti Kartu Pelajar, KIA, KTP, atau SIM atas nama pemesan untuk jaminan). Selesaikan sisa sewa serta deposit jaminan, gunakan alat dengan baik, dan kembalikan tepat waktu untuk pencairan utuh deposit Anda.
+                    Pengambilan unit dilakukan langsung di workshop/toko kami (wajib bawa kartu identitas fisik asli seperti KTP atau SIM atas nama pemesan untuk verifikasi). Selesaikan sisa sewa serta deposit jaminan, gunakan alat dengan baik, dan kembalikan tepat waktu untuk pencairan utuh deposit Anda.
                   </p>
                 </div>
               </div>

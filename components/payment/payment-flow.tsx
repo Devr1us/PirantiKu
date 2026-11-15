@@ -463,7 +463,7 @@ export function PaymentFlow({
                 <span>Pembayaran DP Terverifikasi!</span>
               </div>
               <p className="leading-relaxed text-[11px]">
-                Uang muka Anda telah diterima. Jadwal sewa unit telah terkunci aman. Silakan bawa identitas asli (Kartu Pelajar / KIA / KTP / SIM) saat pengambilan alat di lokasi.
+                Uang muka Anda telah diterima. Jadwal sewa unit telah terkunci aman. Silakan bawa identitas asli (KTP/SIM) untuk verifikasi saat pengambilan alat di lokasi.
               </p>
               
               <div className="pt-2 border-t border-[#C5E1A5] flex items-center justify-between">
