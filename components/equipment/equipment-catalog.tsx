@@ -461,18 +461,20 @@ export function EquipmentCatalog({
       {/* Control Bar: Pencarian & Pengurutan */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Form Pencarian */}
-        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
+        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md w-full">
+          <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84] pointer-events-none" />
           <Input
-            type="text"
-            placeholder="Cari nama alat..."
+            type="search"
+            aria-label="Cari nama alat"
+            placeholder="Cari nama alat atau spesifikasi..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-11 text-sm bg-white"
+            className="pl-10 h-11 text-sm bg-white border-[#CBD5E1] text-[#234E5C] placeholder:text-[#5F7A84] shadow-xs focus:ring-2 focus:ring-[#234E5C]"
           />
           {searchQuery && (
             <button
               type="button"
+              aria-label="Hapus pencarian"
               onClick={() => {
                 setSearchQuery("");
                 applyFilters({ q: "" });

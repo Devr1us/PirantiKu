@@ -48,6 +48,7 @@ export default function CheckoutPage() {
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+  const [agreedTerms, setAgreedTerms] = React.useState<boolean>(true);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
   const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
@@ -556,6 +557,28 @@ export default function CheckoutPage() {
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>
                   </ul>
                 </div>
+
+                {/* Checkbox Persetujuan Syarat & Ketentuan */}
+                <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
+                  <input
+                    type="checkbox"
+                    id="terms-checkbox"
+                    checked={agreedTerms}
+                    onChange={(e) => setAgreedTerms(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-[#CBD5E1] text-[#234E5C] focus:ring-[#234E5C] cursor-pointer"
+                  />
+                  <label htmlFor="terms-checkbox" className="text-[#5F7A84] leading-relaxed cursor-pointer select-none">
+                    Saya telah membaca dan menyetujui{" "}
+                    <Link href="/syarat-ketentuan" target="_blank" className="font-bold text-[#234E5C] underline hover:text-[#A0630F]">
+                      Syarat & Ketentuan
+                    </Link>{" "}
+                    serta{" "}
+                    <Link href="/kebijakan-privasi" target="_blank" className="font-bold text-[#234E5C] underline hover:text-[#A0630F]">
+                      Kebijakan Privasi
+                    </Link>{" "}
+                    PirantiKu.
+                  </label>
+                </div>
               </div>
 
               <div className="flex items-center justify-between gap-3 pt-4 border-t border-[#E8E8E1]">
@@ -573,9 +596,9 @@ export default function CheckoutPage() {
                 <Button
                   type="button"
                   variant="warm"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !agreedTerms}
                   onClick={handleProcessBooking}
-                  className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center"
+                  className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Memproses..." : "Konfirmasi"}
                 </Button>

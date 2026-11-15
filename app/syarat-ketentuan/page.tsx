@@ -12,6 +12,20 @@ export const metadata: Metadata = {
     title: `Syarat & Ketentuan | ${APP_NAME}`,
     description: `Ketentuan dan syarat lengkap rental booking perlengkapan di ${APP_NAME}.`,
     url: "/syarat-ketentuan",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: `${APP_NAME} Syarat & Ketentuan`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Syarat & Ketentuan | ${APP_NAME}`,
+    description: `Ketentuan dan syarat lengkap rental booking perlengkapan di ${APP_NAME}.`,
+    images: ["/logo.png"],
   },
 };
 
@@ -55,10 +69,11 @@ export default function SyaratKetentuanPage() {
 
         {/* Pasal 3 */}
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">3. Deposit Jaminan & Pengembaliannya</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">3. Deposit Jaminan & Ketentuannya</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li>Deposit jaminan merupakan dana titipan sementara untuk menjamin keamanan unit alat selama masa rental.</li>
-            <li>Deposit jaminan akan <strong>dikembalikan utuh 100%</strong> secara tunai atau transfer saat alat dikembalikan tepat waktu, bersih, dan berfungsi dengan baik.</li>
+            <li><strong>Besaran Nominal Deposit:</strong> Besaran deposit jaminan bervariasi bergantung pada kategori, nilai aset, dan tingkat kerentanan masing-masing alat. Nilai deposit setiap alat tertera secara transparan di halaman detail alat dan keranjang booking sebelum Anda checkout.</li>
+            <li>Deposit jaminan akan <strong>dikembalikan utuh 100%</strong> secara tunai atau transfer instan pada saat alat dikembalikan tepat waktu, bersih, dan seluruh fungsi beroperasi normal.</li>
           </ul>
         </section>
 
@@ -66,9 +81,9 @@ export default function SyaratKetentuanPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">4. Keterlambatan Pengembalian (Denda)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li>Unit wajib dikembalikan selambat-lambatnya pada tanggal selesai sewa pukul 21.00 WIB.</li>
-            <li>Keterlambatan pengembalian tanpa konfirmasi sebelumnya akan dikenakan denda keterlambatan sebesar biaya sewa harian alat ditambah biaya kompensasi operasional per hari keterlambatan.</li>
-            <li>Denda keterlambatan dapat dipotong langsung dari deposit jaminan penyewa.</li>
+            <li>Unit wajib dikembalikan selambat-lambatnya pada tanggal selesai sewa pukul 21.00 WIB (sesuai jam operasional toko 08.00 - 21.00 WIB).</li>
+            <li><strong>Rumus Denda:</strong> Keterlambatan pengembalian tanpa konfirmasi awal dikenakan denda sebesar <strong>1x tarif sewa harian alat per hari keterlambatan</strong> (Rumus: <em>Tarif Sewa Harian &times; Jumlah Hari Terlambat</em>).</li>
+            <li>Total denda keterlambatan dipotong langsung dari deposit jaminan penyewa saat serah terima pengembalian.</li>
           </ul>
         </section>
 
@@ -77,16 +92,18 @@ export default function SyaratKetentuanPage() {
           <H2 className="text-lg font-bold text-[#234E5C]">5. Kerusakan & Kehilangan Alat</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li>Penyewa bertanggung jawab penuh atas keutuhan dan keselamatan alat selama masa pinjam.</li>
-            <li>Kerusakan akibat kelalaian atau kesalahan operasional akan dikenakan biaya perbaikan/servis resmi yang dipotong dari deposit jaminan. Jika biaya reparasi melebihi nilai deposit, penyewa wajib melunasi kekurangannya.</li>
+            <li>Kerusakan akibat kelalaian operasional akan dikenakan biaya perbaikan/servis resmi yang dipotong dari deposit jaminan. Jika biaya reparasi melebihi nilai deposit, penyewa wajib melunasi kekurangannya.</li>
             <li>Kehilangan unit atau kelengkapan aksesoris wajib diganti oleh penyewa dengan unit barang yang tipe, merk, dan spesifikasinya sama atau senilai harga unit baru.</li>
           </ul>
         </section>
 
         {/* Pasal 6 */}
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">6. Kebijakan Pembatalan & Jadwal Ulang</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">6. Kebijakan Pembatalan & Pengembalian Dana (Refund)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li>Pembatalan sepihak oleh penyewa yang dilakukan kurang dari 24 jam sebelum tanggal mulai booking menyebabkan DP tidak dapat di-refund karena unit telah diblokir dari pelanggan lain.</li>
+            <li><strong>Pembatalan oleh Penyewa &gt; 24 Jam:</strong> Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai booking berhak mendapatkan <strong>pengembalian uang muka (DP) 100% penuh</strong> atau dialihkan menjadi kredit jadwal booking baru tanpa biaya tambahan.</li>
+            <li><strong>Pembatalan oleh Penyewa &le; 24 Jam:</strong> Pembatalan sepihak dalam waktu kurang dari 24 jam sebelum tanggal sewa menyebabkan DP hangus (tidak dapat direfund) karena unit telah disiapkan dan menolak calon penyewa lain.</li>
+            <li><strong>Pembatalan oleh Pihak PirantiKu:</strong> Apabila alat mengalami kerusakan mendadak saat inspeksi pra-serah terima dan tidak tersedia unit pengganti yang setara, PirantiKu akan mengembalikan <strong>100% seluruh pembayaran DP seketika</strong> dan memberikan kompensasi prioritas pada jadwal berikutnya.</li>
             <li>Penyewa dapat mengajukan perubahan jadwal (reschedule) maksimal 1 kali dengan menghubungi Admin via WhatsApp paling lambat 1 hari sebelum jadwal sewa, selama unit pengganti masih tersedia.</li>
           </ul>
         </section>

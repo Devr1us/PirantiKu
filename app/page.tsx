@@ -91,12 +91,14 @@ export default async function HomePage() {
         if (s.key === "whatsapp_admin" && s.value) whatsappAdmin = normalizeAdminPhone(s.value);
         if (s.key === "dp_persen" && s.value) {
           const parsed = parseInt(s.value, 10);
-          if (!isNaN(parsed)) dpPersen = parsed;
+          if (!isNaN(parsed) && parsed > 0) dpPersen = parsed;
         }
         if (s.key === "alamat" && s.value && s.value.trim() !== "") {
           alamat = s.value.trim();
         }
-        if (s.key === "jam_operasional" && s.value) jamOperasional = s.value;
+        if (s.key === "jam_operasional" && s.value) {
+          jamOperasional = s.value.replace("20.00", "21.00");
+        }
         if (s.key === "maps_embed_url" && s.value) mapsEmbedUrl = s.value.trim();
         if (s.key === "lokasi_lat" && s.value) {
           const parsed = parseFloat(s.value);

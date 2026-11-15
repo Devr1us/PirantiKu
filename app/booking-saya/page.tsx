@@ -445,7 +445,7 @@ export default function BookingSayaPage() {
                           Peralatan Sedang Digunakan
                         </span>
                         <p className="text-[11px] text-[#5B21B6]/80">
-                          Kembalikan alat paling lambat tanggal {formatDateIndo(booking.tanggal_selesai, "d MMM yyyy")} sebelum pukul 20.00 WIB.
+                          Kembalikan alat paling lambat tanggal {formatDateIndo(booking.tanggal_selesai, "d MMM yyyy")} sebelum pukul 21.00 WIB.
                         </p>
                       </div>
 

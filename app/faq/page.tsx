@@ -12,6 +12,20 @@ export const metadata: Metadata = {
     title: `Tanya Jawab (FAQ) | ${APP_NAME}`,
     description: `Pertanyaan yang sering diajukan seputar layanan sewa alat di ${APP_NAME}.`,
     url: "/faq",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: `${APP_NAME} FAQ`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Tanya Jawab (FAQ) | ${APP_NAME}`,
+    description: `Pertanyaan yang sering diajukan seputar layanan sewa alat di ${APP_NAME}.`,
+    images: ["/logo.png"],
   },
 };
 
@@ -43,11 +57,27 @@ export default function FAQPage() {
     },
     {
       q: "Bagaimana jika saya terlambat mengembalikan alat?",
-      a: "Pengembalian alat maksimal pukul 21.00 WIB pada tanggal selesai booking. Keterlambatan tanpa koordinasi awal akan dikenakan denda sesuai tarif harian alat yang dapat dipotong langsung dari deposit jaminan.",
+      a: "Pengembalian alat maksimal pukul 21.00 WIB pada tanggal selesai booking (sesuai jam operasional toko 08.00 - 21.00 WIB). Keterlambatan tanpa koordinasi awal dikenakan denda sebesar 1x tarif sewa harian alat untuk setiap 1 hari keterlambatan yang dipotong langsung dari deposit jaminan.",
     },
     {
       q: "Bagaimana jika alat rusak selama pemakaian?",
       a: "Jika terjadi kerusakan akibat pemakaian wajar atau kendala teknis unit, segera hubungi admin kami untuk panduan penanganan atau penggantian unit. Jika kerusakan terjadi akibat kelalaian operasional, biaya perbaikan resmi akan dipotong dari deposit.",
+    },
+    {
+      q: "Apakah pengambilan alat bisa diwakilkan orang lain?",
+      a: "Bisa, dengan syarat penerima kuasa membawa Surat Kuasa tertulis yang ditandatangani oleh pemesan, serta menunjukkan KTP/SIM asli pemesan dan KTP asli penerima kuasa saat serah terima di toko.",
+    },
+    {
+      q: "Berapa batas usia minimal untuk menyewa alat?",
+      a: "Penyewa wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM) yang masih aktif.",
+    },
+    {
+      q: "Bisakah saya memperpanjang masa sewa (extend)?",
+      a: "Bisa. Anda wajib mengonfirmasi ke Admin WhatsApp kami minimal 24 jam sebelum masa sewa berakhir. Perpanjangan dapat disetujui jika unit belum dipesan oleh penyewa lain pada jadwal berikutnya.",
+    },
+    {
+      q: "Bagaimana jika stok alat yang saya butuhkan sedang habis?",
+      a: "Silakan hubungi Admin melalui WhatsApp. Tim kami dapat mengecek jadwal pengembalian unit terdekat atau memberikan rekomendasi tipe alat alternatif yang memiliki fungsi serupa.",
     },
   ];
 

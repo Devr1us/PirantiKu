@@ -58,6 +58,7 @@ export async function generateMetadata({
     openGraph: {
       title: ogTitle,
       description,
+      url: `/alat/${slug}`,
       images: [
         {
           url: imageUrl,

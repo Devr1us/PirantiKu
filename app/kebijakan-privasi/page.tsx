@@ -12,6 +12,20 @@ export const metadata: Metadata = {
     title: `Kebijakan Privasi | ${APP_NAME}`,
     description: `Kebijakan privasi dan perlindungan data pengguna layanan ${APP_NAME}.`,
     url: "/kebijakan-privasi",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+        alt: `${APP_NAME} Kebijakan Privasi`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Kebijakan Privasi | ${APP_NAME}`,
+    description: `Kebijakan privasi dan perlindungan data pengguna layanan ${APP_NAME}.`,
+    images: ["/logo.png"],
   },
 };
 
@@ -55,16 +69,33 @@ export default function KebijakanPrivasiPage() {
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">3. Keamanan Data & Kerahasiaan</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">3. Pembagian Data & Keamanan</H2>
           <p className="text-[#5F7A84]">
-            {APP_NAME} menerapkan protokol keamanan berstandar industri dengan enkripsi data (SSL/TLS dan Row Level Security database Supabase). Kami <strong>tidak pernah menjual, meminjamkan, atau membagikan</strong> informasi pribadi Anda kepada pihak ketiga mana pun tanpa persetujuan Anda, kecuali jika diwajibkan oleh proses penegakan hukum yang sah di Republik Indonesia.
+            {APP_NAME} berkomitmen tidak pernah memperjualbelikan data pribadi Anda kepada pihak mana pun. Kami hanya membagikan data kepada penyedia infrastruktur tepercaya yang esensial untuk jalannya operasional layanan (seperti penyedia layanan autentikasi cloud, gateway pengiriman notifikasi WhatsApp, dan penyedia peta digital).
+          </p>
+          <p className="text-[#5F7A84]">
+            Seluruh data yang disimpan dilindungi dengan enkripsi standar industri (SSL/TLS) dan pembatasan hak akses berbasis otentikasi ketat demi mencegah akses tidak sah.
           </p>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">4. Hak Pengguna atas Data</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">4. Masa Retensi (Penyimpanan Data)</H2>
           <p className="text-[#5F7A84]">
-            Anda berhak melihat, memperbarui nomor kontak, atau meminta penghapusan akun serta riwayat data pribadi Anda melalui menu profil akun atau dengan menghubungi Admin resmi kami.
+            Data akun Anda disimpan selama akun masih aktif terdaftar pada layanan kami. Data riwayat transaksi sewa disimpan selama maksimal 2 (dua) tahun sejak transaksi selesai guna keperluan pencatatan keuangan, verifikasi garansi deposit, dan audit internal, setelah itu data transaksi akan diarsipkan atau dihapus permanen.
+          </p>
+        </section>
+
+        <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
+          <H2 className="text-lg font-bold text-[#234E5C]">5. Kepatuhan Hukum & Hak Pengguna</H2>
+          <p className="text-[#5F7A84]">
+            Kebijakan privasi ini disusun sesuai dengan ketentuan <strong>Undang-Undang Pelindungan Data Pribadi (UU No. 27 Tahun 2022)</strong> Republik Indonesia. Anda memiliki hak untuk mengakses, memperbarui nama dan kontak melalui halaman <em>Profil Akun</em>, serta berhak meminta penghapusan akun beserta data pribadi terkait dengan menghubungi Admin kami.
+          </p>
+        </section>
+
+        <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
+          <H2 className="text-lg font-bold text-[#234E5C]">6. Kontak Pengelola Data</H2>
+          <p className="text-[#5F7A84]">
+            Apabila Anda memiliki pertanyaan, permohonan hak data, atau keluhan seputar pemrosesan data pribadi, silakan hubungi tim kami melalui email <strong>halo@pirantiku.web.id</strong> atau WhatsApp Admin Resmi di <strong>0857-0151-6287</strong>.
           </p>
         </section>
       </div>

@@ -146,6 +146,7 @@ export function LocationMap({
             isIframeLoaded ? "opacity-0" : "opacity-100"
           )}
           aria-hidden="true"
+          data-nosnippet
         >
           <MapPin className="h-8 w-8 text-[#5F7A84] animate-pulse mb-1.5" />
           <p className="text-xs font-semibold text-[#5F7A84]">

@@ -292,6 +292,7 @@ export function NavbarClient({
             title="Hubungi Admin via WhatsApp"
           >
             <MessageCircle className="h-5 w-5" />
+            <span className="sr-only">Hubungi Admin via WhatsApp</span>
           </a>
 
           {/* Ikon Keranjang dengan Badge Jumlah (Khusus Pelanggan, disembunyikan untuk Admin) */}
@@ -299,6 +300,7 @@ export function NavbarClient({
             <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
               <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-all">
                 <ShoppingCart className="h-5 w-5" />
+                <span className="sr-only">Keranjang Booking</span>
                 {isLoaded && totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A0630F] px-1 text-[11px] font-bold text-white shadow-sm">
                     {totalItems}
