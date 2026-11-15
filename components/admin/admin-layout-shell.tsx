@@ -87,9 +87,11 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       <div className="space-y-5">
         {/* Brand Wordmark Versi Putih */}
         <div className="pb-4 border-b border-white/15">
-          <Wordmark variant="white" asLink={false} />
+          <div className="flex items-center justify-center">
+            <Wordmark variant="white" asLink={false} size="sm" />
+          </div>
           <div className="mt-2 text-center">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-white px-2.5 py-0.5 rounded-full inline-block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-white px-2.5 py-0.5 rounded-full inline-block shadow-xs">
               Console Pengelola
             </span>
           </div>
@@ -173,7 +175,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-[#FAFAF8] text-[#234E5C]">
       {/* Sidebar Desktop: Petrol Penuh */}
-      <aside className="hidden lg:block w-64 bg-[#234E5C] text-white p-6 shrink-0 border-r border-[#E8E8E1]/30">
+      <aside className="hidden lg:block w-72 bg-[#234E5C] text-white p-5 shrink-0 border-r border-[#E8E8E1]/30">
         <div className="sticky top-6 h-[calc(100vh-3rem)]">
           {sidebarContent}
         </div>
@@ -184,7 +186,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         {/* Topbar Mobile: Satu-satunya navbar di halaman admin */}
         <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between p-3.5 bg-[#234E5C] text-white border-b border-white/15 shadow-sm">
           <div className="flex items-center gap-2">
-            <Wordmark variant="white" asLink={false} />
+            <Wordmark variant="white" asLink={false} size="sm" />
             <span className="text-[9px] font-bold uppercase tracking-wider text-[#A0630F] bg-white px-2 py-0.5 rounded-full inline-block">
               Admin
             </span>

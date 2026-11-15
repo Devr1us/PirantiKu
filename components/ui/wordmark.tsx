@@ -12,6 +12,7 @@ interface WordmarkProps {
   asLink?: boolean;
   showLogo?: boolean;
   logoClassName?: string;
+  size?: "default" | "sm" | "lg";
 }
 
 export function Wordmark({
@@ -20,6 +21,7 @@ export function Wordmark({
   asLink = true,
   showLogo = true,
   logoClassName = "",
+  size = "default",
 }: WordmarkProps) {
   const shouldReduceMotion = useReducedMotion();
   const emptySub = () => () => {};
@@ -79,10 +81,23 @@ export function Wordmark({
 
   const logoSrc = isWhite ? "/logo-white.png" : "/logo.png";
 
+  const isSmall = size === "sm";
+
+  const gapClass = isSmall ? "gap-2 sm:gap-2.5" : "gap-2.5 sm:gap-3.5";
+  const logoSizeClass = isSmall
+    ? "h-8 w-auto sm:h-9"
+    : "h-9 w-auto sm:h-11";
+  const mainTextClass = isSmall
+    ? "text-base sm:text-lg font-bold uppercase tracking-[0.15em] leading-none pl-[0.15em]"
+    : "text-lg sm:text-2xl font-bold uppercase tracking-[0.22em] leading-none pl-[0.22em]";
+  const subTextClass = isSmall
+    ? "text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.32em] leading-tight mt-0.5 pl-[0.32em]"
+    : "text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.45em] leading-tight mt-1 pl-[0.45em]";
+
   const content = (
     <div
       aria-label="PIRANTIKU BOOKING ALAT"
-      className={`inline-flex items-center gap-2.5 sm:gap-3.5 select-none ${className}`}
+      className={`inline-flex items-center ${gapClass} select-none ${className}`}
     >
       {showLogo && (
         <div className="relative flex items-center justify-center shrink-0">
@@ -93,7 +108,7 @@ export function Wordmark({
             height={48}
             priority
             unoptimized
-            className={`h-9 w-auto sm:h-11 object-contain transition-transform duration-200 group-hover:scale-105 ${logoClassName}`}
+            className={`${logoSizeClass} object-contain transition-transform duration-200 group-hover:scale-105 ${logoClassName}`}
           />
         </div>
       )}
@@ -101,7 +116,7 @@ export function Wordmark({
       <div className="inline-flex flex-col items-start justify-center text-left">
         <span
           style={{ fontFamily: "var(--font-libre-baskerville), Georgia, serif" }}
-          className={`text-lg sm:text-2xl font-bold uppercase tracking-[0.22em] leading-none pl-[0.22em] ${mainColor}`}
+          className={`${mainTextClass} ${mainColor}`}
         >
           {shouldAnimate ? (
             <motion.span
@@ -129,7 +144,7 @@ export function Wordmark({
 
         <span
           style={{ fontFamily: "var(--font-open-sans), sans-serif" }}
-          className={`text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.45em] leading-tight mt-1 pl-[0.45em] ${subColor}`}
+          className={`${subTextClass} ${subColor}`}
         >
           {shouldAnimate ? (
             <motion.span
