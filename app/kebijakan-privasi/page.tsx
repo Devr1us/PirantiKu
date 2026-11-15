@@ -43,60 +43,81 @@ export default function KebijakanPrivasiPage() {
         <Lead className="text-sm text-[#5F7A84] mt-2">
           Komitmen {APP_NAME} dalam menjaga kerahasiaan dan keamanan informasi pribadi Anda.
         </Lead>
+        <p className="text-xs text-[#5F7A84]/80 mt-1 italic">
+          Terakhir diperbarui: 15 November 2026
+        </p>
       </div>
 
       <div className="space-y-8 bg-white border border-[#E8E8E1] rounded-2xl p-6 sm:p-10 shadow-xs leading-relaxed text-sm">
         <section className="space-y-3">
-          <H2 className="text-lg font-bold text-[#234E5C]">1. Informasi yang Kami Kumpulkan</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">1. Informasi Pengendali & Pengelola Data</H2>
           <p className="text-[#5F7A84]">
-            Untuk menyediakan layanan rental yang aman dan akurat, kami mengumpulkan data yang Anda berikan secara langsung saat mendaftar atau memesan:
+            Pengendali data pribadi atas layanan ini adalah <strong>Manajemen {APP_NAME}</strong>, penyedia jasa rental perlengkapan terintegrasi yang beroperasi di wilayah Karanganyar, Jawa Tengah. Kami tunduk sepenuhnya pada peraturan perundang-undangan Republik Indonesia, khususnya <strong>Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)</strong>.
           </p>
-          <ul className="list-disc pl-5 space-y-1 text-[#5F7A84]">
-            <li><strong>Data Akun:</strong> Nama lengkap, alamat email terdaftar, nomor WhatsApp / handphone, dan alamat domisili (opsional).</li>
-            <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, dan bukti pembayaran (transfer bank atau QRIS).</li>
-            <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas fisik resmi asli (KTP atau SIM) yang ditunjukkan untuk proses verifikasi serah terima alat di toko demi keamanan aset rental.</li>
+        </section>
+
+        <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
+          <H2 className="text-lg font-bold text-[#234E5C]">2. Informasi yang Kami Kumpulkan</H2>
+          <p className="text-[#5F7A84]">
+            Untuk menyediakan layanan rental yang aman, akurat, dan terverifikasi, kami mengumpulkan data yang Anda berikan melalui situs:
+          </p>
+          <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
+            <li><strong>Data Akun:</strong> Nama lengkap dan alamat email yang didaftarkan saat registrasi awal.</li>
+            <li><strong>Nomor Kontak / WhatsApp:</strong> Dikumpulkan saat Anda melengkapi data diri di <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Akun</Link> atau saat mengisi formulir checkout pesanan untuk koordinasi sewa dan pengingat reservasi.</li>
+            <li><strong>Data Autentikasi Pihak Ketiga (Google OAuth):</strong> Jika Anda memilih masuk menggunakan akun Google, kami menerima identitas dasar berupa nama, email terverifikasi, dan foto profil Anda dari Google secara terenkripsi untuk mempermudah akses login.</li>
+            <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, rincian biaya sewa & deposit, serta bukti transfer pembayaran uang muka (DP).</li>
+            <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas fisik resmi asli (KTP atau SIM) wajib ditunjukkan untuk proses verifikasi langsung saat serah terima alat di toko demi keamanan aset rental.</li>
           </ul>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">2. Penggunaan Informasi Pribadi</H2>
-          <p className="text-[#5F7A84]">Data Anda hanya dimanfaatkan untuk tujuan berikut:</p>
-          <ul className="list-disc pl-5 space-y-1 text-[#5F7A84]">
-            <li>Memproses reservasi, mengunci ketersediaan stok, dan menerbitkan invoice pembayaran.</li>
-            <li>Mengirimkan notifikasi dan konfirmasi pemesanan ke nomor WhatsApp yang Anda daftarkan.</li>
-            <li>Mencegah penipuan, kehilangan aset rental, serta keperluan verifikasi serah terima unit secara sah.</li>
+          <H2 className="text-lg font-bold text-[#234E5C]">3. Penggunaan Informasi Pribadi</H2>
+          <p className="text-[#5F7A84]">Data Anda dimanfaatkan semata-mata untuk kebutuhan operasional layanan:</p>
+          <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
+            <li>Memproses reservasi, memvalidasi ketersediaan stok, dan menerbitkan rincian booking.</li>
+            <li>Mengirimkan konfirmasi pesanan, pengingat jadwal sewa, dan informasi pengembalian melalui WhatsApp dan email.</li>
+            <li>Verifikasi kepemilikan sewa serta pencegahan penipuan atau kehilangan aset rental.</li>
           </ul>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">3. Pembagian Data & Keamanan</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">4. Cookie & Penyimpanan Sesi Teknis</H2>
           <p className="text-[#5F7A84]">
-            {APP_NAME} berkomitmen tidak pernah memperjualbelikan data pribadi Anda kepada pihak mana pun. Kami hanya membagikan data kepada penyedia infrastruktur tepercaya yang esensial untuk jalannya operasional layanan (seperti penyedia layanan autentikasi cloud, gateway pengiriman notifikasi WhatsApp, dan penyedia peta digital).
-          </p>
-          <p className="text-[#5F7A84]">
-            Seluruh data yang disimpan dilindungi dengan enkripsi standar industri (SSL/TLS) dan pembatasan hak akses berbasis otentikasi ketat demi mencegah akses tidak sah.
+            {APP_NAME} hanya menggunakan penyimpanan teknis esensial (first-party session cookies & browser local storage) untuk menjaga status login Anda dan menyimpan keranjang belanja sementara. Kami <strong>tidak</strong> menanamkan cookie pelacak pihak ketiga untuk keperluan periklanan bertarget.
           </p>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">4. Masa Retensi (Penyimpanan Data)</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">5. Pembagian Data & Keamanan</H2>
           <p className="text-[#5F7A84]">
-            Data akun Anda disimpan selama akun masih aktif terdaftar pada layanan kami. Data riwayat transaksi sewa disimpan selama maksimal 2 (dua) tahun sejak transaksi selesai guna keperluan pencatatan keuangan, verifikasi garansi deposit, dan audit internal, setelah itu data transaksi akan diarsipkan atau dihapus permanen.
+            {APP_NAME} berkomitmen tidak pernah memperjualbelikan data pribadi Anda kepada pihak mana pun. Kami hanya bekerja sama dengan penyedia infrastruktur cloud tepercaya (seperti Supabase untuk database & autentikasi terenkripsi SSL/TLS, dan Resend untuk pengiriman kode verifikasi transaksi).
           </p>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">5. Kepatuhan Hukum & Hak Pengguna</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">6. Masa Retensi Data</H2>
           <p className="text-[#5F7A84]">
-            Kebijakan privasi ini disusun sesuai dengan ketentuan <strong>Undang-Undang Pelindungan Data Pribadi (UU No. 27 Tahun 2022)</strong> Republik Indonesia. Anda memiliki hak untuk mengakses, memperbarui nama dan kontak melalui halaman <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Penyewa</Link>, serta berhak meminta penghapusan akun beserta data pribadi terkait dengan menghubungi Admin kami.
+            Data akun Anda disimpan selama akun masih aktif digunakan. Data riwayat transaksi sewa disimpan selama maksimal 2 (dua) tahun guna pencatatan keuangan, verifikasi garansi deposit, dan audit internal, setelah itu data transaksi akan diarsipkan atau dihapus secara permanen.
           </p>
         </section>
 
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
-          <H2 className="text-lg font-bold text-[#234E5C]">6. Kontak Pengelola Data</H2>
+          <H2 className="text-lg font-bold text-[#234E5C]">7. Hak Pengguna & Penghapusan Data</H2>
           <p className="text-[#5F7A84]">
-            Apabila Anda memiliki pertanyaan, permohonan hak data, atau keluhan seputar pemrosesan data pribadi, silakan hubungi tim kami langsung melalui WhatsApp Admin Resmi di <strong>0857-0151-6287</strong>.
+            Sesuai UU PDP, Anda berhak memeriksa, memperbarui data diri melalui menu profil, atau mengajukan permohonan penutupan akun dan penghapusan data dengan menghubungi Admin Resmi kami.
           </p>
+        </section>
+
+        <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
+          <H2 className="text-lg font-bold text-[#234E5C]">8. Kontak Resmi Pengelola Data</H2>
+          <p className="text-[#5F7A84]">
+            Apabila Anda memiliki pertanyaan atau permohonan terkait data pribadi, silakan hubungi tim pengelola data kami:
+          </p>
+          <div className="p-4 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs space-y-1">
+            <p><strong>Pengelola:</strong> Manajemen {APP_NAME}</p>
+            <p><strong>Alamat Operasional:</strong> Karanganyar, Jawa Tengah, Indonesia</p>
+            <p><strong>WhatsApp Admin Resmi:</strong> 0857-0151-6287</p>
+          </div>
         </section>
       </div>
 

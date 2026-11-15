@@ -33,6 +33,9 @@ export async function generateMetadata({
   return {
     title: pageTitle,
     description: desc,
+    alternates: {
+      canonical: `/kategori/${slug}`,
+    },
     openGraph: {
       title: `${pageTitle} | ${APP_NAME}`,
       description: desc,

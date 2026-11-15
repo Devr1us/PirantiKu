@@ -69,6 +69,26 @@ export function formatSpecKey(key: string): string {
 }
 
 /**
+ * Memformat nilai spesifikasi agar rapi dan ringkas di layar:
+ * - Standardisasi suhu (contoh: "5 sampai 15 derajat C" => "5–15 °C")
+ * - Boolean boolean => "Ya" / "Tidak"
+ */
+export function formatSpecValue(val: unknown): string {
+  if (typeof val === "boolean") {
+    return val ? "Ya" : "Tidak";
+  }
+  if (val === null || val === undefined) {
+    return "-";
+  }
+  let str = String(val).trim();
+  // Standardisasi rentang suhu: "5 sampai 15 derajat C" -> "5–15 °C"
+  str = str.replace(/(\d+)\s*(?:sampai|-)\s*(\d+)\s*(?:derajat\s*c(?:el[cs]ius)?|°c)/gi, "$1–$2 °C");
+  // Standardisasi suhu tunggal: "10 derajat C" -> "10 °C"
+  str = str.replace(/(\d+)\s*(?:derajat\s*c(?:el[cs]ius)?)/gi, "$1 °C");
+  return str;
+}
+
+/**
  * Menstandarkan nomor HP Indonesia (08xx -> 628xx untuk link WA).
  * Otomatis mengganti dummy placeholder lama jika ada.
  */
@@ -110,6 +130,20 @@ export function getTodayWIB(): string {
 export function getTomorrowWIB(): string {
   const d = new Date();
   d.setDate(d.getDate() + 1);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+/**
+ * Mendapatkan tanggal lusa (2 hari ke depan) dalam format YYYY-MM-DD sesuai zona waktu WIB (Asia/Jakarta, GMT+7).
+ */
+export function getDayAfterTomorrowWIB(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 2);
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Jakarta",
     year: "numeric",

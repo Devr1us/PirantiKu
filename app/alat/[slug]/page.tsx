@@ -8,7 +8,7 @@ import {
   Clock,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { formatSpecKey } from "@/lib/format";
+import { formatSpecKey, formatSpecValue } from "@/lib/format";
 import { APP_NAME, getCategoryIcon, getProductImage } from "@/lib/constants";
 import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/inventory";
 import type { EquipmentWithDetails } from "@/types/database";
@@ -268,11 +268,7 @@ export default async function EquipmentDetailPage({
                           {formatSpecKey(key)}
                         </span>
                         <span className="font-bold text-[#234E5C]">
-                          {typeof val === "boolean"
-                            ? val
-                              ? "Ya"
-                              : "Tidak"
-                            : String(val)}
+                          {formatSpecValue(val)}
                         </span>
                       </div>
                     ))}

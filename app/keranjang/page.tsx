@@ -22,7 +22,7 @@ import {
 import { format, addDays } from "date-fns";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
-import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB } from "@/lib/format";
+import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB, getDayAfterTomorrowWIB } from "@/lib/format";
 import { getProductImage } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,7 @@ export default function KeranjangPage() {
   const paramMulai = searchParams.get("mulai");
   const paramSelesai = searchParams.get("selesai");
 
-  // Inisialisasi tanggal sewa dari URL param -> sessionStorage -> fallback hari ini & besok
+  // Inisialisasi tanggal sewa dari URL param -> sessionStorage -> fallback minimal besok & lusa
   const [startDate, setStartDate] = React.useState<string>(() => {
     if (paramMulai) return paramMulai;
     if (typeof window !== "undefined") {
@@ -60,7 +60,7 @@ export default function KeranjangPage() {
         // Fallback
       }
     }
-    return getTodayWIB();
+    return getTomorrowWIB();
   });
 
   const [endDate, setEndDate] = React.useState<string>(() => {
@@ -76,7 +76,7 @@ export default function KeranjangPage() {
         // Fallback
       }
     }
-    return getTomorrowWIB();
+    return getDayAfterTomorrowWIB();
   });
 
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);

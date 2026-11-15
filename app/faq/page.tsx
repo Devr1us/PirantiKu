@@ -40,6 +40,14 @@ export default function FAQPage() {
       a: "Uang muka pemesanan adalah 30% dari total nilai sewa. Pembayaran DP ini menjamin unit alat terkunci untuk Anda pada jadwal yang dipilih dan tidak akan diberikan ke pelanggan lain.",
     },
     {
+      q: "Berapa lama batas waktu pembayaran DP setelah booking?",
+      a: "Batas waktu pembayaran uang muka (DP) adalah maksimal 24 jam sejak pesanan dibuat. Jika pembayaran DP belum diselesaikan dalam 24 jam, sistem akan otomatis membatalkan pesanan agar stok alat dapat diakses oleh penyewa lain.",
+    },
+    {
+      q: "Bagaimana ketentuan pembatalan sewa dan pengembalian uang muka (refund)?",
+      a: "Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai sewa berhak atas pengembalian (refund) DP 100% penuh atau dialihkan jadwalnya. Namun, pembatalan yang diajukan dalam kurun waktu 24 jam atau kurang sebelum tanggal mulai sewa membuat DP hangus (non-refundable) karena unit telah disiapkan dan menolak calon penyewa lain.",
+    },
+    {
       q: "Metode pembayaran apa saja yang didukung?",
       a: "Kami menerima pembayaran DP dan pelunasan melalui Transfer Rekening Bank (BCA) serta pembayaran instan QRIS yang dapat di-scan dari seluruh aplikasi mobile banking atau e-Wallet (GoPay, OVO, Dana, ShopeePay).",
     },

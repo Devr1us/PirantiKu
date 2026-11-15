@@ -47,9 +47,9 @@ export function getCategoryIcon(ikonName?: string | null): LucideIcon {
 // Pemetaan deskripsi singkat per slug kategori (tanpa mengubah kolom database)
 export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   // 8 Kategori Lengkap
-  "outdoor-pendakian": "Tenda, matras, kompor portabel, trekking pole, dan perlengkapan kegiatan alam terbuka.",
-  "konstruksi-perkakas": "Bor beton, mesin las listrik, gergaji mesin, gerobak dorong, dan perkakas proyek.",
-  "olahraga-fitness": "Sepeda lipat, set badminton, bola basket, resistance band, dan perlengkapan olahraga.",
+  "outdoor-pendakian": "Tenda, sleeping bag, kompor portabel, trekking pole, dan perlengkapan kegiatan alam terbuka.",
+  "konstruksi-perkakas": "Bor beton, mesin las listrik, gergaji circular, gerobak dorong, dan perkakas proyek.",
+  "olahraga-fitness": "Sepeda lipat, set badminton, bola basket, matras yoga, dan perlengkapan olahraga.",
   "rumah-tangga": "Kipas standing, mesin cuci mini, steamer uap, dispenser air, dan alat rumah tangga.",
   "pesta-acara": "Genset portable, lampu sorot, backdrop stand, chafing dish, dan perlengkapan acara.",
   "kamera-elektronik": "Kamera mirrorless, tripod, ring light, gimbal smartphone, dan action cam 4K.",
@@ -57,9 +57,9 @@ export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   "kesehatan-mobilitas": "Kursi roda lipat, walker lansia, kruk ketiak, tensimeter digital, dan kasur anti dekubitus.",
 
   // Alias kompatibilitas
-  outdoor: "Tenda, matras, kompor portabel, dan perlengkapan kegiatan alam terbuka.",
-  pertukangan: "Bor listrik, gergaji mesin, gerinda, tangga, dan perkakas proyek.",
-  olahraga: "Sepeda, raket, bola, matras, dan perlengkapan olahraga terawat.",
+  outdoor: "Tenda, sleeping bag, kompor portabel, dan perlengkapan kegiatan alam terbuka.",
+  pertukangan: "Bor listrik, gergaji circular, gerinda, tangga, dan perkakas proyek.",
+  olahraga: "Sepeda, raket, bola, matras yoga, dan perlengkapan olahraga terawat.",
   event: "Sound system, proyektor, speaker portable, mic, dan kebutuhan acara.",
 };
 

@@ -333,8 +333,22 @@ export default function DaftarPage() {
                 />
                 <span>
                   Saya menyetujui{" "}
-                  <span className="font-semibold text-[#234E5C]">ketentuan peminjaman</span>{" "}
-                  dan bersedia menjaga kondisi alat selama masa sewa.{" "}
+                  <Link
+                    href="/syarat-ketentuan"
+                    target="_blank"
+                    className="font-semibold text-[#234E5C] underline hover:text-[#A0630F]"
+                  >
+                    Syarat &amp; Ketentuan
+                  </Link>{" "}
+                  serta{" "}
+                  <Link
+                    href="/kebijakan-privasi"
+                    target="_blank"
+                    className="font-semibold text-[#234E5C] underline hover:text-[#A0630F]"
+                  >
+                    Kebijakan Privasi
+                  </Link>{" "}
+                  PirantiKu dan bersedia menjaga kondisi alat selama masa sewa.{" "}
                   <span className="text-[#DC2626] font-bold">*</span>
                 </span>
               </label>

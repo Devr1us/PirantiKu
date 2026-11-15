@@ -20,7 +20,7 @@ import type { EquipmentWithDetails } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { calculateAvailableStock } from "@/lib/inventory";
-import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB } from "@/lib/format";
+import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB, getDayAfterTomorrowWIB } from "@/lib/format";
 import { getProductImage } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
@@ -41,9 +41,11 @@ export function RentalBookingWidget({
 
   const todayStr = getTodayWIB();
   const tomorrowStr = getTomorrowWIB();
+  const dayAfterTomorrowStr = getDayAfterTomorrowWIB();
 
-  const [startDate, setStartDate] = React.useState<string>(todayStr);
-  const [endDate, setEndDate] = React.useState<string>(tomorrowStr);
+  // Default tanggal mulai minimal besok untuk menghindari bentrok aturan pembatalan 24 jam & DP
+  const [startDate, setStartDate] = React.useState<string>(tomorrowStr);
+  const [endDate, setEndDate] = React.useState<string>(dayAfterTomorrowStr);
   const [qty, setQty] = React.useState<number>(1);
 
   const [disabledDates, setDisabledDates] = React.useState<string[]>([]);
@@ -356,6 +358,16 @@ export function RentalBookingWidget({
               </span>
             </button>
           </div>
+
+          {/* Peringatan jika pengguna memilih booking hari ini */}
+          {startDate === todayStr && (
+            <div className="flex items-start gap-1.5 p-2 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[10px] text-[#78350F] leading-tight mt-1.5">
+              <Info className="h-3.5 w-3.5 shrink-0 text-[#A0630F] mt-0.5" />
+              <span>
+                Booking untuk hari ini berlaku ketentuan <strong>non-refundable</strong> (DP hangus jika dibatalkan karena waktu sewa &lt; 24 jam).
+              </span>
+            </div>
+          )}
 
           <AnimatePresence>
             {isDatePickerOpen && (

@@ -41,8 +41,11 @@ export default function SyaratKetentuanPage() {
         </Link>
         <H1 className="section-title">SYARAT & KETENTUAN RENTAL</H1>
         <Lead className="text-sm text-[#5F7A84] mt-2">
-          Panduan resmi dan ketentuan penggunaan layanan booking perlengkapan di {APP_NAME}.
+          Panduan resmi dan ketentuan hukum penggunaan layanan booking perlengkapan di {APP_NAME} (dikelola oleh Manajemen {APP_NAME}, Karanganyar, Jawa Tengah).
         </Lead>
+        <p className="text-xs text-[#5F7A84]/80 mt-1 italic">
+          Terakhir diperbarui: 15 November 2026
+        </p>
       </div>
 
       <div className="space-y-8 bg-white border border-[#E8E8E1] rounded-2xl p-6 sm:p-10 shadow-xs leading-relaxed text-sm">

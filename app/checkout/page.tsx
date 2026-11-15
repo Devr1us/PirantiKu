@@ -74,7 +74,11 @@ export default function CheckoutPage() {
         } = await supabase.auth.getUser();
 
         if (!user) {
-          router.push(`/login?next=/checkout?mulai=${startDate}&selesai=${endDate}`);
+          router.push(
+            `/login?next=${encodeURIComponent(
+              `/checkout?mulai=${startDate}&selesai=${endDate}`
+            )}`
+          );
           return;
         }
 
