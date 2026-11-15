@@ -13,9 +13,14 @@ import { Button } from "@/components/ui/button";
 interface EquipmentCardProps {
   equipment: EquipmentWithDetails;
   priority?: boolean;
+  sizes?: string;
 }
 
-export function EquipmentCard({ equipment, priority = false }: EquipmentCardProps) {
+export function EquipmentCard({
+  equipment,
+  priority = false,
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw",
+}: EquipmentCardProps) {
   const shouldReduceMotion = useReducedMotion();
   const availableStock = calculateAvailableStock(equipment);
   const isAvailable = availableStock > 0;
@@ -47,7 +52,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
             alt={equipment.nama}
             fill
             priority={priority}
-            sizes="(max-width: 768px) 50vw, 25vw"
+            sizes={sizes}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             fallback={
               <div className="flex h-full w-full flex-col items-center justify-center p-4 text-[#234E5C]">

@@ -281,7 +281,7 @@ export function HomeView({
                   src="/images/TentangPirantiKu.png"
                   alt="Tentang PirantiKu"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                   fallback={
                     <div className="flex flex-col items-center justify-center space-y-3">
@@ -410,7 +410,7 @@ export function HomeView({
                         src={primaryImage || ""}
                         alt={item.nama}
                         fill
-                        sizes="(max-width: 768px) 240px, 200px"
+                        sizes="(max-width: 640px) 240px, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 200px"
                         className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
                         fallback={
                           <div className="flex flex-col items-center justify-center h-full w-full p-4 text-[#234E5C]">

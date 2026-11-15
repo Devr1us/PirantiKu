@@ -70,7 +70,7 @@ export function EquipmentGallery({
           alt={nama}
           fill
           priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover transition-opacity duration-200"
           fallback={
             <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center text-[#234E5C]">

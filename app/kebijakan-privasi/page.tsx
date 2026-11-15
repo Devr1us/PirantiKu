@@ -52,7 +52,7 @@ export default function KebijakanPrivasiPage() {
             Untuk menyediakan layanan rental yang aman dan akurat, kami mengumpulkan data yang Anda berikan secara langsung saat mendaftar atau memesan:
           </p>
           <ul className="list-disc pl-5 space-y-1 text-[#5F7A84]">
-            <li><strong>Data Akun:</strong> Nama lengkap, alamat email terdaftar, dan nomor WhatsApp / handphone.</li>
+            <li><strong>Data Akun:</strong> Nama lengkap, alamat email terdaftar, nomor WhatsApp / handphone, dan alamat domisili (opsional).</li>
             <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, dan bukti pembayaran (transfer bank atau QRIS).</li>
             <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas fisik resmi asli (KTP atau SIM) yang ditunjukkan untuk proses verifikasi serah terima alat di toko demi keamanan aset rental.</li>
           </ul>
@@ -88,7 +88,7 @@ export default function KebijakanPrivasiPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">5. Kepatuhan Hukum & Hak Pengguna</H2>
           <p className="text-[#5F7A84]">
-            Kebijakan privasi ini disusun sesuai dengan ketentuan <strong>Undang-Undang Pelindungan Data Pribadi (UU No. 27 Tahun 2022)</strong> Republik Indonesia. Anda memiliki hak untuk mengakses, memperbarui nama dan kontak melalui halaman <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Akun</Link>, serta berhak meminta penghapusan akun beserta data pribadi terkait dengan menghubungi Admin kami.
+            Kebijakan privasi ini disusun sesuai dengan ketentuan <strong>Undang-Undang Pelindungan Data Pribadi (UU No. 27 Tahun 2022)</strong> Republik Indonesia. Anda memiliki hak untuk mengakses, memperbarui nama dan kontak melalui halaman <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Penyewa</Link>, serta berhak meminta penghapusan akun beserta data pribadi terkait dengan menghubungi Admin kami.
           </p>
         </section>
 
