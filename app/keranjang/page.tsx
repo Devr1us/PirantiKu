@@ -38,7 +38,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-export default function KeranjangPage() {
+function KeranjangContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, updateQty, removeItem, clearCart, isLoaded } = useCart();
@@ -622,5 +622,19 @@ export default function KeranjangPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function KeranjangPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center bg-[#FAFAF8]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+        </div>
+      }
+    >
+      <KeranjangContent />
+    </React.Suspense>
   );
 }

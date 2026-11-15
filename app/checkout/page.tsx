@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import { PaymentFlow } from "@/components/payment/payment-flow";
 import type { Profile, Booking } from "@/types/database";
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, clearCart, isLoaded } = useCart();
@@ -668,5 +668,19 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center bg-[#FAFAF8]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </React.Suspense>
   );
 }

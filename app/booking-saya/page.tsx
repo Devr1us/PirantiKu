@@ -54,13 +54,23 @@ type BookingWithDetails = Booking & {
     | null;
 };
 
+const CANCELLATION_REASONS = [
+  "Salah input tanggal sewa",
+  "Salah memilih tipe atau unit alat",
+  "Tidak sengaja terbuat (duplikat pesanan)",
+  "Perubahan rencana kegiatan / acara",
+  "Lainnya",
+];
+
 export default function BookingSayaPage() {
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [bookings, setBookings] = React.useState<BookingWithDetails[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isCancelling, setIsCancelling] = React.useState<string | null>(null);
-  const [bookingToCancel, setBookingToCancel] = React.useState<{ id: string; kode: string } | null>(null);
+  const [bookingToCancel, setBookingToCancel] = React.useState<BookingWithDetails | null>(null);
+  const [cancelReason, setCancelReason] = React.useState<string>("");
+  const [customReason, setCustomReason] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
 
   React.useEffect(() => {
@@ -127,30 +137,71 @@ export default function BookingSayaPage() {
 
   const handleConfirmCancel = async () => {
     if (!bookingToCancel) return;
-    const { id: bookingId, kode: bookingCode } = bookingToCancel;
+    if (!cancelReason) {
+      toast.error("Mohon pilih salah satu alasan pembatalan.");
+      return;
+    }
+    if (cancelReason === "Lainnya" && !customReason.trim()) {
+      toast.error("Mohon tuliskan penjelasan alasan pembatalan.");
+      return;
+    }
 
+    const { id: bookingId, kode_booking: bookingCode } = bookingToCancel;
     setIsCancelling(bookingId);
+
+    const fullReason =
+      cancelReason === "Lainnya"
+        ? customReason.trim()
+        : customReason.trim()
+        ? `${cancelReason} (${customReason.trim()})`
+        : cancelReason;
+
+    const cancellationNote = `[Dibatalkan Penyewa: ${fullReason}]${
+      bookingToCancel.catatan_penyewa ? ` | ${bookingToCancel.catatan_penyewa}` : ""
+    }`;
+
     try {
       const supabase = createClient();
+
+      // 1. Panggil RPC jika ada
       const { error: rpcErr } = await supabase.rpc("batalkan_booking", {
         p_booking_id: bookingId,
       });
 
-      if (rpcErr) {
-        const { error: updErr } = await supabase
-          .from("bookings")
-          .update({ status: "dibatalkan" })
-          .eq("id", bookingId);
+      // 2. Simpan alasan pembatalan ke catatan_penyewa dan update status booking
+      const { error: updErr } = await supabase
+        .from("bookings")
+        .update({
+          status: "dibatalkan",
+          catatan_penyewa: cancellationNote,
+        })
+        .eq("id", bookingId);
 
-        if (updErr) throw updErr;
+      if (updErr && rpcErr) throw updErr || rpcErr;
+
+      // 3. Catat riwayat status jika memungkinkan
+      try {
+        await supabase.from("booking_status_history").insert({
+          booking_id: bookingId,
+          status_lama: bookingToCancel.status,
+          status_baru: "dibatalkan",
+        });
+      } catch {
+        // Abaikan jika tabel history sudah ditangani trigger
       }
 
       setBookings((prev) =>
-        prev.map((b) => (b.id === bookingId ? { ...b, status: "dibatalkan" as const } : b))
+        prev.map((b) =>
+          b.id === bookingId
+            ? { ...b, status: "dibatalkan" as const, catatan_penyewa: cancellationNote }
+            : b
+        )
       );
 
       toast.success(`Booking #${bookingCode} berhasil dibatalkan.`);
       setBookingToCancel(null);
+      setCancelReason("");
+      setCustomReason("");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membatalkan pesanan.";
       toast.error(msg);
@@ -346,7 +397,11 @@ export default function BookingSayaPage() {
                             variant="ghost"
                             size="sm"
                             disabled={isCancelling === booking.id}
-                            onClick={() => setBookingToCancel({ id: booking.id, kode: booking.kode_booking })}
+                            onClick={() => {
+                              setBookingToCancel(booking);
+                              setCancelReason("");
+                              setCustomReason("");
+                            }}
                             className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
                           >
                             {isCancelling === booking.id ? "Membatalkan..." : "Batalkan Pesanan"}
@@ -549,13 +604,24 @@ export default function BookingSayaPage() {
                     })()}
 
                   {booking.status === "dibatalkan" && (
-                    <div className="p-3 rounded-lg bg-[#F1F5F9] text-xs text-[#475569] flex items-center justify-between">
-                      <span>Pesanan sewa ini telah dibatalkan.</span>
-                      <Link href="/alat">
-                        <Button variant="ghost" size="sm" className="text-xs text-[#A0630F]">
-                          Sewa Alat Lain
-                        </Button>
-                      </Link>
+                    <div className="p-3.5 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] text-xs space-y-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <span className="font-bold text-[#DC2626] flex items-center gap-1.5">
+                          <AlertTriangle className="h-4 w-4" />
+                          Pesanan Sewa Telah Dibatalkan
+                        </span>
+                        <Link href="/alat">
+                          <Button variant="ghost" size="sm" className="text-xs font-bold text-[#A0630F] p-0 h-auto hover:bg-transparent hover:underline">
+                            Sewa Alat Lain &rarr;
+                          </Button>
+                        </Link>
+                      </div>
+                      {booking.catatan_penyewa && (
+                        <div className="p-2.5 rounded-lg bg-white/90 border border-[#FECACA] text-[11px] text-[#7F1D1D] leading-relaxed">
+                          <strong className="text-[#991B1B]">Alasan Pembatalan:</strong>{" "}
+                          {booking.catatan_penyewa.replace(/^\[Dibatalkan Penyewa:\s*([^\]]+)\]/, "$1")}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -618,7 +684,11 @@ export default function BookingSayaPage() {
       <Dialog
         open={!!bookingToCancel}
         onOpenChange={(open) => {
-          if (!open) setBookingToCancel(null);
+          if (!open) {
+            setBookingToCancel(null);
+            setCancelReason("");
+            setCustomReason("");
+          }
         }}
       >
         <DialogContent className="max-w-md bg-white border border-[#E8E8E1] p-6 rounded-2xl shadow-xl">
@@ -630,17 +700,69 @@ export default function BookingSayaPage() {
               Batalkan Pesanan Sewa?
             </DialogTitle>
             <DialogDescription className="text-xs text-[#5F7A84] leading-relaxed">
-              Apakah Anda yakin ingin membatalkan pesanan booking{" "}
-              <strong className="text-[#234E5C]">#{bookingToCancel?.kode}</strong>? Jadwal
-              dan unit alat yang telah Anda amankan akan dilepaskan kembali ke katalog umum.
+              Pesanan booking <strong className="text-[#234E5C]">#{bookingToCancel?.kode_booking}</strong> akan dibatalkan dan jadwal unit alat akan dilepaskan kembali ke katalog umum.
             </DialogDescription>
           </DialogHeader>
+
+          {/* Form Alasan Pembatalan */}
+          <div className="space-y-3 py-2 text-left">
+            <label className="text-xs font-bold text-[#234E5C] block">
+              Alasan Pembatalan <span className="text-[#DC2626]">*</span>
+            </label>
+            <div className="space-y-2">
+              {CANCELLATION_REASONS.map((reason) => (
+                <label
+                  key={reason}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-colors ${
+                    cancelReason === reason
+                      ? "border-[#234E5C] bg-[#234E5C]/5 text-[#234E5C] font-semibold"
+                      : "border-[#E8E8E1] hover:bg-[#F3F3EF] text-[#5F7A84]"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="cancellationReason"
+                    value={reason}
+                    checked={cancelReason === reason}
+                    onChange={() => setCancelReason(reason)}
+                    className="text-[#234E5C] focus:ring-[#234E5C]"
+                  />
+                  <span>{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {cancelReason && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[11px] font-semibold text-[#5F7A84] block">
+                  {cancelReason === "Lainnya"
+                    ? "Tuliskan alasan lengkap pembatalan *"
+                    : "Catatan atau keterangan tambahan (opsional):"}
+                </label>
+                <textarea
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  placeholder={
+                    cancelReason === "Lainnya"
+                      ? "Contoh: Ada salah input barang atau tanggal, ingin mengganti jadwal..."
+                      : "Keterangan opsional untuk admin..."
+                  }
+                  rows={2}
+                  className="w-full rounded-xl border border-[#E8E8E1] p-2.5 text-xs text-[#234E5C] placeholder:text-[#5F7A84]/60 focus:border-[#234E5C] focus:outline-none"
+                />
+              </div>
+            )}
+          </div>
 
           <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-4 border-t border-[#E8E8E1]">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setBookingToCancel(null)}
+              onClick={() => {
+                setBookingToCancel(null);
+                setCancelReason("");
+                setCustomReason("");
+              }}
               disabled={!!isCancelling}
               className="text-xs font-semibold h-10 flex-1"
             >
@@ -653,7 +775,7 @@ export default function BookingSayaPage() {
               disabled={!!isCancelling}
               className="text-xs font-bold h-10 flex-1 bg-[#DC2626] hover:bg-[#B91C1C] text-white"
             >
-              {isCancelling ? "Membatalkan..." : "Ya, Batalkan"}
+              {isCancelling ? "Membatalkan..." : "Konfirmasi Batalkan"}
             </Button>
           </DialogFooter>
         </DialogContent>

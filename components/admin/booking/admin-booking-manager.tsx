@@ -612,11 +612,11 @@ export function AdminBookingManager({
                 </div>
 
                 {selectedBooking.catatan_penyewa && (
-                  <div className="border-t border-[#E8E8E1] pt-2 text-xs">
-                    <span className="text-[#5F7A84] font-medium block text-[11px]">
-                      Catatan Tambahan Penyewa:
+                  <div className={`border-t pt-2 text-xs ${selectedBooking.status === "dibatalkan" ? "border-[#FECACA] bg-[#FEF2F2] p-2.5 rounded-lg -mx-1" : "border-[#E8E8E1]"}`}>
+                    <span className={`font-bold block text-[11px] ${selectedBooking.status === "dibatalkan" ? "text-[#991B1B]" : "text-[#5F7A84]"}`}>
+                      {selectedBooking.status === "dibatalkan" ? "Alasan Pembatalan Penyewa:" : "Catatan Tambahan Penyewa:"}
                     </span>
-                    <p className="text-[#234E5C] italic mt-0.5">
+                    <p className={`mt-0.5 leading-relaxed ${selectedBooking.status === "dibatalkan" ? "text-[#DC2626] font-medium" : "text-[#234E5C] italic"}`}>
                       &quot;{selectedBooking.catatan_penyewa}&quot;
                     </p>
                   </div>

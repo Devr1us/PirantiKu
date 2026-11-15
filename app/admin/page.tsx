@@ -5,6 +5,7 @@ import {
   XCircle,
   ArrowRight,
   Eye,
+  Users,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
@@ -28,6 +29,7 @@ export default async function AdminDashboardPage() {
   let totalRentedUnits = 0;
   let totalBookings = 0;
   let totalCategories = 0;
+  let totalUsers = 0;
   let recentBookings: DashboardBookingWithDetails[] = [];
 
   try {
@@ -61,7 +63,16 @@ export default async function AdminDashboardPage() {
       totalCategories = catCount;
     }
 
-    // 4. Ambil seluruh booking dengan profil penyewa dan pembayaran (sinkron 100% dengan Kelola Booking)
+    // 4. Hitung total pengguna terdaftar
+    const { count: uCount } = await supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true });
+
+    if (uCount !== null) {
+      totalUsers = uCount;
+    }
+
+    // 5. Ambil seluruh booking dengan profil penyewa dan pembayaran (sinkron 100% dengan Kelola Booking)
     const { data: bData, count: bCount } = await supabase
       .from("bookings")
       .select(`
@@ -94,16 +105,24 @@ export default async function AdminDashboardPage() {
           </Lead>
         </div>
 
-        <Link href="/admin/booking">
-          <Button variant="warm" size="sm" className="text-xs font-bold gap-1.5 shadow-sm">
-            <span>Buka Kelola Booking</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Button>
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/admin/pengguna">
+            <Button variant="outline" size="sm" className="text-xs font-bold gap-1.5 shadow-sm border-[#E8E8E1] text-[#234E5C]">
+              <Users className="h-3.5 w-3.5" />
+              <span>Kelola Pengguna ({totalUsers})</span>
+            </Button>
+          </Link>
+          <Link href="/admin/booking">
+            <Button variant="warm" size="sm" className="text-xs font-bold gap-1.5 shadow-sm">
+              <span>Buka Kelola Booking</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Kartu Statistik Sederhana */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
         <Reveal delay={0.05}>
           <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
@@ -146,6 +165,18 @@ export default async function AdminDashboardPage() {
 
         <Reveal delay={0.2}>
           <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
+              Pengguna Akun
+            </span>
+            <div className="text-3xl font-extrabold text-[#234E5C]">
+              <CountUp value={totalUsers} />
+            </div>
+            <p className="text-[11px] text-[#5F7A84]">Penyewa terdaftar</p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.25}>
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)] col-span-2 sm:col-span-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
               Kategori Alat
             </span>
