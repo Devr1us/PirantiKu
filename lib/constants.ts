@@ -85,12 +85,12 @@ export const BOOKING_STATUS_CONFIG: Record<
   }
 > = {
   menunggu_dp: {
-    label: "Menunggu DP",
+    label: "Menunggu Pembayaran",
     bg: "bg-[#FEF3C7]",
     text: "text-[#78350F]",
     border: "border-[#FDE68A]",
     dot: "bg-[#D97706]",
-    description: "Silakan bayar DP untuk mengamankan pesanan alat.",
+    description: "Silakan selesaikan pembayaran DP untuk mengamankan pesanan alat.",
   },
   dp_dibayar: {
     label: "DP Terverifikasi",

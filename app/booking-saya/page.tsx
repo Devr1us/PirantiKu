@@ -344,29 +344,68 @@ export default function BookingSayaPage() {
                 </div>
 
                 {/* Timeline Status Riwayat */}
-                {booking.history && booking.history.length > 0 && (
-                  <div className="pt-3 border-t border-[#E8E8E1] space-y-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-                      Riwayat Perubahan Status
-                    </span>
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {booking.history.map((hist, hIdx) => (
-                        <div
-                          key={hist.id || hIdx}
-                          className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#E8E8E1] bg-[#FAFAF8] text-[11px] text-[#5F7A84]"
-                        >
-                          <Clock className="h-3 w-3 text-[#234E5C]" />
-                          <span className="font-semibold text-[#234E5C]">
-                            {hist.status_baru.replace("_", " ")}
-                          </span>
-                          <span className="text-[10px] text-[#5F7A84]">
-                            ({formatDateIndo(hist.created_at, "d MMM, HH:mm")})
-                          </span>
-                        </div>
-                      ))}
+                {(() => {
+                  // Hilangkan status duplikat beruntun
+                  const uniqueHistory = (booking.history || []).filter((hist, idx, arr) => {
+                    return idx === 0 || hist.status_baru !== arr[idx - 1].status_baru;
+                  });
+
+                  if (uniqueHistory.length === 0 && !hasPendingProof) return null;
+
+                  const formatHistoryLabel = (status: string, isFirst: boolean) => {
+                    if (status === "menunggu_dp") {
+                      return isFirst ? "Pesanan Dibuat" : "Menunggu Pembayaran";
+                    }
+                    if (status === "dp_dibayar") return "DP Terverifikasi";
+                    if (status === "lunas") return "Pembayaran Lunas";
+                    if (status === "diambil") return "Alat Sedang Digunakan";
+                    if (status === "dikembalikan") return "Alat Dikembalikan";
+                    if (status === "selesai") return "Selesai";
+                    if (status === "dibatalkan") return "Pesanan Dibatalkan";
+                    if (status === "bermasalah") return "Pemeriksaan Unit";
+                    if (status === "terlambat") return "Terlambat Kembali";
+                    return status.replace(/_/g, " ");
+                  };
+
+                  return (
+                    <div className="pt-3 border-t border-[#E8E8E1] space-y-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
+                        Riwayat Perubahan Status
+                      </span>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {uniqueHistory.map((hist, hIdx) => (
+                          <div
+                            key={hist.id || hIdx}
+                            className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#E8E8E1] bg-[#FAFAF8] text-[11px] text-[#5F7A84]"
+                          >
+                            <Clock className="h-3 w-3 text-[#234E5C]" />
+                            <span className="font-semibold text-[#234E5C]">
+                              {formatHistoryLabel(hist.status_baru, hIdx === 0)}
+                            </span>
+                            <span className="text-[10px] text-[#5F7A84]">
+                              ({formatDateIndo(hist.created_at, "d MMM, HH:mm")})
+                            </span>
+                          </div>
+                        ))}
+
+                        {/* Jika bukti pembayaran sudah diunggah tapi admin belum verifikasi, tampilkan step riwayatnya */}
+                        {hasPendingProof && booking.status === "menunggu_dp" && (
+                          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#FDE68A] bg-[#FEF3C7] text-[11px] text-[#78350F]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#D97706] animate-pulse" />
+                            <span className="font-bold">
+                              Bukti Diunggah (Menunggu Verifikasi)
+                            </span>
+                            {dpPayment?.dibayar_pada && (
+                              <span className="text-[10px] text-[#A0630F]">
+                                ({formatDateIndo(dpPayment.dibayar_pada, "d MMM, HH:mm")})
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* PANEL STATUS PEMBAYARAN & TOMBOL AKSI CEPAT */}
                 <div className="pt-4 border-t border-[#E8E8E1]">
