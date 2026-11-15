@@ -10,7 +10,7 @@ export default function Loading() {
           <span className="font-serif font-bold text-lg text-[#234E5C] tracking-tight">
             PirantiKu
           </span>
-          <span className="text-xs uppercase tracking-wider font-semibold text-[#5F7A84]">
+          <span data-nosnippet aria-hidden="true" className="text-xs uppercase tracking-wider font-semibold text-[#5F7A84]">
             Memuat data...
           </span>
         </div>

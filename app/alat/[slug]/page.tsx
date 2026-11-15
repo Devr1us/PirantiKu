@@ -69,14 +69,14 @@ export async function generateMetadata({
       images: [
         {
           url: imageUrl,
-          width: 1200,
-          height: 630,
+          width: 800,
+          height: 800,
           alt: item.nama,
         },
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title: ogTitle,
       description,
       images: [imageUrl],
@@ -337,7 +337,7 @@ export default async function EquipmentDetailPage({
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedEquipment.map((item, index) => (
               <Reveal
                 key={item.id}
