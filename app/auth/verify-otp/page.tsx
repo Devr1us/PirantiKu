@@ -92,7 +92,7 @@ function VerifyOtpForm() {
       });
 
       if (error) {
-        toast.error("Kode salah atau sudah kadaluarsa. Silakan coba lagi.");
+        toast.error(error.message || "Kode salah atau sudah kadaluarsa. Silakan coba lagi.");
         setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
         return;
@@ -103,8 +103,8 @@ function VerifyOtpForm() {
         router.push("/auth/reset-password");
       } else {
         toast.success("Email terverifikasi! Selamat datang di PirantiKu.");
-        router.refresh();
-        router.push("/");
+        // Hard navigation agar session cookie dan server komponen tersinkronisasi penuh
+        window.location.replace("/");
       }
     } catch {
       toast.error("Terjadi kesalahan. Silakan coba lagi.");
@@ -130,8 +130,12 @@ function VerifyOtpForm() {
       }
       toast.success("Kode baru telah dikirim ke email Anda.");
       setCooldown(60);
-    } catch {
-      toast.error("Gagal mengirim ulang kode. Coba lagi.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Gagal mengirim ulang kode. Silakan periksa kembali.";
+      toast.error(message);
     } finally {
       setIsResending(false);
     }

@@ -53,10 +53,46 @@ export function NavbarClient({
 }: NavbarClientProps) {
   const pathname = usePathname();
   const { totalItems, isLoaded } = useCart();
+  const [clientUser, setClientUser] = React.useState<User | null>(null);
+  const [clientProfile, setClientProfile] = React.useState<Profile | null>(null);
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const headerRef = React.useRef<HTMLElement | null>(null);
+
+  // Gabungkan status autentikasi server prop dengan pembaruan real-time client
+  const currentUser = clientUser ?? user;
+  const currentProfile = clientProfile ?? profile;
+
+  // Dengarkan perubahan sesi auth secara real-time di browser
+  React.useEffect(() => {
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const authUser = session?.user ?? null;
+      setClientUser(authUser);
+
+      if (authUser) {
+        try {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", authUser.id)
+            .single();
+          setClientProfile((prof as Profile) || null);
+        } catch {
+          // ignore
+        }
+      } else {
+        setClientProfile(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const activeNav = useActiveNav();
   const shouldReduceMotion = useReducedMotion();
@@ -123,11 +159,11 @@ export function NavbarClient({
     }
   };
 
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = currentProfile?.role === "admin";
   const displayName =
-    profile?.nama ||
-    user?.user_metadata?.nama ||
-    user?.email?.split("@")[0] ||
+    currentProfile?.nama ||
+    currentUser?.user_metadata?.nama ||
+    currentUser?.email?.split("@")[0] ||
     "Penyewa";
   const userInitials = displayName.slice(0, 2).toUpperCase();
 
@@ -270,7 +306,7 @@ export function NavbarClient({
 
           {/* Tombol Auth Desktop */}
           <div className="hidden sm:flex items-center gap-2">
-            {user ? (
+            {currentUser ? (
               <DropdownMenu onOpenChange={setIsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -289,7 +325,7 @@ export function NavbarClient({
                 <DropdownMenuContent align="end" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-xl">
                   <DropdownMenuLabel className="px-3 py-2 font-normal">
                     <p className="text-sm font-bold text-[#234E5C]">{displayName}</p>
-                    <p className="text-xs text-[#5F7A84] truncate">{user.email}</p>
+                    <p className="text-xs text-[#5F7A84] truncate">{currentUser.email}</p>
                     {isAdmin && (
                       <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
                         ADMINISTRATOR
@@ -459,7 +495,7 @@ export function NavbarClient({
                         KONTAK
                       </Link>
 
-                      {user && !isAdmin && (
+                      {currentUser && !isAdmin && (
                         <Link
                           href="/booking-saya"
                           onClick={() => setIsMobileOpen(false)}
@@ -469,7 +505,7 @@ export function NavbarClient({
                         </Link>
                       )}
 
-                      {user && (
+                      {currentUser && (
                         <Link
                           href="/profil"
                           onClick={() => setIsMobileOpen(false)}
@@ -505,7 +541,7 @@ export function NavbarClient({
                     Hubungi Admin via WhatsApp
                   </a>
 
-                  {user ? (
+                  {currentUser ? (
                     <div className="space-y-2">
                       <Link
                         href="/profil"
@@ -522,7 +558,7 @@ export function NavbarClient({
                               {displayName}
                             </span>
                             <span className="text-[11px] text-[#5F7A84] truncate">
-                              {user.email}
+                              {currentUser.email}
                             </span>
                           </div>
                         </div>

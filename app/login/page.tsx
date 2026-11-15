@@ -137,9 +137,9 @@ function LoginForm() {
           .single();
 
         if (profile?.role === "admin") {
-          router.push("/admin");
+          window.location.replace("/admin");
         } else {
-          router.push(nextParam);
+          window.location.replace(nextParam);
         }
       }
     } catch (err: unknown) {
