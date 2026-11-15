@@ -28,8 +28,13 @@ function notify(nav: ActiveNav) {
  * to prevent SSR hydration mismatches.
  */
 export function getInitialActiveNav(pathname: string): ActiveNav {
-  if (pathname === "/alat" || pathname.startsWith("/alat/")) return "katalog";
-  if (pathname.startsWith("/kategori")) return "kategori";
+  if (
+    pathname === "/alat" ||
+    pathname.startsWith("/alat/") ||
+    pathname.startsWith("/kategori")
+  ) {
+    return "katalog";
+  }
   if (pathname === "/") return "beranda";
   return null;
 }

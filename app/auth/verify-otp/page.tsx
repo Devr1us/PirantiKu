@@ -3,186 +3,141 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  ArrowRight,
-  AlertCircle,
-  HelpCircle,
-} from "lucide-react";
+import { motion } from "motion/react";
+import { Mail, RefreshCw, CheckCircle2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Wordmark } from "@/components/ui/wordmark";
-import { H1, H2, Lead, P } from "@/components/ui/typography";
-import { HoverRollText } from "@/components/ui/motion";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { H1, Lead } from "@/components/ui/typography";
 import { toast } from "sonner";
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .email("Format email tidak valid")
-    .refine((val) => val.toLowerCase().endsWith("@gmail.com"), {
-      message: "Hanya email @gmail.com yang diizinkan",
-    }),
-  password: z.string().min(1, "Password wajib diisi"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-
-function LoginForm() {
+function VerifyOtpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const rawNext = searchParams.get("next") || "/";
-  // Validasi open redirect: hanya izinkan path internal
-  const nextParam =
-    rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
+  const email = searchParams.get("email") || "";
+  const type = (searchParams.get("type") || "signup") as "signup" | "recovery";
 
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [otp, setOtp] = React.useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
-  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = React.useState(false);
-  const [resetEmail, setResetEmail] = React.useState("");
-  const [isResetting, setIsResetting] = React.useState(false);
-  const [authError, setAuthError] = React.useState<string | null>(null);
+  const [isResending, setIsResending] = React.useState(false);
+  const [cooldown, setCooldown] = React.useState(0);
+  const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
-    setAuthError(null);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
-            nextParam
-          )}`,
-        },
-      });
-      if (error) {
-        setAuthError(error.message);
-        setIsGoogleLoading(false);
-      }
-    } catch {
-      setAuthError("Gagal masuk dengan Google.");
-      setIsGoogleLoading(false);
+  // Cooldown hitung mundur
+  React.useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
+
+  // Fokus otomatis ke input pertama saat dimuat
+  React.useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index: number, value: string) => {
+    // Hanya angka
+    const digit = value.replace(/\D/g, "").slice(-1);
+    const newOtp = [...otp];
+    newOtp[index] = digit;
+    setOtp(newOtp);
+    // Auto fokus ke kotak berikutnya
+    if (digit && index < 5) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace") {
+      if (!otp[index] && index > 0) {
+        inputRefs.current[index - 1]?.focus();
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
 
-  const onSubmit = async (data: LoginFormData) => {
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, 6);
+    if (!pasted) return;
+    const newOtp = [...otp];
+    pasted.split("").forEach((digit, i) => {
+      if (i < 6) newOtp[i] = digit;
+    });
+    setOtp(newOtp);
+    // Fokus ke kotak terakhir yang terisi
+    const lastIndex = Math.min(pasted.length, 5);
+    inputRefs.current[lastIndex]?.focus();
+  };
+
+  const handleVerify = async () => {
+    const code = otp.join("");
+    if (code.length !== 6) {
+      toast.error("Masukkan 6 digit kode verifikasi.");
+      return;
+    }
     setIsLoading(true);
-    setAuthError(null);
     try {
       const supabase = createClient();
-      const email = data.email.trim().toLowerCase();
-
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.verifyOtp({
         email,
-        password: data.password,
+        token: code,
+        type: type === "recovery" ? "recovery" : "signup",
       });
 
       if (error) {
-        // Akun sudah dibuat tapi belum diverifikasi: kirim kode baru, arahkan ke halaman OTP
-        if (error.message.toLowerCase().includes("email not confirmed")) {
-          await supabase.auth.resend({ type: "signup", email });
-          toast.info("Akun belum diverifikasi. Kode OTP baru sudah dikirim.");
-          router.push(
-            `/auth/verify-otp?email=${encodeURIComponent(email)}&type=signup`
-          );
-          return;
-        }
-
-        setAuthError(
-          error.message === "Invalid login credentials"
-            ? "Email atau kata sandi tidak cocok. Silakan periksa kembali."
-            : error.message
-        );
-        toast.error("Gagal masuk ke akun.");
+        toast.error("Kode salah atau sudah kadaluarsa. Silakan coba lagi.");
+        setOtp(["", "", "", "", "", ""]);
+        inputRefs.current[0]?.focus();
         return;
       }
 
-      if (authData.user) {
-        toast.success("Berhasil masuk!");
-
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", authData.user.id)
-          .single();
-
-        if (profile?.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push(nextParam);
-        }
+      if (type === "recovery") {
+        toast.success("Verifikasi berhasil! Silakan buat password baru.");
+        router.push("/auth/reset-password");
+      } else {
+        toast.success("Email terverifikasi! Selamat datang di PirantiKu.");
+        router.refresh();
+        router.push("/");
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Terjadi kesalahan.";
-      setAuthError(msg);
-      toast.error(msg);
+    } catch {
+      toast.error("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const email = resetEmail.trim().toLowerCase();
-    if (!email || !email.endsWith("@gmail.com")) {
-      toast.error("Masukkan alamat Gmail yang valid (@gmail.com)");
-      return;
-    }
-    setIsResetting(true);
+  const handleResend = async () => {
+    if (cooldown > 0 || !email) return;
+    setIsResending(true);
     try {
       const supabase = createClient();
-      // Tanpa redirectTo: alur OTP tidak memakai link
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) {
-        toast.error(
-          error.message.toLowerCase().includes("rate limit")
-            ? "Terlalu banyak permintaan. Coba lagi beberapa menit lagi."
-            : error.message
-        );
-        return;
+      if (type === "recovery") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.resend({
+          type: "signup",
+          email,
+        });
+        if (error) throw error;
       }
-      toast.success("Kode OTP telah dikirim ke Gmail Anda.");
-      setIsForgotPasswordOpen(false);
-      setResetEmail("");
-      router.push(
-        `/auth/verify-otp?email=${encodeURIComponent(email)}&type=recovery`
-      );
+      toast.success("Kode baru telah dikirim ke email Anda.");
+      setCooldown(60);
     } catch {
-      toast.error("Gagal mengirim kode reset password.");
+      toast.error("Gagal mengirim ulang kode. Coba lagi.");
     } finally {
-      setIsResetting(false);
+      setIsResending(false);
     }
   };
+
+  const isComplete = otp.every((d) => d !== "");
 
   return (
     <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
@@ -190,274 +145,121 @@ function LoginForm() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row"
+        className="w-full max-w-md rounded-2xl border border-[#E8E8E1] bg-white shadow-sm p-8 sm:p-10 space-y-6"
       >
-        {/* Kolom Kiri: Panel Petrol Desktop */}
-        <div className="hidden md:flex md:w-5/12 bg-[#234E5C] text-white p-10 flex-col justify-between">
-          <div>
-            <Wordmark variant="white" />
-          </div>
-
-          <div className="space-y-3 my-auto py-8">
-            <H2 className="text-xl font-bold uppercase tracking-tight text-white">
-              Sewa Alat Praktis & Terpercaya
-            </H2>
-            <P className="text-xs text-white/80 leading-relaxed font-normal">
-              Satu akun untuk menyewa seluruh perlengkapan camping, perkakas,
-              olahraga, dan perayaan dengan stok terjamin per tanggal.
-            </P>
-          </div>
-
-          <div className="text-[11px] text-white/60">
-            &copy; {new Date().getFullYear()} PirantiKu
-          </div>
+        {/* Logo */}
+        <div className="flex justify-center">
+          <Wordmark asLink={false} />
         </div>
 
-        {/* Kolom Kanan: Formulir Putih */}
-        <div className="w-full md:w-7/12 p-8 sm:p-10 flex flex-col justify-center space-y-6">
-          {/* Header Mobile Wordmark */}
-          <div className="md:hidden text-center pb-2">
-            <Wordmark />
+        {/* Ikon & Judul */}
+        <div className="text-center space-y-2">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E8F4F7] border border-[#C5DDE5]">
+            <Mail className="h-7 w-7 text-[#234E5C]" />
           </div>
+          <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+            {type === "recovery" ? "Reset Password" : "Verifikasi Email"}
+          </H1>
+          <Lead className="text-xs text-[#5F7A84] leading-relaxed">
+            Kami mengirimkan kode 6 digit ke
+          </Lead>
+          {email ? (
+            <p className="text-xs font-bold text-[#234E5C] bg-[#F3F3EF] py-1.5 px-3 rounded-lg inline-block">
+              {email}
+            </p>
+          ) : (
+            <p className="text-xs text-[#DC2626] font-medium">
+              Alamat email tidak terdeteksi. Silakan daftar atau masuk ulang.
+            </p>
+          )}
+        </div>
 
-          <div className="space-y-1">
-            <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
-              Masuk ke Akun
-            </H1>
-            <Lead className="text-xs text-[#5F7A84]">
-              Gunakan email terdaftar untuk melanjutkan sewa atau cek booking.
-            </Lead>
-          </div>
+        {/* Input OTP 6 kotak */}
+        <div className="flex justify-center gap-2 sm:gap-3">
+          {otp.map((digit, index) => (
+            <input
+              key={index}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              aria-label={`Digit ${index + 1}`}
+              value={digit}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={handlePaste}
+              className={`h-12 w-10 sm:h-14 sm:w-12 rounded-xl border-2 text-center text-lg font-bold transition-all outline-none
+                ${
+                  digit
+                    ? "border-[#234E5C] bg-[#F3F3EF] text-[#234E5C]"
+                    : "border-[#E8E8E1] bg-white text-[#234E5C]"
+                }
+                focus:border-[#234E5C] focus:ring-2 focus:ring-[#234E5C]/20`}
+            />
+          ))}
+        </div>
 
-          {/* Notifikasi Error Bergetar Halus */}
-          <AnimatePresence>
-            {authError && (
-              <motion.div
-                initial={{ opacity: 0, x: 0 }}
-                animate={{
-                  opacity: 1,
-                  x: [-5, 5, -3, 3, 0],
-                }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35 }}
-                className="flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-3 text-xs text-[#991B1B]"
-              >
-                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                <span>{authError}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Tombol Verifikasi */}
+        <Button
+          onClick={handleVerify}
+          variant="warm"
+          disabled={isLoading || !isComplete || !email}
+          className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <>
+              <CheckCircle2 className="h-4 w-4" />
+              {type === "recovery"
+                ? "Verifikasi & Lanjut"
+                : "Verifikasi Sekarang"}
+            </>
+          )}
+        </Button>
 
-          {/* Tombol Login Google (satu-satunya) */}
+        {/* Kirim Ulang */}
+        <div className="text-center space-y-1">
+          <p className="text-[11px] text-[#5F7A84]">Tidak menerima kode?</p>
           <button
             type="button"
-            onClick={handleGoogleLogin}
-            disabled={isGoogleLoading || isLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#E8E8E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            onClick={handleResend}
+            disabled={isResending || cooldown > 0 || !email}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A0630F] hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
           >
-            {isGoogleLoading ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-            ) : (
-              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
-              </svg>
-            )}
-            <span>
-              {isGoogleLoading ? "Menghubungkan..." : "Masuk dengan Google"}
-            </span>
+            <RefreshCw
+              className={`h-3 w-3 ${isResending ? "animate-spin" : ""}`}
+            />
+            {cooldown > 0
+              ? `Kirim ulang dalam ${cooldown}s`
+              : isResending
+              ? "Mengirim..."
+              : "Kirim ulang kode"}
           </button>
+        </div>
 
-          {/* Pemisah */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-[#E8E8E1]" />
-            <span className="text-[11px] text-[#5F7A84] font-medium">
-              atau masuk dengan email
-            </span>
-            <div className="flex-1 h-px bg-[#E8E8E1]" />
-          </div>
+        <p className="text-center text-[11px] text-[#5F7A84]">
+          Kode berlaku selama <span className="font-semibold">10 menit</span>
+        </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="email"
-                className="text-xs font-semibold text-[#234E5C]"
-              >
-                Alamat Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="nama@gmail.com"
-                  className="pl-10 text-xs"
-                  {...register("email")}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs text-[#DC2626] font-medium">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor="password"
-                  className="text-xs font-semibold text-[#234E5C]"
-                >
-                  Kata Sandi
-                </Label>
-                <button
-                  type="button"
-                  onClick={() => setIsForgotPasswordOpen(true)}
-                  className="text-xs text-[#A0630F] hover:underline font-semibold"
-                >
-                  Lupa password?
-                </button>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84]" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Masukkan kata sandi"
-                  className="pl-10 pr-10 text-xs"
-                  {...register("password")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-[#5F7A84] hover:text-[#234E5C]"
-                  aria-label={
-                    showPassword ? "Sembunyikan password" : "Tampilkan password"
-                  }
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-xs text-[#DC2626] font-medium">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            <div className="pt-2">
-              <Button
-                type="submit"
-                variant="warm"
-                disabled={isLoading}
-                className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <span>Memverifikasi...</span>
-                ) : (
-                  <>
-                    <HoverRollText text="Masuk Sekarang" />
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-
-          <div className="text-center border-t border-[#E8E8E1] pt-4">
-            <p className="text-xs text-[#5F7A84]">
-              Belum punya akun?{" "}
-              <Link
-                href="/daftar"
-                className="font-bold text-[#A0630F] hover:underline"
-              >
-                Daftar sekarang
-              </Link>
-            </p>
-          </div>
+        {/* Link kembali ke login */}
+        <div className="pt-2 text-center border-t border-[#E8E8E1]">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#5F7A84] hover:text-[#234E5C] transition-colors"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Kembali ke Halaman Masuk
+          </Link>
         </div>
       </motion.div>
-
-      {/* Dialog Lupa Password */}
-      <Dialog
-        open={isForgotPasswordOpen}
-        onOpenChange={setIsForgotPasswordOpen}
-      >
-        <DialogContent className="sm:max-w-md bg-white border-[#E8E8E1] rounded-2xl p-6">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base font-bold text-[#234E5C]">
-              <HelpCircle className="h-5 w-5 text-[#234E5C]" />
-              Atur Ulang Kata Sandi
-            </DialogTitle>
-            <DialogDescription className="text-xs text-[#5F7A84]">
-              Masukkan Gmail Anda. Kami akan mengirimkan kode OTP 6 digit untuk
-              mereset password.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleResetPassword} className="space-y-4 pt-2">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="reset-email"
-                className="text-xs font-semibold text-[#234E5C]"
-              >
-                Alamat Email
-              </Label>
-              <Input
-                id="reset-email"
-                type="email"
-                placeholder="nama@gmail.com"
-                value={resetEmail}
-                onChange={(e) => setResetEmail(e.target.value)}
-                required
-                className="text-xs"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setIsForgotPasswordOpen(false)}
-                className="text-xs font-bold"
-              >
-                Batal
-              </Button>
-              <Button
-                type="submit"
-                variant="warm"
-                size="sm"
-                disabled={isResetting}
-                className="text-xs font-bold"
-              >
-                {isResetting ? "Mengirim..." : "Kirim Kode OTP"}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
 
-export default function LoginPage() {
+export default function VerifyOtpPage() {
   return (
     <React.Suspense
       fallback={
@@ -466,7 +268,7 @@ export default function LoginPage() {
         </div>
       }
     >
-      <LoginForm />
+      <VerifyOtpForm />
     </React.Suspense>
   );
 }
