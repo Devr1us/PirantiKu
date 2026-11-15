@@ -194,9 +194,12 @@ export default async function EquipmentDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-8">
-          {/* Galeri Gambar: BUG-A2 — gunakan EquipmentGallery agar thumbnail bisa diklik */}
+          {/* Galeri Gambar: gunakan EquipmentGallery dengan foto lokal utama */}
           <EquipmentGallery
-            images={equipment.images || []}
+            images={(equipment.images || []).map((img) => ({
+              ...img,
+              url: img.is_utama ? (primaryImage || img.url) : img.url,
+            }))}
             primaryImage={primaryImage}
             nama={equipment.nama}
             categoryIconEl={
