@@ -24,11 +24,13 @@ export function EquipmentGallery({
   nama,
   categoryIconEl,
 }: EquipmentGalleryProps) {
-  const [activeImage, setActiveImage] = React.useState<string | null>(primaryImage);
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+  const [prevPrimary, setPrevPrimary] = React.useState<string | null>(primaryImage);
 
-  React.useEffect(() => {
-    setActiveImage(primaryImage);
-  }, [primaryImage]);
+  if (prevPrimary !== primaryImage) {
+    setPrevPrimary(primaryImage);
+    setSelectedImage(null);
+  }
 
   // Filter gambar unik, cegah duplikasi thumbnail dan abaikan placeholder unsplash jika sudah ada foto lokal
   const uniqueImages = React.useMemo(() => {
@@ -57,7 +59,7 @@ export function EquipmentGallery({
     return list;
   }, [images, primaryImage]);
 
-  const displayImage = activeImage || primaryImage;
+  const displayImage = selectedImage || primaryImage;
 
   return (
     <div className="space-y-3">
@@ -95,7 +97,7 @@ export function EquipmentGallery({
             <button
               key={img.id}
               type="button"
-              onClick={() => setActiveImage(img.url)}
+              onClick={() => setSelectedImage(img.url)}
               aria-label={`Lihat foto ${nama}`}
               className={cn(
                 "relative h-20 w-24 shrink-0 overflow-hidden rounded-xl border bg-[#F5F3EB] cursor-pointer transition-all",

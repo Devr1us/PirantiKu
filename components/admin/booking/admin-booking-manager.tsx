@@ -73,14 +73,17 @@ export function AdminBookingManager({
   const hasAutoOpenedRef = React.useRef(false);
   React.useEffect(() => {
     if (qParam && !hasAutoOpenedRef.current) {
-      setSearchQuery(qParam);
       const match = bookings.find(
         (b) => b.kode_booking.toLowerCase() === qParam.toLowerCase()
       );
       if (match) {
         hasAutoOpenedRef.current = true;
-        setSelectedBooking(match);
-        setIsDetailOpen(true);
+        const timer = setTimeout(() => {
+          setSearchQuery(qParam);
+          setSelectedBooking(match);
+          setIsDetailOpen(true);
+        }, 0);
+        return () => clearTimeout(timer);
       }
     }
   }, [qParam, bookings]);

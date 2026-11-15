@@ -122,7 +122,9 @@ export function RentalBookingWidget({
   // 2. Ambil sisa_stok real-time setiap rentang tanggal berubah
   // BUG-RBW1: qty dikeluarkan dari dependency array — qty bukan input, tapi output dari cek stok
   const qtyRef = React.useRef(qty);
-  qtyRef.current = qty;
+  React.useEffect(() => {
+    qtyRef.current = qty;
+  }, [qty]);
 
   React.useEffect(() => {
     let isCancelled = false;

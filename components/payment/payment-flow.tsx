@@ -81,7 +81,7 @@ export function PaymentFlow({
   const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">("transfer");
   const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
   const [payments, setPayments] = React.useState<Payment[]>(initialPayments);
-  const [currentBookingStatus, setCurrentBookingStatus] = React.useState<BookingStatus>(booking.status);
+  const [currentBookingStatus] = React.useState<BookingStatus>(booking.status);
   
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);

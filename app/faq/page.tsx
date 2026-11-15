@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { H1, H2, Lead } from "@/components/ui/typography";
-import { HelpCircle, MessageCircle, ArrowLeft } from "lucide-react";
+import { H1, Lead } from "@/components/ui/typography";
+import { MessageCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { APP_NAME, ADMIN_WHATSAPP_NUMBER } from "@/lib/constants";
 

@@ -353,8 +353,8 @@ export function CountUp({
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
-      setDisplayValue(value);
-      return;
+      const timer = setTimeout(() => setDisplayValue(value), 0);
+      return () => clearTimeout(timer);
     }
 
     const el = elementRef.current;

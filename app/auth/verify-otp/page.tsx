@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { Mail, ArrowRight, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Mail, RefreshCw, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Wordmark } from "@/components/ui/wordmark";

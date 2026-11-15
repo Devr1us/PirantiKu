@@ -7,7 +7,6 @@ import {
   isBefore,
   isAfter,
   isSameDay,
-  startOfToday,
   addMonths,
   subMonths,
   startOfWeek,
