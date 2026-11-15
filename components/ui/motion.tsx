@@ -344,7 +344,7 @@ export function CountUp({
   className = "",
 }: CountUpProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [displayValue, setDisplayValue] = React.useState<number>(shouldReduceMotion ? value : 0);
+  const [displayValue, setDisplayValue] = React.useState<number>(value);
   const [hasStarted, setHasStarted] = React.useState<boolean>(false);
   const elementRef = React.useRef<HTMLSpanElement>(null);
 
@@ -353,6 +353,7 @@ export function CountUp({
 
   React.useEffect(() => {
     if (shouldReduceMotion) {
+      setDisplayValue(value);
       return;
     }
 
@@ -367,6 +368,7 @@ export function CountUp({
         // Enter threshold: at least 20% visible
         if (entry.isIntersecting && entry.intersectionRatio >= THRESHOLD_ENTER) {
           if (!hasStarted) {
+            setDisplayValue(0);
             setHasStarted(true);
           }
         }
@@ -374,7 +376,6 @@ export function CountUp({
         else if (!entry.isIntersecting || entry.intersectionRatio === 0) {
           if (ANIMASI_ULANG && hasStarted) {
             setHasStarted(false);
-            setDisplayValue(0);
           }
         }
       },

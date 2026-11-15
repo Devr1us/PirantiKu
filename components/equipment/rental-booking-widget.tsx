@@ -20,7 +20,7 @@ import type { EquipmentWithDetails } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { calculateRentalPrice } from "@/lib/pricing";
 import { calculateAvailableStock } from "@/lib/inventory";
-import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB } from "@/lib/format";
 import { getProductImage } from "@/lib/constants";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,8 @@ export function RentalBookingWidget({
   const router = useRouter();
   const { addItem } = useCart();
 
-  const todayStr = format(new Date(), "yyyy-MM-dd");
-  const tomorrowStr = format(addDays(new Date(), 1), "yyyy-MM-dd");
+  const todayStr = getTodayWIB();
+  const tomorrowStr = getTomorrowWIB();
 
   const [startDate, setStartDate] = React.useState<string>(todayStr);
   const [endDate, setEndDate] = React.useState<string>(tomorrowStr);
@@ -99,7 +99,7 @@ export function RentalBookingWidget({
     async function loadDisabledDates() {
       try {
         const supabase = createClient();
-        const pDari = format(new Date(), "yyyy-MM-dd");
+        const pDari = getTodayWIB();
         const pSampai = format(addDays(new Date(), 365), "yyyy-MM-dd");
 
         const { data, error } = await supabase.rpc("tanggal_penuh", {
@@ -446,6 +446,10 @@ export function RentalBookingWidget({
           <div className="flex justify-between text-[#5F7A84] text-[11px]">
             <span>Sisa pelunasan saat pengambilan</span>
             <span className="font-semibold text-[#234E5C]">{formatRupiah(pricing.sisaSaatAmbil)}</span>
+          </div>
+
+          <div className="pt-1 border-t border-[#E8E8E1]/60 text-[10px] text-[#5F7A84] italic">
+            *Dihitung per tanggal kalender booking sewa unit (hari mulai s/d selesai keduanya aktif).
           </div>
 
           {/* Animasi Total Harga saat Berubah */}

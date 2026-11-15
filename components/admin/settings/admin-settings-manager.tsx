@@ -540,6 +540,7 @@ export function AdminSettingsManager({
                         src={qrisUrl}
                         alt="QRIS Preview"
                         fill
+                        sizes="176px"
                         className="object-contain p-2"
                         unoptimized
                       />

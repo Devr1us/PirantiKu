@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { formatDateIndo } from "@/lib/format";
+import { formatDateIndo, getTodayWIB } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { H1, Lead } from "@/components/ui/typography";
 import { Calendar, Package } from "lucide-react";
@@ -16,7 +16,7 @@ export default async function AdminCalendarPage() {
 
   try {
     const supabase = await createClient();
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayWIB();
 
     const { data } = await supabase
       .from("bookings")

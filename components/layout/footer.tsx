@@ -72,9 +72,27 @@ export async function Footer() {
                     Keranjang Booking
                   </Link>
                 </li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#234E5C]">
+                Kebijakan & Bantuan
+              </span>
+              <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/admin/login" className="text-xs text-[#5F7A84]/70 hover:text-[#234E5C] transition-colors">
-                    Portal Pengelola
+                  <Link href="/syarat-ketentuan" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                    Syarat & Ketentuan
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kebijakan-privasi" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                    Kebijakan Privasi
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                    Tanya Jawab (FAQ)
                   </Link>
                 </li>
               </ul>

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import { getTodayWIB } from "@/lib/format";
 
 /**
  * Menghitung sisa stok fisik yang benar-benar siap disewa / siap diambil.
@@ -64,7 +65,7 @@ export async function fetchRentedUnitsSummary(
 
   try {
     // 2. Fallback: Query tabel booking_items & bookings
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayWIB();
     const { data: rawItems, error: itemsError } = await supabase
       .from("booking_items")
       .select(`

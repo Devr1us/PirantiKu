@@ -18,11 +18,12 @@ import {
   ArrowLeft,
   Sparkles,
   AlertCircle,
+  CreditCard,
 } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
-import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB } from "@/lib/format";
 import { getProductImage } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ export default function KeranjangPage() {
         // Fallback
       }
     }
-    return format(new Date(), "yyyy-MM-dd");
+    return getTodayWIB();
   });
 
   const [endDate, setEndDate] = React.useState<string>(() => {
@@ -76,7 +77,7 @@ export default function KeranjangPage() {
         // Fallback
       }
     }
-    return format(addDays(new Date(), 1), "yyyy-MM-dd");
+    return getTomorrowWIB();
   });
 
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
@@ -85,7 +86,7 @@ export default function KeranjangPage() {
 
   // BUG-K3: Validasi tanggal di sessionStorage — reset jika sudah lewat
   const handleDateChange = (start: string, end: string) => {
-    const today = format(new Date(), "yyyy-MM-dd");
+    const today = getTodayWIB();
     const validStart = start >= today ? start : today;
     const validEnd = end >= validStart ? end : validStart;
     setStartDate(validStart);
@@ -332,6 +333,10 @@ export default function KeranjangPage() {
               })}
             </div>
 
+            <p className="text-[11px] text-[#5F7A84] italic">
+              *Durasi booking dihitung per tanggal kalender (hari mulai hingga selesai keduanya dihitung aktif).
+            </p>
+
             {/* Alert Peringatan Tanggal Terbalik / Tidak Valid */}
             {isDateInvalid && (
               <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-[#FEE2E2] border border-[#FECACA] text-[#991B1B] text-xs font-semibold">
@@ -398,6 +403,7 @@ export default function KeranjangPage() {
                               src={imgUrl || ""}
                               alt={item.nama}
                               fill
+                              sizes="80px"
                               className="object-cover"
                               fallback={
                                 <div className="flex h-full w-full items-center justify-center text-[#5F7A84]">
@@ -526,6 +532,15 @@ export default function KeranjangPage() {
                 <p className="text-[11px] text-[#5F7A84] leading-relaxed">
                   Cukup bayar DP 30% untuk mengunci stok alat pada tanggal pilihan Anda.
                 </p>
+                <div className="pt-2 border-t border-[#E8E8E1]/80 space-y-1 text-[11px] text-[#5F7A84]">
+                  <p className="flex items-center gap-1.5 font-semibold text-[#234E5C]">
+                    <CreditCard className="h-3.5 w-3.5 text-[#A0630F]" />
+                    Transfer Bank (BCA) & QRIS Otomatis
+                  </p>
+                  <p className="text-[10px] text-[#5F7A84]">
+                    Pengambilan unit mandiri di toko dengan membawa KTP/SIM asli.
+                  </p>
+                </div>
               </div>
 
               <div className="flex justify-between text-[#5F7A84] text-[11px] pt-1">

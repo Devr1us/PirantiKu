@@ -7,8 +7,13 @@ import { fetchRentedUnitsSummary, enrichEquipmentWithStock } from "@/lib/invento
 import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const metadata: Metadata = {
-  title: `Katalog Alat Rental | ${APP_NAME}`,
+  title: "Katalog Alat Rental",
   description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
+  openGraph: {
+    title: `Katalog Alat Rental | ${APP_NAME}`,
+    description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
+    url: "/alat",
+  },
 };
 
 export default async function AlatPage() {

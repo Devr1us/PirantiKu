@@ -26,7 +26,7 @@ export async function generateMetadata({
 }: PembayaranPageProps): Promise<Metadata> {
   const { kode } = await params;
   return {
-    title: `Pembayaran Booking #${kode} | ${APP_NAME}`,
+    title: `Pembayaran Booking #${kode}`,
     description: `Instruksi dan verifikasi pembayaran uang muka untuk booking rental ${APP_NAME}.`,
   };
 }

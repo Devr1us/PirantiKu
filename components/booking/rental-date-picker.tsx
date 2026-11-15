@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getTodayWIB } from "@/lib/format";
 
 interface RentalDatePickerProps {
   startDate: string; // YYYY-MM-DD
@@ -41,7 +42,7 @@ export function RentalDatePicker({
   disabledDates = [],
   className,
 }: RentalDatePickerProps) {
-  const today = startOfToday();
+  const today = React.useMemo(() => parseISO(getTodayWIB()), []);
   const [currentMonth, setCurrentMonth] = React.useState<Date>(
     startDate ? parseISO(startDate) : today
   );

@@ -90,3 +90,30 @@ export function formatWhatsAppNumber(phone: string): string {
   }
   return cleaned;
 }
+
+/**
+ * Mendapatkan tanggal hari ini dalam format YYYY-MM-DD sesuai zona waktu WIB (Asia/Jakarta, GMT+7).
+ * Menghindari bug tanggal mundur saat aplikasi dijalankan di server dengan waktu UTC.
+ */
+export function getTodayWIB(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
+/**
+ * Mendapatkan tanggal besok dalam format YYYY-MM-DD sesuai zona waktu WIB (Asia/Jakarta, GMT+7).
+ */
+export function getTomorrowWIB(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}

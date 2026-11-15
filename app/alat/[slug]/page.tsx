@@ -46,16 +46,17 @@ export async function generateMetadata({
     : null;
   const imageUrl = getProductImage(slug, primaryImage) || "/logo.png";
 
-  const title = `${item.nama} | ${APP_NAME}`;
+  const pageTitle = item.nama;
+  const ogTitle = `${item.nama} | ${APP_NAME}`;
   const description =
     item.deskripsi ||
     `Sewa ${item.nama} di ${APP_NAME}. Kualitas prima, DP ringan, dan stok siap pakai.`;
 
   return {
-    title,
+    title: pageTitle,
     description,
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       images: [
         {
@@ -66,7 +67,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: [imageUrl],
     },

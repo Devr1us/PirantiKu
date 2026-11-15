@@ -27,7 +27,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `Sewa Alat ${cat.nama} | ${APP_NAME}`,
+    title: `Sewa Alat ${cat.nama}`,
     description: `Pilihan perlengkapan ${cat.nama} siap sewa di ${APP_NAME}. Kualitas prima dan stok pasti ada.`,
   };
 }

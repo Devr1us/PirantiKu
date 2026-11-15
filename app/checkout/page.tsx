@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
-import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { formatRupiah, formatDateIndo, getTodayWIB, getTomorrowWIB } from "@/lib/format";
 import { createClient } from "@/lib/supabase/client";
 import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
 import {
@@ -53,15 +53,11 @@ export default function CheckoutPage() {
   const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
   const [savedPricing, setSavedPricing] = React.useState<{ totalSewa: number; dpJumlah: number; totalDeposit: number } | null>(null);
 
-  // Fallback tanggal stabil dengan lazy initial state
-  const [defaultDates] = React.useState(() => {
-    const now = new Date();
-    const tomorrow = new Date(now.getTime() + 86400000);
-    return {
-      today: now.toISOString().split("T")[0],
-      tomorrow: tomorrow.toISOString().split("T")[0],
-    };
-  });
+  // Fallback tanggal stabil dengan zona waktu WIB
+  const [defaultDates] = React.useState(() => ({
+    today: getTodayWIB(),
+    tomorrow: getTomorrowWIB(),
+  }));
 
   // Ambil tanggal sewa dari params atau fallback
   const startDate = mulaiParam || defaultDates.today;

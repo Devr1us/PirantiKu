@@ -327,31 +327,25 @@ export function EquipmentCatalog({
     }> = [
       {
         id: "under-10k",
-        label: "Di bawah Rp 10.000",
+        label: "< Rp 10.000",
         min: "",
-        max: "10000",
-      },
-      {
-        id: "above-10k",
-        label: "Di atas Rp 10.000",
-        min: "10000",
-        max: "",
+        max: "9999",
       },
       {
         id: "10k-50k",
-        label: "Rp 10.000 - Rp 50.000",
+        label: "Rp 10.000 - Rp 49.999",
         min: "10000",
-        max: "50000",
+        max: "49999",
       },
       {
         id: "50k-100k",
-        label: "Rp 50.000 - Rp 100.000",
+        label: "Rp 50.000 - Rp 99.999",
         min: "50000",
-        max: "100000",
+        max: "99999",
       },
       {
         id: "above-100k",
-        label: "Di atas Rp 100.000",
+        label: "≥ Rp 100.000",
         min: "100000",
         max: "",
       },
@@ -376,10 +370,11 @@ export function EquipmentCatalog({
 
   // Filter dan sorting lokal
   const filteredEquipment = React.useMemo(() => {
+    const activeSearch = searchQuery.trim() || currentQ;
     return initialEquipment
       .filter((item) => {
-        if (currentQ) {
-          const qLower = currentQ.toLowerCase();
+        if (activeSearch) {
+          const qLower = activeSearch.toLowerCase();
           const matchName = item.nama.toLowerCase().includes(qLower);
           const matchDesc = item.deskripsi?.toLowerCase().includes(qLower);
           if (!matchName && !matchDesc) return false;
@@ -417,6 +412,7 @@ export function EquipmentCatalog({
       });
   }, [
     initialEquipment,
+    searchQuery,
     currentQ,
     currentCategory,
     currentMinPrice,

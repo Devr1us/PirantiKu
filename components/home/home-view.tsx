@@ -67,6 +67,7 @@ export function HomeView({
   lokasiLng = LOKASI_DEFAULT.lng,
 }: HomeViewProps) {
   const cleanWa = normalizeAdminPhone(whatsappAdmin);
+  const effectiveDp = Number(dpPersen) > 0 ? Number(dpPersen) : 30;
 
   const effectiveAlamat =
     alamat &&
@@ -93,7 +94,7 @@ export function HomeView({
               </div>
 
               <Lead>
-                Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai {dpPersen}%.
+                Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai {effectiveDp}%.
               </Lead>
 
               <Reveal delay={0.25} className="pt-2">
@@ -265,7 +266,7 @@ export function HomeView({
                   PirantiKu hadir untuk memudahkan masyarakat, pekerja lapangan, dan komunitas mendapatkan akses perlengkapan berkualitas tanpa harus membeli unit baru. Kami beroperasi dengan sistem <strong>booking per tanggal</strong> yang terintegrasi langsung dengan penghitungan sisa unit secara real-time.
                 </P>
                 <P delay={0.08}>
-                  Setiap alat yang masuk dan keluar selalu melalui prosedur pembersihan dan <strong>uji fungsi kelayakan</strong>. Untuk menjamin kepastian jadwal, Anda cukup membayar <strong>uang muka (DP) {dpPersen}%</strong> saat pemesanan online.
+                  Setiap alat yang masuk dan keluar selalu melalui prosedur pembersihan dan <strong>uji fungsi kelayakan</strong>. Untuk menjamin kepastian jadwal, Anda cukup membayar <strong>uang muka (DP) {effectiveDp}%</strong> saat pemesanan online.
                 </P>
                 <P delay={0.16}>
                   Pelunasan sisa biaya booking beserta <strong>deposit jaminan</strong> dilakukan saat serah terima unit di lokasi kami. Setelah masa booking selesai dan alat dikembalikan dalam keadaan baik sesuai ketentuan, deposit Anda akan <strong>langsung dikembalikan penuh</strong>.
@@ -349,7 +350,7 @@ export function HomeView({
             <StaggerItem>
               <div className="bg-white border border-[#E8E8E1] rounded-xl p-6 text-center space-y-1">
                 <div className="text-3xl sm:text-4xl font-extrabold text-[#A0630F]">
-                  <CountUp value={dpPersen} suffix="%" />
+                  <CountUp value={effectiveDp} suffix="%" />
                 </div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#5F7A84]">
                   DP Ringan Mulai
@@ -486,7 +487,7 @@ export function HomeView({
                     Booking dan bayar DP
                   </h3>
                   <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Kunci unit alat pesanan Anda dengan membayar uang muka (DP) {dpPersen}% via transfer bank atau QRIS. Admin akan segera memverifikasi pesanan Anda.
+                    Kunci unit alat pesanan Anda dengan membayar uang muka (DP) {effectiveDp}% via transfer bank atau QRIS. Admin akan segera memverifikasi pesanan Anda.
                   </p>
                 </div>
               </div>
@@ -503,7 +504,7 @@ export function HomeView({
                     Ambil alat, pakai, lalu kembalikan
                   </h3>
                   <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Ambil unit di toko kami, selesaikan pelunasan serta deposit jaminan, gunakan alat dengan baik, dan kembalikan tepat waktu untuk pencairan kembali deposit Anda.
+                    Pengambilan unit dilakukan langsung di workshop/toko kami (wajib bawa KTP/SIM asli atas nama pemesan untuk verifikasi fisik). Selesaikan sisa sewa serta deposit jaminan, gunakan alat dengan baik, dan kembalikan tepat waktu untuk pencairan utuh deposit Anda.
                   </p>
                 </div>
               </div>
