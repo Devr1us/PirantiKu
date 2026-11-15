@@ -101,11 +101,11 @@ export default function SyaratKetentuanPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">6. Kebijakan Pembatalan & Pengembalian Dana (Refund)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li><strong>Tata Cara Pengajuan Pembatalan:</strong> Pengajuan pembatalan atau perubahan jadwal booking dapat dilakukan secara mandiri dengan menekan tombol <em>Batalkan Pesanan</em> pada halaman <strong>Booking Saya</strong> atau dengan menghubungi Admin kami via WhatsApp resmi (0857-0151-6287).</li>
+            <li><strong>Tata Cara Pengajuan Pembatalan:</strong> Pengajuan pembatalan sewa dapat dilakukan secara mandiri dengan menekan tombol <em>Batalkan Pesanan</em> pada halaman <strong>Booking Saya</strong> atau dengan menghubungi Admin melalui WhatsApp resmi (0857-0151-6287).</li>
             <li><strong>Pembatalan oleh Penyewa &gt; 24 Jam:</strong> Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai booking berhak mendapatkan <strong>pengembalian uang muka (DP) 100% penuh</strong> atau dialihkan menjadi kredit jadwal booking baru tanpa biaya tambahan.</li>
-            <li><strong>Pembatalan oleh Penyewa &le; 24 Jam:</strong> Pembatalan sepihak dalam waktu kurang dari 24 jam sebelum tanggal sewa menyebabkan DP hangus (tidak dapat direfund) karena unit telah disiapkan dan menolak calon penyewa lain.</li>
-            <li><strong>Pembatalan oleh Pihak PirantiKu:</strong> Apabila alat mengalami kerusakan mendadak saat inspeksi pra-serah terima dan tidak tersedia unit pengganti yang setara, PirantiKu akan mengembalikan <strong>100% seluruh pembayaran DP seketika</strong> dan memberikan kompensasi prioritas pada jadwal berikutnya.</li>
-            <li>Penyewa dapat mengajukan perubahan jadwal (reschedule) maksimal 1 kali dengan menghubungi Admin via WhatsApp paling lambat 1 hari sebelum jadwal sewa, selama unit pengganti masih tersedia.</li>
+            <li><strong>Pembatalan oleh Penyewa &le; 24 Jam:</strong> Pembatalan sepihak yang diajukan dalam waktu <strong>24 jam atau kurang</strong> sebelum tanggal mulai sewa menyebabkan DP hangus (tidak dapat direfund) karena unit telah disiapkan dan menolak calon penyewa lain.</li>
+            <li><strong>Pembatalan oleh Pihak PirantiKu:</strong> Apabila alat mengalami kendala mendadak saat inspeksi pra-serah terima dan tidak tersedia unit pengganti yang setara, PirantiKu akan mengembalikan <strong>100% seluruh pembayaran DP seketika</strong> dan memberikan kompensasi prioritas pada jadwal berikutnya.</li>
+            <li><strong>Perubahan Jadwal (Reschedule):</strong> Perubahan jadwal sewa wajib dikoordinasikan langsung dengan menghubungi Admin via WhatsApp resmi paling lambat 1 hari sebelum jadwal mulai sewa, maksimal 1 kali selama unit pengganti masih tersedia.</li>
           </ul>
         </section>
       </div>

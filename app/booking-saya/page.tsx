@@ -349,7 +349,7 @@ export default function BookingSayaPage() {
                             onClick={() => setBookingToCancel({ id: booking.id, kode: booking.kode_booking })}
                             className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
                           >
-                            {isCancelling === booking.id ? "Membatalkan..." : "Batalkan"}
+                            {isCancelling === booking.id ? "Membatalkan..." : "Batalkan Pesanan"}
                           </Button>
                         )}
 

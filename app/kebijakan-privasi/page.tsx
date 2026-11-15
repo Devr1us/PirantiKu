@@ -95,7 +95,7 @@ export default function KebijakanPrivasiPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">6. Kontak Pengelola Data</H2>
           <p className="text-[#5F7A84]">
-            Apabila Anda memiliki pertanyaan, permohonan hak data, atau keluhan seputar pemrosesan data pribadi, silakan hubungi tim kami melalui email <strong>halo@pirantiku.web.id</strong> atau WhatsApp Admin Resmi di <strong>0857-0151-6287</strong>.
+            Apabila Anda memiliki pertanyaan, permohonan hak data, atau keluhan seputar pemrosesan data pribadi, silakan hubungi tim kami langsung melalui WhatsApp Admin Resmi di <strong>0857-0151-6287</strong>.
           </p>
         </section>
       </div>

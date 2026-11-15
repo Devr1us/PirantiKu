@@ -140,19 +140,18 @@ export function LocationMap({
     <div className={cn("w-full flex flex-col", className)}>
       <div className="relative w-full h-[320px] lg:h-full lg:min-h-[380px] rounded-xl overflow-hidden border border-[#E8E8E1] bg-[#F3F3EF] shadow-sm">
         {/* Placeholder skeleton saat iframe sedang dimuat */}
-        <div
-          className={cn(
-            "absolute inset-0 flex flex-col items-center justify-center p-6 text-center transition-opacity duration-300 pointer-events-none",
-            isIframeLoaded ? "opacity-0" : "opacity-100"
-          )}
-          aria-hidden="true"
-          data-nosnippet
-        >
-          <MapPin className="h-8 w-8 text-[#5F7A84] animate-pulse mb-1.5" />
-          <p className="text-xs font-semibold text-[#5F7A84]">
-            Memuat peta PirantiKu...
-          </p>
-        </div>
+        {!isIframeLoaded && (
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none"
+            aria-hidden="true"
+            data-nosnippet
+          >
+            <MapPin className="h-8 w-8 text-[#5F7A84] animate-pulse mb-1.5" />
+            <p data-nosnippet aria-hidden="true" className="text-xs font-semibold text-[#5F7A84]">
+              Memuat peta PirantiKu...
+            </p>
+          </div>
+        )}
 
         {/* Google Maps Iframe */}
         <iframe
