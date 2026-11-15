@@ -26,6 +26,9 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
     null;
 
   const primaryImage =
+    getProductImage(equipment.slug, null) ||
+    getProductImage(equipment.nama, null) ||
+    getProductImage(equipment.id, null) ||
     getProductImage(equipment.slug, dbImage) ||
     getProductImage(equipment.id, dbImage) ||
     dbImage;
@@ -44,7 +47,7 @@ export function EquipmentCard({ equipment, priority = false }: EquipmentCardProp
             alt={equipment.nama}
             fill
             priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
             className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             fallback={
               <div className="flex h-full w-full flex-col items-center justify-center p-4 text-[#234E5C]">

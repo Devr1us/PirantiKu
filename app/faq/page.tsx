@@ -69,7 +69,7 @@ export default function FAQPage() {
     },
     {
       q: "Berapa batas usia minimal untuk menyewa alat?",
-      a: "Penyewa wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM) yang masih aktif.",
+      a: "Penyewa wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi (KTP atau SIM asli) yang masih berlaku. Khusus untuk peralatan pertukangan & mesin bertenaga tinggi yang memiliki risiko operasional (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), penyewa wajib berusia minimal 18 tahun atau didampingi tenaga ahli berpengalaman demi keselamatan kerja.",
     },
     {
       q: "Bisakah saya memperpanjang masa sewa (extend)?",

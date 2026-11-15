@@ -44,7 +44,14 @@ export async function generateMetadata({
   const primaryImage = Array.isArray(item.images)
     ? item.images.find((img) => img.is_utama)?.url || item.images[0]?.url
     : null;
-  const imageUrl = getProductImage(slug, primaryImage) || "/logo.png";
+  const localImg =
+    getProductImage(slug, null) ||
+    getProductImage(item.nama, null);
+  const rawImgUrl = localImg || primaryImage || "/logo.png";
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.web.id";
+  const imageUrl = rawImgUrl.startsWith("http")
+    ? rawImgUrl
+    : `${siteUrl}${rawImgUrl.startsWith("/") ? "" : "/"}${rawImgUrl}`;
 
   const pageTitle = item.nama;
   const ogTitle = `${item.nama} | ${APP_NAME}`;
@@ -62,6 +69,8 @@ export async function generateMetadata({
       images: [
         {
           url: imageUrl,
+          width: 1200,
+          height: 630,
           alt: item.nama,
         },
       ],
@@ -142,7 +151,13 @@ export default async function EquipmentDetailPage({
     equipment.images?.[0]?.url ||
     null;
 
+  const localImg =
+    getProductImage(equipment.slug, null) ||
+    getProductImage(equipment.nama, null) ||
+    getProductImage(equipment.id, null);
+
   const primaryImage =
+    localImg ||
     getProductImage(equipment.slug, dbImage) ||
     getProductImage(equipment.id, dbImage) ||
     dbImage;
@@ -194,12 +209,9 @@ export default async function EquipmentDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi */}
         <div className="lg:col-span-7 xl:col-span-8 space-y-8">
-          {/* Galeri Gambar: gunakan EquipmentGallery dengan foto lokal utama */}
+          {/* Galeri Gambar: gunakan EquipmentGallery dengan foto lokal utama dan deduplikasi cerdas */}
           <EquipmentGallery
-            images={(equipment.images || []).map((img) => ({
-              ...img,
-              url: img.is_utama ? (primaryImage || img.url) : img.url,
-            }))}
+            images={equipment.images || []}
             primaryImage={primaryImage}
             nama={equipment.nama}
             categoryIconEl={

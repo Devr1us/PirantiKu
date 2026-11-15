@@ -240,7 +240,7 @@ export default function CheckoutPage() {
 
   if (!isLoaded) {
     return (
-      <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
+      <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
           <p className="text-sm text-[#5F7A84]">Memuat informasi checkout...</p>
@@ -488,7 +488,7 @@ export default function CheckoutPage() {
                   onClick={handleNextToStep2}
                   className="w-full sm:w-auto px-8 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {!profile ? "Memuat data..." : "Lanjut ke Rincian & DP"}
+                  Lanjut ke Rincian & DP
                   <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </div>

@@ -184,7 +184,7 @@ export default function KeranjangPage() {
 
   if (!isLoaded) {
     return (
-      <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
+      <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
           <p className="text-sm text-[#5F7A84]">Memuat keranjang booking...</p>

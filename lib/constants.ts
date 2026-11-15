@@ -275,8 +275,16 @@ export const LOCAL_PRODUCT_IMAGES: Record<string, string> = {
   "8": "/images/alat/sekop.png",
   "tangga-lipat": "/images/alat/tangga-lipat-4-meter.png",
   "tangga-lipat-4-meter": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-lipat-4m": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-lipat-aluminium": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-aluminium": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-teleskopik": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga-4-meter": "/images/alat/tangga-lipat-4-meter.png",
+  "tangga": "/images/alat/tangga-lipat-4-meter.png",
   tanggalipat: "/images/alat/tangga-lipat-4-meter.png",
   tanggalipat4meter: "/images/alat/tangga-lipat-4-meter.png",
+  tanggalipat4m: "/images/alat/tangga-lipat-4-meter.png",
+  tanggalipataluminium: "/images/alat/tangga-lipat-4-meter.png",
   "9": "/images/alat/tangga-lipat-4-meter.png",
   "mesin-las-inverter": "/images/alat/mesin-las-inverter.png",
   mesinlasinverter: "/images/alat/mesin-las-inverter.png",
@@ -458,6 +466,14 @@ export function getProductImage(
     const simplified = raw.replace(/[^a-z0-9]/g, "");
     if (LOCAL_PRODUCT_IMAGES[simplified]) {
       return LOCAL_PRODUCT_IMAGES[simplified];
+    }
+    // Pencocokan sebagian kata untuk nama alat panjang atau variasi slug
+    for (const [key, val] of Object.entries(LOCAL_PRODUCT_IMAGES)) {
+      if (isNaN(Number(key)) && key.length >= 6) {
+        if (raw.includes(key) || simplified.includes(key.replace(/[^a-z0-9]/g, ""))) {
+          return val;
+        }
+      }
     }
   }
   return dbUrl || null;

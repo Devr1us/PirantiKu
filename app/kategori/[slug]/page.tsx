@@ -26,9 +26,32 @@ export async function generateMetadata({
     return { title: "Kategori Tidak Ditemukan" };
   }
 
+  const pageTitle = `Sewa Alat ${cat.nama}`;
+  const desc = `Pilihan perlengkapan ${cat.nama} siap sewa di ${APP_NAME}. Kualitas prima dan stok pasti ada.`;
+  const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.web.id";
+
   return {
-    title: `Sewa Alat ${cat.nama}`,
-    description: `Pilihan perlengkapan ${cat.nama} siap sewa di ${APP_NAME}. Kualitas prima dan stok pasti ada.`,
+    title: pageTitle,
+    description: desc,
+    openGraph: {
+      title: `${pageTitle} | ${APP_NAME}`,
+      description: desc,
+      url: `/kategori/${slug}`,
+      images: [
+        {
+          url: `${siteUrl}/logo.png`,
+          width: 800,
+          height: 600,
+          alt: `${APP_NAME} - ${cat.nama}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pageTitle} | ${APP_NAME}`,
+      description: desc,
+      images: [`${siteUrl}/logo.png`],
+    },
   };
 }
 
@@ -79,7 +102,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <React.Suspense
       fallback={
-        <div className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
+        <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
             <p className="text-sm text-[#5F7A84]">

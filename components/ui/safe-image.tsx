@@ -20,12 +20,18 @@ export function SafeImage({ fallback, src, alt, ...props }: SafeImageProps) {
     return <>{fallback}</>;
   }
 
+  const effectiveSizes =
+    props.fill && !props.sizes
+      ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+      : props.sizes;
+
   return (
     <Image
       src={src}
       alt={alt}
       onError={() => setHasError(true)}
       {...props}
+      sizes={effectiveSizes}
     />
   );
 }

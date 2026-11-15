@@ -6,7 +6,7 @@ import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EquipmentImage {
-  id: number;
+  id: number | string;
   url: string;
   is_utama?: boolean;
 }
@@ -25,6 +25,37 @@ export function EquipmentGallery({
   categoryIconEl,
 }: EquipmentGalleryProps) {
   const [activeImage, setActiveImage] = React.useState<string | null>(primaryImage);
+
+  React.useEffect(() => {
+    setActiveImage(primaryImage);
+  }, [primaryImage]);
+
+  // Filter gambar unik, cegah duplikasi thumbnail dan abaikan placeholder unsplash jika sudah ada foto lokal
+  const uniqueImages = React.useMemo(() => {
+    const list: EquipmentImage[] = [];
+    const seen = new Set<string>();
+
+    if (primaryImage) {
+      seen.add(primaryImage);
+      list.push({ id: "primary", url: primaryImage, is_utama: true });
+    }
+
+    const hasLocalPrimary = primaryImage?.startsWith("/images/");
+
+    for (const img of images || []) {
+      if (!img?.url) continue;
+      // Lewati Unsplash jika unit sudah memiliki foto lokal terverifikasi
+      if (hasLocalPrimary && img.url.includes("images.unsplash.com")) {
+        continue;
+      }
+      if (!seen.has(img.url)) {
+        seen.add(img.url);
+        list.push(img);
+      }
+    }
+
+    return list;
+  }, [images, primaryImage]);
 
   const displayImage = activeImage || primaryImage;
 
@@ -57,10 +88,10 @@ export function EquipmentGallery({
         />
       </div>
 
-      {/* Thumbnail jika ada lebih dari 1 foto */}
-      {images && images.length > 1 && (
+      {/* Thumbnail HANYA jika ada lebih dari 1 foto unik berbeda */}
+      {uniqueImages.length > 1 && (
         <div className="flex gap-2.5 overflow-x-auto pb-2">
-          {images.map((img) => (
+          {uniqueImages.map((img) => (
             <button
               key={img.id}
               type="button"

@@ -94,7 +94,7 @@ export function HomeView({
               </div>
 
               <Lead>
-                Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai {effectiveDp}%.
+                Booking dan reservasi alat lengkap untuk camping outdoor, pertukangan mandiri, olahraga, kebersihan rumah tangga, dan kebutuhan acara. Stok pasti per tanggal yang Anda pilih dengan uang muka (DP) mulai 30%.
               </Lead>
 
               <Reveal delay={0.25} className="pt-2">
