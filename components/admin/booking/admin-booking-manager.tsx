@@ -338,89 +338,91 @@ export function AdminBookingManager({
       {/* 1. Bar Tab Filter & Pencarian */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setStatusFilter("semua")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "semua"
-                ? "bg-[#234E5C] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-              }`}
-          >
-            Semua ({bookings.length})
-          </button>
+        <div className="w-full overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 min-w-max">
+            <button
+              type="button"
+              onClick={() => setStatusFilter("semua")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "semua"
+                  ? "bg-[#234E5C] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
+                }`}
+            >
+              Semua ({bookings.length})
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("perlu_verifikasi")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${statusFilter === "perlu_verifikasi"
-                ? "bg-[#A0630F] text-white"
-                : "bg-[#FEF3C7] border border-[#FDE68A] text-[#78350F] hover:bg-[#FDE68A]"
-              }`}
-          >
-            <Clock className="h-3 w-3" />
-            <span>Perlu Cek Bukti</span>
-            {pendingVerificationCount > 0 && (
-              <span className="h-4 w-4 rounded-full bg-[#DC2626] text-white text-[10px] flex items-center justify-center font-extrabold ml-0.5">
-                {pendingVerificationCount}
-              </span>
-            )}
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("perlu_verifikasi")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${statusFilter === "perlu_verifikasi"
+                  ? "bg-[#A0630F] text-white"
+                  : "bg-[#FEF3C7] border border-[#FDE68A] text-[#78350F] hover:bg-[#FDE68A]"
+                }`}
+            >
+              <Clock className="h-3 w-3 shrink-0" />
+              <span>Perlu Cek Bukti</span>
+              {pendingVerificationCount > 0 && (
+                <span className="h-4 w-4 rounded-full bg-[#DC2626] text-white text-[10px] flex items-center justify-center font-extrabold ml-0.5">
+                  {pendingVerificationCount}
+                </span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("menunggu_dp")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "menunggu_dp"
-                ? "bg-[#234E5C] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-              }`}
-          >
-            Menunggu DP
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("menunggu_dp")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "menunggu_dp"
+                  ? "bg-[#234E5C] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
+                }`}
+            >
+              Menunggu DP
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("dp_dibayar")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "dp_dibayar"
-                ? "bg-[#234E5C] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-              }`}
-          >
-            DP Terverifikasi
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("dp_dibayar")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "dp_dibayar"
+                  ? "bg-[#234E5C] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
+                }`}
+            >
+              DP Terverifikasi
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("diambil")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "diambil"
-                ? "bg-[#234E5C] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
-              }`}
-          >
-            Sedang Disewa
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("diambil")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "diambil"
+                  ? "bg-[#234E5C] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
+                }`}
+            >
+              Sedang Disewa
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("selesai")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "selesai"
-                ? "bg-[#2E5E4E] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#2E5E4E]"
-              }`}
-          >
-            Selesai Dikembalikan
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("selesai")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "selesai"
+                  ? "bg-[#2E5E4E] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#2E5E4E]"
+                }`}
+            >
+              Selesai Dikembalikan
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setStatusFilter("bermasalah")}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${statusFilter === "bermasalah"
-                ? "bg-[#991B1B] text-white"
-                : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#991B1B]"
-              }`}
-          >
-            Bermasalah
-          </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter("bermasalah")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${statusFilter === "bermasalah"
+                  ? "bg-[#991B1B] text-white"
+                  : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#991B1B]"
+                }`}
+            >
+              Bermasalah
+            </button>
+          </div>
         </div>
 
         {/* Input Pencarian */}
@@ -436,7 +438,7 @@ export function AdminBookingManager({
       </div>
 
       {/* 2. Tabel Transaksi Booking Interaktif */}
-      <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
             Daftar Booking ({filteredBookings.length})

@@ -203,7 +203,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Konten Halaman Admin */}
-        <main className="flex-1 p-4 sm:p-8 lg:p-10 max-w-[1200px] w-full mx-auto">
+        <main className="flex-1 p-3.5 sm:p-8 lg:p-10 max-w-[1200px] w-full mx-auto min-w-0 overflow-x-hidden">
           {children}
         </main>
       </div>

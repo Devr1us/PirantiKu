@@ -49,7 +49,7 @@ export default async function AdminCalendarPage() {
       </div>
 
       {/* Tabel Jadwal Sewa Aktif dalam Kartu Putih */}
-      <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-2">
             <Calendar className="h-4 w-4 text-[#234E5C]" />

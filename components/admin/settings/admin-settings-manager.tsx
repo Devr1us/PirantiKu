@@ -224,66 +224,75 @@ export function AdminSettingsManager({
   const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${lokasiLat},${lokasiLng}`;
 
   return (
-    <div className="space-y-8">
-      {/* BUG-10: Warning jika format rekening dari DB tidak terbaca */}
+    <div className="space-y-6">
+      {/* Warning jika format rekening dari DB tidak terbaca */}
       {rekParseWarning && (
-        <div className="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-4 text-xs text-[#78350F] flex items-start gap-2.5">
-          <span className="font-bold">⚠️ Format rekening bank tidak dikenali.</span>
-          <span>Data lama di database: <code className="font-mono bg-white/60 px-1 rounded">{initialRekening}</code>. Silakan isi ulang field bank, nomor rekening, dan atas nama di bawah, lalu simpan.</span>
+        <div className="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-3.5 sm:p-4 text-xs text-[#78350F] flex flex-col sm:flex-row sm:items-start gap-1.5 sm:gap-2.5">
+          <div className="font-bold flex items-center gap-1.5 shrink-0">
+            <span>⚠️</span>
+            <span>Format rekening bank tidak dikenali.</span>
+          </div>
+          <p className="leading-relaxed min-w-0">
+            Data lama di database: <code className="font-mono bg-white/70 px-1.5 py-0.5 rounded break-all">{initialRekening}</code>. Silakan isi ulang field bank, nomor rekening, dan atas nama di bawah, lalu simpan.
+          </p>
         </div>
       )}
-      {/* Tombol Navigasi Tab */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E8E8E1] pb-3">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab("pembayaran")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
-              activeTab === "pembayaran"
-                ? "bg-[#234E5C] text-white shadow-xs"
-                : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
-            }`}
-          >
-            <CreditCard className="h-3.5 w-3.5" />
-            <span>Rekening & Pembayaran</span>
-          </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("kontak")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
-              activeTab === "kontak"
-                ? "bg-[#234E5C] text-white shadow-xs"
-                : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
-            }`}
-          >
-            <Phone className="h-3.5 w-3.5" />
-            <span>Kontak & Operasional</span>
-          </button>
+      {/* Tombol Navigasi Tab & Aksi Atas */}
+      <div className="space-y-3 border-b border-[#E8E8E1] pb-3">
+        {/* Horizontal scroll untuk tab mobile agar tidak terpotong */}
+        <div className="w-full overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 min-w-max">
+            <button
+              type="button"
+              onClick={() => setActiveTab("pembayaran")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                activeTab === "pembayaran"
+                  ? "bg-[#234E5C] text-white shadow-xs"
+                  : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
+              }`}
+            >
+              <CreditCard className="h-3.5 w-3.5 shrink-0" />
+              <span>Rekening & Pembayaran</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("lokasi")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${
-              activeTab === "lokasi"
-                ? "bg-[#234E5C] text-white shadow-xs"
-                : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
-            }`}
-          >
-            <MapPin className="h-3.5 w-3.5" />
-            <span>Alamat & Lokasi Toko</span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("kontak")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                activeTab === "kontak"
+                  ? "bg-[#234E5C] text-white shadow-xs"
+                  : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
+              }`}
+            >
+              <Phone className="h-3.5 w-3.5 shrink-0" />
+              <span>Kontak & Operasional</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("lokasi")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                activeTab === "lokasi"
+                  ? "bg-[#234E5C] text-white shadow-xs"
+                  : "bg-white text-[#5F7A84] border border-[#E8E8E1] hover:text-[#234E5C] hover:bg-[#FAFAF8]"
+              }`}
+            >
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              <span>Alamat & Lokasi Toko</span>
+            </button>
+          </div>
         </div>
 
         {/* Action Buttons Top */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:justify-end">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleReset}
             disabled={isSaving}
-            className="text-xs text-[#5F7A84] border-[#E8E8E1] hover:text-[#234E5C]"
+            className="flex-1 sm:flex-none text-xs text-[#5F7A84] border-[#E8E8E1] hover:text-[#234E5C] h-9"
           >
             <RotateCcw className="h-3.5 w-3.5 mr-1" />
             Reset Default
@@ -294,7 +303,7 @@ export function AdminSettingsManager({
             size="sm"
             onClick={handleSave}
             disabled={isSaving}
-            className="text-xs shadow-sm font-bold"
+            className="flex-1 sm:flex-none text-xs shadow-sm font-bold h-9"
           >
             <Save className="h-3.5 w-3.5 mr-1" />
             {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
@@ -304,20 +313,20 @@ export function AdminSettingsManager({
 
       {/* Konten Tab 1: Rekening & Pembayaran */}
       {activeTab === "pembayaran" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           <div className="lg:col-span-7 space-y-6">
             {/* Form Rekening Bank */}
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center shrink-0">
                     <Building className="h-4 w-4" />
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-[#234E5C]">
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-[#234E5C] truncate">
                       Rekening Bank Pembayaran
                     </h3>
-                    <p className="text-[11px] text-[#5F7A84]">
+                    <p className="text-[11px] text-[#5F7A84] leading-snug">
                       Tujuan transfer uang muka (DP) yang ditampilkan kepada penyewa
                     </p>
                   </div>
@@ -363,16 +372,16 @@ export function AdminSettingsManager({
             </div>
 
             {/* Form Kebijakan DP & Denda */}
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
-                <div className="h-8 w-8 rounded-full bg-[#FEF3C7] text-[#A0630F] flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-[#FEF3C7] text-[#A0630F] flex items-center justify-center shrink-0">
                   <DollarSign className="h-4 w-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-sm font-bold text-[#234E5C]">
                     Kebijakan Nilai DP & Denda
                   </h3>
-                  <p className="text-[11px] text-[#5F7A84]">
+                  <p className="text-[11px] text-[#5F7A84] leading-snug">
                     Aturan finansial yang digunakan saat checkout kalkulasi otomatis
                   </p>
                 </div>
@@ -426,17 +435,17 @@ export function AdminSettingsManager({
             </div>
 
             {/* Form QRIS */}
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-full bg-[#E0F2FE] text-[#0369A1] flex items-center justify-center shrink-0">
                     <QrCode className="h-4 w-4" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-sm font-bold text-[#234E5C]">
                       Kode QRIS Pembayaran Toko
                     </h3>
-                    <p className="text-[11px] text-[#5F7A84]">
+                    <p className="text-[11px] text-[#5F7A84] leading-snug">
                       Mendukung GoPay, OVO, Dana, ShopeePay, BCA QRIS, dan mobile banking
                     </p>
                   </div>
@@ -448,12 +457,12 @@ export function AdminSettingsManager({
                   <Label className="text-xs font-bold text-[#234E5C]">
                     URL Gambar QRIS (atau Unggah File)
                   </Label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={qrisUrl}
                       onChange={(e) => setQrisUrl(e.target.value)}
                       placeholder="https://... atau klik tombol Unggah Gambar di samping"
-                      className="h-10 text-xs font-mono"
+                      className="h-10 text-xs font-mono flex-1 min-w-0"
                     />
                     <input
                       type="file"
@@ -468,7 +477,7 @@ export function AdminSettingsManager({
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploadingQris}
-                      className="h-10 px-4 text-xs font-bold border-[#E8E8E1] shrink-0"
+                      className="h-10 px-4 text-xs font-bold border-[#E8E8E1] shrink-0 justify-center"
                     >
                       <Upload className="h-3.5 w-3.5 mr-1.5" />
                       {isUploadingQris ? "Memproses..." : "Unggah QRIS"}
@@ -566,18 +575,18 @@ export function AdminSettingsManager({
 
       {/* Konten Tab 2: Kontak & Operasional */}
       {activeTab === "kontak" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           <div className="lg:col-span-7 space-y-6">
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
-                <div className="h-8 w-8 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center shrink-0">
                   <Phone className="h-4 w-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-sm font-bold text-[#234E5C]">
                     Nomor WhatsApp Admin / CS
                   </h3>
-                  <p className="text-[11px] text-[#5F7A84]">
+                  <p className="text-[11px] text-[#5F7A84] leading-snug">
                     Nomor tujuan penyewa untuk konfirmasi bukti transfer dan tanya jawab alat
                   </p>
                 </div>
@@ -587,7 +596,7 @@ export function AdminSettingsManager({
                 <Label className="text-xs font-bold text-[#234E5C]">
                   Nomor WhatsApp (Diawali kode negara 62)
                 </Label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative flex-1">
                     <span className="absolute left-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">
                       +
@@ -603,7 +612,7 @@ export function AdminSettingsManager({
                     href={waTestUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border border-[#2E5E4E] text-[#2E5E4E] hover:bg-[#E2F0D9] text-xs font-bold transition-colors shrink-0"
+                    className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-xl border border-[#2E5E4E] text-[#2E5E4E] hover:bg-[#E2F0D9] text-xs font-bold transition-colors shrink-0"
                   >
                     <span>Uji Kirim Pesan</span>
                     <ExternalLink className="h-3 w-3" />
@@ -615,16 +624,16 @@ export function AdminSettingsManager({
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
-                <div className="h-8 w-8 rounded-full bg-[#FEF3C7] text-[#A0630F] flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-[#FEF3C7] text-[#A0630F] flex items-center justify-center shrink-0">
                   <Clock className="h-4 w-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-sm font-bold text-[#234E5C]">
                     Jam Operasional Rental
                   </h3>
-                  <p className="text-[11px] text-[#5F7A84]">
+                  <p className="text-[11px] text-[#5F7A84] leading-snug">
                     Jadwal buka pengambilan & pengembalian unit di gerai
                   </p>
                 </div>
@@ -648,7 +657,7 @@ export function AdminSettingsManager({
           </div>
 
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-5 shadow-xs space-y-4">
+            <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 sm:p-5 shadow-xs space-y-4">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block border-b border-[#E8E8E1] pb-2">
                 Tampilan Kartu Informasi di Beranda
               </span>
@@ -658,11 +667,11 @@ export function AdminSettingsManager({
                   <div className="h-8 w-8 rounded-full bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center shrink-0">
                     <Phone className="h-4 w-4" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F7A84]">
                       WhatsApp Resmi
                     </span>
-                    <p className="text-xs font-bold text-[#234E5C]">
+                    <p className="text-xs font-bold text-[#234E5C] truncate">
                       +{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}
                     </p>
                     <p className="text-[11px] text-[#2E5E4E] font-medium">
@@ -675,11 +684,11 @@ export function AdminSettingsManager({
                   <div className="h-8 w-8 rounded-full bg-[#FEF3C7] text-[#A0630F] flex items-center justify-center shrink-0">
                     <Clock className="h-4 w-4" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F7A84]">
                       Jam Buka Gerai
                     </span>
-                    <p className="text-xs font-bold text-[#234E5C]">
+                    <p className="text-xs font-bold text-[#234E5C] truncate">
                       {jamOperasional || "Senin - Minggu: 08.00 - 21.00 WIB"}
                     </p>
                   </div>
@@ -692,18 +701,18 @@ export function AdminSettingsManager({
 
       {/* Konten Tab 3: Alamat & Lokasi Toko */}
       {activeTab === "lokasi" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           <div className="lg:col-span-7 space-y-6">
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
               <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
-                <div className="h-8 w-8 rounded-full bg-[#EDE9FE] text-[#6D28D9] flex items-center justify-center">
+                <div className="h-8 w-8 rounded-full bg-[#EDE9FE] text-[#6D28D9] flex items-center justify-center shrink-0">
                   <MapPin className="h-4 w-4" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-sm font-bold text-[#234E5C]">
                     Alamat Pengambilan Alat
                   </h3>
-                  <p className="text-[11px] text-[#5F7A84]">
+                  <p className="text-[11px] text-[#5F7A84] leading-snug">
                     Alamat fisik yang dituju oleh penyewa untuk serah terima peralatan
                   </p>
                 </div>
@@ -745,7 +754,7 @@ export function AdminSettingsManager({
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
                 <span className="text-[11px] text-[#5F7A84]">
                   Koordinat ini dipakai untuk penanda titik peta interaktif di beranda.
                 </span>
@@ -753,7 +762,7 @@ export function AdminSettingsManager({
                   href={gmapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#234E5C] hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#234E5C] hover:underline shrink-0"
                 >
                   <Compass className="h-3.5 w-3.5" />
                   <span>Cek di Google Maps</span>
@@ -762,9 +771,9 @@ export function AdminSettingsManager({
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
-                <MapPin className="h-4 w-4 text-[#234E5C]" />
+                <MapPin className="h-4 w-4 text-[#234E5C] shrink-0" />
                 <h3 className="text-sm font-bold text-[#234E5C]">
                   Google Maps Embed URL (Opsional)
                 </h3>
@@ -784,7 +793,7 @@ export function AdminSettingsManager({
           </div>
 
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-5 shadow-xs space-y-3">
+            <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 sm:p-5 shadow-xs space-y-3">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block border-b border-[#E8E8E1] pb-2">
                 Pratinjau Alamat Pengambilan
               </span>
@@ -792,7 +801,7 @@ export function AdminSettingsManager({
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F]">
                   Alamat Pengambilan Alat
                 </span>
-                <p className="text-xs font-semibold text-[#234E5C] leading-relaxed">
+                <p className="text-xs font-semibold text-[#234E5C] leading-relaxed break-words">
                   {alamat || LOKASI_DEFAULT.alamat}
                 </p>
                 <div className="pt-2 border-t border-[#E8E8E1] flex items-center justify-between text-[11px] text-[#5F7A84]">
@@ -808,22 +817,22 @@ export function AdminSettingsManager({
       )}
 
       {/* Sticky Bottom Bar untuk Simpan Cepat */}
-      <div className="sticky bottom-4 rounded-2xl border border-[#E8E8E1] bg-white/95 backdrop-blur-md p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
-          <CheckCircle2 className="h-4 w-4 text-[#2E5E4E]" />
-          <span>
+      <div className="sticky bottom-3 sm:bottom-4 rounded-2xl border border-[#E8E8E1] bg-white/95 backdrop-blur-md p-3 sm:p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 z-20">
+        <div className="flex items-center gap-2 text-xs text-[#5F7A84] text-center sm:text-left">
+          <CheckCircle2 className="h-4 w-4 text-[#2E5E4E] shrink-0 hidden sm:block" />
+          <span className="text-[11px] sm:text-xs">
             Perubahan pengaturan akan langsung diterapkan ke seluruh halaman publik dan alur checkout.
           </span>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto shrink-0">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleReset}
             disabled={isSaving}
-            className="flex-1 sm:flex-none text-xs text-[#5F7A84]"
+            className="flex-1 sm:flex-none text-xs text-[#5F7A84] h-9"
           >
             Reset
           </Button>
@@ -833,10 +842,10 @@ export function AdminSettingsManager({
             size="sm"
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 sm:flex-none text-xs font-bold px-6"
+            className="flex-1 sm:flex-none text-xs font-bold px-4 sm:px-6 h-9"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
-            {isSaving ? "Menyimpan ke Database..." : "Simpan Semua Pengaturan"}
+            {isSaving ? "Menyimpan..." : "Simpan Semua Pengaturan"}
           </Button>
         </div>
       </div>

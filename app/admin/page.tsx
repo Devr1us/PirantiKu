@@ -158,7 +158,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Tabel dalam Kartu Putih: Daftar Booking Pelanggan (Sinkron 100% dengan Kelola Booking) */}
-      <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E8E1] pb-4">
           <div>
             <div className="flex items-center gap-2">
