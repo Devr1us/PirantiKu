@@ -262,7 +262,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
               <ShieldCheck className="h-4 w-4 text-[#2E5E4E]" />
               Ketentuan Pengambilan Alat:
             </h4>
-            <ul className="space-y-1.5 text-[#5F7A84] list-disc list-inside text-[11px] leading-relaxed">
+            <ul className="space-y-1.5 text-[#5F7A84] list-disc list-inside text-[11px] leading-relaxed break-words">
               <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan untuk verifikasi fisik saat serah terima.</li>
               <li>Sisa biaya sewa & deposit jaminan dilunasi di toko saat serah terima unit.</li>
               <li>Pengecekan fungsi & kondisi alat dilakukan bersama sebelum serah terima.</li>

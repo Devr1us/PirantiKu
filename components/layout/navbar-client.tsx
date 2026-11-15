@@ -77,6 +77,11 @@ export function NavbarClient({
 
   const cleanWa = normalizeAdminPhone(whatsappAdmin);
 
+  // Jangan render navbar publik di area admin agar tidak duplicate dengan AdminLayout
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (pathname === "/") {
       e.preventDefault();

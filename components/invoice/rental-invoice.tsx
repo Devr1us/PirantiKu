@@ -86,26 +86,29 @@ export function RentalInvoice({
     data.status === "selesai";
 
   return (
-    <div className="bg-white text-[#234E5C] text-xs leading-relaxed max-w-3xl mx-auto p-4 sm:p-8 font-sans print:p-0 print:max-w-none print:text-black">
+    <div className="bg-white text-[#234E5C] text-xs leading-relaxed max-w-3xl mx-auto p-3.5 sm:p-8 font-sans print:p-0 print:max-w-none print:text-black w-full overflow-hidden">
       {/* Tombol Aksi Kontrol (Disembunyikan saat mencetak) */}
       {showPrintButton && (
-        <div className="flex items-center justify-between gap-3 pb-6 mb-6 border-b border-[#E8E8E1] print:hidden">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#5F7A84]">
-              Pratinjau Surat Perjanjian & Invoice Resmi
-            </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-5 border-b border-[#E8E8E1] print:hidden">
+          <div className="space-y-0.5">
+            <h2 className="text-xs sm:text-sm font-bold text-[#234E5C]">
+              Pratinjau Surat Perjanjian &amp; Invoice Resmi
+            </h2>
+            <p className="text-[11px] text-[#5F7A84]">
+              Dokumen bukti booking dan serah terima unit yang sah
+            </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <Button
               type="button"
               variant="warm"
               size="sm"
               onClick={handlePrint}
-              className="font-bold text-xs gap-1.5 shadow-sm"
+              className="flex-1 sm:flex-none font-bold text-xs gap-1.5 shadow-sm justify-center"
             >
               <Printer className="h-3.5 w-3.5" />
-              <span>Cetak / Simpan PDF (A4)</span>
+              <span>Cetak / Simpan PDF</span>
             </Button>
 
             {storePhone && (
@@ -116,12 +119,13 @@ export function RentalInvoice({
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="flex-1 sm:flex-none"
               >
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="font-bold text-xs gap-1.5 border-[#E8E8E1] text-[#2E5E4E] hover:bg-[#E2F0D9]"
+                  className="w-full font-bold text-xs gap-1.5 border-[#E8E8E1] text-[#2E5E4E] hover:bg-[#E2F0D9] justify-center"
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
                   <span>WhatsApp Admin</span>
@@ -146,27 +150,27 @@ export function RentalInvoice({
       )}
 
       {/* DOKUMEN CETAK UTAMA */}
-      <div className="border border-[#E8E8E1] rounded-xl p-6 sm:p-8 bg-white print:border-none print:p-0 space-y-6">
+      <div className="border border-[#E8E8E1] rounded-xl p-4 sm:p-8 bg-white print:border-none print:p-0 space-y-6 overflow-hidden">
         {/* 1. KOP SURAT RESMI */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b-2 border-[#234E5C] pb-5">
-          <div className="space-y-1 max-w-sm">
+          <div className="space-y-1 max-w-sm min-w-0">
             <Wordmark asLink={false} />
             <p className="text-[10px] font-bold tracking-widest uppercase text-[#A0630F]">
               {TAGLINE}
             </p>
-            <p className="text-[11px] text-[#5F7A84] pt-1 leading-snug">
+            <p className="text-[11px] text-[#5F7A84] pt-1 leading-snug break-words">
               {storeAddress}
             </p>
-            <p className="text-[11px] text-[#5F7A84]">
+            <p className="text-[11px] text-[#5F7A84] break-words">
               WhatsApp: <strong>+{storePhone}</strong> | Jam Operasional: {storeHours}
             </p>
           </div>
 
-          <div className="text-left sm:text-right space-y-1">
-            <span className="inline-block px-3 py-1 bg-[#234E5C] text-white font-extrabold text-xs tracking-wider uppercase rounded-sm">
-              SURAT PERJANJIAN & INVOICE
+          <div className="text-left sm:text-right space-y-1 min-w-0">
+            <span className="inline-block px-3 py-1 bg-[#234E5C] text-white font-extrabold text-[11px] sm:text-xs tracking-wider uppercase rounded-sm">
+              SURAT PERJANJIAN &amp; INVOICE
             </span>
-            <p className="font-mono text-sm font-bold text-[#234E5C]">
+            <p className="font-mono text-sm sm:text-base font-bold text-[#234E5C] break-all">
               #{data.kode_booking}
             </p>
             <p className="text-[11px] text-[#5F7A84]">
@@ -189,37 +193,37 @@ export function RentalInvoice({
         {/* 2. DATA IDENTITAS & JADWAL SEWA */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-lg bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
           {/* Kolom Kiri: Pihak Pertama (Penyewa) */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F] block">
               Pihak Pertama (Penyewa)
             </span>
-            <p className="font-bold text-sm text-[#234E5C]">{customerName}</p>
-            <p className="text-[#5F7A84]">
+            <p className="font-bold text-sm text-[#234E5C] break-words">{customerName}</p>
+            <p className="text-[#5F7A84] break-words">
               No. Kontak / WA: <strong className="text-[#234E5C]">{customerPhone}</strong>
             </p>
-            <p className="text-[#5F7A84] leading-snug">
+            <p className="text-[#5F7A84] leading-snug break-words">
               Alamat: <span className="text-[#234E5C]">{customerAddress}</span>
             </p>
           </div>
 
           {/* Kolom Kanan: Jadwal Waktu Sewa */}
-          <div className="space-y-1.5 sm:border-l sm:border-[#E8E8E1] sm:pl-4">
+          <div className="space-y-1.5 sm:border-l sm:border-[#E8E8E1] sm:pl-4 min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F] block">
               Jadwal Peminjaman Alat
             </span>
-            <p className="text-[#5F7A84]">
+            <p className="text-[#5F7A84] break-words">
               Tanggal Pengambilan:{" "}
               <strong className="text-[#234E5C]">
                 {formatDateIndo(data.tanggal_mulai, "d MMMM yyyy")}
               </strong>
             </p>
-            <p className="text-[#5F7A84]">
+            <p className="text-[#5F7A84] break-words">
               Batas Pengembalian:{" "}
               <strong className="text-[#234E5C]">
                 {formatDateIndo(data.tanggal_selesai, "d MMMM yyyy")}
               </strong>
             </p>
-            <p className="text-[#5F7A84]">
+            <p className="text-[#5F7A84] break-words">
               Durasi Sewa:{" "}
               <strong className="text-[#234E5C]">{durasiHari} Hari Kalender</strong>
             </p>
@@ -228,71 +232,78 @@ export function RentalInvoice({
 
         {/* 3. TABEL PERALATAN SEWA */}
         <div className="space-y-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-            Daftar Peralatan yang Disewa
-          </span>
-          <table className="w-full text-left text-xs border border-[#E8E8E1]">
-            <thead className="bg-[#FAFAF8] border-b border-[#E8E8E1] text-[10px] uppercase font-bold text-[#5F7A84]">
-              <tr>
-                <th className="py-2.5 px-3 w-10 text-center">No</th>
-                <th className="py-2.5 px-3">Nama Alat & Perlengkapan</th>
-                <th className="py-2.5 px-3 text-center">Qty</th>
-                <th className="py-2.5 px-3 text-right">Tarif / Hari</th>
-                <th className="py-2.5 px-3 text-right">Durasi</th>
-                <th className="py-2.5 px-3 text-right">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E8E8E1]">
-              {data.items.map((item, idx) => (
-                <tr key={item.id || idx}>
-                  <td className="py-2.5 px-3 text-center font-bold text-[#5F7A84]">
-                    {idx + 1}
-                  </td>
-                  <td className="py-2.5 px-3 font-bold text-[#234E5C]">
-                    {item.equipment?.nama || "Peralatan Rental"}
-                  </td>
-                  <td className="py-2.5 px-3 text-center font-semibold text-[#234E5C]">
-                    {item.qty} unit
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-[#5F7A84]">
-                    {formatRupiah(item.harga_per_hari)}
-                  </td>
-                  <td className="py-2.5 px-3 text-right text-[#5F7A84]">
-                    {durasiHari} hari
-                  </td>
-                  <td className="py-2.5 px-3 text-right font-bold text-[#234E5C]">
-                    {formatRupiah(item.subtotal)}
-                  </td>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
+              Daftar Peralatan yang Disewa
+            </span>
+            <span className="text-[10px] font-medium text-[#5F7A84] sm:hidden flex items-center gap-1">
+              Geser tabel &rarr;
+            </span>
+          </div>
+          <div className="w-full overflow-x-auto rounded-lg border border-[#E8E8E1] print:border-none print:overflow-visible">
+            <table className="w-full min-w-[500px] text-left text-xs border-collapse">
+              <thead className="bg-[#FAFAF8] border-b border-[#E8E8E1] text-[10px] uppercase font-bold text-[#5F7A84] whitespace-nowrap">
+                <tr>
+                  <th className="py-2.5 px-3 w-10 text-center">No</th>
+                  <th className="py-2.5 px-3">Nama Alat &amp; Perlengkapan</th>
+                  <th className="py-2.5 px-3 text-center">Qty</th>
+                  <th className="py-2.5 px-3 text-right">Tarif / Hari</th>
+                  <th className="py-2.5 px-3 text-right">Durasi</th>
+                  <th className="py-2.5 px-3 text-right">Subtotal</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[#E8E8E1]">
+                {data.items.map((item, idx) => (
+                  <tr key={item.id || idx}>
+                    <td className="py-2.5 px-3 text-center font-bold text-[#5F7A84]">
+                      {idx + 1}
+                    </td>
+                    <td className="py-2.5 px-3 font-bold text-[#234E5C] break-words">
+                      {item.equipment?.nama || "Peralatan Rental"}
+                    </td>
+                    <td className="py-2.5 px-3 text-center font-semibold text-[#234E5C] whitespace-nowrap">
+                      {item.qty} unit
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-[#5F7A84] whitespace-nowrap">
+                      {formatRupiah(item.harga_per_hari)}
+                    </td>
+                    <td className="py-2.5 px-3 text-right text-[#5F7A84] whitespace-nowrap">
+                      {durasiHari} hari
+                    </td>
+                    <td className="py-2.5 px-3 text-right font-bold text-[#234E5C] whitespace-nowrap">
+                      {formatRupiah(item.subtotal)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* 4. RINCIAN BIAYA & PEMBAYARAN */}
         <div className="flex flex-col sm:flex-row justify-end">
-          <div className="w-full sm:w-72 space-y-2 p-3.5 rounded-lg bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
-            <div className="flex justify-between text-[#5F7A84]">
+          <div className="w-full sm:w-80 space-y-2 p-3.5 rounded-lg bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
+            <div className="flex justify-between items-center text-[#5F7A84]">
               <span>Total Sewa Alat:</span>
               <span className="font-bold text-[#234E5C]">
                 {formatRupiah(data.total_harga)}
               </span>
             </div>
-            <div className="flex justify-between text-[#5F7A84]">
+            <div className="flex justify-between items-center text-[#5F7A84]">
               <span>Deposit Jaminan (Kembali):</span>
               <span className="font-bold text-[#234E5C]">
                 {formatRupiah(data.deposit)}
               </span>
             </div>
-            <div className="border-t border-[#E8E8E1] pt-1.5 flex justify-between font-bold text-[#234E5C]">
+            <div className="border-t border-[#E8E8E1] pt-1.5 flex justify-between items-center font-bold text-[#234E5C]">
               <span>Total Tagihan:</span>
               <span>{formatRupiah(totalTagihan)}</span>
             </div>
-            <div className="flex justify-between text-[#2E5E4E] font-bold">
+            <div className="flex justify-between items-center text-[#2E5E4E] font-bold">
               <span>Uang Muka (DP) 30%:</span>
               <span>- {formatRupiah(data.dp_jumlah)}</span>
             </div>
-            <div className="border-t-2 border-[#234E5C] pt-2 flex justify-between font-extrabold text-[#A0630F] text-sm">
+            <div className="border-t-2 border-[#234E5C] pt-2 flex justify-between items-center font-extrabold text-[#A0630F] text-sm">
               <span>Sisa Saat Serah Terima:</span>
               <span>{formatRupiah(sisaPelunasan)}</span>
             </div>

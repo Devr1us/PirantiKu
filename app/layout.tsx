@@ -5,6 +5,7 @@ import { MotionProvider } from "@/components/layout/motion-provider";
 import { CartProvider } from "@/lib/cart-context";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { FooterWrapper } from "@/components/layout/footer-wrapper";
 import { Toaster } from "@/components/ui/sonner";
 import { APP_NAME, TAGLINE, APP_DESCRIPTION } from "@/lib/constants";
 
@@ -94,7 +95,9 @@ export default function RootLayout({
             <main className="flex-1 flex flex-col w-full">
               {children}
             </main>
-            <Footer />
+            <FooterWrapper>
+              <Footer />
+            </FooterWrapper>
             <Toaster />
           </CartProvider>
         </MotionProvider>

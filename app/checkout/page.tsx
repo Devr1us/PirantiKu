@@ -551,7 +551,7 @@ export default function CheckoutPage() {
 
                 <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 space-y-2">
                   <h4 className="font-bold text-[#234E5C]">Ketentuan Pengambilan Unit:</h4>
-                  <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px]">
+                  <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px] break-words">
                     <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan ({nama.trim() || profile?.nama || "Penyewa"}) untuk verifikasi saat serah terima.</li>
                     <li>Melunasi sisa biaya booking ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>

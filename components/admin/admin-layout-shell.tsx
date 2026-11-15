@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -10,20 +10,65 @@ import {
   Calendar,
   Layers,
   Settings,
-  ArrowLeft,
+  ExternalLink,
   Menu,
+  User,
+  LogOut,
 } from "lucide-react";
 import { Wordmark } from "@/components/ui/wordmark";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  const [adminUser, setAdminUser] = React.useState<{ name: string; email: string } | null>(null);
+
+  React.useEffect(() => {
+    async function loadAdminUser() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("nama")
+            .eq("id", user.id)
+            .single();
+          setAdminUser({
+            name: profile?.nama || user.email?.split("@")[0] || "Admin Pengelola",
+            email: user.email || "",
+          });
+        }
+      } catch (err) {
+        console.error("Gagal memuat profil admin:", err);
+      }
+    }
+    loadAdminUser();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      toast.success("Berhasil keluar dari akun pengelola.");
+      router.push("/admin/login");
+      router.refresh();
+    } catch {
+      toast.error("Gagal keluar akun.");
+    }
+  };
 
   // Jika halaman login admin, tampilkan children langsung tanpa sidebar
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
+
+  const userInitials = (adminUser?.name || "AD").slice(0, 2).toUpperCase();
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -36,7 +81,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
   const sidebarContent = (
     <div className="flex flex-col h-full justify-between">
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Brand Wordmark Versi Putih */}
         <div className="pb-4 border-b border-white/15">
           <Wordmark variant="white" asLink={false} />
@@ -47,8 +92,23 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
+        {/* Profil Singkat Admin */}
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/10 border border-white/10">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#A0630F] text-white text-xs font-bold">
+            {userInitials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-white truncate">
+              {adminUser?.name || "Administrator"}
+            </p>
+            <p className="text-[10px] text-white/70 truncate">
+              {adminUser?.email || "admin@pirantiku.web.id"}
+            </p>
+          </div>
+        </div>
+
         {/* Menu Navigasi Admin */}
-        <nav className="space-y-1.5">
+        <nav className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -75,15 +135,34 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      {/* Bagian Bawah Sidebar */}
-      <div className="pt-6 border-t border-white/15 space-y-3">
+      {/* Bagian Bawah Sidebar: Profil, Ke Web, & Keluar */}
+      <div className="pt-4 border-t border-white/15 space-y-1.5">
         <Link
           href="/"
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+          onClick={() => setIsMobileOpen(false)}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Ke Beranda Publik</span>
+          <ExternalLink className="h-4 w-4 shrink-0 text-[#E8E8E1]" />
+          <span>Lihat Website Publik</span>
         </Link>
+
+        <Link
+          href="/profil"
+          onClick={() => setIsMobileOpen(false)}
+          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <User className="h-4 w-4 shrink-0 text-[#E8E8E1]" />
+          <span>Profil Penyewa</span>
+        </Link>
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-red-200 hover:text-white hover:bg-red-500/20 transition-colors text-left cursor-pointer"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          <span>Keluar Akun Admin</span>
+        </button>
       </div>
     </div>
   );
@@ -99,20 +178,25 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
       {/* Area Konten Utama */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar Mobile */}
-        <div className="lg:hidden flex items-center justify-between p-4 bg-[#234E5C] text-white">
-          <Wordmark variant="white" asLink={false} />
+        {/* Topbar Mobile: Satu-satunya navbar di halaman admin */}
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between p-3.5 bg-[#234E5C] text-white border-b border-white/15 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Wordmark variant="white" asLink={false} />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-[#A0630F] bg-white px-2 py-0.5 rounded-full inline-block">
+              Admin
+            </span>
+          </div>
           <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
             <SheetTrigger asChild>
               <button
                 type="button"
-                className="p-2 rounded-xl text-white hover:bg-white/10"
-                aria-label="Buka Menu Admin"
+                className="p-2 rounded-xl text-white hover:bg-white/10 flex items-center gap-1.5 focus:outline-none"
+                aria-label="Buka Menu Pengelola"
               >
                 <Menu className="h-6 w-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 bg-[#234E5C] text-white p-6 border-r-0">
+            <SheetContent side="left" className="w-72 bg-[#234E5C] text-white p-6 border-r-0 overflow-y-auto">
               {sidebarContent}
             </SheetContent>
           </Sheet>

@@ -139,7 +139,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] py-8 px-4 sm:px-6 print:p-0 print:bg-white">
+    <div className="min-h-screen bg-[#FAFAF8] py-4 sm:py-8 px-3 sm:px-6 print:p-0 print:bg-white overflow-x-hidden">
       <div className="max-w-3xl mx-auto mb-4 print:hidden">
         <Link
           href={isAdmin ? "/admin/booking" : "/booking-saya"}
