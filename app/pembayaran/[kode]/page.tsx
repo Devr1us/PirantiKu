@@ -148,7 +148,11 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
               {isDpVerified ? "RINCIAN BOOKING & LOKASI" : "PEMBAYARAN BOOKING"}
             </H1>
             <Lead className="text-sm text-[#5F7A84] font-medium">
-              {isDpVerified
+              {booking.status === "diambil"
+                ? "Peralatan saat ini sedang dalam masa peminjaman aktif Anda. Silakan cek detail alat, batas waktu pengembalian, dan lokasi serah terima."
+                : booking.status === "selesai" || booking.status === "dikembalikan"
+                ? "Penyewaan telah selesai. Unit alat telah dikembalikan dan diverifikasi oleh pihak gerai."
+                : isDpVerified
                 ? "Jadwal booking dan ketersediaan unit alat Anda telah dikunci. Silakan cek detail pesanan dan lokasi serah terima alat."
                 : "Selesaikan uang muka (DP) untuk mengunci jadwal peminjaman unit alat Anda."}
             </Lead>

@@ -17,6 +17,7 @@ import {
   ZoomIn,
   X,
   Printer,
+  Package,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -508,7 +509,11 @@ export function PaymentFlow({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E8E1] pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              {isDpVerified
+              {currentBookingStatus === "diambil"
+                ? "Status Booking: Unit Sedang Digunakan"
+                : currentBookingStatus === "selesai" || currentBookingStatus === "dikembalikan"
+                ? "Status Booking: Selesai"
+                : isDpVerified
                 ? "Uang Muka (DP 30%) - Terverifikasi"
                 : isPaymentSubmitted
                 ? "Rincian Pembayaran Uang Muka (DP 30%)"
@@ -518,7 +523,17 @@ export function PaymentFlow({
               <span className="text-2xl sm:text-3xl font-extrabold text-[#A0630F]">
                 {formatRupiah(booking.dp_jumlah)}
               </span>
-              {isDpVerified ? (
+              {currentBookingStatus === "diambil" ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#5B21B6] bg-[#EDE9FE] px-2.5 py-0.5 rounded-full border border-[#DDD6FE]">
+                  <Package className="h-3 w-3" />
+                  <span>Sedang Digunakan</span>
+                </span>
+              ) : currentBookingStatus === "selesai" || currentBookingStatus === "dikembalikan" ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#234E5C] bg-[#E8E8E1] px-2.5 py-0.5 rounded-full border border-[#D5D5CA]">
+                  <Check className="h-3 w-3" />
+                  <span>Selesai</span>
+                </span>
+              ) : isDpVerified ? (
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2E5E4E] bg-[#E2F0D9] px-2.5 py-0.5 rounded-full border border-[#C5E1A5]">
                   <Check className="h-3 w-3" />
                   <span>DP Terverifikasi</span>
@@ -603,32 +618,89 @@ export function PaymentFlow({
           )}
 
           {isDpVerified && (
-            <div className="rounded-xl border border-[#C5E1A5] bg-[#E2F0D9] p-4 text-xs text-[#2E5E4E] space-y-3">
-              <div className="flex items-center gap-2 font-bold text-sm">
-                <Check className="h-4 w-4 text-[#2E5E4E]" />
-                <span>Pembayaran DP Terverifikasi!</span>
-              </div>
-              <p className="leading-relaxed text-[11px]">
-                Uang muka Anda telah diterima. Jadwal booking unit telah terkunci aman. Silakan bawa identitas asli (KTP/SIM) untuk verifikasi saat pengambilan alat di lokasi.
-              </p>
-              
-              <div className="pt-2 border-t border-[#C5E1A5] flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-[#2E5E4E]">
-                  Surat perjanjian booking telah terbit
-                </span>
-                <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
-                  <Button
-                    type="button"
-                    variant="petrol"
-                    size="sm"
-                    className="text-xs font-bold gap-1.5 h-8 px-4"
-                  >
-                    <Printer className="h-3.5 w-3.5" />
-                    <span>Cetak Invoice & Surat Jalan</span>
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <>
+              {currentBookingStatus === "diambil" ? (
+                <div className="rounded-xl border border-[#DDD6FE] bg-[#EDE9FE] p-4 text-xs text-[#5B21B6] space-y-3">
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    <Package className="h-4 w-4 text-[#5B21B6]" />
+                    <span>Peralatan Sedang Digunakan</span>
+                  </div>
+                  <p className="leading-relaxed text-[11px]">
+                    Unit alat telah diserahterimakan dan saat ini sedang dalam masa sewa aktif Anda. Harap jaga kondisi alat dengan baik dan kembalikan paling lambat tanggal {formatDateIndo(booking.tanggal_selesai, "d MMM yyyy")} sebelum pukul 21.00 WIB.
+                  </p>
+                  
+                  <div className="pt-2 border-t border-[#DDD6FE] flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-[#5B21B6]">
+                      Surat jalan &amp; perjanjian sewa aktif
+                    </span>
+                    <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
+                      <Button
+                        type="button"
+                        variant="petrol"
+                        size="sm"
+                        className="text-xs font-bold gap-1.5 h-8 px-4"
+                      >
+                        <Printer className="h-3.5 w-3.5" />
+                        <span>Cetak Invoice &amp; Surat Jalan</span>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : currentBookingStatus === "selesai" || currentBookingStatus === "dikembalikan" ? (
+                <div className="rounded-xl border border-[#234E5C]/20 bg-[#234E5C]/10 p-4 text-xs text-[#234E5C] space-y-3">
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    <Check className="h-4 w-4 text-[#2E5E4E]" />
+                    <span>Unit Telah Dikembalikan &amp; Peminjaman Selesai</span>
+                  </div>
+                  <p className="leading-relaxed text-[11px]">
+                    Peralatan telah selesai disewa dan telah diperiksa oleh petugas gerai. Terima kasih telah menyewa di PirantiKu!
+                  </p>
+                  <div className="pt-2 border-t border-[#234E5C]/20 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-[#234E5C]">
+                      Tanda terima &amp; arsip transaksi
+                    </span>
+                    <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
+                      <Button
+                        type="button"
+                        variant="petrol"
+                        size="sm"
+                        className="text-xs font-bold gap-1.5 h-8 px-4"
+                      >
+                        <Printer className="h-3.5 w-3.5" />
+                        <span>Cetak Bukti Selesai</span>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-[#C5E1A5] bg-[#E2F0D9] p-4 text-xs text-[#2E5E4E] space-y-3">
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    <Check className="h-4 w-4 text-[#2E5E4E]" />
+                    <span>Pembayaran DP Terverifikasi!</span>
+                  </div>
+                  <p className="leading-relaxed text-[11px]">
+                    Uang muka Anda telah diterima. Jadwal booking unit telah terkunci aman. Silakan bawa identitas asli (KTP/SIM) untuk verifikasi saat pengambilan alat di lokasi gerai.
+                  </p>
+                  
+                  <div className="pt-2 border-t border-[#C5E1A5] flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-[#2E5E4E]">
+                      Surat perjanjian booking telah terbit
+                    </span>
+                    <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
+                      <Button
+                        type="button"
+                        variant="petrol"
+                        size="sm"
+                        className="text-xs font-bold gap-1.5 h-8 px-4"
+                      >
+                        <Printer className="h-3.5 w-3.5" />
+                        <span>Cetak Invoice &amp; Surat Jalan</span>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {latestDpPayment.status === "ditolak" && (

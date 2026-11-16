@@ -22,6 +22,7 @@ import { createWhatsAppLink } from "@/lib/payment-utils";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -70,6 +71,7 @@ export default function BookingSayaPage() {
   const [bookingToCancel, setBookingToCancel] = React.useState<BookingWithDetails | null>(null);
   const [cancelReason, setCancelReason] = React.useState<string>("");
   const [customReason, setCustomReason] = React.useState<string>("");
+  const [refundAccountInfo, setRefundAccountInfo] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
 
   React.useEffect(() => {
@@ -145,6 +147,19 @@ export default function BookingSayaPage() {
       return;
     }
 
+    const hasPaidOrProof =
+      bookingToCancel.status === "dp_dibayar" ||
+      bookingToCancel.payments?.some(
+        (p) => p.jenis === "dp" && p.status !== "ditolak"
+      );
+
+    if (hasPaidOrProof && !refundAccountInfo.trim()) {
+      toast.error(
+        "Mohon cantumkan rekening atau e-wallet tujuan pengembalian dana (refund)."
+      );
+      return;
+    }
+
     const { id: bookingId, kode_booking: bookingCode } = bookingToCancel;
     setIsCancelling(bookingId);
 
@@ -155,7 +170,11 @@ export default function BookingSayaPage() {
         ? `${cancelReason} (${customReason.trim()})`
         : cancelReason;
 
-    const cancellationNote = `[Dibatalkan User: ${fullReason}]${
+    const refundNote = hasPaidOrProof
+      ? ` [Refund DP 1x24 Jam ke: ${refundAccountInfo.trim()}]`
+      : "";
+
+    const cancellationNote = `[Dibatalkan User: ${fullReason}]${refundNote}${
       bookingToCancel.catatan_penyewa ? ` | ${bookingToCancel.catatan_penyewa}` : ""
     }`;
 
@@ -197,10 +216,18 @@ export default function BookingSayaPage() {
         )
       );
 
-      toast.success(`Booking #${bookingCode} berhasil dibatalkan.`);
+      if (hasPaidOrProof) {
+        toast.success(
+          `Booking #${bookingCode} dibatalkan. Pengembalian dana DP akan diproses admin dalam jangka waktu 1x24 jam.`
+        );
+      } else {
+        toast.success(`Booking #${bookingCode} berhasil dibatalkan.`);
+      }
+
       setBookingToCancel(null);
       setCancelReason("");
       setCustomReason("");
+      setRefundAccountInfo("");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal membatalkan pesanan.";
       toast.error(msg);
@@ -429,22 +456,21 @@ export default function BookingSayaPage() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        {!hasPendingProof && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            disabled={isCancelling === booking.id}
-                            onClick={() => {
-                              setBookingToCancel(booking);
-                              setCancelReason("");
-                              setCustomReason("");
-                            }}
-                            className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
-                          >
-                            {isCancelling === booking.id ? "Membatalkan..." : "Batalkan Pesanan"}
-                          </Button>
-                        )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          disabled={isCancelling === booking.id}
+                          onClick={() => {
+                            setBookingToCancel(booking);
+                            setCancelReason("");
+                            setCustomReason("");
+                            setRefundAccountInfo("");
+                          }}
+                          className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
+                        >
+                          {isCancelling === booking.id ? "Membatalkan..." : "Batalkan Pesanan"}
+                        </Button>
 
                         <Link href={`/pembayaran/${booking.kode_booking}`} className="flex-1 sm:flex-initial">
                           <Button
@@ -476,7 +502,7 @@ export default function BookingSayaPage() {
                     </div>
                   )}
 
-                  {isDpVerified && (
+                  {booking.status === "dp_dibayar" && (
                     <div className="rounded-xl border border-[#C5E1A5] bg-[#E2F0D9]/40 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                       <div className="space-y-0.5">
                         <span className="font-bold text-[#2E5E4E] flex items-center gap-1.5">
@@ -489,6 +515,22 @@ export default function BookingSayaPage() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          disabled={isCancelling === booking.id}
+                          onClick={() => {
+                            setBookingToCancel(booking);
+                            setCancelReason("");
+                            setCustomReason("");
+                            setRefundAccountInfo("");
+                          }}
+                          className="text-xs text-[#991B1B] hover:bg-[#FEE2E2]"
+                        >
+                          {isCancelling === booking.id ? "Membatalkan..." : "Batalkan Booking"}
+                        </Button>
+
                         <Link href={`/pembayaran/${booking.kode_booking}`} className="flex-1 sm:flex-initial">
                           <Button
                             type="button"
@@ -528,16 +570,31 @@ export default function BookingSayaPage() {
                         </p>
                       </div>
 
-                      <Link href={`/pembayaran/${booking.kode_booking}`} className="w-full sm:w-auto">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="text-xs font-bold w-full"
+                      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <Link href={`/pembayaran/${booking.kode_booking}`} className="flex-1 sm:flex-initial">
+                          <Button
+                            type="button"
+                            variant="warm"
+                            size="sm"
+                            className="text-xs font-bold gap-1.5 w-full"
+                          >
+                            Rincian Booking &amp; Lokasi
+                          </Button>
+                        </Link>
+
+                        <a
+                          href={createWhatsAppLink(
+                            whatsappAdmin,
+                            `Halo Admin PirantiKu, saya sedang menggunakan unit untuk booking *${booking.kode_booking}*. Ingin konfirmasi terkait jadwal pengembalian alat.`
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-[#DDD6FE] bg-white hover:bg-[#EDE9FE] text-[#5B21B6] text-xs font-semibold transition-colors shrink-0"
+                          title="Hubungi Admin"
                         >
-                          Rincian Booking
-                        </Button>
-                      </Link>
+                          <span>Hubungi Admin</span>
+                        </a>
+                      </div>
                     </div>
                   )}
 
@@ -627,27 +684,66 @@ export default function BookingSayaPage() {
                       );
                     })()}
 
-                  {booking.status === "dibatalkan" && (
-                    <div className="p-3.5 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] text-xs space-y-2">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <span className="font-bold text-[#DC2626] flex items-center gap-1.5">
-                          <AlertTriangle className="h-4 w-4" />
-                          Pesanan Booking Telah Dibatalkan
-                        </span>
-                        <Link href="/alat">
-                          <Button variant="ghost" size="sm" className="text-xs font-bold text-[#A0630F] p-0 h-auto hover:bg-transparent hover:underline">
-                            Booking Alat Lain
-                          </Button>
-                        </Link>
-                      </div>
-                      {booking.catatan_penyewa && (
-                        <div className="p-2.5 rounded-lg bg-white/90 border border-[#FECACA] text-[11px] text-[#7F1D1D] leading-relaxed">
-                          <strong className="text-[#991B1B]">Alasan Pembatalan:</strong>{" "}
-                          {booking.catatan_penyewa.replace(/^\[Dibatalkan (?:Penyewa|User):\s*([^\]]+)\]/, "$1")}
+                  {booking.status === "dibatalkan" && (() => {
+                    const hadPayment =
+                      (booking.payments &&
+                        booking.payments.some(
+                          (p) => p.jenis === "dp" && p.status !== "ditolak"
+                        )) ||
+                      Boolean(booking.catatan_penyewa?.includes("Refund DP"));
+                    return (
+                      <div className="p-4 rounded-xl bg-[#FEF2F2] border border-[#FEE2E2] text-xs space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <span className="font-bold text-[#DC2626] flex items-center gap-1.5">
+                            <AlertTriangle className="h-4 w-4 shrink-0" />
+                            <span>Pesanan Booking Telah Dibatalkan</span>
+                          </span>
+                          <Link href="/alat">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs font-bold text-[#A0630F] p-0 h-auto hover:bg-transparent hover:underline"
+                            >
+                              Booking Alat Lain &rarr;
+                            </Button>
+                          </Link>
                         </div>
-                      )}
-                    </div>
-                  )}
+
+                        {hadPayment && (
+                          <div className="p-3.5 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] text-xs text-[#92400E] space-y-1.5">
+                            <div className="flex items-center gap-2 font-bold text-[#B45309]">
+                              <Clock className="h-4 w-4 text-[#D97706]" />
+                              <span>Pengembalian Dana (Refund DP) Diproses 1x24 Jam</span>
+                            </div>
+                            <p className="text-[11px] leading-relaxed text-[#78350F]">
+                              Uang muka (DP) sebesar <strong>{formatRupiah(booking.dp_jumlah)}</strong> yang telah masuk ke rekening toko sedang diproses pengembaliannya oleh pengelola ke rekening Anda dalam jangka waktu maksimal <strong>1x24 jam</strong>.
+                            </p>
+                            <div className="pt-1 flex flex-wrap items-center gap-3">
+                              <a
+                                href={createWhatsAppLink(
+                                  whatsappAdmin,
+                                  `Halo Admin PirantiKu, saya telah membatalkan booking *${booking.kode_booking}*. Ingin konfirmasi proses pengembalian dana (refund) DP sebesar ${formatRupiah(booking.dp_jumlah)} dalam 1x24 jam.`
+                                )}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#1B5E20] hover:underline"
+                              >
+                                <MessageCircle className="h-3.5 w-3.5" />
+                                <span>Konfirmasi Rekening Refund ke WhatsApp Admin &rarr;</span>
+                              </a>
+                            </div>
+                          </div>
+                        )}
+
+                        {booking.catatan_penyewa && (
+                          <div className="p-2.5 rounded-lg bg-white border border-[#FECACA] text-[11px] text-[#7F1D1D] leading-relaxed">
+                            <strong className="text-[#991B1B]">Keterangan:</strong>{" "}
+                            {booking.catatan_penyewa}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             );
@@ -710,6 +806,7 @@ export default function BookingSayaPage() {
             setBookingToCancel(null);
             setCancelReason("");
             setCustomReason("");
+            setRefundAccountInfo("");
           }
         }}
       >
@@ -725,6 +822,42 @@ export default function BookingSayaPage() {
               Pesanan booking <strong className="text-[#234E5C]">#{bookingToCancel?.kode_booking}</strong> akan dibatalkan dan jadwal unit alat akan dilepaskan kembali ke katalog umum.
             </DialogDescription>
           </DialogHeader>
+
+          {/* Kotak Informasi Refund DP Jika User Telah Membayar / Upload Bukti */}
+          {(() => {
+            const hasPaid =
+              bookingToCancel?.status === "dp_dibayar" ||
+              bookingToCancel?.payments?.some(
+                (p) => p.jenis === "dp" && p.status !== "ditolak"
+              );
+            if (!hasPaid || !bookingToCancel) return null;
+            return (
+              <div className="p-3.5 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#78350F] space-y-2">
+                <div className="flex items-center gap-1.5 font-bold text-[#92400E]">
+                  <Clock className="h-4 w-4 text-[#A0630F]" />
+                  <span>Ketentuan Pengembalian Dana (Refund DP)</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Uang DP sebesar <strong>{formatRupiah(bookingToCancel.dp_jumlah)}</strong> yang telah masuk ke rekening toko akan diproses untuk dikembalikan dalam jangka waktu <strong>1x24 jam</strong>.
+                </p>
+                <div className="pt-1 space-y-1">
+                  <label className="text-[11px] font-bold text-[#78350F] block">
+                    Rekening / E-Wallet Tujuan Refund: <span className="text-[#DC2626]">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Contoh: BCA 1234567890 a.n. Budi / GoPay 0812..."
+                    value={refundAccountInfo}
+                    onChange={(e) => setRefundAccountInfo(e.target.value)}
+                    className="text-xs bg-white text-[#234E5C] border-[#FDE68A] focus:border-[#A0630F]"
+                  />
+                  <p className="text-[10px] text-[#78350F]/80">
+                    Sebutkan Nama Bank/E-Wallet, Nomor Rekening/HP, dan Nama Pemilik Akun.
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Form Alasan Pembatalan */}
           <div className="space-y-3 py-2 text-left">
@@ -784,6 +917,7 @@ export default function BookingSayaPage() {
                 setBookingToCancel(null);
                 setCancelReason("");
                 setCustomReason("");
+                setRefundAccountInfo("");
               }}
               disabled={!!isCancelling}
               className="text-xs font-semibold h-10 flex-1"
