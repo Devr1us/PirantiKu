@@ -3,8 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import { EASE, DURATION_BASE, DURATION_SHORT } from "@/lib/motion";
 
 interface WordmarkProps {
   variant?: "default" | "white";
@@ -23,81 +21,32 @@ export function Wordmark({
   logoClassName = "",
   size = "default",
 }: WordmarkProps) {
-  const shouldReduceMotion = useReducedMotion();
-  const emptySub = () => () => {};
-  const isAlreadyAnimated = React.useSyncExternalStore(
-    emptySub,
-    () => {
-      try {
-        return sessionStorage.getItem("pirantiku_wordmark_animated") === "true";
-      } catch {
-        return true;
-      }
-    },
-    () => true
-  );
-  const shouldAnimate = !isAlreadyAnimated && !shouldReduceMotion;
-
-  React.useEffect(() => {
-    if (shouldAnimate) {
-      try {
-        sessionStorage.setItem("pirantiku_wordmark_animated", "true");
-      } catch {
-        // Ignore
-      }
-    }
-  }, [shouldAnimate]);
-
   const isWhite = variant === "white";
   const mainColor = isWhite ? "text-white" : "text-[#234E5C]";
   const subColor = isWhite ? "text-white/80" : "text-[#5F7A84]";
-
-  const chars = Array.from("PIRANTIKU");
-
-  const containerVariants: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.035,
-        delayChildren: 0.05,
-      },
-    },
-  };
-
-  const charVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      y: "115%",
-    },
-    visible: {
-      opacity: 1,
-      y: "0%",
-      transition: {
-        duration: DURATION_BASE,
-        ease: EASE,
-      },
-    },
-  };
-
   const logoSrc = isWhite ? "/logo-white.png" : "/logo.png";
-
   const isSmall = size === "sm";
 
-  const gapClass = isSmall ? "gap-2 sm:gap-2.5" : "gap-2.5 sm:gap-3.5";
-  const logoSizeClass = isSmall
-    ? "h-8 w-auto sm:h-9"
-    : "h-9 w-auto sm:h-11";
-  const mainTextClass = isSmall
-    ? "text-base sm:text-lg font-bold uppercase tracking-[0.15em] leading-none pl-[0.15em]"
-    : "text-lg sm:text-2xl font-bold uppercase tracking-[0.22em] leading-none pl-[0.22em]";
-  const subTextClass = isSmall
-    ? "text-[6.5px] sm:text-[7.5px] font-bold uppercase tracking-[0.14em] leading-tight mt-0.5 pl-[0.14em] whitespace-nowrap"
-    : "text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-[0.18em] leading-tight mt-1 pl-[0.18em] whitespace-nowrap";
+  // Ukuran sesuai spesifikasi prompt:
+  // Desktop (>=768px): ikon 44x44, wordmark 24px, subtitle 9.5px
+  // Mobile (<768px): ikon 36x36, wordmark 22px, subtitle 8px
+  // Khusus size="sm" (admin sidebar / small): ikon 32px, wordmark 18px, subtitle 7.5px
+  const iconSizeClass = isSmall
+    ? "w-8 h-8"
+    : "w-[36px] h-[36px] md:w-[44px] md:h-[44px]";
+
+  const wordmarkSizeClass = isSmall
+    ? "text-[18px]"
+    : "text-[22px] md:text-[24px]";
+
+  const subtitleSizeClass = isSmall
+    ? "text-[7.5px]"
+    : "text-[8px] md:text-[9.5px]";
 
   const content = (
     <div
       aria-label="PIRANTIKU BOOKING ALAT SERBA ADA"
-      className={`inline-flex items-center ${gapClass} select-none ${className}`}
+      className={`inline-flex items-center gap-[14px] shrink-0 flex-nowrap select-none ${className}`}
     >
       {showLogo && (
         <div className="relative flex items-center justify-center shrink-0">
@@ -105,59 +54,42 @@ export function Wordmark({
             src={logoSrc}
             alt="Logo PirantiKu"
             width={44}
-            height={48}
+            height={44}
             priority
             unoptimized
-            className={`${logoSizeClass} object-contain transition-transform duration-200 group-hover:scale-105 ${logoClassName}`}
+            className={`${iconSizeClass} object-contain shrink-0 transition-transform duration-200 group-hover:scale-105 ${logoClassName}`}
           />
         </div>
       )}
 
-      <div className="inline-flex flex-col items-start justify-center text-left">
+      {/* Blok Teks: Flex Column, Gap 4px, Line-height 1 */}
+      <div className="inline-flex flex-col gap-[4px] leading-none shrink-0 text-left">
+        {/* Wordmark: font-bold, uppercase, letter-spacing 0.28em, margin-right: -0.28em */}
         <span
-          style={{ fontFamily: "var(--font-libre-baskerville), Georgia, serif" }}
-          className={`${mainTextClass} ${mainColor}`}
+          style={{
+            fontFamily: "var(--font-libre-baskerville), Georgia, serif",
+            letterSpacing: "0.28em",
+            marginRight: "-0.28em",
+          }}
+          className={`block font-bold uppercase leading-none ${wordmarkSizeClass} ${mainColor}`}
         >
-          {shouldAnimate ? (
-            <motion.span
-              className="inline-flex overflow-hidden pb-[0.1em] -mb-[0.1em]"
-              aria-hidden="true"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {chars.map((char, i) => (
-                <span key={i} className="inline-block overflow-hidden align-top">
-                  <motion.span
-                    variants={charVariants}
-                    className="inline-block"
-                  >
-                    {char}
-                  </motion.span>
-                </span>
-              ))}
-            </motion.span>
-          ) : (
-            <span>PIRANTIKU</span>
-          )}
+          PIRANTIKU
         </span>
 
-        <span
-          style={{ fontFamily: "var(--font-open-sans), sans-serif" }}
-          className={`${subTextClass} ${subColor}`}
+        {/* Subtitle: Selebar Wordmark, Tepi Kiri & Kanan Sejajar Sempurna */}
+        <div
+          style={{
+            fontFamily: "var(--font-open-sans), sans-serif",
+            textAlign: "justify",
+            textAlignLast: "justify",
+          }}
+          className={`w-full flex justify-between items-center font-bold uppercase leading-none tracking-[0.22em] mr-[-0.22em] whitespace-nowrap ${subtitleSizeClass} ${subColor}`}
         >
-          {shouldAnimate ? (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: DURATION_SHORT, delay: 0.35, ease: EASE }}
-            >
-              BOOKING ALAT SERBA ADA
-            </motion.span>
-          ) : (
-            <span>BOOKING ALAT SERBA ADA</span>
-          )}
-        </span>
+          <span>BOOKING</span>
+          <span>ALAT</span>
+          <span>SERBA</span>
+          <span>ADA</span>
+        </div>
       </div>
     </div>
   );
@@ -166,7 +98,7 @@ export function Wordmark({
     return (
       <Link
         href="/"
-        className="inline-flex items-center group focus:outline-none focus:ring-2 focus:ring-[#234E5C]/30 rounded-xl"
+        className="inline-flex items-center shrink-0 group focus:outline-none focus:ring-2 focus:ring-[#234E5C]/30 rounded-xl"
       >
         {content}
       </Link>
