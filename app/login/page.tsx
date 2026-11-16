@@ -193,22 +193,22 @@ function LoginForm() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row"
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:min-h-[640px]"
       >
-        {/* Kolom Kiri: Panel Petrol Desktop */}
-        <div className="hidden md:flex md:w-5/12 bg-[#234E5C] text-white p-10 flex-col justify-between">
+        {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci Stabil Tidak Berubah Saat Ada Error) */}
+        <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between">
           <div>
             <Wordmark variant="white" />
           </div>
 
-          <div className="space-y-3 my-auto py-8">
-            <H2 className="text-xl font-bold uppercase tracking-tight text-white">
-              Sewa Alat Praktis & Terpercaya
-            </H2>
-            <P className="text-xs text-white/80 leading-relaxed font-normal">
+          <div className="space-y-3 py-6">
+            <h2 className="text-xl font-bold uppercase tracking-tight text-white">
+              Sewa Alat Praktis &amp; Terpercaya
+            </h2>
+            <p className="text-xs text-white/80 leading-relaxed font-normal">
               Satu akun untuk menyewa seluruh perlengkapan camping, perkakas,
               olahraga, dan perayaan dengan stok terjamin per tanggal.
-            </P>
+            </p>
           </div>
 
           <div className="text-[11px] text-white/60">
@@ -217,7 +217,7 @@ function LoginForm() {
         </div>
 
         {/* Kolom Kanan: Formulir Putih */}
-        <div className="w-full md:w-7/12 p-8 sm:p-10 flex flex-col justify-center space-y-6">
+        <div className="w-full md:flex-1 p-8 sm:p-10 flex flex-col justify-center space-y-6">
           {/* Header Mobile Wordmark */}
           <div className="md:hidden text-center pb-2">
             <Wordmark />
