@@ -305,6 +305,65 @@ export function HomeView({
           </Stagger>
         </div>
       </section>
+
+      {/* ========================================================
+          5. KARTU CTA WADAH RAPI MODERN (DI ATAS FOOTER)
+          ======================================================== */}
+      <section className="w-full py-16 sm:py-24 bg-[#FAFAF8]">
+        <div className="site-container">
+          <Reveal>
+            <div className="rounded-[28px] sm:rounded-[36px] border border-[#234E5C]/20 bg-white p-8 sm:p-14 md:p-16 text-center space-y-6 shadow-xs">
+              {/* Pill Badge Centered */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8F4F7] border border-[#234E5C]/20 text-[#234E5C] text-xs font-semibold">
+                <Package className="h-3.5 w-3.5" />
+                <span>Mulai Booking Dalam 2 Menit</span>
+              </div>
+
+              {/* Judul Besar Sesuai Layout Referensi */}
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#234E5C] max-w-3xl mx-auto leading-tight">
+                Siap Booking Perlengkapan &amp; Melipatgandakan Kelancaran Acara Anda?
+              </h2>
+
+              {/* Teks Pendukung */}
+              <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#5F7A84] leading-relaxed">
+                Pilih perlengkapan yang Anda butuhkan tanpa ribet. Booking langsung per tanggal, amankan unit dengan DP fleksibel {effectiveDp}%, dan nikmati alat terawat siap pakai untuk segala kebutuhan aktivitas Anda.
+              </p>
+
+              {/* Tombol Aksi Utama (Warna Dominan Petrol #234E5C) */}
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <Link href="/alat">
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#234E5C] hover:bg-[#1B3E49] active:scale-[0.98] text-white text-sm sm:text-base font-bold shadow-sm transition-all cursor-pointer"
+                  >
+                    <span>Lihat Katalog Alat Sekarang &mdash; Siap Pakai &rarr;</span>
+                  </button>
+                </Link>
+
+                <a
+                  href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    variant="outline"
+                    className="h-12 px-6 rounded-xl border-[#E8E8E1] text-[#234E5C] text-sm font-bold flex items-center gap-2 hover:bg-[#FAFAF8]"
+                  >
+                    <MessageCircle className="h-4 w-4 text-[#25D366]" />
+                    <span>Hubungi Admin WhatsApp</span>
+                  </Button>
+                </a>
+              </div>
+
+              {/* Poin Kepercayaan dengan Centang (Trust Checkmarks) */}
+              <div className="pt-2 text-xs sm:text-sm text-[#5F7A84] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <span>&check; Jaminan stok pasti per tanggal. Cukup KTP / SIM fisik saat serah terima.</span>
+                <span>&check; Deposit jaminan kembali utuh 100% tanpa potongan tersembunyi.</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
     </div>
   );
 }

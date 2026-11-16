@@ -91,12 +91,12 @@ export function Wordmark({
     ? "text-base sm:text-lg font-bold uppercase tracking-[0.15em] leading-none pl-[0.15em]"
     : "text-lg sm:text-2xl font-bold uppercase tracking-[0.22em] leading-none pl-[0.22em]";
   const subTextClass = isSmall
-    ? "text-[7px] sm:text-[8px] font-bold uppercase tracking-[0.32em] leading-tight mt-0.5 pl-[0.32em]"
-    : "text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.45em] leading-tight mt-1 pl-[0.45em]";
+    ? "text-[6.5px] sm:text-[7.5px] font-bold uppercase tracking-[0.14em] leading-tight mt-0.5 pl-[0.14em] whitespace-nowrap"
+    : "text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-[0.18em] leading-tight mt-1 pl-[0.18em] whitespace-nowrap";
 
   const content = (
     <div
-      aria-label="PIRANTIKU BOOKING ALAT"
+      aria-label="PIRANTIKU BOOKING ALAT SERBA ADA"
       className={`inline-flex items-center ${gapClass} select-none ${className}`}
     >
       {showLogo && (
@@ -152,10 +152,10 @@ export function Wordmark({
               animate={{ opacity: 1 }}
               transition={{ duration: DURATION_SHORT, delay: 0.35, ease: EASE }}
             >
-              BOOKING ALAT
+              BOOKING ALAT SERBA ADA
             </motion.span>
           ) : (
-            <span>BOOKING ALAT</span>
+            <span>BOOKING ALAT SERBA ADA</span>
           )}
         </span>
       </div>
