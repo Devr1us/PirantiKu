@@ -125,7 +125,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
         <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
           <Link href="/booking-saya" className="hover:text-[#234E5C] font-semibold flex items-center gap-1">
             <ArrowLeft className="h-3.5 w-3.5" />
-            Kembali ke Booking Saya
+            Kembali ke Riwayat Booking
           </Link>
           <span>/</span>
           <span>Pembayaran</span>

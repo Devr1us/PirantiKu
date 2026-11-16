@@ -146,7 +146,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#5F7A84] hover:text-[#234E5C] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Kembali ke {isAdmin ? "Kelola Booking" : "Booking Saya"}</span>
+          <span>Kembali ke {isAdmin ? "Kelola Booking" : "Riwayat Booking"}</span>
         </Link>
       </div>
 

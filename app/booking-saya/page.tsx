@@ -225,7 +225,7 @@ export default function BookingSayaPage() {
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <H1 className="section-title block">
-          BOOKING SAYA
+          RIWAYAT BOOKING
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
           Pantau status verifikasi pembayaran uang muka, cetak surat jalan perjanjian, dan jadwal pengambilan unit booking Anda.

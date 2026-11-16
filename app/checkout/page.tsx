@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { H1, Lead, Eyebrow } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { PaymentFlow } from "@/components/payment/payment-flow";
+import { PaymentMethodSelector } from "@/components/payment/payment-method-selector";
 import type { Profile, Booking } from "@/types/database";
 
 function CheckoutContent() {
@@ -46,8 +47,11 @@ function CheckoutContent() {
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
+  const [selectedMethod, setSelectedMethod] = React.useState<"transfer" | "qris">("transfer");
+  const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [agreedTerms, setAgreedTerms] = React.useState<boolean>(true);
+  const [createdBookingId, setCreatedBookingId] = React.useState<string | null>(null);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = React.useState<Booking | null>(null);
   const [bookedItemsSummary, setBookedItemsSummary] = React.useState<string>("");
@@ -204,6 +208,7 @@ function CheckoutContent() {
       // Ambil data booking lengkap yang dibuat
       let createdBookingRecord: Booking | null = null;
       if (bookingId) {
+        setCreatedBookingId(String(bookingId));
         const { data: bData } = await supabase
           .from("bookings")
           .select("*")
@@ -269,7 +274,7 @@ function CheckoutContent() {
     const finalDeposit = createdBooking?.deposit ?? savedPricing?.totalDeposit ?? pricing.totalDeposit;
 
     const bookingForFlow = createdBooking || {
-      id: createdBookingCode,
+      id: createdBookingId || (createdBookingCode ?? ""),
       kode_booking: createdBookingCode,
       status: "menunggu_dp" as const,
       total_harga: finalTotalSewa,
@@ -346,7 +351,7 @@ function CheckoutContent() {
           </div>
         </div>
 
-        {/* Modul Alur Pembayaran Interaktif */}
+        {/* Modul Alur Pembayaran Interaktif: Fokus Unggah Bukti TF di Tahap 3 */}
         <PaymentFlow
           booking={bookingForFlow}
           customerName={nama.trim() || profile?.nama || "User"}
@@ -354,6 +359,9 @@ function CheckoutContent() {
           qrisUrl={qrisUrl}
           whatsappAdmin={whatsappAdmin}
           showBackToHome={true}
+          defaultTab={selectedMethod}
+          defaultBank={selectedBank}
+          hideMethodSelector={true}
         />
       </div>
     );
@@ -407,7 +415,7 @@ function CheckoutContent() {
               2
             </div>
             <span className="text-xs font-bold text-[#5F7A84] hidden sm:inline">
-              Rincian & DP
+              Metode & Rekening
             </span>
           </div>
 
@@ -424,7 +432,7 @@ function CheckoutContent() {
               3
             </div>
             <span className="text-xs font-bold text-[#5F7A84] hidden sm:inline">
-              Konfirmasi
+              Upload Bukti TF
             </span>
           </div>
         </div>
@@ -517,24 +525,16 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <p className="text-[#5F7A84] leading-relaxed">
-                  Pesanan Anda akan tercatat dengan status <strong>Menunggu DP</strong>. Untuk mengunci unit, silakan transfer sejumlah DP ke rekening berikut:
-                </p>
-
-                <div className="p-4 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-                    Rekening Pembayaran DP
-                  </span>
-                  <p className="text-base font-bold text-[#234E5C]">
-                    {rekeningInfo}
-                  </p>
-                  <p className="text-[11px] text-[#5F7A84]">
-                    Jumlah Uang Muka (DP 30%):{" "}
-                    <strong className="text-[#A0630F] font-bold text-sm">
-                      {formatRupiah(pricing.dpJumlah)}
-                    </strong>
-                  </p>
-                </div>
+                {/* Pemilihan Rekening & Metode Pembayaran (Tahap 2) */}
+                <PaymentMethodSelector
+                  selectedTab={selectedMethod}
+                  onTabChange={setSelectedMethod}
+                  selectedBank={selectedBank}
+                  onBankChange={setSelectedBank}
+                  dpAmount={pricing.dpJumlah}
+                  rekeningBank={rekeningInfo}
+                  qrisUrl={qrisUrl}
+                />
 
                 {/* Catatan Tambahan untuk Admin (Dipindahkan ke Step 2) */}
                 <div className="space-y-1.5">
@@ -601,7 +601,7 @@ function CheckoutContent() {
                   onClick={handleProcessBooking}
                   className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Memproses..." : "Konfirmasi"}
+                  {isSubmitting ? "Memproses..." : "Konfirmasi & Lanjut Upload Bukti"}
                 </Button>
               </div>
             </div>

@@ -65,6 +65,7 @@ export interface PaymentFlowProps {
   showBackToHome?: boolean;
   defaultTab?: "transfer" | "qris";
   defaultBank?: "bca" | "mandiri" | "bri" | "bni";
+  hideMethodSelector?: boolean;
 }
 
 export function PaymentFlow({
@@ -78,6 +79,7 @@ export function PaymentFlow({
   showBackToHome = false,
   defaultTab = "transfer",
   defaultBank = "bca",
+  hideMethodSelector = false,
 }: PaymentFlowProps) {
   const router = useRouter();
   // BUG-PF3: Supabase client di useMemo, bukan di render body
@@ -106,10 +108,26 @@ export function PaymentFlow({
     getPaymentCountdown(booking.created_at, 24)
   );
 
-  // Realtime subscription: otomatis redirect jika pembayaran DP diterima atau ditolak
+  // Realtime subscription + Smart Polling: otomatis redirect ke Riwayat Booking jika pembayaran diverifikasi atau ditolak
   React.useEffect(() => {
     if (!booking?.id) return;
 
+    let isRedirecting = false;
+
+    const handleRedirect = (type: "verified" | "rejected", msg?: string) => {
+      if (isRedirecting) return;
+      isRedirecting = true;
+      if (type === "verified") {
+        toast.success(msg || "Pembayaran DP berhasil diverifikasi admin!");
+      } else {
+        toast.error(msg || "Bukti pembayaran ditolak oleh admin.");
+      }
+      setTimeout(() => {
+        router.push("/booking-saya");
+      }, 700);
+    };
+
+    // 1. Supabase Realtime channel
     const channel = supabase
       .channel(`realtime-booking-${booking.id}`)
       .on(
@@ -122,19 +140,14 @@ export function PaymentFlow({
         },
         (payload) => {
           const newStatus = payload.new?.status as BookingStatus;
+          const pesanAdmin = payload.new?.pesan_admin as string | undefined;
           if (newStatus) {
             setCurrentBookingStatus(newStatus);
           }
           if (newStatus === "dp_dibayar" || newStatus === "lunas" || newStatus === "diambil") {
-            toast.success("Pembayaran DP berhasil diverifikasi admin!");
-            setTimeout(() => {
-              router.push("/booking-saya");
-            }, 1000);
+            handleRedirect("verified");
           } else if (newStatus === "dibatalkan") {
-            toast.error("Pesanan ini telah dibatalkan atau ditolak admin.");
-            setTimeout(() => {
-              router.push("/booking-saya");
-            }, 1200);
+            handleRedirect("rejected", pesanAdmin || "Pesanan ini telah dibatalkan atau ditolak admin.");
           }
         }
       )
@@ -154,15 +167,9 @@ export function PaymentFlow({
             );
             if (updatedPayment.status === "terverifikasi") {
               setCurrentBookingStatus("dp_dibayar");
-              toast.success("Pembayaran DP berhasil diverifikasi!");
-              setTimeout(() => {
-                router.push("/booking-saya");
-              }, 1000);
+              handleRedirect("verified");
             } else if (updatedPayment.status === "ditolak") {
-              toast.error("Bukti pembayaran ditolak oleh admin.");
-              setTimeout(() => {
-                router.push("/booking-saya");
-              }, 1200);
+              handleRedirect("rejected", "Bukti pembayaran ditolak oleh admin.");
             }
           } else if (payload.eventType === "INSERT") {
             const newPayment = payload.new as Payment;
@@ -172,7 +179,44 @@ export function PaymentFlow({
       )
       .subscribe();
 
+    // 2. Smart Polling fallback setiap 2.5 detik (menjamin redirect langsung terjadi bila ada jeda websocket)
+    const pollInterval = setInterval(async () => {
+      if (isRedirecting || !booking.id) return;
+      try {
+        const { data: bData } = await supabase
+          .from("bookings")
+          .select("status, pesan_admin, payments(*)")
+          .eq("id", booking.id)
+          .maybeSingle();
+
+        if (bData && !isRedirecting) {
+          const bStatus = bData.status as BookingStatus;
+          const payList = (bData.payments || []) as Payment[];
+
+          if (
+            bStatus === "dp_dibayar" ||
+            bStatus === "lunas" ||
+            bStatus === "diambil" ||
+            payList.some((p) => p.status === "terverifikasi")
+          ) {
+            handleRedirect("verified", "Pembayaran DP berhasil diverifikasi admin!");
+          } else if (
+            bStatus === "dibatalkan" ||
+            payList.some((p) => p.status === "ditolak")
+          ) {
+            handleRedirect(
+              "rejected",
+              bData.pesan_admin || "Bukti transfer ditolak oleh admin."
+            );
+          }
+        }
+      } catch {
+        // abaikan kesalahan polling sementara
+      }
+    }, 2500);
+
     return () => {
+      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, [booking.id, router, supabase]);
@@ -668,110 +712,36 @@ export function PaymentFlow({
       {/* BUG-PF4: Jangan tampilkan form upload jika DP sudah terverifikasi */}
       {!isDpVerified && (!latestDpPayment || isEditingProof || latestDpPayment.status === "ditolak") && (
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-6">
-          <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
-            <div>
-              <h3 className="text-base font-bold text-[#234E5C]">
-                Pilihan Metode Pembayaran Uang Muka (DP)
-              </h3>
-              <p className="text-xs text-[#5F7A84] mt-0.5">
-                Tersedia 2 metode transfer online resmi: Transfer Bank dan QRIS & E-Wallet
-              </p>
-            </div>
-            {isEditingProof && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditingProof(false)}
-                className="text-xs text-[#5F7A84]"
-              >
-                Batal
-              </Button>
-            )}
-          </div>
-
-          <Tabs
-            value={activeTab}
-            onValueChange={(val) => setActiveTab(val as "transfer" | "qris")}
-            className="w-full"
-          >
-            <TabsList className="grid grid-cols-2 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
-              <TabsTrigger
-                value="transfer"
-                className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
-              >
-                <CreditCard className="h-3.5 w-3.5" />
-                <span>Transfer Bank</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="qris"
-                className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
-              >
-                <QrCode className="h-3.5 w-3.5" />
-                <span>QRIS & E-Wallet</span>
-              </TabsTrigger>
-            </TabsList>
-
-            {/* TAB 1: Transfer Bank (Multi-Bank) */}
-            <TabsContent value="transfer" className="space-y-4 pt-2">
-              {/* Pemilih Bank */}
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-xs font-bold text-[#5F7A84] mr-1">
-                  Pilih Bank Tujuan:
-                </span>
-                {(["bca", "mandiri", "bri", "bni"] as const).map((bKey) => {
-                  const b = bankOptions[bKey];
-                  const isSel = selectedBank === bKey;
-                  return (
-                    <button
-                      key={bKey}
-                      type="button"
-                      onClick={() => setSelectedBank(bKey)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                        isSel
-                          ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
-                          : "bg-white text-[#234E5C] border-[#E8E8E1] hover:bg-[#FAFAF8]"
-                      }`}
-                    >
-                      {b.bank}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84] block">
-                      Rekening Resmi PirantiKu
-                    </span>
-                    <h4 className="text-lg font-extrabold text-[#234E5C] mt-0.5">
-                      {activeBank.name}
-                    </h4>
-                  </div>
-                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+          {hideMethodSelector ? (
+            /* Ringkasan Rekening / Metode yang Sudah Dipilih di Tahap 2 */
+            <div className="p-4 sm:p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84] block">
+                    Metode Pembayaran DP Terpilih
+                  </span>
+                  <h4 className="text-base font-bold text-[#234E5C]">
+                    {activeTab === "transfer" ? activeBank.name : "QRIS & E-Wallet"}
+                  </h4>
+                </div>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                     activeBank.isDemo
                       ? "bg-[#FEF3C7] text-[#A0630F] border-[#FDE68A]"
                       : "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5]"
-                  }`}>
-                    {activeBank.badge}
-                  </span>
-                </div>
+                  }`}
+                >
+                  {activeTab === "transfer" ? activeBank.badge : "QRIS"}
+                </span>
+              </div>
 
-                {/* BUG-PF1+PF2: Banner jelas untuk rekening dummy/demo */}
-                {activeBank.isDemo && (
-                  <div className="rounded-lg bg-[#FEF3C7] border border-[#FDE68A] p-3 text-[11px] text-[#78350F]">
-                    <span className="font-bold block">⚠️ Akun Bank Demo / Simulasi</span>
-                    <span>Rekening ini hanya untuk keperluan demo tampilan. Gunakan rekening BCA (Utama) untuk transaksi nyata.</span>
-                  </div>
-                )}
-
-                <div className="p-4 rounded-xl bg-white border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {activeTab === "transfer" ? (
+                <div className="p-3.5 rounded-xl bg-white border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <span className="text-[11px] text-[#5F7A84] block font-medium">
                       Nomor Rekening Tujuan:
                     </span>
-                    <span className="font-mono text-xl sm:text-2xl font-extrabold text-[#234E5C] tracking-wider block">
+                    <span className="font-mono text-lg sm:text-xl font-extrabold text-[#234E5C] tracking-wider block">
                       {activeBank.nomor}
                     </span>
                     <span className="text-xs text-[#5F7A84] font-semibold block">
@@ -784,7 +754,7 @@ export function PaymentFlow({
                     variant="outline"
                     size="sm"
                     onClick={handleCopyRekening}
-                    className="text-xs font-bold gap-1.5 shrink-0 self-start sm:self-auto"
+                    className="text-xs font-bold gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
                   >
                     {isCopiedRek ? (
                       <>
@@ -799,87 +769,234 @@ export function PaymentFlow({
                     )}
                   </Button>
                 </div>
-
-                <div className="rounded-lg bg-[#F3F3EF] p-3 text-[11px] text-[#5F7A84] space-y-1">
+              ) : (
+                <div className="p-3.5 rounded-xl bg-white border border-[#E8E8E1] text-xs space-y-1">
                   <span className="font-bold text-[#234E5C] block">
-                    Panduan Transfer:
+                    Metode QRIS & E-Wallet
                   </span>
-                  <ol className="list-decimal list-inside space-y-0.5">
-                    <li>Gunakan m-Banking atau ATM ke rekening {activeBank.name} di atas.</li>
-                    <li>
-                      Pastikan nominal transfer tepat sebesar{" "}
-                      <strong>{formatRupiah(booking.dp_jumlah)}</strong>.
-                    </li>
-                    <li>
-                      Isi kolom berita/keterangan dengan kode booking:{" "}
-                      <strong>{booking.kode_booking}</strong>.
-                    </li>
-                    <li>Simpan struk atau foto bukti transfer untuk diunggah di formulir bawah.</li>
-                  </ol>
+                  <p className="text-[#5F7A84]">
+                    Silakan scan QRIS PirantiKu dan transfer DP sebesar{" "}
+                    <strong className="text-[#A0630F]">{formatRupiah(booking.dp_jumlah)}</strong>.
+                  </p>
                 </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
+                <div>
+                  <h3 className="text-base font-bold text-[#234E5C]">
+                    Pilihan Metode Pembayaran Uang Muka (DP)
+                  </h3>
+                  <p className="text-xs text-[#5F7A84] mt-0.5">
+                    Tersedia 2 metode transfer online resmi: Transfer Bank dan QRIS & E-Wallet
+                  </p>
+                </div>
+                {isEditingProof && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditingProof(false)}
+                    className="text-xs text-[#5F7A84]"
+                  >
+                    Batal
+                  </Button>
+                )}
               </div>
-            </TabsContent>
 
-            {/* TAB 2: QRIS */}
-            <TabsContent value="qris" className="space-y-4 pt-2">
-              <div className="p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] flex flex-col items-center text-center space-y-4">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84]">
-                    QRIS Standar Pembayaran Nasional
-                  </span>
-                  <h4 className="text-base font-extrabold text-[#234E5C]">
-                    Scan QRIS PirantiKu Rental
-                  </h4>
-                </div>
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) => setActiveTab(val as "transfer" | "qris")}
+                className="w-full"
+              >
+                <TabsList className="grid grid-cols-2 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
+                  <TabsTrigger
+                    value="transfer"
+                    className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
+                  >
+                    <CreditCard className="h-3.5 w-3.5" />
+                    <span>Transfer Bank</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="qris"
+                    className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
+                  >
+                    <QrCode className="h-3.5 w-3.5" />
+                    <span>QRIS & E-Wallet</span>
+                  </TabsTrigger>
+                </TabsList>
 
-                {/* QR Code Container */}
-                <div className="p-4 bg-white rounded-2xl border border-[#E8E8E1] shadow-sm flex flex-col items-center space-y-3">
-                  <div className="flex items-center justify-between w-48 border-b border-[#E8E8E1] pb-2">
-                    <span className="font-extrabold text-xs tracking-tighter text-[#234E5C]">
-                      QRIS
+                {/* TAB 1: Transfer Bank (Multi-Bank) */}
+                <TabsContent value="transfer" className="space-y-4 pt-2">
+                  {/* Pemilih Bank */}
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-xs font-bold text-[#5F7A84] mr-1">
+                      Pilih Bank Tujuan:
                     </span>
-                    <span className="text-[9px] font-bold text-[#5F7A84]">
-                      GPN / BI
-                    </span>
+                    {(["bca", "mandiri", "bri", "bni"] as const).map((bKey) => {
+                      const b = bankOptions[bKey];
+                      const isSel = selectedBank === bKey;
+                      return (
+                        <button
+                          key={bKey}
+                          type="button"
+                          onClick={() => setSelectedBank(bKey)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                            isSel
+                              ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
+                              : "bg-white text-[#234E5C] border-[#E8E8E1] hover:bg-[#FAFAF8]"
+                          }`}
+                        >
+                          {b.bank}
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  {qrisUrl ? (
-                    <div className="relative h-48 w-48 rounded-lg overflow-hidden border border-[#E8E8E1]">
-                      <img
-                        src={qrisUrl}
-                        alt="QRIS PirantiKu"
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-48 w-48 bg-[#F3F3EF] rounded-lg border border-[#E8E8E1] flex flex-col items-center justify-center p-3 relative">
-                      <QrCode className="h-32 w-32 text-[#234E5C]" />
-                      <span className="text-[10px] font-bold text-[#A0630F] mt-1">
-                        PIRANTIKU KARANGANYAR
+                  <div className="p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84] block">
+                          Rekening Resmi PirantiKu
+                        </span>
+                        <h4 className="text-lg font-extrabold text-[#234E5C] mt-0.5">
+                          {activeBank.name}
+                        </h4>
+                      </div>
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                        activeBank.isDemo
+                          ? "bg-[#FEF3C7] text-[#A0630F] border-[#FDE68A]"
+                          : "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5]"
+                      }`}>
+                        {activeBank.badge}
                       </span>
                     </div>
-                  )}
 
-                  <div className="text-[11px] text-[#5F7A84] space-y-0.5">
-                    {/* BUG-PF2: NMID dinamis dari settings atau ditandai demo */}
-                    <p className="font-bold text-[#234E5C]">
-                      NMID: {qrisUrl ? "ID1020PIRANTIKU" : "ID0000000000000 (Demo)"}
-                    </p>
-                    <p>Bebas biaya admin antar aplikasi e-Wallet</p>
+                    {/* BUG-PF1+PF2: Banner jelas untuk rekening dummy/demo */}
+                    {activeBank.isDemo && (
+                      <div className="rounded-lg bg-[#FEF3C7] border border-[#FDE68A] p-3 text-[11px] text-[#78350F]">
+                        <span className="font-bold block">⚠️ Akun Bank Demo / Simulasi</span>
+                        <span>Rekening ini hanya untuk keperluan demo tampilan. Gunakan rekening BCA (Utama) untuk transaksi nyata.</span>
+                      </div>
+                    )}
+
+                    <div className="p-4 rounded-xl bg-white border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <span className="text-[11px] text-[#5F7A84] block font-medium">
+                          Nomor Rekening Tujuan:
+                        </span>
+                        <span className="font-mono text-xl sm:text-2xl font-extrabold text-[#234E5C] tracking-wider block">
+                          {activeBank.nomor}
+                        </span>
+                        <span className="text-xs text-[#5F7A84] font-semibold block">
+                          Atas Nama: {activeBank.atasNama}
+                        </span>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCopyRekening}
+                        className="text-xs font-bold gap-1.5 shrink-0 self-start sm:self-auto"
+                      >
+                        {isCopiedRek ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-[#2E5E4E]" />
+                            <span>Tersalin!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5" />
+                            <span>Salin Rekening</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="rounded-lg bg-[#F3F3EF] p-3 text-[11px] text-[#5F7A84] space-y-1">
+                      <span className="font-bold text-[#234E5C] block">
+                        Panduan Transfer:
+                      </span>
+                      <ol className="list-decimal list-inside space-y-0.5">
+                        <li>Gunakan m-Banking atau ATM ke rekening {activeBank.name} di atas.</li>
+                        <li>
+                          Pastikan nominal transfer tepat sebesar{" "}
+                          <strong>{formatRupiah(booking.dp_jumlah)}</strong>.
+                        </li>
+                        <li>
+                          Isi kolom berita/keterangan dengan kode booking:{" "}
+                          <strong>{booking.kode_booking}</strong>.
+                        </li>
+                        <li>Simpan struk atau foto bukti transfer untuk diunggah di formulir bawah.</li>
+                      </ol>
+                    </div>
                   </div>
-                </div>
+                </TabsContent>
 
-                <div className="text-xs text-[#5F7A84] max-w-sm space-y-1">
-                  <p>
-                    Buka aplikasi <strong>BCA Mobile, Livin, GoPay, OVO, Dana, ShopeePay</strong>, pilih menu Scan QRIS, lalu masukkan nominal DP:
-                  </p>
-                  <p className="font-extrabold text-[#A0630F] text-base">
-                    {formatRupiah(booking.dp_jumlah)}
-                  </p>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+                {/* TAB 2: QRIS */}
+                <TabsContent value="qris" className="space-y-4 pt-2">
+                  <div className="p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] flex flex-col items-center text-center space-y-4">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84]">
+                        QRIS Standar Pembayaran Nasional
+                      </span>
+                      <h4 className="text-base font-extrabold text-[#234E5C]">
+                        Scan QRIS PirantiKu Rental
+                      </h4>
+                    </div>
+
+                    {/* QR Code Container */}
+                    <div className="p-4 bg-white rounded-2xl border border-[#E8E8E1] shadow-sm flex flex-col items-center space-y-3">
+                      <div className="flex items-center justify-between w-48 border-b border-[#E8E8E1] pb-2">
+                        <span className="font-extrabold text-xs tracking-tighter text-[#234E5C]">
+                          QRIS
+                        </span>
+                        <span className="text-[9px] font-bold text-[#5F7A84]">
+                          GPN / BI
+                        </span>
+                      </div>
+
+                      {qrisUrl ? (
+                        <div className="relative h-48 w-48 rounded-lg overflow-hidden border border-[#E8E8E1]">
+                          <img
+                            src={qrisUrl}
+                            alt="QRIS PirantiKu"
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-48 w-48 bg-[#F3F3EF] rounded-lg border border-[#E8E8E1] flex flex-col items-center justify-center p-3 relative">
+                          <QrCode className="h-32 w-32 text-[#234E5C]" />
+                          <span className="text-[10px] font-bold text-[#A0630F] mt-1">
+                            PIRANTIKU KARANGANYAR
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="text-[11px] text-[#5F7A84] space-y-0.5">
+                        {/* BUG-PF2: NMID dinamis dari settings atau ditandai demo */}
+                        <p className="font-bold text-[#234E5C]">
+                          NMID: {qrisUrl ? "ID1020PIRANTIKU" : "ID0000000000000 (Demo)"}
+                        </p>
+                        <p>Bebas biaya admin antar aplikasi e-Wallet</p>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-[#5F7A84] max-w-sm space-y-1">
+                      <p>
+                        Buka aplikasi <strong>BCA Mobile, Livin, GoPay, OVO, Dana, ShopeePay</strong>, pilih menu Scan QRIS, lalu masukkan nominal DP:
+                      </p>
+                      <p className="font-extrabold text-[#A0630F] text-base">
+                        {formatRupiah(booking.dp_jumlah)}
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </>
+          )}
 
           {/* FORMULIR UNGGAH BUKTI TRANSFER (Untuk Tab Transfer & QRIS) */}
           <form onSubmit={handleSubmitPayment} className="space-y-5 border-t border-[#E8E8E1] pt-6">
@@ -1024,7 +1141,7 @@ export function PaymentFlow({
           href="/booking-saya"
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-[#234E5C] text-[#234E5C] font-bold text-xs hover:bg-[#234E5C] hover:text-white transition-all shadow-xs active:scale-[0.98] text-center"
         >
-          <span>Lihat Seluruh Booking Saya</span>
+          <span>Lihat Riwayat Booking</span>
         </Link>
 
         {showBackToHome && (

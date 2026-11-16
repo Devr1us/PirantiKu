@@ -27,26 +27,27 @@ export function Wordmark({
   const logoSrc = isWhite ? "/logo-white.png" : "/logo.png";
   const isSmall = size === "sm";
 
-  // Ukuran sesuai spesifikasi prompt:
+  // Ukuran responsif:
   // Desktop (>=768px): ikon 44x44, wordmark 24px, subtitle 9.5px
-  // Mobile (<768px): ikon 36x36, wordmark 22px, subtitle 8px
+  // Tablet (640-767px): ikon 36x36, wordmark 21px, subtitle 7.8px
+  // Mobile (<640px): ikon 28-30px, wordmark 16-18px, subtitle 6-7px (memberikan ruang lega untuk navigasi)
   // Khusus size="sm" (admin sidebar / small): ikon 32px, wordmark 18px, subtitle 7.5px
   const iconSizeClass = isSmall
     ? "w-8 h-8"
-    : "w-[36px] h-[36px] md:w-[44px] md:h-[44px]";
+    : "w-[26px] h-[26px] min-[380px]:w-[30px] min-[380px]:h-[30px] sm:w-[36px] sm:h-[36px] md:w-[44px] md:h-[44px]";
 
   const wordmarkSizeClass = isSmall
     ? "text-[18px]"
-    : "text-[22px] md:text-[24px]";
+    : "text-[16px] min-[380px]:text-[18px] sm:text-[21px] md:text-[24px]";
 
   const subtitleSizeClass = isSmall
-    ? "text-[7.5px]"
-    : "text-[8px] md:text-[9.5px]";
+    ? "text-[7px]"
+    : "text-[6px] min-[380px]:text-[7px] sm:text-[7.8px] md:text-[9.5px]";
 
   const content = (
     <div
       aria-label="PIRANTIKU BOOKING ALAT SERBA ADA"
-      className={`inline-flex items-center gap-[14px] shrink-0 flex-nowrap select-none ${className}`}
+      className={`inline-flex items-center gap-2 min-[380px]:gap-2.5 sm:gap-[12px] md:gap-[14px] shrink-0 flex-nowrap select-none ${className}`}
     >
       {showLogo && (
         <div className="relative flex items-center justify-center shrink-0">

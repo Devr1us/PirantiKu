@@ -198,7 +198,7 @@ export function NavbarClient({
     >
       <div className="site-container flex h-full items-center justify-between">
         {/* Sisi Kiri: Wordmark PirantiKu */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6 min-w-0 shrink">
           <Wordmark />
         </div>
 
@@ -285,7 +285,7 @@ export function NavbarClient({
         </LayoutGroup>
 
         {/* Sisi Kanan: Keranjang, WhatsApp, Auth (Masuk / Daftar / Avatar) */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 sm:gap-3.5 shrink-0 ml-auto pl-3">
           {/* Tombol Hubungi Admin via WhatsApp */}
           <a
             href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
@@ -302,8 +302,8 @@ export function NavbarClient({
           {/* Ikon Keranjang dengan Badge Jumlah (Khusus Pelanggan, disembunyikan untuk Admin) */}
           {!isAdmin && (
             <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-all">
-                <ShoppingCart className="h-5 w-5" />
+              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-all">
+                <ShoppingCart className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                 <span className="sr-only">Keranjang Booking</span>
                 {isLoaded && totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--accent-gold)] px-1 text-[11px] font-bold text-[var(--bg-dark)] shadow-sm">
@@ -356,7 +356,7 @@ export function NavbarClient({
                           className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-sage)] rounded-xl cursor-pointer"
                         >
                           <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
-                          <span>Booking Saya</span>
+                          <span>Riwayat Booking</span>
                         </Link>
                       </DropdownMenuItem>
                     )}
@@ -413,10 +413,10 @@ export function NavbarClient({
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-colors"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-colors cursor-pointer"
                   aria-label="Buka Menu"
                 >
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                 </button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[85vw] max-w-sm bg-white p-6 flex flex-col justify-between">
@@ -512,7 +512,7 @@ export function NavbarClient({
                           onClick={() => setIsMobileOpen(false)}
                           className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                         >
-                          BOOKING SAYA
+                          RIWAYAT BOOKING
                         </Link>
                       )}
 

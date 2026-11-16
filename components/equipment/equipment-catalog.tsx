@@ -531,9 +531,9 @@ export function EquipmentCatalog({
           )}
         </form>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto shrink-0">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Tombol Filter Mobile */}
-          <div className="lg:hidden flex-1 sm:flex-none">
+          <div className="lg:hidden shrink-0">
             <Sheet
               open={isMobileFilterOpen}
               onOpenChange={setIsMobileFilterOpen}
@@ -541,10 +541,10 @@ export function EquipmentCatalog({
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto h-11 text-xs font-bold flex items-center justify-center gap-2"
+                  className="h-11 px-3.5 sm:px-4 text-xs font-bold flex items-center justify-center gap-2 shrink-0"
                 >
                   <Filter className="h-4 w-4 text-[#234E5C]" />
-                  FILTER
+                  <span>FILTER</span>
                   {hasActiveFilters && (
                     <span className="h-2 w-2 rounded-full bg-[#A0630F]" />
                   )}
@@ -565,18 +565,18 @@ export function EquipmentCatalog({
           </div>
 
           {/* Pengurutan */}
-          <div className="relative shrink-0 w-full sm:w-48">
+          <div className="relative flex-1 min-w-0 sm:flex-initial sm:w-48">
             <select
               value={currentSort}
               onChange={(e) => handleSortChange(e.target.value)}
-              className="w-full sm:w-48 h-11 px-3.5 bg-white border border-[#E8E8E1] text-xs font-bold text-[#234E5C] rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#234E5C] cursor-pointer pr-8"
+              className="w-full sm:w-48 h-11 pl-3.5 pr-8 bg-white border border-[#E8E8E1] text-xs font-bold text-[#234E5C] rounded-xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#234E5C] cursor-pointer truncate"
             >
               <option value="populer">Paling Banyak Unit</option>
               <option value="termurah">Harga: Rendah ke Tinggi</option>
               <option value="termahal">Harga: Tinggi ke Rendah</option>
               <option value="terbaru">Terbaru Ditambahkan</option>
             </select>
-            <ChevronDown className="absolute right-3 top-4 h-3.5 w-3.5 pointer-events-none text-[#5F7A84]" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none text-[#5F7A84]" />
           </div>
         </div>
       </div>
@@ -633,7 +633,7 @@ export function EquipmentCatalog({
           >
             {filteredEquipment.length > 0 ? (
               <div className="space-y-8 w-full">
-                <div className="w-full grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 content-start">
+                <div className="w-full grid grid-cols-[repeat(auto-fill,minmax(min(100%,260px),1fr))] gap-6 content-start">
                   {displayedEquipment.map((item, index) => {
                     if (shouldReduceMotion) {
                       return (

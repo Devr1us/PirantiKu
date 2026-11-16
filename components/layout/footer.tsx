@@ -64,7 +64,7 @@ export async function Footer() {
                 </li>
                 <li>
                   <Link href="/booking-saya" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
-                    Booking Saya
+                    Riwayat Booking
                   </Link>
                 </li>
                 <li>
