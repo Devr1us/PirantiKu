@@ -550,9 +550,9 @@ export function EquipmentCatalog({
       </div>
 
       {/* Konten Utama: Filter di Wadah --panel + Grid Kartu Alat */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         {/* Sidebar Filter Desktop: Wadah --panel dengan scrolling mandiri */}
-        <aside className="hidden lg:block lg:col-span-1">
+        <aside className="hidden lg:block lg:col-span-1 min-w-0 w-full">
           <div className="sticky top-[calc(var(--navbar-offset)+1rem)] max-h-[calc(100vh-var(--navbar-offset)-2rem)] flex flex-col rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] shadow-xs transition-[top] duration-300 overflow-hidden">
             {/* Header Sticky Card */}
             <div className="flex items-center justify-between p-4 px-5 border-b border-[#E8E8E1] shrink-0 bg-[#F3F3EF]">
@@ -581,8 +581,8 @@ export function EquipmentCatalog({
         </aside>
 
         {/* Grid Kartu Alat */}
-        <main className="lg:col-span-3 space-y-6">
-          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between">
+        <main className="lg:col-span-3 min-w-0 w-full min-h-[500px] space-y-6">
+          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between min-h-[24px]">
             <span>
               Menampilkan <strong className="text-[#234E5C] font-bold">{Math.min(visibleCount, filteredEquipment.length)}</strong> dari <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
             </span>
@@ -645,7 +645,7 @@ export function EquipmentCatalog({
               )}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-dashed border-[#E8E8E1] bg-white">
+            <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-[#E8E8E1] bg-white min-h-[420px] w-full shadow-xs">
               <Package className="h-12 w-12 text-[#5F7A84]/50 mb-3" />
               <h3 className="text-base font-bold text-[#234E5C]">
                 Tidak ada alat yang cocok
