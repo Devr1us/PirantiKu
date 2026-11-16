@@ -191,10 +191,10 @@ export default function DaftarPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:min-h-[680px]"
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:h-[720px] md:min-h-[720px] md:max-h-[720px] items-stretch"
       >
-        {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci Stabil Tidak Berubah Saat Ada Error) */}
-        <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between">
+        {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci 360px & Tinggi 100% Tetap Stabil) */}
+        <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between h-full">
           <div>
             <Wordmark variant="white" />
           </div>
@@ -213,14 +213,14 @@ export default function DaftarPage() {
           </div>
         </div>
 
-        {/* Kolom Kanan: Formulir Putih */}
-        <div className="w-full md:flex-1 p-8 sm:p-10 flex flex-col justify-center space-y-5">
+        {/* Kolom Kanan: Formulir Putih (Tinggi Terkunci, Overflow Auto Jika Diperlukan) */}
+        <div className="w-full md:flex-1 p-6 sm:p-8 flex flex-col justify-between h-full overflow-y-auto">
           {/* Header Mobile Wordmark */}
-          <div className="md:hidden text-center pb-2">
-            <Wordmark />
-          </div>
-
           <div className="space-y-1">
+            <div className="md:hidden text-center pb-2">
+              <Wordmark />
+            </div>
+
             <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
               Buat Akun User
             </H1>
@@ -229,7 +229,7 @@ export default function DaftarPage() {
             </Lead>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3.5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
             {/* Nama Lengkap */}
             <div className="space-y-1">
               <Label htmlFor="nama" className="text-xs font-semibold text-[#234E5C]">
@@ -245,9 +245,15 @@ export default function DaftarPage() {
                   {...register("nama")}
                 />
               </div>
-              {errors.nama && (
-                <p className="text-[11px] text-[#DC2626] font-medium">{errors.nama.message}</p>
-              )}
+              <div className="min-h-[16px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium leading-none transition-opacity duration-150 ${
+                    errors.nama ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                  }`}
+                >
+                  {errors.nama?.message || " "}
+                </p>
+              </div>
             </div>
 
             {/* Email */}
@@ -265,9 +271,15 @@ export default function DaftarPage() {
                   {...register("email")}
                 />
               </div>
-              {errors.email && (
-                <p className="text-[11px] text-[#DC2626] font-medium">{errors.email.message}</p>
-              )}
+              <div className="min-h-[16px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium leading-none transition-opacity duration-150 ${
+                    errors.email ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                  }`}
+                >
+                  {errors.email?.message || " "}
+                </p>
+              </div>
             </div>
 
             {/* Password */}
@@ -294,26 +306,38 @@ export default function DaftarPage() {
                 </button>
               </div>
 
-              {passwordVal && (
-                <div className="pt-1 space-y-1">
-                  <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-[#5F7A84]">Kekuatan: {strength.label}</span>
-                  </div>
-                  <div className="h-1 w-full rounded-full bg-[#E8E8E1] overflow-hidden flex gap-1">
-                    {[1, 2, 3, 4].map((step) => (
-                      <div
-                        key={step}
-                        className={`h-full flex-1 transition-all ${step <= strength.score ? strength.color : "bg-[#E8E8E1]"
-                          }`}
-                      />
-                    ))}
-                  </div>
+              {/* Indikator Kekuatan Password - Selalu dicadangkan di layout agar tinggi card tidak memanjang saat mengetik */}
+              <div className="h-5 flex flex-col justify-center space-y-1 pt-0.5">
+                <div className="flex items-center justify-between text-[10px] leading-none">
+                  <span
+                    className={`transition-opacity duration-150 ${
+                      passwordVal ? "opacity-100 text-[#5F7A84]" : "opacity-0 select-none"
+                    }`}
+                  >
+                    Kekuatan: {strength.label}
+                  </span>
                 </div>
-              )}
+                <div className="h-1 w-full rounded-full bg-[#E8E8E1] overflow-hidden flex gap-1">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      className={`h-full flex-1 transition-all duration-200 ${
+                        passwordVal && step <= strength.score ? strength.color : "bg-[#E8E8E1]"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
 
-              {errors.password && (
-                <p className="text-[11px] text-[#DC2626] font-medium">{errors.password.message}</p>
-              )}
+              <div className="min-h-[16px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium leading-none transition-opacity duration-150 ${
+                    errors.password ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                  }`}
+                >
+                  {errors.password?.message || " "}
+                </p>
+              </div>
             </div>
 
             {/* Konfirmasi Password */}
@@ -339,13 +363,19 @@ export default function DaftarPage() {
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.confirmPassword && (
-                <p className="text-[11px] text-[#DC2626] font-medium">{errors.confirmPassword.message}</p>
-              )}
+              <div className="min-h-[16px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium leading-none transition-opacity duration-150 ${
+                    errors.confirmPassword ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                  }`}
+                >
+                  {errors.confirmPassword?.message || " "}
+                </p>
+              </div>
             </div>
 
             {/* Syarat & Ketentuan */}
-            <div className="pt-1">
+            <div>
               <label className={`flex items-start gap-2 text-xs cursor-pointer ${agreeTermsVal ? "text-[#234E5C]" : "text-[#5F7A84]"}`}>
                 <input
                   type="checkbox"
@@ -373,13 +403,19 @@ export default function DaftarPage() {
                   <span className="text-[#DC2626] font-bold">*</span>
                 </span>
               </label>
-              {errors.agreeTerms && (
-                <p className="text-[11px] text-[#DC2626] font-medium mt-1">{errors.agreeTerms.message}</p>
-              )}
+              <div className="min-h-[16px] flex items-center mt-0.5">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium leading-none transition-opacity duration-150 ${
+                    errors.agreeTerms ? "opacity-100" : "opacity-0 pointer-events-none select-none"
+                  }`}
+                >
+                  {errors.agreeTerms?.message || " "}
+                </p>
+              </div>
             </div>
 
             {/* Tombol Daftar Ochre */}
-            <div className="pt-2">
+            <div className="pt-1">
               <Button
                 type="submit"
                 variant="warm"
@@ -396,7 +432,7 @@ export default function DaftarPage() {
           </form>
 
           {/* Pemisah */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 my-1">
             <div className="flex-1 h-px bg-[#E8E8E1]" />
             <span className="text-[11px] text-[#5F7A84] font-medium">atau daftar dengan</span>
             <div className="flex-1 h-px bg-[#E8E8E1]" />
@@ -422,7 +458,7 @@ export default function DaftarPage() {
             <span>{isGoogleLoading ? "Menghubungkan..." : "Daftar dengan Google"}</span>
           </button>
 
-          <div className="text-center border-t border-[#E8E8E1] pt-4">
+          <div className="text-center border-t border-[#E8E8E1] pt-3">
             <p className="text-xs text-[#5F7A84]">
               Sudah punya akun?{" "}
               <Link

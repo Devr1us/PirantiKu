@@ -214,7 +214,7 @@ function LoginForm() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:h-[640px] md:min-h-[640px] items-stretch"
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:h-[640px] md:min-h-[640px] md:max-h-[640px] items-stretch"
       >
         {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci 360px & Tinggi 100% Tetap Stabil) */}
         <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between h-full">
