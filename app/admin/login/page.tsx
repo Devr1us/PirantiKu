@@ -12,7 +12,6 @@ import {
   Mail,
   Eye,
   EyeOff,
-  ArrowRight,
   AlertTriangle,
   ChevronLeft,
 } from "lucide-react";
@@ -241,10 +240,7 @@ function AdminLoginForm() {
               {isLoading ? (
                 <span>Mengautentikasi...</span>
               ) : (
-                <>
-                  <HoverRollText text="Masuk ke Console Admin" />
-                  <ArrowRight className="h-4 w-4" />
-                </>
+                <HoverRollText text="Masuk ke Console Admin" />
               )}
             </Button>
           </div>

@@ -579,7 +579,7 @@ export function NavbarClient({
                           </div>
                         </div>
                         <span className="text-[10px] font-bold text-[var(--bg-dark)] group-hover:underline pl-2 shrink-0">
-                          Profil &rarr;
+                          Profil
                         </span>
                       </Link>
                       <Button

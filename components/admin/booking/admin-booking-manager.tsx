@@ -398,7 +398,7 @@ export function AdminBookingManager({
                   : "bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C]"
                 }`}
             >
-              Sedang Disewa
+              Sedang Dibooking
             </button>
 
             <button
@@ -453,7 +453,7 @@ export function AdminBookingManager({
                 <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Status Booking</th>
                 <th className="py-3 px-4">Status Pembayaran</th>
-                <th className="py-3 px-4">Jadwal Sewa</th>
+                <th className="py-3 px-4">Jadwal Booking</th>
                 <th className="py-3 px-4">Total Biaya & DP</th>
                 <th className="py-3 px-4 text-right">Aksi</th>
               </tr>
@@ -627,7 +627,7 @@ export function AdminBookingManager({
               <div className="space-y-2 text-xs">
                 <span className="font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5 text-[11px]">
                   <Package className="h-3.5 w-3.5 text-[#234E5C]" />
-                  Peralatan yang Disewa ({selectedBooking.items?.length || 0})
+                  Peralatan yang Dibooking ({selectedBooking.items?.length || 0})
                 </span>
                 <div className="space-y-2 rounded-xl border border-[#E8E8E1] p-3 bg-white">
                   {selectedBooking.items?.map((item) => (

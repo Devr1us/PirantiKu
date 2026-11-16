@@ -26,8 +26,8 @@ export async function generateMetadata({
     return { title: "Kategori Tidak Ditemukan" };
   }
 
-  const pageTitle = `Sewa Alat ${cat.nama}`;
-  const desc = `Pilihan perlengkapan ${cat.nama} siap sewa di ${APP_NAME}. Kualitas prima dan stok pasti ada.`;
+  const pageTitle = `Booking Alat ${cat.nama}`;
+  const desc = `Pilihan perlengkapan ${cat.nama} siap booking di ${APP_NAME}. Kualitas prima dan stok pasti ada.`;
   const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://pirantiku.web.id";
 
   return {

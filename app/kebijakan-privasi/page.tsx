@@ -63,9 +63,9 @@ export default function KebijakanPrivasiPage() {
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li><strong>Data Akun:</strong> Nama lengkap dan alamat email yang didaftarkan saat registrasi awal.</li>
-            <li><strong>Nomor Kontak / WhatsApp:</strong> Dikumpulkan saat Anda melengkapi data diri di <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Akun</Link> atau saat mengisi formulir checkout pesanan untuk koordinasi sewa dan pengingat reservasi.</li>
+            <li><strong>Nomor Kontak / WhatsApp:</strong> Dikumpulkan saat Anda melengkapi data diri di <Link href="/profil" className="font-semibold underline hover:text-[#234E5C]">Profil Akun</Link> atau saat mengisi formulir checkout pesanan untuk koordinasi booking dan pengingat reservasi.</li>
             <li><strong>Data Autentikasi Pihak Ketiga (Google OAuth):</strong> Jika Anda memilih masuk menggunakan akun Google, kami menerima identitas dasar berupa nama, email terverifikasi, dan foto profil Anda dari Google secara terenkripsi untuk mempermudah akses login.</li>
-            <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, rincian biaya sewa & deposit, serta bukti transfer pembayaran uang muka (DP).</li>
+            <li><strong>Data Transaksi:</strong> Riwayat booking alat, durasi peminjaman, rincian biaya booking & deposit, serta bukti transfer pembayaran uang muka (DP).</li>
             <li><strong>Identitas Fisik (Verifikasi Toko):</strong> Kartu identitas fisik resmi asli (KTP atau SIM) wajib ditunjukkan untuk proses verifikasi langsung saat serah terima alat di toko demi keamanan aset rental.</li>
           </ul>
         </section>
@@ -75,8 +75,8 @@ export default function KebijakanPrivasiPage() {
           <p className="text-[#5F7A84]">Data Anda dimanfaatkan semata-mata untuk kebutuhan operasional layanan:</p>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li>Memproses reservasi, memvalidasi ketersediaan stok, dan menerbitkan rincian booking.</li>
-            <li>Mengirimkan konfirmasi pesanan, pengingat jadwal sewa, dan informasi pengembalian melalui WhatsApp dan email.</li>
-            <li>Verifikasi kepemilikan sewa serta pencegahan penipuan atau kehilangan aset rental.</li>
+            <li>Mengirimkan konfirmasi pesanan, pengingat jadwal booking, dan informasi pengembalian melalui WhatsApp dan email.</li>
+            <li>Verifikasi kepemilikan booking serta pencegahan penipuan atau kehilangan aset rental.</li>
           </ul>
         </section>
 
@@ -97,7 +97,7 @@ export default function KebijakanPrivasiPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">6. Masa Retensi Data</H2>
           <p className="text-[#5F7A84]">
-            Data akun Anda disimpan selama akun masih aktif digunakan. Data riwayat transaksi sewa disimpan selama maksimal 2 (dua) tahun guna pencatatan keuangan, verifikasi garansi deposit, dan audit internal, setelah itu data transaksi akan diarsipkan atau dihapus secara permanen.
+            Data akun Anda disimpan selama akun masih aktif digunakan. Data riwayat transaksi booking disimpan selama maksimal 2 (dua) tahun guna pencatatan keuangan, verifikasi garansi deposit, dan audit internal, setelah itu data transaksi akan diarsipkan atau dihapus secara permanen.
           </p>
         </section>
 

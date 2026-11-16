@@ -83,7 +83,7 @@ export function EquipmentGallery({
               )}
               <span className="text-sm font-bold text-[#234E5C]">{nama}</span>
               <span className="text-xs text-[#5F7A84] mt-1">
-                Foto produk siap disewa dengan kondisi prima
+                Foto produk siap dibooking dengan kondisi prima
               </span>
             </div>
           }

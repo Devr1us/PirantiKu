@@ -490,7 +490,7 @@ export function PaymentFlow({
         {/* Breakdown Singkat */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-1">
           <div className="p-3 rounded-xl bg-[#FAFAF8] border border-[#E8E8E1]">
-            <span className="text-[11px] text-[#5F7A84] block">Total Sewa Alat</span>
+            <span className="text-[11px] text-[#5F7A84] block">Total Booking Alat</span>
             <span className="font-bold text-[#234E5C]">
               {formatRupiah(booking.total_harga)}
             </span>
@@ -541,12 +541,12 @@ export function PaymentFlow({
                 <span>Pembayaran DP Terverifikasi!</span>
               </div>
               <p className="leading-relaxed text-[11px]">
-                Uang muka Anda telah diterima. Jadwal sewa unit telah terkunci aman. Silakan bawa identitas asli (KTP/SIM) untuk verifikasi saat pengambilan alat di lokasi.
+                Uang muka Anda telah diterima. Jadwal booking unit telah terkunci aman. Silakan bawa identitas asli (KTP/SIM) untuk verifikasi saat pengambilan alat di lokasi.
               </p>
               
               <div className="pt-2 border-t border-[#C5E1A5] flex items-center justify-between">
                 <span className="text-[11px] font-semibold text-[#2E5E4E]">
-                  Surat perjanjian sewa telah terbit
+                  Surat perjanjian booking telah terbit
                 </span>
                 <Link href={`/invoice/${booking.kode_booking}`} target="_blank">
                   <Button
@@ -1024,7 +1024,7 @@ export function PaymentFlow({
           href="/booking-saya"
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-[#234E5C] text-[#234E5C] font-bold text-xs hover:bg-[#234E5C] hover:text-white transition-all shadow-xs active:scale-[0.98] text-center"
         >
-          <span>&larr; Lihat Seluruh Booking Saya</span>
+          <span>Lihat Seluruh Booking Saya</span>
         </Link>
 
         {showBackToHome && (
@@ -1032,7 +1032,7 @@ export function PaymentFlow({
             href="/alat"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-[#E8E8E1] text-[#5F7A84] hover:text-[#234E5C] hover:border-[#234E5C] font-semibold text-xs transition-all shadow-xs active:scale-[0.98] text-center"
           >
-            <span>Kembali ke Katalog Alat &rarr;</span>
+            <span>Kembali ke Katalog Alat</span>
           </Link>
         )}
       </div>

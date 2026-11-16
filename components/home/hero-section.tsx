@@ -110,7 +110,6 @@ export function HeroSection({
                 className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-[var(--bg-dark)] text-white font-bold text-base sm:text-lg shadow-[5px_5px_0_var(--bg-footer)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_var(--bg-footer)] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
               >
                 <span>Lihat Katalog</span>
-                <span aria-hidden="true">→</span>
               </Link>
 
               {/* Tombol Hubungi Admin */}

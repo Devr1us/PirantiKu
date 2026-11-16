@@ -5,7 +5,6 @@ import {
   Package,
   ShieldCheck,
   CheckCircle2,
-  ArrowRight,
   MessageCircle,
   Clock,
   MapPin,
@@ -56,7 +55,7 @@ export default async function CaraBookingPage() {
             </span>
             <h3 className="text-lg font-bold text-[#234E5C] flex items-center gap-2">
               <Package className="h-5 w-5 text-[#234E5C]" />
-              Pilih Alat &amp; Jadwal Sewa
+              Pilih Alat &amp; Jadwal Booking
             </h3>
             <p className="text-sm text-[#5F7A84] leading-relaxed">
               Jelajahi katalog dan pilih perlengkapan yang Anda perlukan. Tentukan tanggal mulai dan selesai peminjaman untuk melihat sisa stok yang tersedia secara real-time.
@@ -64,7 +63,7 @@ export default async function CaraBookingPage() {
           </div>
           <div className="pt-4 border-t border-[#E8E8E1] text-xs text-[#5F7A84] space-y-1">
             <span className="font-bold text-[#234E5C] block">Tips:</span>
-            <p>Durasi sewa 7 hari ke atas otomatis mendapatkan tarif sewa mingguan yang lebih hemat.</p>
+            <p>Durasi booking 7 hari ke atas otomatis mendapatkan tarif booking mingguan yang lebih hemat.</p>
           </div>
         </div>
 
@@ -99,7 +98,7 @@ export default async function CaraBookingPage() {
               Ambil, Pakai &amp; Kembalikan
             </h3>
             <p className="text-sm text-[#5F7A84] leading-relaxed">
-              Pengambilan alat langsung di toko kami dengan membawa kartu identitas fisik asli (KTP/SIM). Selesaikan sisa sewa &amp; deposit, pakai alat, dan kembalikan tepat waktu untuk pencairan utuh deposit.
+              Pengambilan alat langsung di toko kami dengan membawa kartu identitas fisik asli (KTP/SIM). Selesaikan sisa booking &amp; deposit, pakai alat, dan kembalikan tepat waktu untuk pencairan utuh deposit.
             </p>
           </div>
           <div className="pt-4 border-t border-[#E8E8E1] text-xs text-[#5F7A84] space-y-1">
@@ -114,7 +113,7 @@ export default async function CaraBookingPage() {
         <div className="space-y-1">
           <h2 className="text-base sm:text-lg font-bold text-[#234E5C] flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-[#234E5C]" />
-            Ketentuan Penting Sewa &amp; Serah Terima
+            Ketentuan Penting Booking &amp; Serah Terima
           </h2>
           <p className="text-xs sm:text-sm text-[#5F7A84]">
             Harap perhatikan ketentuan berikut demi kenyamanan dan keamanan transaksi Anda:
@@ -170,13 +169,12 @@ export default async function CaraBookingPage() {
           Sudah Siap Memilih Peralatan?
         </h3>
         <p className="max-w-xl mx-auto text-sm text-[#5F7A84] leading-relaxed">
-          Buka katalog untuk mengecek ketersediaan unit dan sewa alat sesuai tanggal yang Anda inginkan.
+          Buka katalog untuk mengecek ketersediaan unit dan booking alat sesuai tanggal yang Anda inginkan.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link href="/alat">
-            <Button variant="warm" size="lg" className="px-8 text-xs sm:text-sm font-bold gap-2">
+            <Button variant="warm" size="lg" className="px-8 text-xs sm:text-sm font-bold">
               <span>Lihat Katalog Alat</span>
-              <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
           <a

@@ -57,7 +57,7 @@ export async function generateMetadata({
   const ogTitle = `${item.nama} | ${APP_NAME}`;
   const description =
     item.deskripsi ||
-    `Sewa ${item.nama} di ${APP_NAME}. Kualitas prima, DP ringan, dan stok siap pakai.`;
+    `Booking ${item.nama} di ${APP_NAME}. Kualitas prima, DP ringan, dan stok siap pakai.`;
 
   return {
     title: pageTitle,
@@ -328,7 +328,7 @@ export default async function EquipmentDetailPage({
                 href={`/kategori/${equipment.category.slug}`}
                 className="text-xs font-bold text-[#A0630F] hover:underline uppercase"
               >
-                Lihat Semua &rarr;
+                Lihat Semua
               </Link>
             )}
           </div>

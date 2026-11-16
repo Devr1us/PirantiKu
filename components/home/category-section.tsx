@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ArrowRight, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import type { Category } from "@/types/database";
 import { getCategoryIcon, getCategoryDescription } from "@/lib/constants";
 
@@ -39,10 +39,9 @@ export function CategorySection({
 
           <Link
             href="/alat"
-            className="inline-flex items-center gap-1.5 text-sm sm:text-base font-bold text-[var(--bg-dark)] hover:text-[var(--accent-gold)] transition-colors shrink-0 group"
+            className="inline-flex items-center text-sm sm:text-base font-bold text-[var(--bg-dark)] hover:text-[var(--accent-gold)] transition-colors shrink-0 group"
           >
             <span>Lihat semua</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -83,9 +82,8 @@ export function CategorySection({
                   <span className="text-[var(--text-muted)] font-medium">
                     {count} alat aktif
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[var(--accent-gold)] group-hover:translate-x-1 transition-transform">
+                  <span className="inline-flex items-center text-[var(--accent-gold)] transition-colors">
                     <span>Lihat alat</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </Link>
@@ -116,9 +114,8 @@ export function CategorySection({
               <span className="text-[var(--text-muted)] font-medium">
                 {totalActiveTypes > 0 ? `${totalActiveTypes} macam alat` : "Katalog Lengkap"}
               </span>
-              <span className="inline-flex items-center gap-1 text-[var(--accent-gold)] group-hover:translate-x-1 transition-transform">
+              <span className="inline-flex items-center text-[var(--accent-gold)] transition-colors">
                 <span>Buka katalog</span>
-                <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
           </Link>

@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Kelola Kategori Alat | Admin PirantiKu",
-  description: "Kelola klasifikasi kategori alat sewa, urutan tampilan di beranda, dan ikon.",
+  description: "Kelola klasifikasi kategori alat booking, urutan tampilan di beranda, dan ikon.",
 };
 
 export default async function AdminCategoriesPage() {
@@ -53,7 +53,7 @@ export default async function AdminCategoriesPage() {
           KELOLA KATEGORI ALAT
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Daftar klasifikasi kategori perlengkapan sewa yang ditampilkan di beranda dan navigasi website.
+          Daftar klasifikasi kategori perlengkapan booking yang ditampilkan di beranda dan navigasi website.
         </Lead>
       </div>
 

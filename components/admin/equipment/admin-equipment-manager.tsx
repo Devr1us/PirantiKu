@@ -373,7 +373,7 @@ export function AdminEquipmentManager({
         // Jika terdapat riwayat sewa / foreign key constraint, tawarkan soft delete (nonaktifkan)
         if (error.code === "23503" || error.message.includes("violates foreign key")) {
           const soft = confirm(
-            `Alat ini memiliki riwayat booking sewa sebelumnya dan tidak dapat dihapus permanen. Nonaktifkan alat ini agar tidak tampil lagi di katalog?`
+            `Alat ini memiliki riwayat booking sebelumnya dan tidak dapat dihapus permanen. Nonaktifkan alat ini agar tidak tampil lagi di katalog?`
           );
           if (soft) {
             await supabase
@@ -453,7 +453,7 @@ export function AdminEquipmentManager({
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Unit Siap Sewa
+              Unit Siap Booking
             </span>
             <span className="text-2xl font-extrabold text-[#2E5E4E]">
               {totalUnitSiapSewa} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
@@ -467,7 +467,7 @@ export function AdminEquipmentManager({
         <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 flex items-center justify-between shadow-xs">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Sedang Disewa
+              Sedang Dibooking
             </span>
             <span className="text-2xl font-extrabold text-[#2B6CB0]">
               {totalUnitDisewa} <span className="text-xs font-semibold text-[#5F7A84]">unit</span>
@@ -564,8 +564,8 @@ export function AdminEquipmentManager({
                 <th className="py-3 px-4 text-right">Tarif / Hari</th>
                 <th className="py-3 px-4 text-right">Deposit</th>
                 <th className="py-3 px-4 text-center">Stok Bersih</th>
-                <th className="py-3 px-4 text-center">Disewa</th>
-                <th className="py-3 px-4 text-center">Siap Sewa</th>
+                <th className="py-3 px-4 text-center">Dibooking</th>
+                <th className="py-3 px-4 text-center">Siap Booking</th>
                 <th className="py-3 px-4 text-center">Rusak</th>
                 <th className="py-3 px-4 text-center">Status</th>
                 <th className="py-3 px-4 text-center w-28">Aksi</th>
@@ -740,7 +740,7 @@ export function AdminEquipmentManager({
         <DialogContent className="max-w-2xl bg-white p-6 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
-              {editingId ? "Edit Perlengkapan Sewa" : "Tambah Perlengkapan Sewa Baru"}
+              {editingId ? "Edit Perlengkapan Booking" : "Tambah Perlengkapan Booking Baru"}
             </DialogTitle>
           </DialogHeader>
 
@@ -879,7 +879,7 @@ export function AdminEquipmentManager({
                   className="h-10 text-xs text-[#991B1B] font-bold"
                 />
                 <span className="text-[10px] text-[#5F7A84] block">
-                  Tidak dapat disewa pelanggan
+                  Tidak dapat dibooking pelanggan
                 </span>
               </div>
 

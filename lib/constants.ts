@@ -64,7 +64,7 @@ export const CATEGORY_DESCRIPTIONS: Record<string, string> = {
 };
 
 export const FALLBACK_CATEGORY_DESCRIPTION =
-  "Pilihan perlengkapan berkualitas siap sewa dengan stok terjamin per tanggal.";
+  "Pilihan perlengkapan berkualitas siap booking dengan stok terjamin per tanggal.";
 
 export function getCategoryDescription(slug?: string | null): string {
   if (!slug) return FALLBACK_CATEGORY_DESCRIPTION;
@@ -122,7 +122,7 @@ export const BOOKING_STATUS_CONFIG: Record<
     text: "text-[#991B1B]",
     border: "border-[#FECACA]",
     dot: "bg-[#DC2626]",
-    description: "Masa sewa berakhir namun alat belum dikembalikan.",
+    description: "Masa booking berakhir namun alat belum dikembalikan.",
   },
   dikembalikan: {
     label: "Dikembalikan",

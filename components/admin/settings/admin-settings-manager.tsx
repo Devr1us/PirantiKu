@@ -533,7 +533,7 @@ export function AdminSettingsManager({
 
                 <div className="flex justify-between items-center text-xs pt-1 border-t border-[#E8E8E1]">
                   <span className="text-[#5F7A84]">Ketentuan Uang Muka:</span>
-                  <span className="font-bold text-[#A0630F]">{dpPersen}% dari Total Sewa</span>
+                  <span className="font-bold text-[#A0630F]">{dpPersen}% dari Total Booking</span>
                 </div>
               </div>
 
@@ -675,7 +675,7 @@ export function AdminSettingsManager({
                       +{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}
                     </p>
                     <p className="text-[11px] text-[#2E5E4E] font-medium">
-                      Aktif untuk konfirmasi sewa & panduan alat
+                      Aktif untuk konfirmasi booking & panduan alat
                     </p>
                   </div>
                 </div>

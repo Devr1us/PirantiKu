@@ -7,10 +7,10 @@ import { APP_NAME, ADMIN_WHATSAPP_NUMBER } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Tanya Jawab (FAQ)",
-  description: `Pertanyaan yang sering diajukan seputar layanan sewa alat di ${APP_NAME}.`,
+  description: `Pertanyaan yang sering diajukan seputar layanan booking alat di ${APP_NAME}.`,
   openGraph: {
     title: `Tanya Jawab (FAQ) | ${APP_NAME}`,
-    description: `Pertanyaan yang sering diajukan seputar layanan sewa alat di ${APP_NAME}.`,
+    description: `Pertanyaan yang sering diajukan seputar layanan booking alat di ${APP_NAME}.`,
     url: "/faq",
     images: [
       {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `Tanya Jawab (FAQ) | ${APP_NAME}`,
-    description: `Pertanyaan yang sering diajukan seputar layanan sewa alat di ${APP_NAME}.`,
+    description: `Pertanyaan yang sering diajukan seputar layanan booking alat di ${APP_NAME}.`,
     images: ["/logo.png"],
   },
 };
@@ -37,15 +37,15 @@ export default function FAQPage() {
     },
     {
       q: "Berapa minimal uang muka (DP) yang harus dibayar?",
-      a: "Uang muka pemesanan adalah 30% dari total nilai sewa. Pembayaran DP ini menjamin unit alat terkunci untuk Anda pada jadwal yang dipilih dan tidak akan diberikan ke pelanggan lain.",
+      a: "Uang muka pemesanan adalah 30% dari total nilai booking. Pembayaran DP ini menjamin unit alat terkunci untuk Anda pada jadwal yang dipilih dan tidak akan diberikan ke pelanggan lain.",
     },
     {
       q: "Berapa lama batas waktu pembayaran DP setelah booking?",
       a: "Batas waktu pembayaran uang muka (DP) adalah maksimal 24 jam sejak pesanan dibuat. Jika pembayaran DP belum diselesaikan dalam 24 jam, sistem akan otomatis membatalkan pesanan agar stok alat dapat diakses oleh user lain.",
     },
     {
-      q: "Bagaimana ketentuan pembatalan sewa dan pengembalian uang muka (refund)?",
-      a: "Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai sewa berhak atas pengembalian (refund) DP 100% penuh atau dialihkan jadwalnya. Namun, pembatalan yang diajukan dalam kurun waktu 24 jam atau kurang sebelum tanggal mulai sewa membuat DP hangus (non-refundable) karena unit telah disiapkan dan menolak calon user lain.",
+      q: "Bagaimana ketentuan pembatalan booking dan pengembalian uang muka (refund)?",
+      a: "Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai booking berhak atas pengembalian (refund) DP 100% penuh atau dialihkan jadwalnya. Namun, pembatalan yang diajukan dalam kurun waktu 24 jam atau kurang sebelum tanggal mulai booking membuat DP hangus (non-refundable) karena unit telah disiapkan dan menolak calon user lain.",
     },
     {
       q: "Metode pembayaran apa saja yang didukung?",
@@ -61,11 +61,11 @@ export default function FAQPage() {
     },
     {
       q: "Apa saja syarat dokumen saat pengambilan alat?",
-      a: "User wajib membawa dan menunjukkan kartu identitas resmi yang masih aktif (KTP atau SIM asli) yang sesuai dengan nama pada akun booking untuk verifikasi fisik saat serah terima, serta menyelesaikan pelunasan sisa biaya sewa dan deposit jaminan.",
+      a: "User wajib membawa dan menunjukkan kartu identitas resmi yang masih aktif (KTP atau SIM asli) yang sesuai dengan nama pada akun booking untuk verifikasi fisik saat serah terima, serta menyelesaikan pelunasan sisa biaya booking dan deposit jaminan.",
     },
     {
       q: "Bagaimana jika saya terlambat mengembalikan alat?",
-      a: "Pengembalian alat maksimal pukul 21.00 WIB pada tanggal selesai booking (sesuai jam operasional toko 08.00 - 21.00 WIB). Keterlambatan tanpa koordinasi awal dikenakan denda sebesar 1x tarif sewa harian alat untuk setiap 1 hari keterlambatan yang dipotong langsung dari deposit jaminan.",
+      a: "Pengembalian alat maksimal pukul 21.00 WIB pada tanggal selesai booking (sesuai jam operasional toko 08.00 - 21.00 WIB). Keterlambatan tanpa koordinasi awal dikenakan denda sebesar 1x tarif booking harian alat untuk setiap 1 hari keterlambatan yang dipotong langsung dari deposit jaminan.",
     },
     {
       q: "Bagaimana jika alat rusak selama pemakaian?",
@@ -80,8 +80,8 @@ export default function FAQPage() {
       a: "User wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM asli) yang masih aktif untuk ditunjukkan dalam proses verifikasi serah terima unit. Khusus untuk peralatan pertukangan bermesin besar yang memiliki risiko tinggi (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), user pemula disarankan didampingi teknisi atau orang dewasa berpengalaman demi keselamatan kerja.",
     },
     {
-      q: "Bisakah saya memperpanjang masa sewa (extend)?",
-      a: "Bisa. Anda wajib mengonfirmasi ke Admin WhatsApp kami minimal 24 jam sebelum masa sewa berakhir. Perpanjangan dapat disetujui jika unit belum dipesan oleh user lain pada jadwal berikutnya.",
+      q: "Bisakah saya memperpanjang masa booking (extend)?",
+      a: "Bisa. Anda wajib mengonfirmasi ke Admin WhatsApp kami minimal 24 jam sebelum masa booking berakhir. Perpanjangan dapat disetujui jika unit belum dipesan oleh user lain pada jadwal berikutnya.",
     },
     {
       q: "Bagaimana jika stok alat yang saya butuhkan sedang habis?",

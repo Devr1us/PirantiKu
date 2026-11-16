@@ -135,7 +135,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
-            <H1 className="section-title block">PEMBAYARAN SEWA</H1>
+            <H1 className="section-title block">PEMBAYARAN BOOKING</H1>
             <Lead className="text-sm text-[#5F7A84] font-medium">
               Selesaikan uang muka (DP) untuk mengunci jadwal peminjaman unit alat Anda.
             </Lead>
@@ -195,14 +195,14 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
           <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
             <h3 className="text-sm font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3 flex items-center gap-2">
               <Package className="h-4 w-4 text-[#234E5C]" />
-              Peralatan yang Disewa ({booking.items?.length || 0})
+              Peralatan yang Dibooking ({booking.items?.length || 0})
             </h3>
 
-            {/* Jadwal Rentang Sewa */}
+            {/* Jadwal Rentang Booking */}
             <div className="p-3 rounded-xl bg-[#FAFAF8] border border-[#E8E8E1] space-y-1 text-xs">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5">
                 <Calendar className="h-3.5 w-3.5 text-[#234E5C]" />
-                Jadwal Sewa
+                Jadwal Booking
               </span>
               <p className="font-bold text-[#234E5C]">
                 {formatDateIndo(booking.tanggal_mulai, "d MMM yyyy")} &rarr;{" "}
@@ -232,7 +232,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
             {/* Total Ringkasan Biaya */}
             <div className="border-t border-[#E8E8E1] pt-3 space-y-2 text-xs">
               <div className="flex justify-between text-[#5F7A84]">
-                <span>Total Sewa Alat</span>
+                <span>Total Booking Alat</span>
                 <span className="font-bold text-[#234E5C]">
                   {formatRupiah(booking.total_harga)}
                 </span>
@@ -264,7 +264,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
             </h4>
             <ul className="space-y-1.5 text-[#5F7A84] list-disc list-inside text-[11px] leading-relaxed break-words">
               <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan untuk verifikasi fisik saat serah terima.</li>
-              <li>Sisa biaya sewa & deposit jaminan dilunasi di toko saat serah terima unit.</li>
+              <li>Sisa biaya booking & deposit jaminan dilunasi di toko saat serah terima unit.</li>
               <li>Pengecekan fungsi & kondisi alat dilakukan bersama sebelum serah terima.</li>
               <li>Deposit akan dikembalikan 100% penuh saat alat kembali tepat waktu dan dalam kondisi baik.</li>
             </ul>

@@ -44,16 +44,16 @@ export default async function AdminCalendarPage() {
           KALENDER RENTAL
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Pantau jadwal masa sewa yang sedang aktif dan agenda pengembalian peralatan mendatang.
+          Pantau jadwal masa booking yang sedang aktif dan agenda pengembalian peralatan mendatang.
         </Lead>
       </div>
 
-      {/* Tabel Jadwal Sewa Aktif dalam Kartu Putih */}
+      {/* Tabel Jadwal Booking Aktif dalam Kartu Putih */}
       <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between border-b border-[#E8E8E1] pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-2">
             <Calendar className="h-4 w-4 text-[#234E5C]" />
-            Jadwal Sewa Aktif & Mendatang ({activeBookings.length})
+            Jadwal Booking Aktif & Mendatang ({activeBookings.length})
           </span>
         </div>
 
@@ -65,7 +65,7 @@ export default async function AdminCalendarPage() {
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Tanggal Mulai</th>
                 <th className="py-3 px-4">Batas Kembali</th>
-                <th className="py-3 px-4">Alat yang Sedang Disewa</th>
+                <th className="py-3 px-4">Alat yang Sedang Dibooking</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E8E8E1]">
@@ -102,7 +102,7 @@ export default async function AdminCalendarPage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-[#5F7A84]">
-                    Tidak ada jadwal sewa aktif yang tercatat saat ini.
+                    Tidak ada jadwal booking aktif yang tercatat saat ini.
                   </td>
                 </tr>
               )}

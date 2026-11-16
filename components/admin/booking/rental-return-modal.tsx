@@ -323,7 +323,7 @@ export function RentalReturnModal({
             <div className="flex items-center justify-between">
               <span className="font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5 text-[11px]">
                 <Clock className="h-3.5 w-3.5 text-[#234E5C]" />
-                Pemeriksaan Batas Waktu Sewa
+                Pemeriksaan Batas Waktu Booking
               </span>
               <span
                 className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
@@ -411,7 +411,7 @@ export function RentalReturnModal({
                             {item.equipmentNama}
                           </span>
                           <span className="text-[11px] text-[#5F7A84]">
-                            Jumlah disewa: <strong>{item.maxQty} unit</strong>
+                            Jumlah dibooking: <strong>{item.maxQty} unit</strong>
                           </span>
                         </div>
                       </div>

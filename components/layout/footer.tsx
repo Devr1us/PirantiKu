@@ -35,12 +35,12 @@ export async function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#cara-sewa" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link href="/cara-booking" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Cara Booking
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#kontak" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link href="/kontak" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Kontak
                   </Link>
                 </li>

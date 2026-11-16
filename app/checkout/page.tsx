@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
-  ArrowRight,
   ArrowLeft,
   CheckCircle2,
   Calendar,
@@ -333,7 +332,7 @@ function CheckoutContent() {
                 </span>
               </div>
               <p className="text-xs text-[#15803D] leading-relaxed">
-                Kirim rincian sewa langsung ke WhatsApp Admin (<strong>{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}</strong>) hanya dalam 1 klik untuk konfirmasi kilat!
+                Kirim rincian booking langsung ke WhatsApp Admin (<strong>{whatsappAdmin || DEFAULT_SETTINGS.whatsapp_admin}</strong>) hanya dalam 1 klik untuk konfirmasi kilat!
               </p>
             </div>
             <a
@@ -492,7 +491,6 @@ function CheckoutContent() {
                   className="w-full sm:w-auto px-8 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Lanjut ke Rincian & DP
-                  <ArrowRight className="h-4 w-4 ml-1.5" />
                 </Button>
               </div>
             </div>

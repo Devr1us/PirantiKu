@@ -221,9 +221,9 @@ export function RentalDatePicker({
                   const start = parseISO(startDate);
                   const end = parseISO(endDate);
                   const diff = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
-                  return diff <= 1 ? "1 Hari Sewa" : `${diff} Hari Sewa`;
+                  return diff <= 1 ? "1 Hari Booking" : `${diff} Hari Booking`;
                 } catch {
-                  return "1 Hari Sewa";
+                  return "1 Hari Booking";
                 }
               })()}
             </span>

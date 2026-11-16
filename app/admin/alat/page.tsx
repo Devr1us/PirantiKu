@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Kelola Alat & Inventaris | Admin PirantiKu",
-  description: "Kelola data perlengkapan sewa, harga, stok unit, dan foto produk.",
+  description: "Kelola data perlengkapan booking, harga, stok unit, dan foto produk.",
 };
 
 export default async function AdminEquipmentPage() {

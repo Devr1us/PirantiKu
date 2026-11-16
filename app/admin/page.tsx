@@ -3,7 +3,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  ArrowRight,
   Eye,
   Users,
 } from "lucide-react";
@@ -115,7 +114,6 @@ export default async function AdminDashboardPage() {
           <Link href="/admin/booking">
             <Button variant="warm" size="sm" className="text-xs font-bold gap-1.5 shadow-sm">
               <span>Buka Kelola Booking</span>
-              <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </Link>
         </div>
@@ -138,14 +136,14 @@ export default async function AdminDashboardPage() {
         <Reveal delay={0.1}>
           <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Unit Siap Sewa
+              Unit Siap Booking
             </span>
             <div className="text-3xl font-extrabold text-[#234E5C]">
               <CountUp value={totalAvailableUnits} />
             </div>
             <p className="text-[11px] text-[#5F7A84]">
               {totalRentedUnits > 0
-                ? `${totalRentedUnits} unit sedang disewa`
+                ? `${totalRentedUnits} unit sedang dibooking`
                 : "Semua unit siap di gudang"}
             </p>
           </div>
@@ -159,7 +157,7 @@ export default async function AdminDashboardPage() {
             <div className="text-3xl font-extrabold text-[#A0630F]">
               <CountUp value={totalBookings} />
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Pesanan sewa masuk</p>
+            <p className="text-[11px] text-[#5F7A84]">Pesanan booking masuk</p>
           </div>
         </Reveal>
 
@@ -201,7 +199,7 @@ export default async function AdminDashboardPage() {
               </span>
             </div>
             <p className="text-xs text-[#5F7A84] mt-0.5">
-              Daftar seluruh pesanan sewa pelanggan yang sinkron dengan data di Kelola Booking
+              Daftar seluruh pesanan booking pelanggan yang sinkron dengan data di Kelola Booking
             </p>
           </div>
 
@@ -212,7 +210,6 @@ export default async function AdminDashboardPage() {
               className="text-xs font-bold gap-1.5 border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF]"
             >
               <span>Verifikasi & Kelola di Menu Booking</span>
-              <ArrowRight className="h-3.5 w-3.5 text-[#A0630F]" />
             </Button>
           </Link>
         </div>
@@ -225,7 +222,7 @@ export default async function AdminDashboardPage() {
                 <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Status Booking</th>
                 <th className="py-3 px-4">Status Pembayaran</th>
-                <th className="py-3 px-4">Jadwal Sewa</th>
+                <th className="py-3 px-4">Jadwal Booking</th>
                 <th className="py-3 px-4">Total Biaya & DP</th>
                 <th className="py-3 px-4 text-right">Aksi</th>
               </tr>
@@ -304,7 +301,7 @@ export default async function AdminDashboardPage() {
               ) : (
                 <tr>
                   <td colSpan={7} className="py-8 text-center text-[#5F7A84]">
-                    Belum ada pesanan booking sewa yang tercatat.
+                    Belum ada pesanan booking yang tercatat.
                   </td>
                 </tr>
               )}

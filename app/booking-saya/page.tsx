@@ -7,7 +7,6 @@ import {
   Calendar,
   Package,
   Clock,
-  ArrowRight,
   ShieldCheck,
   AlertCircle,
   CreditCard,
@@ -55,7 +54,7 @@ type BookingWithDetails = Booking & {
 };
 
 const CANCELLATION_REASONS = [
-  "Salah input tanggal sewa",
+  "Salah input tanggal booking",
   "Salah memilih tipe atau unit alat",
   "Tidak sengaja terbuat (duplikat pesanan)",
   "Perubahan rencana kegiatan / acara",
@@ -215,7 +214,7 @@ export default function BookingSayaPage() {
       <div data-nosnippet aria-hidden="true" className="mx-auto max-w-[1200px] px-4 py-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#234E5C] border-t-transparent" />
-          <p data-nosnippet aria-hidden="true" className="text-sm text-[#5F7A84]">Memuat daftar pesanan sewa Anda...</p>
+          <p data-nosnippet aria-hidden="true" className="text-sm text-[#5F7A84]">Memuat daftar pesanan booking Anda...</p>
         </div>
       </div>
     );
@@ -229,7 +228,7 @@ export default function BookingSayaPage() {
           BOOKING SAYA
         </H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Pantau status verifikasi pembayaran uang muka, cetak surat jalan perjanjian, dan jadwal pengambilan unit sewa Anda.
+          Pantau status verifikasi pembayaran uang muka, cetak surat jalan perjanjian, dan jadwal pengambilan unit booking Anda.
         </Lead>
       </div>
 
@@ -277,7 +276,7 @@ export default function BookingSayaPage() {
 
                     <div className="text-right">
                       <span className="text-[11px] font-semibold text-[#5F7A84] block">
-                        Total Biaya Sewa
+                        Total Biaya Booking
                       </span>
                       <span className="text-base font-extrabold text-[#A0630F]">
                         {formatRupiah(booking.total_harga)}
@@ -288,10 +287,10 @@ export default function BookingSayaPage() {
 
                 {/* Jadwal dan Barang */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Jadwal Sewa */}
+                  {/* Jadwal Booking */}
                   <div className="space-y-3">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                      Rentang Waktu Sewa
+                      Rentang Waktu Booking
                     </h4>
                     <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-3.5 flex items-center gap-3">
                       <Calendar className="h-5 w-5 text-[#234E5C] shrink-0" />
@@ -320,7 +319,7 @@ export default function BookingSayaPage() {
                   {/* Daftar Peralatan */}
                   <div className="space-y-3">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                      Peralatan yang Disewa ({booking.items?.length || 0})
+                      Peralatan yang Dibooking ({booking.items?.length || 0})
                     </h4>
                     <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                       {booking.items?.map((item) => (
@@ -497,7 +496,7 @@ export default function BookingSayaPage() {
                             size="sm"
                             className="text-xs font-bold gap-1.5 w-full"
                           >
-                            Rincian Sewa &amp; Lokasi
+                            Rincian Booking &amp; Lokasi
                           </Button>
                         </Link>
 
@@ -633,11 +632,11 @@ export default function BookingSayaPage() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <span className="font-bold text-[#DC2626] flex items-center gap-1.5">
                           <AlertTriangle className="h-4 w-4" />
-                          Pesanan Sewa Telah Dibatalkan
+                          Pesanan Booking Telah Dibatalkan
                         </span>
                         <Link href="/alat">
                           <Button variant="ghost" size="sm" className="text-xs font-bold text-[#A0630F] p-0 h-auto hover:bg-transparent hover:underline">
-                            Sewa Alat Lain &rarr;
+                            Booking Alat Lain
                           </Button>
                         </Link>
                       </div>
@@ -674,13 +673,12 @@ export default function BookingSayaPage() {
               Belum Ada Riwayat Booking
             </h3>
             <p className="text-xs text-[#5F7A84] max-w-sm">
-              Anda belum pernah menyewa peralatan di PirantiKu. Buka katalog untuk mulai mencari perlengkapan kebutuhan Anda.
+              Anda belum pernah membooking peralatan di PirantiKu. Buka katalog untuk mulai mencari perlengkapan kebutuhan Anda.
             </p>
           </div>
           <Link href="/alat">
             <Button variant="warm" className="px-6 text-xs font-bold">
               Buka Katalog Alat
-              <ArrowRight className="h-4 w-4 ml-1.5" />
             </Button>
           </Link>
         </div>
@@ -721,7 +719,7 @@ export default function BookingSayaPage() {
               <AlertTriangle className="h-6 w-6 stroke-[2]" />
             </div>
             <DialogTitle className="text-lg font-bold text-[#234E5C]">
-              Batalkan Pesanan Sewa?
+              Batalkan Pesanan Booking?
             </DialogTitle>
             <DialogDescription className="text-xs text-[#5F7A84] leading-relaxed">
               Pesanan booking <strong className="text-[#234E5C]">#{bookingToCancel?.kode_booking}</strong> akan dibatalkan dan jadwal unit alat akan dilepaskan kembali ke katalog umum.

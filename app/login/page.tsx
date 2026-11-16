@@ -12,7 +12,6 @@ import {
   EyeOff,
   Mail,
   Lock,
-  ArrowRight,
   AlertCircle,
   HelpCircle,
   CheckCircle2,
@@ -203,10 +202,10 @@ function LoginForm() {
 
           <div className="space-y-3 py-6">
             <h2 className="text-xl font-bold uppercase tracking-tight text-white">
-              Sewa Alat Praktis &amp; Terpercaya
+              Booking Alat Praktis &amp; Terpercaya
             </h2>
             <p className="text-xs text-white/80 leading-relaxed font-normal">
-              Satu akun untuk menyewa seluruh perlengkapan camping, perkakas,
+              Satu akun untuk membooking seluruh perlengkapan camping, perkakas,
               olahraga, dan perayaan dengan stok terjamin per tanggal.
             </p>
           </div>
@@ -229,7 +228,7 @@ function LoginForm() {
               Masuk ke Akun
             </H1>
             <Lead className="text-xs text-[#5F7A84]">
-              Gunakan email terdaftar untuk melanjutkan sewa atau cek booking.
+              Gunakan email terdaftar untuk melanjutkan atau cek booking.
             </Lead>
           </div>
 
@@ -385,10 +384,7 @@ function LoginForm() {
                 ) : isLoading ? (
                   <span>Memverifikasi...</span>
                 ) : (
-                  <>
-                    <HoverRollText text="Masuk Sekarang" />
-                    <ArrowRight className="h-4 w-4" />
-                  </>
+                  <HoverRollText text="Masuk Sekarang" />
                 )}
               </Button>
             </div>

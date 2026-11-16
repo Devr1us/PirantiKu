@@ -168,7 +168,7 @@ export function generateWhatsAppBookingMessage({
   const notesInfo = catatan ? `\n- Catatan: ${catatan}` : "";
 
   return `Halo Admin PirantiKu,
-Saya ingin konfirmasi pesanan sewa:
+Saya ingin konfirmasi pesanan booking:
 
 - Kode Booking: *${bookingCode}*
 - User: *${customerName}*${phoneInfo}

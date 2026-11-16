@@ -660,21 +660,26 @@ export function EquipmentCatalog({
 
                 {/* Tombol Muat Lebih Banyak (Pagination / Progressive Loading untuk HP) */}
                 {filteredEquipment.length > visibleCount && (
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-[#E8E8E1]">
-                    <Button
-                      variant="outline"
-                      onClick={() => setVisibleCount((prev) => prev + 12)}
-                      className="w-full sm:w-auto text-xs font-bold px-6 h-11 border-[#234E5C] text-[#234E5C] hover:bg-[#234E5C] hover:text-white transition-colors"
-                    >
-                      Muat Lebih Banyak ({filteredEquipment.length - visibleCount} alat lagi)
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setVisibleCount(filteredEquipment.length)}
-                      className="w-full sm:w-auto text-xs font-semibold text-[#5F7A84] hover:text-[#234E5C]"
-                    >
-                      Tampilkan Semua ({filteredEquipment.length})
-                    </Button>
+                  <div className="mt-8 p-4 sm:p-5 rounded-2xl bg-white border-2 border-[var(--border-soft)] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-xs sm:text-sm font-medium text-[var(--text-muted)] text-center sm:text-left">
+                      Menampilkan <span className="font-bold text-[var(--bg-dark)]">{visibleCount}</span> dari{" "}
+                      <span className="font-bold text-[var(--bg-dark)]">{filteredEquipment.length}</span> alat
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                      <Button
+                        onClick={() => setVisibleCount((prev) => prev + 12)}
+                        className="w-full sm:w-auto text-xs sm:text-sm font-bold px-6 h-11 rounded-xl bg-[var(--bg-dark)] text-white hover:bg-[#0B2F37] border-2 border-[var(--bg-dark)] shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer"
+                      >
+                        Muat Lebih Banyak ({filteredEquipment.length - visibleCount} lagi)
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setVisibleCount(filteredEquipment.length)}
+                        className="w-full sm:w-auto text-xs sm:text-sm font-bold px-6 h-11 rounded-xl bg-[var(--bg-sage)] hover:bg-white border-2 border-[var(--border-soft)] hover:border-[var(--bg-dark)] text-[var(--bg-dark)] shadow-xs hover:translate-y-[-1px] transition-all cursor-pointer"
+                      >
+                        Tampilkan Semua ({filteredEquipment.length})
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

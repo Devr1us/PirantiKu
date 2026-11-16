@@ -8,10 +8,10 @@ import type { Category, EquipmentWithDetails } from "@/types/database";
 
 export const metadata: Metadata = {
   title: "Katalog Alat Rental",
-  description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
+  description: `Booking alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
   openGraph: {
     title: `Katalog Alat Rental | ${APP_NAME}`,
-    description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
+    description: `Booking alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
     url: "/alat",
     images: [
       {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `Katalog Alat Rental | ${APP_NAME}`,
-    description: `Sewa alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
+    description: `Booking alat camping, pertukangan, olahraga, kebersihan, dan event di ${APP_NAME}. DP ringan, stok transparan per tanggal.`,
     images: ["/logo.png"],
   },
 };

@@ -121,7 +121,7 @@ export default async function KontakPage() {
                     {cleanWa === "6285701516287" ? "+62 857-0151-6287" : `+${cleanWa}`}
                   </a>
                   <p className="text-xs text-[#5F7A84] mt-0.5">
-                    Respons cepat untuk tanya stok, perpanjangan sewa, dan konfirmasi pembayaran.
+                    Respons cepat untuk tanya stok, perpanjangan booking, dan konfirmasi pembayaran.
                   </p>
                 </div>
               </div>

@@ -10,7 +10,6 @@ import {
   Plus,
   Minus,
   Calendar,
-  ArrowRight,
   ShieldCheck,
   Info,
   Package,
@@ -163,7 +162,7 @@ function KeranjangContent() {
 
     if (isDateInvalid) {
       toast.error(
-        "Rentang tanggal sewa tidak valid. Tanggal selesai tidak boleh mendahului tanggal mulai."
+        "Rentang tanggal booking tidak valid. Tanggal selesai tidak boleh mendahului tanggal mulai."
       );
       return;
     }
@@ -207,7 +206,7 @@ function KeranjangContent() {
           <div className="mt-6">
             <Link href="/alat">
               <Button variant="warm" className="px-6 text-sm font-bold">
-                Mulai Pilih Alat &rarr;
+                Mulai Pilih Alat
               </Button>
             </Link>
           </div>
@@ -342,7 +341,7 @@ function KeranjangContent() {
                 <div>
                   <p className="font-bold">Rentang Tanggal Tidak Valid</p>
                   <p className="font-normal text-[11px] text-[#7F1D1D] mt-0.5 leading-relaxed">
-                    Tanggal selesai sewa tidak boleh mendahului tanggal mulai. Silakan sesuaikan tanggal selesai atau klik salah satu tombol durasi sewa di atas.
+                    Tanggal selesai booking tidak boleh mendahului tanggal mulai. Silakan sesuaikan tanggal selesai atau klik salah satu tombol durasi booking di atas.
                   </p>
                 </div>
               </div>
@@ -352,7 +351,7 @@ function KeranjangContent() {
             {!isDateInvalid && pricing.days >= 7 && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[#E2F0D9] border border-[#C5E1A5] text-[#2E5E4E] text-xs font-semibold">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-[#2E5E4E]" />
-                <span>Paket Mingguan Aktif! Tarif sewa otomatis dihitung dengan harga mingguan yang lebih hemat.</span>
+                <span>Paket Mingguan Aktif! Tarif booking otomatis dihitung dengan harga mingguan yang lebih hemat.</span>
               </div>
             )}
 
@@ -377,7 +376,7 @@ function KeranjangContent() {
           {/* Daftar Barang Disewa */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold text-[#234E5C] uppercase tracking-wider">
-              Daftar Barang Disewa ({items.length})
+              Daftar Barang Dibooking ({items.length})
             </h3>
 
             <div className="space-y-3">
@@ -492,7 +491,7 @@ function KeranjangContent() {
 
             <div className="space-y-3 text-xs">
               <div className="flex justify-between items-center text-[#5F7A84]">
-                <span>Total Durasi Sewa</span>
+                <span>Total Durasi Booking</span>
                 {isDateInvalid ? (
                   <span className="font-bold text-[#991B1B] bg-[#FEE2E2] px-2 py-0.5 rounded text-[11px]">
                     Tanggal Tidak Valid
@@ -566,7 +565,6 @@ function KeranjangContent() {
                 className="w-full h-12 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isDateInvalid ? "Periksa Rentang Tanggal" : "Lanjut ke Checkout"}
-                <ArrowRight className="h-4 w-4" />
               </Button>
 
               <Link href="/alat" className="block text-center">

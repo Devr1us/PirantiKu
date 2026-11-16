@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Lock, Eye, EyeOff, ArrowRight, ShieldCheck } from "lucide-react";
+import { Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -167,10 +167,7 @@ export default function ResetPasswordPage() {
               {isLoading ? (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               ) : (
-                <>
-                  <ArrowRight className="h-4 w-4" />
-                  Simpan Password Baru
-                </>
+                "Simpan Password Baru"
               )}
             </Button>
           </div>

@@ -13,7 +13,6 @@ import {
   Mail,
   Lock,
   User,
-  ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ const registerSchema = z
       .max(64, "Password maksimal 64 karakter"),
     confirmPassword: z.string(),
     agreeTerms: z.boolean().refine((val) => val === true, {
-      message: "Anda harus menyetujui syarat & ketentuan sewa",
+      message: "Anda harus menyetujui syarat & ketentuan booking",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -204,7 +203,7 @@ export default function DaftarPage() {
               Buat Akun User
             </H1>
             <Lead className="text-xs text-[#5F7A84]">
-              Gunakan akun Gmail Anda untuk mendaftar dan mulai sewa alat.
+              Gunakan akun Gmail Anda untuk mendaftar dan mulai booking alat.
             </Lead>
           </div>
 
@@ -348,7 +347,7 @@ export default function DaftarPage() {
                   >
                     Kebijakan Privasi
                   </Link>{" "}
-                  PirantiKu dan bersedia menjaga kondisi alat selama masa sewa.{" "}
+                  PirantiKu dan bersedia menjaga kondisi alat selama masa booking.{" "}
                   <span className="text-[#DC2626] font-bold">*</span>
                 </span>
               </label>
@@ -368,10 +367,7 @@ export default function DaftarPage() {
                 {isLoading ? (
                   <span>Memproses Akun...</span>
                 ) : (
-                  <>
-                    <HoverRollText text="Daftar Sekarang" />
-                    <ArrowRight className="h-4 w-4" />
-                  </>
+                  <HoverRollText text="Daftar Sekarang" />
                 )}
               </Button>
             </div>

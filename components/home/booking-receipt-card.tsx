@@ -89,14 +89,6 @@ export function BookingReceiptCard({
           2. KARTU UTAMA PUTIH (Rounded-[28px] + Ticket Cutouts)
           ======================================================== */}
       <div className="relative z-10 w-full rounded-[28px] bg-white border border-[var(--border-soft)] shadow-2xl shadow-black/10 p-6 sm:p-8 xl:p-9 text-[var(--text-main)] overflow-hidden">
-        {/* Label Pil Gelap di Tepi Atas: Simulasi Nota Booking */}
-        <div className="flex items-center justify-start mb-3.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-dark)] text-white text-xs font-bold tracking-wide shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-gold)] animate-pulse" />
-            <span>Simulasi Nota Booking</span>
-          </div>
-        </div>
-
         {/* Header Nota: User, Jadwal, ID & Status Badge */}
         <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-[var(--border-soft)]">
           <div>
@@ -191,7 +183,7 @@ export function BookingReceiptCard({
         <div className="flex items-center justify-between gap-3 pt-1 pb-1">
           <div>
             <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] block">
-              TOTAL SEWA
+              TOTAL BOOKING
             </span>
             <div className="text-2xl sm:text-3xl xl:text-[34px] font-black text-[var(--bg-dark)] leading-none mt-1">
               Rp {data.totalPrice.toLocaleString("id-ID")}
@@ -275,7 +267,7 @@ export function BookingReceiptCard({
         className="absolute -bottom-3.5 -left-2 sm:-left-4 z-20 px-4.5 py-2 rounded-full bg-[var(--accent-gold)] border border-[#E0A82E] shadow-lg text-xs sm:text-sm font-black text-[var(--bg-dark)] flex items-center gap-2 select-none"
         aria-hidden="true"
       >
-        <span>{totalToolCount}+ alat siap sewa</span>
+        <span>{totalToolCount}+ alat siap booking</span>
       </motion.div>
     </motion.div>
   );

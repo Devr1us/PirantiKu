@@ -203,7 +203,7 @@ export function HomeView({
                     type="button"
                     className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-[var(--accent-gold)] hover:bg-[#E0A82E] text-[var(--bg-dark)] text-sm sm:text-base font-bold shadow-[4px_4px_0_var(--bg-footer)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--bg-footer)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 cursor-pointer"
                   >
-                    <span>Lihat Katalog Alat →</span>
+                    <span>Lihat Katalog Alat</span>
                   </button>
                 </Link>
 

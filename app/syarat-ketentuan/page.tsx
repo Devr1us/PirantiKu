@@ -53,8 +53,8 @@ export default function SyaratKetentuanPage() {
         <section className="space-y-3">
           <H2 className="text-lg font-bold text-[#234E5C]">1. Pemesanan & Pembayaran Uang Muka (DP)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li>Pemesanan dilakukan secara mandiri melalui website {APP_NAME} dengan memilih jadwal tanggal sewa.</li>
-            <li>Untuk mengunci ketersediaan unit, user wajib membayar Uang Muka (DP) sebesar 30% dari total biaya sewa melalui transfer bank atau QRIS yang tersedia.</li>
+            <li>Pemesanan dilakukan secara mandiri melalui website {APP_NAME} dengan memilih jadwal tanggal booking.</li>
+            <li>Untuk mengunci ketersediaan unit, user wajib membayar Uang Muka (DP) sebesar 30% dari total biaya booking melalui transfer bank atau QRIS yang tersedia.</li>
             <li>Pesanan yang belum dibayarkan DP-nya dalam batas waktu 24 jam akan otomatis dibatalkan oleh sistem agar stok dapat diakses oleh user lain.</li>
           </ul>
         </section>
@@ -65,7 +65,7 @@ export default function SyaratKetentuanPage() {
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
             <li>Pengambilan alat dilakukan langsung di workshop/toko kami sesuai jam operasional (08.00 - 21.00 WIB).</li>
             <li>User berusia minimal 17 tahun dan <strong>wajib membawa kartu identitas asli</strong> (KTP atau SIM) yang masih aktif untuk ditunjukkan dalam proses verifikasi serah terima unit.</li>
-            <li>Pelunasan sisa biaya sewa serta <strong>deposit jaminan</strong> dibayarkan saat pengambilan unit.</li>
+            <li>Pelunasan sisa biaya booking serta <strong>deposit jaminan</strong> dibayarkan saat pengambilan unit.</li>
             <li>User dan petugas kami akan melakukan pemeriksaan fisik dan uji fungsi alat bersama sebelum unit dibawa.</li>
           </ul>
         </section>
@@ -84,8 +84,8 @@ export default function SyaratKetentuanPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">4. Keterlambatan Pengembalian (Denda)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li>Unit wajib dikembalikan selambat-lambatnya pada tanggal selesai sewa pukul 21.00 WIB (sesuai jam operasional toko 08.00 - 21.00 WIB).</li>
-            <li><strong>Rumus Denda:</strong> Keterlambatan pengembalian tanpa konfirmasi awal dikenakan denda sebesar <strong>1x tarif sewa harian alat per hari keterlambatan</strong> (Rumus: <em>Tarif Sewa Harian &times; Jumlah Hari Terlambat</em>).</li>
+            <li>Unit wajib dikembalikan selambat-lambatnya pada tanggal selesai booking pukul 21.00 WIB (sesuai jam operasional toko 08.00 - 21.00 WIB).</li>
+            <li><strong>Rumus Denda:</strong> Keterlambatan pengembalian tanpa konfirmasi awal dikenakan denda sebesar <strong>1x tarif booking harian alat per hari keterlambatan</strong> (Rumus: <em>Tarif Booking Harian &times; Jumlah Hari Terlambat</em>).</li>
             <li>Total denda keterlambatan dipotong langsung dari deposit jaminan user saat serah terima pengembalian.</li>
           </ul>
         </section>
@@ -104,11 +104,11 @@ export default function SyaratKetentuanPage() {
         <section className="space-y-3 border-t border-[#E8E8E1] pt-6">
           <H2 className="text-lg font-bold text-[#234E5C]">6. Kebijakan Pembatalan & Pengembalian Dana (Refund)</H2>
           <ul className="list-disc pl-5 space-y-1.5 text-[#5F7A84]">
-            <li><strong>Tata Cara Pengajuan Pembatalan:</strong> Pengajuan pembatalan sewa dapat dilakukan secara mandiri dengan menekan tombol <em>Batalkan Pesanan</em> pada halaman <strong>Booking Saya</strong> atau dengan menghubungi Admin melalui WhatsApp resmi (0857-0151-6287).</li>
+            <li><strong>Tata Cara Pengajuan Pembatalan:</strong> Pengajuan pembatalan booking dapat dilakukan secara mandiri dengan menekan tombol <em>Batalkan Pesanan</em> pada halaman <strong>Booking Saya</strong> atau dengan menghubungi Admin melalui WhatsApp resmi (0857-0151-6287).</li>
             <li><strong>Pembatalan oleh User &gt; 24 Jam:</strong> Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai booking berhak mendapatkan <strong>pengembalian uang muka (DP) 100% penuh</strong> atau dialihkan menjadi kredit jadwal booking baru tanpa biaya tambahan.</li>
-            <li><strong>Pembatalan oleh User &le; 24 Jam:</strong> Pembatalan sepihak yang diajukan dalam waktu <strong>24 jam atau kurang</strong> sebelum tanggal mulai sewa menyebabkan DP hangus (tidak dapat direfund) karena unit telah disiapkan dan menolak calon user lain.</li>
+            <li><strong>Pembatalan oleh User &le; 24 Jam:</strong> Pembatalan sepihak yang diajukan dalam waktu <strong>24 jam atau kurang</strong> sebelum tanggal mulai booking menyebabkan DP hangus (tidak dapat direfund) karena unit telah disiapkan dan menolak calon user lain.</li>
             <li><strong>Pembatalan oleh Pihak PirantiKu:</strong> Apabila alat mengalami kendala mendadak saat inspeksi pra-serah terima dan tidak tersedia unit pengganti yang setara, PirantiKu akan mengembalikan <strong>100% seluruh pembayaran DP seketika</strong> dan memberikan kompensasi prioritas pada jadwal berikutnya.</li>
-            <li><strong>Perubahan Jadwal (Reschedule):</strong> Perubahan jadwal sewa wajib dikoordinasikan langsung dengan menghubungi Admin via WhatsApp resmi paling lambat 1 hari sebelum jadwal mulai sewa, maksimal 1 kali selama unit pengganti masih tersedia.</li>
+            <li><strong>Perubahan Jadwal (Reschedule):</strong> Perubahan jadwal booking wajib dikoordinasikan langsung dengan menghubungi Admin via WhatsApp resmi paling lambat 1 hari sebelum jadwal mulai booking, maksimal 1 kali selama unit pengganti masih tersedia.</li>
           </ul>
         </section>
       </div>

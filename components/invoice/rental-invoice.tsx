@@ -223,7 +223,7 @@ export function RentalInvoice({
               </strong>
             </p>
             <p className="text-[#5F7A84] break-words">
-              Durasi Sewa:{" "}
+              Durasi Booking:{" "}
               <strong className="text-[#234E5C]">{durasiHari} Hari Kalender</strong>
             </p>
           </div>
@@ -233,10 +233,10 @@ export function RentalInvoice({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              Daftar Peralatan yang Disewa
+              Daftar Peralatan yang Dibooking
             </span>
             <span className="text-[10px] font-medium text-[#5F7A84] sm:hidden flex items-center gap-1">
-              Geser tabel &rarr;
+              Geser tabel
             </span>
           </div>
           <div className="w-full overflow-x-auto rounded-lg border border-[#E8E8E1] print:border-none print:overflow-visible">
@@ -283,7 +283,7 @@ export function RentalInvoice({
         <div className="flex flex-col sm:flex-row justify-end">
           <div className="w-full sm:w-80 space-y-2 p-3.5 rounded-lg bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
             <div className="flex justify-between items-center text-[#5F7A84]">
-              <span>Total Sewa Alat:</span>
+              <span>Total Booking Alat:</span>
               <span className="font-bold text-[#234E5C]">
                 {formatRupiah(data.total_harga)}
               </span>
@@ -309,20 +309,20 @@ export function RentalInvoice({
           </div>
         </div>
 
-        {/* 5. KLAUSUL SURAT PERJANJIAN SEWA (HUKUM & LEGALITAS TOKO) */}
+        {/* 5. KLAUSUL SURAT PERJANJIAN BOOKING (HUKUM & LEGALITAS TOKO) */}
         <div className="rounded-lg border border-[#E8E8E1] p-4 bg-[#FAFAF8]/60 space-y-2 text-[10px] text-[#5F7A84] leading-relaxed">
           <span className="font-bold uppercase tracking-wider text-[#234E5C] block text-[11px]">
-            Ketentuan & Surat Perjanjian Sewa Unit:
+            Ketentuan & Surat Perjanjian Booking Unit:
           </span>
           <ol className="list-decimal list-inside space-y-1">
             <li>
-              <strong>Pemeriksaan Fisik:</strong> User telah memeriksa secara langsung dan memastikan seluruh unit peralatan yang disewa dalam kondisi normal, prima, bersih, dan lengkap aksesorisnya saat serah terima.
+              <strong>Pemeriksaan Fisik:</strong> User telah memeriksa secara langsung dan memastikan seluruh unit peralatan yang dibooking dalam kondisi normal, prima, bersih, dan lengkap aksesorisnya saat serah terima.
             </li>
             <li>
-              <strong>Tanggung Jawab Kerusakan / Kehilangan:</strong> User bertanggung jawab penuh atas segala bentuk kerusakan akibat kelalaian pemakaian, benturan, terbakar, maupun kehilangan unit selama masa sewa berlangsung dan bersedia mengganti biaya perbaikan atau unit baru.
+              <strong>Tanggung Jawab Kerusakan / Kehilangan:</strong> User bertanggung jawab penuh atas segala bentuk kerusakan akibat kelalaian pemakaian, benturan, terbakar, maupun kehilangan unit selama masa booking berlangsung dan bersedia mengganti biaya perbaikan atau unit baru.
             </li>
             <li>
-              <strong>Keterlambatan Pengembalian:</strong> Pengembalian melewati batas tanggal/jam sewa yang telah disepakati dikenakan denda keterlambatan sebesar <strong>Rp 50.000 / hari</strong> per alat.
+              <strong>Keterlambatan Pengembalian:</strong> Pengembalian melewati batas tanggal/jam booking yang telah disepakati dikenakan denda keterlambatan sebesar <strong>Rp 50.000 / hari</strong> per alat.
             </li>
             <li>
               <strong>Pengembalian Deposit:</strong> Uang jaminan (deposit) akan dikembalikan penuh 100% saat alat dikembalikan tepat waktu dan dinyatakan lolos inspeksi fisik oleh petugas PirantiKu.
@@ -412,7 +412,7 @@ export function RentalInvoice({
         {/* Footer Cetak & Konfirmasi Elektronik */}
         <div className="text-center pt-6 border-t border-[#E8E8E1] text-[10px] text-[#5F7A84] space-y-1">
           <p className="font-semibold text-[#234E5C]">
-            Dokumen ini merupakan bukti transaksi dan surat perjanjian booking/sewa resmi yang diterbitkan secara elektronik oleh {APP_NAME}.
+            Dokumen ini merupakan bukti transaksi dan surat perjanjian booking resmi yang diterbitkan secara elektronik oleh {APP_NAME}.
           </p>
           <p className="text-[9px] text-[#5F7A84]">
             Sah dan mengikat tanpa memerlukan tanda tangan basah fisik dari kedua belah pihak.

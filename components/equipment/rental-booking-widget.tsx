@@ -282,7 +282,7 @@ export function RentalBookingWidget({
         <div className="flex items-start justify-between border-b border-[#E8E8E1] pb-4">
           <div>
             <span className="text-[11px] font-bold text-[#5F7A84] uppercase tracking-wider block">
-              Tarif Sewa
+              Tarif Booking
             </span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="text-2xl sm:text-3xl font-extrabold text-[#A0630F]">
@@ -338,7 +338,7 @@ export function RentalBookingWidget({
               className="flex flex-col text-left p-3 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
             >
               <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
-                Mulai Sewa
+                Mulai Booking
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#234E5C] truncate mt-0.5">
                 {formatDateIndo(startDate, "d MMM yyyy")}
@@ -351,7 +351,7 @@ export function RentalBookingWidget({
               className="flex flex-col text-left p-3 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
             >
               <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
-                Selesai Sewa
+                Selesai Booking
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#234E5C] truncate mt-0.5">
                 {formatDateIndo(endDate, "d MMM yyyy")}
@@ -364,7 +364,7 @@ export function RentalBookingWidget({
             <div className="flex items-start gap-1.5 p-2 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[10px] text-[#78350F] leading-tight mt-1.5">
               <Info className="h-3.5 w-3.5 shrink-0 text-[#A0630F] mt-0.5" />
               <span>
-                Booking untuk hari ini berlaku ketentuan <strong>non-refundable</strong> (DP hangus jika dibatalkan karena waktu sewa &lt; 24 jam).
+                Booking untuk hari ini berlaku ketentuan <strong>non-refundable</strong> (DP hangus jika dibatalkan karena waktu booking &lt; 24 jam).
               </span>
             </div>
           )}
@@ -463,7 +463,7 @@ export function RentalBookingWidget({
           </div>
 
           <div className="pt-1 border-t border-[#E8E8E1]/60 text-[10px] text-[#5F7A84] italic">
-            *Dihitung per tanggal kalender booking sewa unit (hari mulai s/d selesai keduanya aktif).
+            *Dihitung per tanggal kalender booking unit (hari mulai s/d selesai keduanya aktif).
           </div>
 
           {/* Animasi Total Harga saat Berubah */}
@@ -489,7 +489,7 @@ export function RentalBookingWidget({
               <span>Mode Administrator</span>
             </div>
             <p className="text-[11px] text-[#234E5C] leading-relaxed">
-              Anda sedang masuk sebagai Pengelola / Admin PirantiKu. Pemesanan sewa alat dikhususkan untuk akun pelanggan.
+              Anda sedang masuk sebagai Pengelola / Admin PirantiKu. Pemesanan booking alat dikhususkan untuk akun pelanggan.
             </p>
             <Link href="/admin/alat" className="block pt-0.5">
               <Button
@@ -498,7 +498,7 @@ export function RentalBookingWidget({
                 size="sm"
                 className="w-full text-xs font-bold gap-1.5 h-10"
               >
-                Kelola Data & Stok Alat di Panel Admin &rarr;
+                Kelola Data & Stok Alat di Panel Admin
               </Button>
             </Link>
           </div>
