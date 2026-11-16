@@ -608,9 +608,9 @@ function CheckoutContent() {
           )}
         </div>
 
-        {/* Kolom Kanan: Ringkasan Pesanan (5 Kolom) */}
+        {/* Kolom Kanan: Ringkasan Pesanan (5 Kolom) - Tetap diam di atas tanpa sticky */}
         <div className="lg:col-span-5 xl:col-span-4">
-          <div className="sticky top-[var(--navbar-offset)] transition-[top] duration-300 rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-5">
             <h3 className="text-base font-bold text-[#234E5C] border-b border-[#E8E8E1] pb-3">
               Ringkasan Pesanan
             </h3>
