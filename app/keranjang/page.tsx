@@ -25,6 +25,7 @@ import { getProductImage } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
+import { cn } from "@/lib/utils";
 import { H1, Lead } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -78,6 +79,7 @@ function KeranjangContent() {
   });
 
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
+  const [datePickerStep, setDatePickerStep] = React.useState<"start" | "end">("start");
   // BUG-K4: Konfirmasi sebelum kosongkan keranjang
   const [isClearConfirmOpen, setIsClearConfirmOpen] = React.useState<boolean>(false);
 
@@ -275,8 +277,20 @@ function KeranjangContent() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-                className="flex flex-col text-left p-3.5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
+                onClick={() => {
+                  if (isDatePickerOpen && datePickerStep === "start") {
+                    setIsDatePickerOpen(false);
+                  } else {
+                    setDatePickerStep("start");
+                    setIsDatePickerOpen(true);
+                  }
+                }}
+                className={cn(
+                  "flex flex-col text-left p-3.5 rounded-xl border bg-[#FAFAF8] transition-all cursor-pointer",
+                  isDatePickerOpen && datePickerStep === "start"
+                    ? "border-[#234E5C] ring-2 ring-[#234E5C]/20 shadow-xs"
+                    : "border-[#E8E8E1] hover:border-[#234E5C]"
+                )}
               >
                 <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
                   Mulai Pengambilan
@@ -288,8 +302,20 @@ function KeranjangContent() {
 
               <button
                 type="button"
-                onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-                className="flex flex-col text-left p-3.5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
+                onClick={() => {
+                  if (isDatePickerOpen && datePickerStep === "end") {
+                    setIsDatePickerOpen(false);
+                  } else {
+                    setDatePickerStep("end");
+                    setIsDatePickerOpen(true);
+                  }
+                }}
+                className={cn(
+                  "flex flex-col text-left p-3.5 rounded-xl border bg-[#FAFAF8] transition-all cursor-pointer",
+                  isDatePickerOpen && datePickerStep === "end"
+                    ? "border-[#234E5C] ring-2 ring-[#234E5C]/20 shadow-xs"
+                    : "border-[#E8E8E1] hover:border-[#234E5C]"
+                )}
               >
                 <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
                   Batas Pengembalian
@@ -302,13 +328,12 @@ function KeranjangContent() {
 
             {/* Preset Durasi Cepat */}
             <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#E8E8E1]/60">
-              <span className="text-[11px] font-semibold text-[#5F7A84]">Preset Cepat:</span>
+              <span className="text-[11px] font-semibold text-[#5F7A84]">Pilihan Durasi Cepat:</span>
               {[
                 { label: "1 Hari", days: 1 },
-                { label: "2 Hari", days: 2 },
-                { label: "3 Hari (Weekend)", days: 3 },
-                { label: "7 Hari (Hemat)", days: 7, isPromo: true },
-                { label: "14 Hari", days: 14, isPromo: true },
+                { label: "3 Hari", days: 3 },
+                { label: "7 Hari", days: 7 },
+                { label: "14 Hari", days: 14 },
               ].map((preset) => {
                 const isActive = pricing.days === preset.days;
                 return (
@@ -316,11 +341,9 @@ function KeranjangContent() {
                     key={preset.days}
                     type="button"
                     onClick={() => applyPresetDays(preset.days)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       isActive
                         ? "bg-[#234E5C] text-white"
-                        : preset.isPromo
-                        ? "bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5] hover:bg-[#d4eac7]"
                         : "bg-[#F3F3EF] text-[#234E5C] border border-[#E8E8E1] hover:bg-[#E8E8E1]"
                     }`}
                   >
@@ -347,11 +370,11 @@ function KeranjangContent() {
               </div>
             )}
 
-            {/* Banner Diskon Mingguan Aktif */}
+            {/* Banner Diskon Khusus 7+ Hari */}
             {!isDateInvalid && pricing.days >= 7 && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[#E2F0D9] border border-[#C5E1A5] text-[#2E5E4E] text-xs font-semibold">
                 <ShieldCheck className="h-4 w-4 shrink-0 text-[#2E5E4E]" />
-                <span>Paket Mingguan Aktif! Tarif booking otomatis dihitung dengan harga mingguan yang lebih hemat.</span>
+                <span>Tarif booking khusus 7+ hari aktif! Dihitung dengan harga paket lebih hemat.</span>
               </div>
             )}
 
@@ -366,6 +389,8 @@ function KeranjangContent() {
                   <RentalDatePicker
                     startDate={startDate}
                     endDate={endDate}
+                    activeStep={datePickerStep}
+                    onStepChange={setDatePickerStep}
                     onChange={handleDateChange}
                   />
                 </motion.div>
@@ -424,7 +449,7 @@ function KeranjangContent() {
                           {formatRupiah(item.harga_per_hari)} / hari
                           {item.harga_mingguan && (
                             <span className="text-[10px] text-[#2E5E4E] ml-1 font-semibold">
-                              (Mingguan: {formatRupiah(item.harga_mingguan)})
+                              (Paket 7 hari: {formatRupiah(item.harga_mingguan)})
                             </span>
                           )}
                         </p>

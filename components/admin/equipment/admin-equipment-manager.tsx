@@ -576,7 +576,11 @@ export function AdminEquipmentManager({
                 filteredEquipment.map((item) => {
                   const bersih = Math.max(0, (item.stok || 0) - (item.stok_rusak || 0));
                   const dbImg = item.images?.find((img) => img.is_utama)?.url || item.images?.[0]?.url || "";
-                  const displayImg = getProductImage(item.slug, dbImg) || getProductImage(item.id, dbImg) || dbImg;
+                  const displayImg =
+                    getProductImage(item.slug, dbImg) ||
+                    getProductImage(item.nama, dbImg) ||
+                    getProductImage(item.id, dbImg) ||
+                    dbImg;
 
                   return (
                     <tr key={item.id} className="hover:bg-[#F3F3EF]/50 transition-colors">

@@ -26,6 +26,7 @@ import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
 import { RentalDatePicker } from "@/components/booking/rental-date-picker";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface RentalBookingWidgetProps {
   equipment: EquipmentWithDetails;
@@ -57,6 +58,7 @@ export function RentalBookingWidget({
   );
   const [isLoadingStock, setIsLoadingStock] = React.useState<boolean>(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = React.useState<boolean>(false);
+  const [datePickerStep, setDatePickerStep] = React.useState<"start" | "end">("start");
 
   // BUG-RBW3: Tutup date picker saat klik di luar widget
   const widgetRef = React.useRef<HTMLDivElement>(null);
@@ -334,8 +336,20 @@ export function RentalBookingWidget({
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-              className="flex flex-col text-left p-3 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
+              onClick={() => {
+                if (isDatePickerOpen && datePickerStep === "start") {
+                  setIsDatePickerOpen(false);
+                } else {
+                  setDatePickerStep("start");
+                  setIsDatePickerOpen(true);
+                }
+              }}
+              className={cn(
+                "flex flex-col text-left p-3 rounded-xl border bg-[#FAFAF8] transition-all cursor-pointer",
+                isDatePickerOpen && datePickerStep === "start"
+                  ? "border-[#234E5C] ring-2 ring-[#234E5C]/20 shadow-xs"
+                  : "border-[#E8E8E1] hover:border-[#234E5C]"
+              )}
             >
               <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
                 Mulai Booking
@@ -347,8 +361,20 @@ export function RentalBookingWidget({
 
             <button
               type="button"
-              onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
-              className="flex flex-col text-left p-3 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] hover:border-[#234E5C] transition-colors cursor-pointer"
+              onClick={() => {
+                if (isDatePickerOpen && datePickerStep === "end") {
+                  setIsDatePickerOpen(false);
+                } else {
+                  setDatePickerStep("end");
+                  setIsDatePickerOpen(true);
+                }
+              }}
+              className={cn(
+                "flex flex-col text-left p-3 rounded-xl border bg-[#FAFAF8] transition-all cursor-pointer",
+                isDatePickerOpen && datePickerStep === "end"
+                  ? "border-[#234E5C] ring-2 ring-[#234E5C]/20 shadow-xs"
+                  : "border-[#E8E8E1] hover:border-[#234E5C]"
+              )}
             >
               <span className="text-[10px] text-[#5F7A84] uppercase font-bold">
                 Selesai Booking
@@ -381,6 +407,8 @@ export function RentalBookingWidget({
                   startDate={startDate}
                   endDate={endDate}
                   disabledDates={disabledDates}
+                  activeStep={datePickerStep}
+                  onStepChange={setDatePickerStep}
                   onChange={(start, end) => {
                     setStartDate(start);
                     setEndDate(end);
