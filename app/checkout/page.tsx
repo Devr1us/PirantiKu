@@ -12,6 +12,9 @@ import {
   CreditCard,
   User as UserIcon,
   MessageCircle,
+  QrCode,
+  Copy,
+  Check,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { calculateRentalPrice } from "@/lib/pricing";
@@ -21,10 +24,12 @@ import { DEFAULT_SETTINGS, normalizeAdminPhone } from "@/lib/constants";
 import {
   createWhatsAppLink,
   generateWhatsAppBookingMessage,
+  parseBankAccount,
 } from "@/lib/payment-utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { H1, Lead, Eyebrow } from "@/components/ui/typography";
 import { toast } from "sonner";
 import { PaymentFlow } from "@/components/payment/payment-flow";
@@ -47,6 +52,10 @@ function CheckoutContent() {
   const [rekeningInfo, setRekeningInfo] = React.useState<string>("BCA 1234567890 a/n PirantiKu");
   const [qrisUrl, setQrisUrl] = React.useState<string>("");
   const [whatsappAdmin, setWhatsappAdmin] = React.useState<string>(DEFAULT_SETTINGS.whatsapp_admin);
+  const [selectedMethodTab, setSelectedMethodTab] = React.useState<"transfer" | "qris">("transfer");
+  const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
+  const [isCopiedRek, setIsCopiedRek] = React.useState<boolean>(false);
+  const [isCopiedNominal, setIsCopiedNominal] = React.useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [agreedTerms, setAgreedTerms] = React.useState<boolean>(true);
   const [createdBookingCode, setCreatedBookingCode] = React.useState<string | null>(null);
@@ -131,6 +140,70 @@ function CheckoutContent() {
 
     return calculateRentalPrice(pricingItems, startDate, endDate, 30);
   }, [items, startDate, endDate]);
+
+  const bcaInfo = React.useMemo(
+    () => parseBankAccount(rekeningInfo),
+    [rekeningInfo]
+  );
+
+  const bankOptions = React.useMemo(() => ({
+    bca: {
+      name: "Bank BCA",
+      bank: "BCA",
+      nomor: bcaInfo.nomor || "1234567890",
+      atasNama: bcaInfo.atasNama || "PirantiKu",
+      badge: "Utama",
+      isDemo: false,
+    },
+    mandiri: {
+      name: "Bank Mandiri",
+      bank: "Mandiri",
+      nomor: "108-000-1234567",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
+    },
+    bri: {
+      name: "Bank BRI",
+      bank: "BRI",
+      nomor: "0123-01-012345-30-6",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
+    },
+    bni: {
+      name: "Bank BNI",
+      bank: "BNI",
+      nomor: "0123456789",
+      atasNama: "PirantiKu (Demo)",
+      badge: "Simulasi",
+      isDemo: true,
+    },
+  }), [bcaInfo]);
+
+  const activeBank = bankOptions[selectedBank];
+
+  const handleCopyRekening = async () => {
+    try {
+      await navigator.clipboard.writeText(activeBank.nomor);
+      setIsCopiedRek(true);
+      toast.success(`Nomor rekening ${activeBank.bank} berhasil disalin!`);
+      setTimeout(() => setIsCopiedRek(false), 2000);
+    } catch {
+      toast.error("Gagal menyalin nomor rekening.");
+    }
+  };
+
+  const handleCopyNominal = async () => {
+    try {
+      await navigator.clipboard.writeText(pricing.dpJumlah.toString());
+      setIsCopiedNominal(true);
+      toast.success("Nominal DP berhasil disalin!");
+      setTimeout(() => setIsCopiedNominal(false), 2000);
+    } catch {
+      toast.error("Gagal menyalin nominal.");
+    }
+  };
 
   const handleNextToStep2 = async () => {
     if (!profile) return;
@@ -356,6 +429,8 @@ function CheckoutContent() {
           qrisUrl={qrisUrl}
           whatsappAdmin={whatsappAdmin}
           showBackToHome={true}
+          defaultTab={selectedMethodTab}
+          defaultBank={selectedBank}
         />
       </div>
     );
@@ -409,7 +484,7 @@ function CheckoutContent() {
               2
             </div>
             <span className="text-xs font-bold text-[#5F7A84] hidden sm:inline">
-              Rincian & DP
+              Metode Bayar
             </span>
           </div>
 
@@ -426,7 +501,7 @@ function CheckoutContent() {
               3
             </div>
             <span className="text-xs font-bold text-[#5F7A84] hidden sm:inline">
-              Konfirmasi
+              Konfirmasi &amp; Bukti
             </span>
           </div>
         </div>
@@ -503,11 +578,11 @@ function CheckoutContent() {
             <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 shadow-sm space-y-6">
               <h2 className="text-base font-bold text-[#234E5C] flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
                 <CreditCard className="h-5 w-5 text-[#234E5C]" />
-                2. Rincian Pembayaran & Rekening Tujuan
+                2. Pilihan Metode Pembayaran Uang Muka (DP)
               </h2>
 
-              <div className="space-y-4 text-xs">
-                {/* Jadwal Booking Terpilih (Dipindahkan ke Step 2) */}
+              <div className="space-y-5 text-xs">
+                {/* Jadwal Booking Terpilih */}
                 <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-[#234E5C] shrink-0 mt-0.5" />
                   <div className="text-xs space-y-0.5">
@@ -520,26 +595,216 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <p className="text-[#5F7A84] leading-relaxed">
-                  Pesanan Anda akan tercatat dengan status <strong>Menunggu DP</strong>. Untuk mengunci unit, silakan transfer sejumlah DP ke rekening berikut:
-                </p>
-
-                <div className="p-4 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-                    Rekening Pembayaran DP
-                  </span>
-                  <p className="text-base font-bold text-[#234E5C]">
-                    {rekeningInfo}
-                  </p>
-                  <p className="text-[11px] text-[#5F7A84]">
-                    Jumlah Uang Muka (DP 30%):{" "}
-                    <strong className="text-[#A0630F] font-bold text-sm">
-                      {formatRupiah(pricing.dpJumlah)}
-                    </strong>
+                {/* Subtitle Metode Pembayaran */}
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-[#234E5C]">
+                    Pilihan Metode Pembayaran Uang Muka (DP)
+                  </h3>
+                  <p className="text-xs text-[#5F7A84]">
+                    Tersedia 2 metode transfer online resmi: Transfer Bank dan QRIS &amp; E-Wallet
                   </p>
                 </div>
 
-                {/* Catatan Tambahan untuk Admin (Dipindahkan ke Step 2) */}
+                {/* Tabs Metode Pembayaran: Transfer Bank vs QRIS */}
+                <Tabs
+                  value={selectedMethodTab}
+                  onValueChange={(val) => setSelectedMethodTab(val as "transfer" | "qris")}
+                  className="w-full"
+                >
+                  <TabsList className="grid grid-cols-2 w-full bg-[#F3F3EF] p-1 rounded-2xl gap-1">
+                    <TabsTrigger
+                      value="transfer"
+                      className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
+                    >
+                      <CreditCard className="h-3.5 w-3.5" />
+                      <span>Transfer Bank</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="qris"
+                      className="rounded-xl text-xs font-bold data-[state=active]:bg-[#234E5C] data-[state=active]:text-white flex items-center justify-center gap-1.5 py-2.5 transition-all"
+                    >
+                      <QrCode className="h-3.5 w-3.5" />
+                      <span>QRIS &amp; E-Wallet</span>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {/* Tab 1: Transfer Bank */}
+                  <TabsContent value="transfer" className="space-y-4 pt-3">
+                    {/* Pemilih Bank */}
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <span className="text-xs font-bold text-[#5F7A84] mr-1">
+                        Pilih Bank Tujuan:
+                      </span>
+                      {(["bca", "mandiri", "bri", "bni"] as const).map((bKey) => {
+                        const b = bankOptions[bKey];
+                        const isSel = selectedBank === bKey;
+                        return (
+                          <button
+                            key={bKey}
+                            type="button"
+                            onClick={() => setSelectedBank(bKey)}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+                              isSel
+                                ? "bg-[#234E5C] text-white border-[#234E5C] shadow-xs"
+                                : "bg-white text-[#234E5C] border-[#E8E8E1] hover:bg-[#FAFAF8]"
+                            }`}
+                          >
+                            {b.bank}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="p-4 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] space-y-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84] block">
+                            Rekening Resmi PirantiKu
+                          </span>
+                          <h4 className="text-base font-extrabold text-[#234E5C] mt-0.5">
+                            {activeBank.name}
+                          </h4>
+                        </div>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                            activeBank.isDemo
+                              ? "bg-[#FEF3C7] text-[#A0630F] border-[#FDE68A]"
+                              : "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5]"
+                          }`}
+                        >
+                          {activeBank.badge}
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-white border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <span className="text-[11px] text-[#5F7A84] block font-medium">
+                            Nomor Rekening Tujuan:
+                          </span>
+                          <span className="font-mono text-lg sm:text-xl font-extrabold text-[#234E5C] tracking-wider block">
+                            {activeBank.nomor}
+                          </span>
+                          <span className="text-xs text-[#5F7A84] font-semibold block">
+                            Atas Nama: {activeBank.atasNama}
+                          </span>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleCopyRekening}
+                          className="text-xs font-bold gap-1.5 shrink-0 self-start sm:self-auto"
+                        >
+                          {isCopiedRek ? (
+                            <>
+                              <Check className="h-3.5 w-3.5 text-[#2E5E4E]" />
+                              <span>Tersalin!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3.5 w-3.5" />
+                              <span>Salin Rekening</span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+
+                      <div className="rounded-lg bg-[#F3F3EF] p-3 text-[11px] text-[#5F7A84] space-y-1">
+                        <span className="font-bold text-[#234E5C] block">
+                          Panduan Transfer:
+                        </span>
+                        <p>
+                          Transfer sejumlah DP 30% sebesar{" "}
+                          <strong className="text-[#A0630F] font-bold">
+                            {formatRupiah(pricing.dpJumlah)}
+                          </strong>{" "}
+                          ke rekening di atas, lalu lanjutkan ke langkah berikutnya untuk mengirimkan foto struk bukti transfer.
+                        </p>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* Tab 2: QRIS */}
+                  <TabsContent value="qris" className="space-y-4 pt-3">
+                    <div className="p-5 rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] flex flex-col items-center text-center space-y-4">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#5F7A84]">
+                          QRIS Standar Pembayaran Nasional
+                        </span>
+                        <h4 className="text-base font-extrabold text-[#234E5C]">
+                          Scan QRIS PirantiKu Rental
+                        </h4>
+                      </div>
+
+                      <div className="p-4 bg-white rounded-2xl border border-[#E8E8E1] shadow-sm flex flex-col items-center space-y-3">
+                        {qrisUrl ? (
+                          <div className="relative h-44 w-44 rounded-lg overflow-hidden border border-[#E8E8E1]">
+                            <img
+                              src={qrisUrl}
+                              alt="QRIS PirantiKu"
+                              className="h-full w-full object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-44 w-44 bg-[#F3F3EF] rounded-lg border border-[#E8E8E1] flex flex-col items-center justify-center p-3">
+                            <QrCode className="h-28 w-28 text-[#234E5C]" />
+                            <span className="text-[10px] font-bold text-[#A0630F] mt-1">
+                              PIRANTIKU KARANGANYAR
+                            </span>
+                          </div>
+                        )}
+                        <p className="text-[11px] font-bold text-[#234E5C]">
+                          NMID: {qrisUrl ? "ID1020PIRANTIKU" : "ID0000000000000 (Demo)"}
+                        </p>
+                      </div>
+
+                      <p className="text-xs text-[#5F7A84]">
+                        Buka aplikasi m-Banking atau e-Wallet (BCA Mobile, Livin, GoPay, OVO, Dana, ShopeePay), scan QRIS di atas, dan masukkan nominal DP:{" "}
+                        <strong className="text-[#A0630F] font-bold">
+                          {formatRupiah(pricing.dpJumlah)}
+                        </strong>
+                      </p>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+
+                {/* Box Rincian Tagihan DP dengan tombol Salin */}
+                <div className="p-4 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
+                      Jumlah Uang Muka (DP 30%)
+                    </span>
+                    <span className="text-xl sm:text-2xl font-extrabold text-[#A0630F] block mt-0.5">
+                      {formatRupiah(pricing.dpJumlah)}
+                    </span>
+                    <span className="text-[11px] text-[#5F7A84] block">
+                      Cukup bayar DP 30% untuk mengunci stok unit pada tanggal pilihan Anda.
+                    </span>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyNominal}
+                    className="text-xs font-bold gap-1.5 shrink-0 self-start sm:self-auto"
+                  >
+                    {isCopiedNominal ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-[#2E5E4E]" />
+                        <span>Tersalin!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span>Salin Nominal DP</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {/* Catatan Tambahan untuk Admin */}
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold text-[#5F7A84]">
                     Catatan Tambahan untuk Admin (Opsional)
@@ -604,7 +869,7 @@ function CheckoutContent() {
                   onClick={handleProcessBooking}
                   className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Memproses..." : "Konfirmasi"}
+                  {isSubmitting ? "Memproses..." : "Lanjut ke Konfirmasi & Unggah Bukti →"}
                 </Button>
               </div>
             </div>

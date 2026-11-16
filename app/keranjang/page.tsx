@@ -15,7 +15,6 @@ import {
   Info,
   Package,
   ArrowLeft,
-  Sparkles,
   AlertCircle,
   CreditCard,
 } from "lucide-react";
@@ -352,7 +351,7 @@ function KeranjangContent() {
             {/* Banner Diskon Mingguan Aktif */}
             {!isDateInvalid && pricing.days >= 7 && (
               <div className="flex items-center gap-2 p-3 rounded-xl bg-[#E2F0D9] border border-[#C5E1A5] text-[#2E5E4E] text-xs font-semibold">
-                <Sparkles className="h-4 w-4 shrink-0" />
+                <ShieldCheck className="h-4 w-4 shrink-0 text-[#2E5E4E]" />
                 <span>Paket Mingguan Aktif! Tarif sewa otomatis dihitung dengan harga mingguan yang lebih hemat.</span>
               </div>
             )}

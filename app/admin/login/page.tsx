@@ -50,6 +50,43 @@ function AdminLoginForm() {
       : null
   );
 
+  // Otomatis logout jika user biasa mencoba membuka portal admin
+  React.useEffect(() => {
+    async function checkExistingNonAdminSession() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
+
+          if (!profile || profile.role !== "admin") {
+            await supabase.auth.signOut();
+            try {
+              localStorage.removeItem("pirantiku_cart_v1");
+              localStorage.removeItem("pirantiku_cart_user_id");
+              sessionStorage.removeItem("pirantiku_booking_dates");
+            } catch {
+              // ignore
+            }
+            setErrorMessage("Sesi pengguna biasa dikeluarkan secara otomatis. Silakan masuk dengan akun Administrator.");
+            toast.info("Sesi pengguna biasa dikeluarkan. Silakan login sebagai Admin.");
+          }
+        }
+      } catch (err) {
+        console.error("Gagal memeriksa sesi admin:", err);
+      }
+    }
+
+    checkExistingNonAdminSession();
+  }, []);
+
   const {
     register,
     handleSubmit,

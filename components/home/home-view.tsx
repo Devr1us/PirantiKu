@@ -575,40 +575,59 @@ export function HomeView({
       </section>
 
       {/* ========================================================
-          8. BAND CTA LEBAR PENUH BERLATAR PETROL
+          8. KARTU CTA WADAH RAPI BERGAYA MODERN (CONTAINER CARD)
           ======================================================== */}
-      <section className="w-full bg-[#234E5C] text-white py-16 sm:py-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <H2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold uppercase tracking-tight text-white leading-tight">
-            SIAP BOOKING ALAT?
-          </H2>
+      <section className="w-full py-16 sm:py-24 bg-[#FAFAF8]">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="rounded-[28px] sm:rounded-[36px] border border-[#2E5E4E]/30 bg-white p-8 sm:p-14 md:p-16 text-center space-y-6 shadow-sm">
+              {/* Pill Badge Centered */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EBF4F0] border border-[#2E5E4E]/20 text-[#1E7450] text-xs font-semibold">
+                <Package className="h-3.5 w-3.5" />
+                <span>Mulai Booking Dalam 2 Menit</span>
+              </div>
 
-          <P className="max-w-2xl mx-auto text-base sm:text-lg text-white/90 leading-relaxed font-normal">
-            Pilih perlengkapan yang Anda butuhkan sekarang atau hubungi staf kami untuk ketersediaan alat dalam jumlah besar.
-          </P>
+              {/* Judul Besar Sesuai Layout Referensi */}
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1F2937] max-w-3xl mx-auto leading-tight">
+                Siap Booking Perlengkapan &amp; Melipatgandakan Kelancaran Acara Anda?
+              </h2>
 
-          <Reveal delay={0.15}>
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Link href="/alat">
-                <Button variant="warm" size="lg" className="px-8 text-sm uppercase tracking-wider font-bold">
-                  <HoverRollText text="LIHAT KATALOG" />
-                </Button>
-              </Link>
+              {/* Teks Pendukung */}
+              <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#5F7A84] leading-relaxed">
+                Pilih perlengkapan yang Anda butuhkan tanpa ribet. Booking langsung, amankan unit dengan DP fleksibel {effectiveDp}%, dan nikmati alat terawat siap pakai untuk segala kebutuhan aktivitas Anda.
+              </p>
 
-              <a
-                href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  variant="warm"
-                  size="lg"
-                  className="px-8 text-sm uppercase tracking-wider font-bold flex items-center gap-2"
+              {/* Tombol Aksi Utama */}
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <Link href="/alat">
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#1E7450] hover:bg-[#16583D] active:scale-[0.98] text-white text-sm sm:text-base font-bold shadow-sm transition-all cursor-pointer"
+                  >
+                    <span>Lihat Katalog Alat Sekarang &mdash; Siap Pakai &rarr;</span>
+                  </button>
+                </Link>
+
+                <a
+                  href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  <HoverRollText text="HUBUNGI ADMIN" />
-                </Button>
-              </a>
+                  <Button
+                    variant="outline"
+                    className="h-12 px-6 rounded-xl border-[#E8E8E1] text-[#234E5C] text-sm font-bold flex items-center gap-2 hover:bg-[#FAFAF8]"
+                  >
+                    <MessageCircle className="h-4 w-4 text-[#25D366]" />
+                    <span>Hubungi Admin WhatsApp</span>
+                  </Button>
+                </a>
+              </div>
+
+              {/* Poin Kepercayaan dengan Centang (Trust Checkmarks) */}
+              <div className="pt-2 text-xs sm:text-sm text-[#5F7A84] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <span>&check; Tanpa jaminan berbelit. Cukup KTP / SIM fisik saat serah terima.</span>
+                <span>&check; Deposit jaminan kembali utuh 100% tanpa potongan tersembunyi.</span>
+              </div>
             </div>
           </Reveal>
         </div>

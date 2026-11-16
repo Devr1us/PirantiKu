@@ -33,17 +33,35 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
         const {
           data: { user },
         } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("nama")
-            .eq("id", user.id)
-            .single();
-          setAdminUser({
-            name: profile?.nama || user.email?.split("@")[0] || "Admin Pengelola",
-            email: user.email || "",
-          });
+        if (!user) {
+          window.location.href = "/admin/login";
+          return;
         }
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("nama, role")
+          .eq("id", user.id)
+          .single();
+
+        if (!profile || profile.role !== "admin") {
+          // Pengguna biasa mencoba akses console admin: otomatis logout akun user
+          await supabase.auth.signOut();
+          try {
+            localStorage.removeItem("pirantiku_cart_v1");
+            localStorage.removeItem("pirantiku_cart_user_id");
+            sessionStorage.removeItem("pirantiku_booking_dates");
+          } catch {
+            // ignore
+          }
+          window.location.href = "/admin/login?error=unauthorized";
+          return;
+        }
+
+        setAdminUser({
+          name: profile?.nama || user.email?.split("@")[0] || "Admin Pengelola",
+          email: user.email || "",
+        });
       } catch (err) {
         console.error("Gagal memuat profil admin:", err);
       }
@@ -55,6 +73,13 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
+      try {
+        localStorage.removeItem("pirantiku_cart_v1");
+        localStorage.removeItem("pirantiku_cart_user_id");
+        sessionStorage.removeItem("pirantiku_booking_dates");
+      } catch {
+        // ignore
+      }
       toast.success("Berhasil keluar.");
     } catch (err) {
       console.error("Gagal keluar akun admin:", err);

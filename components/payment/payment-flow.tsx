@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   CreditCard,
   QrCode,
@@ -62,6 +63,8 @@ export interface PaymentFlowProps {
   whatsappAdmin?: string;
   onPaymentSuccess?: () => void;
   showBackToHome?: boolean;
+  defaultTab?: "transfer" | "qris";
+  defaultBank?: "bca" | "mandiri" | "bri" | "bni";
 }
 
 export function PaymentFlow({
@@ -73,15 +76,19 @@ export function PaymentFlow({
   whatsappAdmin = DEFAULT_SETTINGS.whatsapp_admin,
   onPaymentSuccess,
   showBackToHome = false,
+  defaultTab = "transfer",
+  defaultBank = "bca",
 }: PaymentFlowProps) {
+  const router = useRouter();
   // BUG-PF3: Supabase client di useMemo, bukan di render body
   const supabase = React.useMemo(() => createClient(), []);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Tab: transfer | qris
-  const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">("transfer");
-  const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">("bca");
+  const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">(defaultTab);
+  const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">(defaultBank);
   const [payments, setPayments] = React.useState<Payment[]>(initialPayments);
-  const [currentBookingStatus] = React.useState<BookingStatus>(booking.status);
+  const [currentBookingStatus, setCurrentBookingStatus] = React.useState<BookingStatus>(booking.status);
   
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
@@ -98,6 +105,77 @@ export function PaymentFlow({
   const [countdown, setCountdown] = React.useState(() =>
     getPaymentCountdown(booking.created_at, 24)
   );
+
+  // Realtime subscription: otomatis redirect jika pembayaran DP diterima atau ditolak
+  React.useEffect(() => {
+    if (!booking?.id) return;
+
+    const channel = supabase
+      .channel(`realtime-booking-${booking.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "bookings",
+          filter: `id=eq.${booking.id}`,
+        },
+        (payload) => {
+          const newStatus = payload.new?.status as BookingStatus;
+          if (newStatus) {
+            setCurrentBookingStatus(newStatus);
+          }
+          if (newStatus === "dp_dibayar" || newStatus === "lunas" || newStatus === "diambil") {
+            toast.success("Pembayaran DP berhasil diverifikasi admin!");
+            setTimeout(() => {
+              router.push("/booking-saya");
+            }, 1000);
+          } else if (newStatus === "dibatalkan") {
+            toast.error("Pesanan ini telah dibatalkan atau ditolak admin.");
+            setTimeout(() => {
+              router.push("/booking-saya");
+            }, 1200);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "payments",
+          filter: `booking_id=eq.${booking.id}`,
+        },
+        (payload) => {
+          if (payload.eventType === "UPDATE") {
+            const updatedPayment = payload.new as Payment;
+            setPayments((prev) =>
+              prev.map((p) => (p.id === updatedPayment.id ? updatedPayment : p))
+            );
+            if (updatedPayment.status === "terverifikasi") {
+              setCurrentBookingStatus("dp_dibayar");
+              toast.success("Pembayaran DP berhasil diverifikasi!");
+              setTimeout(() => {
+                router.push("/booking-saya");
+              }, 1000);
+            } else if (updatedPayment.status === "ditolak") {
+              toast.error("Bukti pembayaran ditolak oleh admin.");
+              setTimeout(() => {
+                router.push("/booking-saya");
+              }, 1200);
+            }
+          } else if (payload.eventType === "INSERT") {
+            const newPayment = payload.new as Payment;
+            setPayments((prev) => [newPayment, ...prev]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [booking.id, router, supabase]);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -815,18 +893,23 @@ export function PaymentFlow({
                 </p>
               </div>
 
-              {/* Dropzone Upload */}
+              {/* Dropzone Upload — seluruh kotak dapat diklik */}
               <div
+                onClick={() => {
+                  if (!previewUrl) {
+                    fileInputRef.current?.click();
+                  }
+                }}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
                   previewUrl
                     ? "border-[#2E5E4E] bg-[#E2F0D9]/20"
-                    : "border-[#E8E8E1] hover:border-[#234E5C] bg-[#FAFAF8]"
+                    : "border-[#E8E8E1] hover:border-[#234E5C] hover:bg-[#FAFAF8] bg-white cursor-pointer group"
                 }`}
               >
                 {previewUrl ? (
-                  <div className="space-y-3">
+                  <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
                     <div className="relative inline-block max-w-xs mx-auto rounded-xl overflow-hidden border border-[#E8E8E1] shadow-sm">
                       <img
                         src={previewUrl}
@@ -835,7 +918,8 @@ export function PaymentFlow({
                       />
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setUploadedFile(null);
                           setPreviewUrl(null);
                         }}
@@ -851,23 +935,21 @@ export function PaymentFlow({
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F3F3EF] text-[#234E5C] mx-auto">
-                      <UploadCloud className="h-6 w-6" />
+                  <div className="space-y-3 cursor-pointer">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F3F3EF] text-[#234E5C] mx-auto group-hover:scale-105 transition-transform">
+                      <UploadCloud className="h-6 w-6 text-[#234E5C]" />
                     </div>
                     <div className="space-y-1">
-                      <label
-                        htmlFor="payment-file-upload"
-                        className="text-xs font-bold text-[#A0630F] hover:underline cursor-pointer"
-                      >
+                      <span className="text-xs font-bold text-[#A0630F] group-hover:underline">
                         Klik untuk pilih foto struk
-                      </label>
+                      </span>
                       <span className="text-xs text-[#5F7A84]"> atau seret file ke sini</span>
                       <p className="text-[11px] text-[#5F7A84]">
                         Mendukung format JPG, PNG, WEBP (otomatis dikompresi &lt;150KB)
                       </p>
                     </div>
                     <input
+                      ref={fileInputRef}
                       id="payment-file-upload"
                       type="file"
                       accept="image/*"

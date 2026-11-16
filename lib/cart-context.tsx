@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export interface CartItem {
   equipmentId: number;
@@ -28,6 +29,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = "pirantiku_cart_v1";
+const CART_USER_STORAGE_KEY = "pirantiku_cart_user_id";
 
 const emptySubscribe = () => () => {};
 
@@ -48,10 +50,52 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
+  // Dengarkan perubahan autentikasi Supabase untuk membersihkan keranjang saat logout atau ganti akun
+  useEffect(() => {
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        setItems([]);
+        try {
+          localStorage.removeItem(CART_STORAGE_KEY);
+          localStorage.removeItem(CART_USER_STORAGE_KEY);
+          sessionStorage.removeItem("pirantiku_booking_dates");
+        } catch {
+          // ignore
+        }
+      } else if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+        const currentUserId = session?.user?.id;
+        try {
+          const storedUserId = localStorage.getItem(CART_USER_STORAGE_KEY);
+          if (storedUserId && currentUserId && storedUserId !== currentUserId) {
+            // Pengguna berganti akun: kosongkan keranjang akun sebelumnya
+            setItems([]);
+            localStorage.removeItem(CART_STORAGE_KEY);
+          }
+          if (currentUserId) {
+            localStorage.setItem(CART_USER_STORAGE_KEY, currentUserId);
+          }
+        } catch {
+          // ignore
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   useEffect(() => {
     if (!isLoaded) return;
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      if (items.length > 0) {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      } else {
+        localStorage.removeItem(CART_STORAGE_KEY);
+      }
     } catch (e) {
       console.error("Gagal menyimpan keranjang ke localStorage:", e);
     }
@@ -92,6 +136,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    try {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      sessionStorage.removeItem("pirantiku_booking_dates");
+    } catch {
+      // ignore
+    }
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.qty, 0);

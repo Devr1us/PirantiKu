@@ -149,6 +149,13 @@ export function NavbarClient({
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
+      try {
+        localStorage.removeItem("pirantiku_cart_v1");
+        localStorage.removeItem("pirantiku_cart_user_id");
+        sessionStorage.removeItem("pirantiku_booking_dates");
+      } catch {
+        // ignore
+      }
       toast.success("Berhasil keluar.");
     } catch (err) {
       console.error("Gagal keluar:", err);
@@ -232,11 +239,10 @@ export function NavbarClient({
               )}
             </Link>
 
-            {/* CARA SEWA (Scroll ke #cara-sewa) */}
+            {/* CARA BOOKING */}
             <Link
-              href="/#cara-sewa"
-              onClick={(e) => handleAnchorClick(e, "cara-sewa")}
-              aria-current={activeNav === "cara-sewa" ? "location" : undefined}
+              href="/cara-booking"
+              aria-current={activeNav === "cara-sewa" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "cara-sewa"
                   ? "text-[#234E5C] font-semibold"
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
@@ -252,11 +258,10 @@ export function NavbarClient({
               )}
             </Link>
 
-            {/* KONTAK (Scroll ke #kontak) */}
+            {/* KONTAK */}
             <Link
-              href="/#kontak"
-              onClick={(e) => handleAnchorClick(e, "kontak")}
-              aria-current={activeNav === "kontak" ? "location" : undefined}
+              href="/kontak"
+              aria-current={activeNav === "kontak" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "kontak"
                   ? "text-[#234E5C] font-semibold"
                   : "text-[#234E5C]/80 hover:text-[#234E5C]"
@@ -452,12 +457,9 @@ export function NavbarClient({
                       </Link>
 
                       <Link
-                        href="/#cara-sewa"
-                        onClick={(e) => {
-                          setIsMobileOpen(false);
-                          handleAnchorClick(e, "cara-sewa");
-                        }}
-                        aria-current={activeNav === "cara-sewa" ? "location" : undefined}
+                        href="/cara-booking"
+                        onClick={() => setIsMobileOpen(false)}
+                        aria-current={activeNav === "cara-sewa" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "cara-sewa"
                             ? "bg-[#F3F3EF] text-[#234E5C]"
                             : "text-[#234E5C] hover:bg-[#F3F3EF]"
@@ -474,12 +476,9 @@ export function NavbarClient({
                       </Link>
 
                       <Link
-                        href="/#kontak"
-                        onClick={(e) => {
-                          setIsMobileOpen(false);
-                          handleAnchorClick(e, "kontak");
-                        }}
-                        aria-current={activeNav === "kontak" ? "location" : undefined}
+                        href="/kontak"
+                        onClick={() => setIsMobileOpen(false)}
+                        aria-current={activeNav === "kontak" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "kontak"
                             ? "bg-[#F3F3EF] text-[#234E5C]"
                             : "text-[#234E5C] hover:bg-[#F3F3EF]"

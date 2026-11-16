@@ -35,6 +35,12 @@ export function getInitialActiveNav(pathname: string): ActiveNav {
   ) {
     return "katalog";
   }
+  if (pathname === "/cara-booking" || pathname.startsWith("/cara-booking")) {
+    return "cara-sewa";
+  }
+  if (pathname === "/kontak" || pathname.startsWith("/kontak")) {
+    return "kontak";
+  }
   if (pathname === "/") return "beranda";
   return null;
 }

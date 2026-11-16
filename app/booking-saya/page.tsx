@@ -491,26 +491,14 @@ export default function BookingSayaPage() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <Link href={`/invoice/${booking.kode_booking}`} target="_blank" className="flex-1 sm:flex-initial">
-                          <Button
-                            type="button"
-                            variant="petrol"
-                            size="sm"
-                            className="text-xs font-bold gap-1.5 w-full"
-                          >
-                            <Printer className="h-3.5 w-3.5" />
-                            <span>Cetak Invoice</span>
-                          </Button>
-                        </Link>
-
                         <Link href={`/pembayaran/${booking.kode_booking}`} className="flex-1 sm:flex-initial">
                           <Button
                             type="button"
-                            variant="outline"
+                            variant="warm"
                             size="sm"
-                            className="text-xs font-bold gap-1.5 w-full text-[#234E5C]"
+                            className="text-xs font-bold gap-1.5 w-full"
                           >
-                            Rincian Sewa & Lokasi
+                            Rincian Sewa &amp; Lokasi
                           </Button>
                         </Link>
 

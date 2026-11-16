@@ -410,36 +410,14 @@ export function RentalInvoice({
           </div>
         )}
 
-        {/* 7. KOLOM TANDA TANGAN SERAH TERIMA */}
-        <div className="grid grid-cols-2 gap-8 pt-6 border-t border-[#E8E8E1] text-center text-xs">
-          <div className="space-y-16">
-            <span className="font-bold text-[#5F7A84] block">
-              Pihak Pertama (Penyewa)
-            </span>
-            <div className="space-y-0.5">
-              <p className="font-bold text-[#234E5C] underline underline-offset-4">
-                ( {customerName} )
-              </p>
-              <p className="text-[10px] text-[#5F7A84]">Tanda Tangan & Nama Terang</p>
-            </div>
-          </div>
-
-          <div className="space-y-16">
-            <span className="font-bold text-[#5F7A84] block">
-              Pihak Kedua (Pengelola PirantiKu)
-            </span>
-            <div className="space-y-0.5">
-              <p className="font-bold text-[#234E5C] underline underline-offset-4">
-                ( Petugas / Pengelola )
-              </p>
-              <p className="text-[10px] text-[#5F7A84]">Stempel & Tanda Tangan Resmi</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Cetak */}
-        <div className="text-center pt-4 border-t border-[#E8E8E1]/60 text-[9px] text-[#5F7A84]">
-          Dokumen ini merupakan bukti transaksi & perjanjian sewa resmi yang diterbitkan secara elektronik oleh platform {APP_NAME}.
+        {/* Footer Cetak & Konfirmasi Elektronik */}
+        <div className="text-center pt-6 border-t border-[#E8E8E1] text-[10px] text-[#5F7A84] space-y-1">
+          <p className="font-semibold text-[#234E5C]">
+            Dokumen ini merupakan bukti transaksi dan surat perjanjian booking/sewa resmi yang diterbitkan secara elektronik oleh {APP_NAME}.
+          </p>
+          <p className="text-[9px] text-[#5F7A84]">
+            Sah dan mengikat tanpa memerlukan tanda tangan basah fisik dari kedua belah pihak.
+          </p>
         </div>
       </div>
     </div>
