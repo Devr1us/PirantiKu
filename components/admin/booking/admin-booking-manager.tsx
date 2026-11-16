@@ -15,6 +15,7 @@ import {
   ZoomIn,
   Printer,
   RotateCcw,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -63,13 +64,36 @@ export function AdminBookingManager({
   const qParam = searchParams.get("q") || "";
 
   const [bookings, setBookings] = React.useState<AdminBookingWithDetails[]>(initialBookings);
-  const [searchQuery, setSearchQuery] = React.useState<string>(qParam);
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [statusFilter, setStatusFilter] = React.useState<string>("semua");
   const [selectedBooking, setSelectedBooking] = React.useState<AdminBookingWithDetails | null>(null);
   const [isDetailOpen, setIsDetailOpen] = React.useState<boolean>(false);
 
-  // BUG-17: Auto-buka modal hanya sekali saat qParam pertama kali ada,
-  // bukan setiap kali bookings berubah (hindari re-open loop setelah verifikasi)
+  // Helper: Kembali ke daftar booking awal (membersihkan search, filter, dan URL parameter)
+  const returnToInitialBookingList = React.useCallback(() => {
+    setSearchQuery("");
+    setStatusFilter("semua");
+    setSelectedBooking(null);
+    setIsDetailOpen(false);
+    setIsRejectFormOpen(false);
+    setIsReturnModalOpen(false);
+    if (typeof window !== "undefined" && window.location.search) {
+      window.history.replaceState(null, "", "/admin/booking");
+    }
+  }, []);
+
+  const handleCloseDetail = (open: boolean) => {
+    setIsDetailOpen(open);
+    if (!open) {
+      setIsRejectFormOpen(false);
+      setSelectedBooking(null);
+      if (typeof window !== "undefined" && window.location.search) {
+        window.history.replaceState(null, "", "/admin/booking");
+      }
+    }
+  };
+
+  // Auto-buka modal hanya sekali saat qParam pertama kali ada dari URL
   const hasAutoOpenedRef = React.useRef(false);
   React.useEffect(() => {
     if (qParam && !hasAutoOpenedRef.current) {
@@ -79,7 +103,6 @@ export function AdminBookingManager({
       if (match) {
         hasAutoOpenedRef.current = true;
         const timer = setTimeout(() => {
-          setSearchQuery(qParam);
           setSelectedBooking(match);
           setIsDetailOpen(true);
         }, 0);
@@ -189,7 +212,7 @@ export function AdminBookingManager({
       setSelectedBooking(updatedBooking);
 
       toast.success(`Pembayaran DP booking #${booking.kode_booking} berhasil diverifikasi!`);
-      setIsDetailOpen(false);
+      returnToInitialBookingList();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memverifikasi DP.";
       toast.error(msg);
@@ -252,9 +275,8 @@ export function AdminBookingManager({
       );
 
       toast.success("Bukti transfer ditolak dan alasan telah disampaikan ke user.");
-      setIsRejectFormOpen(false);
       setRejectReason("");
-      setIsDetailOpen(false);
+      returnToInitialBookingList();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal menolak bukti pembayaran.";
       toast.error(msg);
@@ -300,7 +322,7 @@ export function AdminBookingManager({
       );
 
       toast.success(`Status booking #${booking.kode_booking} diubah menjadi ${newStatus}.`);
-      setIsDetailOpen(false);
+      returnToInitialBookingList();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memperbarui status.";
       toast.error(msg);
@@ -311,8 +333,7 @@ export function AdminBookingManager({
 
   // Callback setelah proses pengembalian & inspeksi fisik berhasil
   const handleReturnSuccess = async () => {
-    setIsReturnModalOpen(false);
-    setIsDetailOpen(false);
+    returnToInitialBookingList();
     try {
       const { data, error } = await supabase
         .from("bookings")
@@ -432,8 +453,24 @@ export function AdminBookingManager({
             placeholder="Cari kode booking / nama..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-9 text-xs bg-white rounded-full border-[#E8E8E1]"
+            className="pl-9 pr-8 h-9 text-xs bg-white rounded-full border-[#E8E8E1]"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery("");
+                if (typeof window !== "undefined" && window.location.search) {
+                  window.history.replaceState(null, "", "/admin/booking");
+                }
+              }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F7A84] hover:text-[#234E5C] p-0.5 rounded-full hover:bg-[#F3F3EF] cursor-pointer"
+              title="Hapus pencarian"
+              aria-label="Hapus pencarian"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -559,7 +596,7 @@ export function AdminBookingManager({
       </div>
 
       {/* 3. DIALOG DETAIL BOOKING & VERIFIKASI ADMIN */}
-      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+      <Dialog open={isDetailOpen} onOpenChange={handleCloseDetail}>
         <DialogContent className="max-w-2xl bg-white p-6 max-h-[90vh] overflow-y-auto">
           {selectedBooking && (
             <div className="space-y-6">
