@@ -107,9 +107,23 @@ export function PaymentFlow({
     getPaymentCountdown(booking.created_at, 24)
   );
 
-  // Realtime subscription + Smart Polling: otomatis redirect ke Riwayat Booking jika pembayaran diverifikasi atau ditolak
+  // Realtime subscription + Smart Polling: otomatis redirect ke Riwayat Booking HANYA jika pengguna sedang menunggu verifikasi di halaman ini lalu status berubah
   React.useEffect(() => {
     if (!booking?.id) return;
+
+    // Jika saat halaman pertama kali dibuka booking memang sudah terverifikasi / lunas / diambil / selesai,
+    // maka JANGAN PERNAH redirect atau memicu notifikasi verifikasi.
+    // Pengguna membuka halaman ini murni untuk melihat rincian booking & lokasi (crosscheck status).
+    const isInitiallyVerified =
+      booking.status === "dp_dibayar" ||
+      booking.status === "lunas" ||
+      booking.status === "diambil" ||
+      booking.status === "selesai" ||
+      initialPayments.some((p) => p.status === "terverifikasi");
+
+    if (isInitiallyVerified) {
+      return;
+    }
 
     let isRedirecting = false;
 
@@ -117,7 +131,7 @@ export function PaymentFlow({
       if (isRedirecting) return;
       isRedirecting = true;
       if (type === "verified") {
-        toast.success(msg || "Pembayaran DP berhasil diverifikasi admin!");
+        toast.success(msg || "Pembayaran DP Anda telah dikonfirmasi oleh admin.");
       } else {
         toast.error(msg || "Bukti pembayaran ditolak oleh admin.");
       }
@@ -178,7 +192,7 @@ export function PaymentFlow({
       )
       .subscribe();
 
-    // 2. Smart Polling fallback setiap 2.5 detik (menjamin redirect langsung terjadi bila ada jeda websocket)
+    // 2. Smart Polling fallback setiap 2.5 detik (hanya bagi pengguna yang sedang aktif menunggu verifikasi)
     const pollInterval = setInterval(async () => {
       if (isRedirecting || !booking.id) return;
       try {
@@ -198,7 +212,7 @@ export function PaymentFlow({
             bStatus === "diambil" ||
             payList.some((p) => p.status === "terverifikasi")
           ) {
-            handleRedirect("verified", "Pembayaran DP berhasil diverifikasi admin!");
+            handleRedirect("verified", "Pembayaran DP Anda telah dikonfirmasi oleh admin.");
           } else if (
             bStatus === "dibatalkan" ||
             payList.some((p) => p.status === "ditolak")
@@ -218,7 +232,7 @@ export function PaymentFlow({
       clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
-  }, [booking.id, router, supabase]);
+  }, [booking.id, booking.status, initialPayments, router, supabase]);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -494,29 +508,40 @@ export function PaymentFlow({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E8E8E1] pb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block">
-              {isPaymentSubmitted || isDpVerified ? "Rincian Pembayaran Uang Muka (DP 30%)" : "Tagihan Uang Muka (DP 30%)"}
+              {isDpVerified
+                ? "Uang Muka (DP 30%) - Terverifikasi"
+                : isPaymentSubmitted
+                ? "Rincian Pembayaran Uang Muka (DP 30%)"
+                : "Tagihan Uang Muka (DP 30%)"}
             </span>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-2xl sm:text-3xl font-extrabold text-[#A0630F]">
                 {formatRupiah(booking.dp_jumlah)}
               </span>
-              <button
-                type="button"
-                onClick={handleCopyNominal}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#234E5C] hover:text-[#A0630F] underline cursor-pointer"
-              >
-                {isCopiedNominal ? (
-                  <>
-                    <Check className="h-3 w-3 text-[#2E5E4E]" />
-                    <span>Tersalin</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3 w-3" />
-                    <span>Salin Nominal</span>
-                  </>
-                )}
-              </button>
+              {isDpVerified ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2E5E4E] bg-[#E2F0D9] px-2.5 py-0.5 rounded-full border border-[#C5E1A5]">
+                  <Check className="h-3 w-3" />
+                  <span>DP Terverifikasi</span>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleCopyNominal}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#234E5C] hover:text-[#A0630F] underline cursor-pointer"
+                >
+                  {isCopiedNominal ? (
+                    <>
+                      <Check className="h-3 w-3 text-[#2E5E4E]" />
+                      <span>Tersalin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3" />
+                      <span>Salin Nominal</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
 

@@ -8,6 +8,7 @@ import {
   MapPin,
   ArrowLeft,
   Printer,
+  ExternalLink,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { PaymentFlow } from "@/components/payment/payment-flow";
@@ -15,6 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { H1, Lead } from "@/components/ui/typography";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
 import { APP_NAME, DEFAULT_SETTINGS, LOKASI_DEFAULT, normalizeAdminPhone } from "@/lib/constants";
+import { createWhatsAppLink } from "@/lib/payment-utils";
 import type { Booking, BookingItem, EquipmentItem, Payment } from "@/types/database";
 
 interface PembayaranPageProps {
@@ -118,6 +120,13 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
 
   const customerName = profile?.nama || "User";
 
+  const isDpVerified =
+    booking.status === "dp_dibayar" ||
+    booking.status === "lunas" ||
+    booking.status === "diambil" ||
+    booking.status === "selesai" ||
+    booking.payments?.some((p) => p.status === "terverifikasi");
+
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
       {/* Breadcrumbs & Header */}
@@ -128,16 +137,20 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
             Kembali ke Riwayat Booking
           </Link>
           <span>/</span>
-          <span>Pembayaran</span>
+          <span>{isDpVerified ? "Rincian Booking & Lokasi" : "Pembayaran"}</span>
           <span>/</span>
           <span className="font-mono font-bold text-[#234E5C]">#{booking.kode_booking}</span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
           <div>
-            <H1 className="section-title block">PEMBAYARAN BOOKING</H1>
+            <H1 className="section-title block">
+              {isDpVerified ? "RINCIAN BOOKING & LOKASI" : "PEMBAYARAN BOOKING"}
+            </H1>
             <Lead className="text-sm text-[#5F7A84] font-medium">
-              Selesaikan uang muka (DP) untuk mengunci jadwal peminjaman unit alat Anda.
+              {isDpVerified
+                ? "Jadwal booking dan ketersediaan unit alat Anda telah dikunci. Silakan cek detail pesanan dan lokasi serah terima alat."
+                : "Selesaikan uang muka (DP) untuk mengunci jadwal peminjaman unit alat Anda."}
             </Lead>
           </div>
           <div className="self-start sm:self-auto flex items-center gap-2">
@@ -270,15 +283,37 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
             </ul>
           </div>
 
-          {/* Alamat Toko */}
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 shadow-sm space-y-2 text-xs">
+          {/* Alamat Toko & Panduan Lokasi Serah Terima */}
+          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 shadow-sm space-y-3 text-xs">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5">
               <MapPin className="h-3.5 w-3.5 text-[#234E5C]" />
-              Lokasi Toko PirantiKu
+              Lokasi Pengambilan &amp; Pengembalian Unit
             </span>
             <p className="text-[#234E5C] font-semibold leading-relaxed">
               {alamat}
             </p>
+            <div className="pt-2 border-t border-[#E8E8E1] flex flex-wrap items-center gap-2">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(alamat)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#234E5C] hover:bg-[#1b3d48] text-white font-bold text-xs transition-colors"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                <span>Buka di Google Maps</span>
+              </a>
+              <a
+                href={createWhatsAppLink(
+                  whatsappAdmin,
+                  `Halo Admin PirantiKu, saya ingin bertanya terkait rute lokasi gerai untuk serah terima booking #${booking.kode_booking}.`
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] font-semibold text-xs transition-colors"
+              >
+                <span>Tanya Rute ke Admin</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
