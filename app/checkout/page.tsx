@@ -599,9 +599,9 @@ function CheckoutContent() {
                   variant="warm"
                   disabled={isSubmitting || !agreedTerms}
                   onClick={handleProcessBooking}
-                  className="px-6 sm:px-8 text-xs font-bold shrink-0 min-w-[120px] justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 sm:px-8 text-xs font-bold justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Memproses..." : "Konfirmasi & Lanjut Upload Bukti"}
+                  {isSubmitting ? "Memproses..." : "Konfirmasi"}
                 </Button>
               </div>
             </div>

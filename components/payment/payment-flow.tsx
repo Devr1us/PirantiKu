@@ -15,7 +15,6 @@ import {
   MessageCircle,
   ShieldCheck,
   ZoomIn,
-  RefreshCw,
   X,
   Printer,
 } from "lucide-react";
@@ -674,17 +673,16 @@ export function PaymentFlow({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
               {!isDpVerified && (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setIsEditingProof(true)}
-                  className="text-xs font-bold gap-1.5 flex-1 sm:flex-initial"
+                  className="text-xs font-bold flex-1 sm:flex-none sm:w-auto px-2 sm:px-4 text-center cursor-pointer min-w-0"
                 >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Ganti / Upload Ulang
+                  Ganti / Reupload
                 </Button>
               )}
 
@@ -692,13 +690,13 @@ export function PaymentFlow({
                 href={waPaymentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 sm:flex-initial"
+                className="flex-1 sm:flex-none sm:w-auto min-w-0"
               >
                 <Button
                   type="button"
                   variant="warm"
                   size="sm"
-                  className="text-xs font-bold w-full"
+                  className="text-xs font-bold w-full sm:w-auto px-2 sm:px-4 text-center cursor-pointer min-w-0"
                 >
                   Hubungi Admin
                 </Button>
