@@ -188,15 +188,15 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 bg-[#FAFAF8]">
+    <div className="flex min-h-[calc(100svh-80px)] items-center justify-center px-4 py-8 sm:py-12 bg-[#FAFAF8]">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:min-h-[640px]"
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E8E8E1] bg-white shadow-sm flex flex-col md:flex-row md:h-[640px] md:min-h-[640px] items-stretch"
       >
-        {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci Stabil Tidak Berubah Saat Ada Error) */}
-        <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between">
+        {/* Kolom Kiri: Panel Petrol Desktop (Ukuran Terkunci 360px & Tinggi 100% Tetap Stabil) */}
+        <div className="hidden md:flex md:w-[360px] md:shrink-0 bg-[#234E5C] text-white p-10 flex-col justify-between h-full">
           <div>
             <Wordmark variant="white" />
           </div>
@@ -216,14 +216,15 @@ function LoginForm() {
           </div>
         </div>
 
-        {/* Kolom Kanan: Formulir Putih */}
-        <div className="w-full md:flex-1 p-8 sm:p-10 flex flex-col justify-center space-y-6">
-          {/* Header Mobile Wordmark */}
-          <div className="md:hidden text-center pb-2">
-            <Wordmark />
-          </div>
-
+        {/* Kolom Kanan: Formulir Putih (Tinggi Terkunci, Overflow Auto Jika Diperlukan) */}
+        <div className="w-full md:flex-1 p-8 sm:p-10 flex flex-col justify-between h-full overflow-y-auto">
+          {/* Header Formulir */}
           <div className="space-y-1">
+            {/* Header Mobile Wordmark */}
+            <div className="md:hidden text-center pb-2">
+              <Wordmark />
+            </div>
+
             <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
               Masuk ke Akun
             </H1>
@@ -232,30 +233,24 @@ function LoginForm() {
             </Lead>
           </div>
 
-          {/* Notifikasi Error Bergetar Halus */}
-          <AnimatePresence>
-            {authError && (
-              <motion.div
-                initial={{ opacity: 0, x: 0 }}
-                animate={{
-                  opacity: 1,
-                  x: [-5, 5, -3, 3, 0],
-                }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35 }}
-                className="flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-3 text-xs text-[#991B1B]"
-              >
-                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                <span>{authError}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Slot Tetap Banner Error (Tinggi 48px Dicadangkan Permanen Agar Tidak Mendorong Layout) */}
+          <div className="min-h-[48px] flex items-center">
+            <div
+              className={`w-full flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-2.5 text-xs text-[#991B1B] transition-opacity duration-200 ${
+                authError ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+              role="alert"
+            >
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span className="truncate">{authError || "Kredensial tidak valid"}</span>
+            </div>
+          </div>
 
           {/* Tombol Login Google */}
           <button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={isGoogleLoading || isLoading}
+            disabled={isGoogleLoading || isLoading || isSuccess}
             className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#E8E8E1] bg-white px-4 py-2.5 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {isGoogleLoading ? (
@@ -294,8 +289,9 @@ function LoginForm() {
             <div className="flex-1 h-px bg-[#E8E8E1]" />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1.5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+            {/* Field Email dengan Slot Error Tetap */}
+            <div className="space-y-1">
               <Label
                 htmlFor="email"
                 className="text-xs font-semibold text-[#234E5C]"
@@ -312,14 +308,20 @@ function LoginForm() {
                   {...register("email")}
                 />
               </div>
-              {errors.email && (
-                <p className="text-xs text-[#DC2626] font-medium">
-                  {errors.email.message}
+              {/* Slot Teks Error Tetap (Cadangkan min-h-5 agar tidak mendorong input berikutnya) */}
+              <div className="min-h-[20px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${
+                    errors.email ? "opacity-100" : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  {errors.email?.message || " "}
                 </p>
-              )}
+              </div>
             </div>
 
-            <div className="space-y-1.5">
+            {/* Field Password dengan Slot Error Tetap */}
+            <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <Label
                   htmlFor="password"
@@ -359,14 +361,19 @@ function LoginForm() {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-xs text-[#DC2626] font-medium">
-                  {errors.password.message}
+              {/* Slot Teks Error Tetap (Cadangkan min-h-5 agar tidak mendorong tombol submit) */}
+              <div className="min-h-[20px] flex items-center">
+                <p
+                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${
+                    errors.password ? "opacity-100" : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  {errors.password?.message || " "}
                 </p>
-              )}
+              </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <Button
                 type="submit"
                 variant="warm"
@@ -390,7 +397,7 @@ function LoginForm() {
             </div>
           </form>
 
-          <div className="text-center border-t border-[#E8E8E1] pt-4">
+          <div className="text-center border-t border-[#E8E8E1] pt-3">
             <p className="text-xs text-[#5F7A84]">
               Belum punya akun?{" "}
               <Link
