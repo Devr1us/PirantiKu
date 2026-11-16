@@ -11,9 +11,9 @@ Semua file migrasi berada di dalam direktori `supabase/migrations/`:
 1. **[`01_schema_and_policies.sql`](file:///e:/PirantiKu/PirantiKu/supabase/migrations/01_schema_and_policies.sql)**
    - **Tabel Inti**: `settings`, `profiles`, `categories`, `equipment`, `equipment_images`, `bookings`, `booking_items`, `booking_status_history`, `payments`, `booking_returns`, `damage_reports`, `admin_logs`.
    - **Tipe Data Kustom (ENUM)**: `user_role`, `booking_status`, `payment_jenis`, `payment_status`, `damage_jenis`.
-   - **Keamanan (RLS)**: Row-Level Security aktif di semua tabel dengan pembagian hak akses terperinci antara penyewa (`user`) dan pengelola (`admin`).
+   - **Keamanan (RLS)**: Row-Level Security aktif di semua tabel dengan pembagian hak akses terperinci antara user (`user`) dan pengelola (`admin`).
    - **Trigger Otomatis**:
-     - `on_auth_user_created`: Otomatis membuat baris profil di `public.profiles` saat penyewa mendaftar akun di Supabase Auth.
+     - `on_auth_user_created`: Otomatis membuat baris profil di `public.profiles` saat user mendaftar akun di Supabase Auth.
    - **Storage Buckets**: Membuat bucket `equipment-images` dan `payment-proofs` dengan permission upload terverifikasi.
    - **Fungsi RPC Bisnis Rental**:
      - `create_booking(p_mulai, p_selesai, p_items, p_catatan)`: Validasi stok atomik, kalkulasi diskon sewa mingguan, dan pembuatan nomor booking unik (`PK-YYMMDD-XXXX`).

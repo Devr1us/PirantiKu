@@ -22,8 +22,8 @@ export function Wordmark({
   size = "default",
 }: WordmarkProps) {
   const isWhite = variant === "white";
-  const mainColor = isWhite ? "text-white" : "text-[#234E5C]";
-  const subColor = isWhite ? "text-white/80" : "text-[#5F7A84]";
+  const mainColor = isWhite ? "text-white" : "text-[var(--text-main)]";
+  const subColor = isWhite ? "text-white/80" : "text-[var(--text-muted)]";
   const logoSrc = isWhite ? "/logo-white.png" : "/logo.png";
   const isSmall = size === "sm";
 

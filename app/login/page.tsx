@@ -236,9 +236,8 @@ function LoginForm() {
           {/* Slot Tetap Banner Error (Tinggi 48px Dicadangkan Permanen Agar Tidak Mendorong Layout) */}
           <div className="min-h-[48px] flex items-center">
             <div
-              className={`w-full flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-2.5 text-xs text-[#991B1B] transition-opacity duration-200 ${
-                authError ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
+              className={`w-full flex items-start gap-2.5 rounded-xl border border-[#FECACA] bg-[#FEE2E2] p-2.5 text-xs text-[#991B1B] transition-opacity duration-200 ${authError ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
               role="alert"
             >
               <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
@@ -311,9 +310,8 @@ function LoginForm() {
               {/* Slot Teks Error Tetap (Cadangkan min-h-5 agar tidak mendorong input berikutnya) */}
               <div className="min-h-[20px] flex items-center">
                 <p
-                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${
-                    errors.email ? "opacity-100" : "opacity-0 pointer-events-none"
-                  }`}
+                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${errors.email ? "opacity-100" : "opacity-0 pointer-events-none"
+                    }`}
                 >
                   {errors.email?.message || " "}
                 </p>
@@ -364,9 +362,8 @@ function LoginForm() {
               {/* Slot Teks Error Tetap (Cadangkan min-h-5 agar tidak mendorong tombol submit) */}
               <div className="min-h-[20px] flex items-center">
                 <p
-                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${
-                    errors.password ? "opacity-100" : "opacity-0 pointer-events-none"
-                  }`}
+                  className={`text-[11px] text-[#DC2626] font-medium transition-opacity duration-150 ${errors.password ? "opacity-100" : "opacity-0 pointer-events-none"
+                    }`}
                 >
                   {errors.password?.message || " "}
                 </p>

@@ -189,14 +189,14 @@ export function AdminUserManager({
             KELOLA PENGGUNA
           </H1>
           <Lead className="text-sm text-[#5F7A84] font-medium">
-            Kelola data akun penyewa, hak akses role admin, dan kontrol keamanan akun PirantiKu.
+            Kelola data akun user, hak akses role admin, dan kontrol keamanan akun PirantiKu.
           </Lead>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#E2F0D9] border border-[#C5E1A5] text-xs font-bold text-[#2E5E4E]">
             <UserCheck className="h-4 w-4" />
-            <span>{totalUsers} Penyewa</span>
+            <span>{totalUsers} User</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-xs font-bold text-[#A0630F]">
             <ShieldCheck className="h-4 w-4" />
@@ -246,7 +246,7 @@ export function AdminUserManager({
                   : "text-[#5F7A84] hover:text-[#234E5C]"
               }`}
             >
-              Penyewa ({totalUsers})
+              User ({totalUsers})
             </button>
             <button
               onClick={() => setRoleFilter("admin")}
@@ -327,7 +327,7 @@ export function AdminUserManager({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex p-1 rounded-md bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] transition-colors"
-                              title="Chat WhatsApp Penyewa"
+                              title="Chat WhatsApp User"
                             >
                               <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
                             </a>
@@ -352,7 +352,7 @@ export function AdminUserManager({
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0] text-[10px] font-extrabold uppercase">
                             <UserCheck className="h-3 w-3" />
-                            Penyewa
+                            User
                           </span>
                         )}
                       </td>
@@ -459,7 +459,7 @@ export function AdminUserManager({
                 value={editAlamat}
                 onChange={(e) => setEditAlamat(e.target.value)}
                 rows={2}
-                placeholder="Alamat lengkap penyewa..."
+                placeholder="Alamat lengkap user..."
                 className="w-full rounded-xl border border-[#E8E8E1] p-2.5 text-xs text-[#234E5C] focus:border-[#234E5C] focus:outline-none"
               />
             </div>
@@ -477,7 +477,7 @@ export function AdminUserManager({
                   }`}
                 >
                   <UserCheck className="h-4 w-4" />
-                  <span>Penyewa (User)</span>
+                  <span>User</span>
                 </button>
                 <button
                   type="button"
@@ -530,7 +530,7 @@ export function AdminUserManager({
             <DialogDescription className="text-xs text-[#5F7A84] leading-relaxed">
               Anda akan menghapus akun{" "}
               <strong className="text-[#234E5C]">{deletingProfile?.nama}</strong> ({deletingProfile?.no_hp}).
-              Tindakan ini permanen dan akan menghapus akses login penyewa pada sistem PirantiKu.
+              Tindakan ini permanen dan akan menghapus akses login user pada sistem PirantiKu.
             </DialogDescription>
           </DialogHeader>
 

@@ -30,7 +30,7 @@ export function H1({
   const chosenMode: AnimatedTextMode = mode ?? (hero ? "char" : "word");
   const baseClass = hero
     ? "hero-title block tracking-tight"
-    : "text-2xl sm:text-3xl font-extrabold uppercase text-[#234E5C]";
+    : "text-2xl sm:text-3xl font-extrabold uppercase text-[var(--bg-dark)]";
 
   return (
     <AnimatedText
@@ -134,7 +134,7 @@ export function P({
       mode="block"
       delay={delay}
       once={once}
-      className={`text-sm sm:text-base text-[#234E5C] leading-relaxed ${className}`}
+      className={`text-sm sm:text-base text-[var(--text-main)] leading-relaxed ${className}`}
     >
       {children}
     </AnimatedText>
@@ -158,7 +158,7 @@ export function Eyebrow({
       duration={DURATION_SHORT}
       y={8}
       once={once}
-      className={`inline-block text-xs font-bold uppercase tracking-wider text-[#5F7A84] ${className}`}
+      className={`inline-block text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] ${className}`}
     >
       {children}
     </Reveal>

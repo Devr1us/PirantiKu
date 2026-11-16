@@ -73,46 +73,46 @@ export function BookingReceiptCard({
       {/* ========================================================
           1. LAPISAN KARTU BELAKANG (Layered Shadow Depth)
           ======================================================== */}
-      {/* Lapisan 1: Cokelat Emas (#8a5a12) miring rotate(5deg) */}
+      {/* Lapisan 1: Emas (#F2B93B) miring rotate(5deg) */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 rounded-[28px] bg-[#8a5a12] rotate-[5deg] scale-[0.98] transition-transform duration-300 pointer-events-none shadow-md shadow-[#8a5a12]/20"
+        className="absolute inset-0 rounded-[28px] bg-[var(--accent-gold)] rotate-[5deg] scale-[0.98] transition-transform duration-300 pointer-events-none shadow-md shadow-[var(--accent-gold)]/20"
       />
 
-      {/* Lapisan 2: Teal Tua (#1f4e5f) miring rotate(-3deg) */}
+      {/* Lapisan 2: Teal Tua (#0F3D47) miring rotate(-3deg) */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 rounded-[28px] bg-[#1f4e5f] -rotate-[3deg] scale-[0.99] transition-transform duration-300 pointer-events-none shadow-lg shadow-[#1f4e5f]/25"
+        className="absolute inset-0 rounded-[28px] bg-[var(--bg-dark)] -rotate-[3deg] scale-[0.99] transition-transform duration-300 pointer-events-none shadow-lg shadow-[var(--bg-dark)]/25"
       />
 
       {/* ========================================================
           2. KARTU UTAMA PUTIH (Rounded-[28px] + Ticket Cutouts)
           ======================================================== */}
-      <div className="relative z-10 w-full rounded-[28px] bg-white border border-[#e3e1d9] shadow-2xl shadow-black/10 p-6 sm:p-8 xl:p-9 text-[#0f2e39] overflow-hidden">
+      <div className="relative z-10 w-full rounded-[28px] bg-white border border-[var(--border-soft)] shadow-2xl shadow-black/10 p-6 sm:p-8 xl:p-9 text-[var(--text-main)] overflow-hidden">
         {/* Label Pil Gelap di Tepi Atas: Simulasi Nota Booking */}
         <div className="flex items-center justify-start mb-3.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0f2e39] text-white text-xs font-bold tracking-wide shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#f2c96b] animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-dark)] text-white text-xs font-bold tracking-wide shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-gold)] animate-pulse" />
             <span>Simulasi Nota Booking</span>
           </div>
         </div>
 
-        {/* Header Nota: Penyewa, Jadwal, ID & Status Badge */}
-        <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-[#e3e1d9]/60">
+        {/* Header Nota: User, Jadwal, ID & Status Badge */}
+        <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-[var(--border-soft)]">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8a5a12] block">
-              PENYEWA
+            <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[var(--accent-gold)] block">
+              USER
             </span>
-            <h4 className="text-2xl sm:text-[28px] font-black text-[#1f4e5f] tracking-tight leading-tight mt-0.5">
+            <h4 className="text-2xl sm:text-[28px] font-black text-[var(--bg-dark)] tracking-tight leading-tight mt-0.5">
               {data.customerName}
             </h4>
-            <p className="text-xs sm:text-[13px] text-[#5F7A84] font-medium mt-1">
+            <p className="text-xs sm:text-[13px] text-[var(--text-muted)] font-medium mt-1">
               {data.pickupSchedule}
             </p>
           </div>
 
           <div className="text-right flex flex-col items-end gap-1.5 shrink-0">
-            <span className="font-mono text-xs sm:text-sm font-bold text-[#5F7A84]">
+            <span className="font-mono text-xs sm:text-sm font-bold text-[var(--text-muted)]">
               {data.orderId}
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
@@ -123,14 +123,14 @@ export function BookingReceiptCard({
         </div>
 
         {/* Kotak Abu Krem: KODE BOOKING Besar */}
-        <div className="my-4 rounded-2xl bg-[#f6f5f1] border border-[#e3e1d9] p-3.5 sm:p-4.5 text-center">
-          <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#5F7A84] block">
+        <div className="my-4 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-soft)] p-3.5 sm:p-4.5 text-center">
+          <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[var(--text-muted)] block">
             KODE BOOKING
           </span>
-          <div className="text-3xl sm:text-[46px] xl:text-[50px] font-black tracking-[0.2em] text-[#0f2e39] font-mono leading-tight py-1">
+          <div className="text-3xl sm:text-[46px] xl:text-[50px] font-black tracking-[0.2em] text-[var(--bg-dark)] font-mono leading-tight py-1">
             {data.bookingCode}
           </div>
-          <p className="text-[11px] sm:text-xs text-[#5F7A84]">
+          <p className="text-[11px] sm:text-xs text-[var(--text-muted)]">
             Tunjukkan kode ini ke admin saat pengambilan
           </p>
         </div>
@@ -140,33 +140,33 @@ export function BookingReceiptCard({
           {/* Lubang sobek kiri */}
           <div
             aria-hidden="true"
-            className="absolute -left-[32px] sm:-left-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#f6f5f1] border-r border-[#e3e1d9]"
+            className="absolute -left-[32px] sm:-left-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[var(--bg-sage)] border-r border-[var(--border-soft)]"
           />
           {/* Garis putus-putus */}
-          <div className="border-t-2 border-dashed border-[#e3e1d9] w-full" />
+          <div className="border-t-2 border-dashed border-[var(--border-soft)] w-full" />
           {/* Lubang sobek kanan */}
           <div
             aria-hidden="true"
-            className="absolute -right-[32px] sm:-right-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#f6f5f1] border-l border-[#e3e1d9]"
+            className="absolute -right-[32px] sm:-right-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[var(--bg-sage)] border-l border-[var(--border-soft)]"
           />
         </div>
 
         {/* Rincian Peralatan */}
         <div className="space-y-2.5 py-0.5">
-          <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[#8a5a12] block">
+          <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[var(--accent-gold)] block">
             {data.durationLabel}
           </span>
           <div className="space-y-2 text-xs sm:text-sm">
             {data.items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-baseline justify-between text-[#3f5a64]"
+                className="flex items-baseline justify-between text-[var(--text-muted)]"
               >
-                <span className="font-semibold text-[#1f4e5f]">
+                <span className="font-semibold text-[var(--bg-dark)]">
                   {item.qty}× {item.name}
                 </span>
-                <span className="flex-1 mx-2.5 border-b border-dotted border-[#cbd5e1] min-w-3" />
-                <span className="font-mono font-bold text-[#0f2e39]">
+                <span className="flex-1 mx-2.5 border-b border-dotted border-[var(--border-soft)] min-w-3" />
+                <span className="font-mono font-bold text-[var(--bg-dark)]">
                   Rp {item.subtotal.toLocaleString("id-ID")}
                 </span>
               </div>
@@ -178,25 +178,25 @@ export function BookingReceiptCard({
         <div className="relative my-4">
           <div
             aria-hidden="true"
-            className="absolute -left-[32px] sm:-left-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#f6f5f1] border-r border-[#e3e1d9]"
+            className="absolute -left-[32px] sm:-left-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[var(--bg-sage)] border-r border-[var(--border-soft)]"
           />
-          <div className="border-t-2 border-dashed border-[#e3e1d9] w-full" />
+          <div className="border-t-2 border-dashed border-[var(--border-soft)] w-full" />
           <div
             aria-hidden="true"
-            className="absolute -right-[32px] sm:-right-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#f6f5f1] border-l border-[#e3e1d9]"
+            className="absolute -right-[32px] sm:-right-[40px] top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[var(--bg-sage)] border-l border-[var(--border-soft)]"
           />
         </div>
 
         {/* Total Sewa & Stempel DP 30% LUNAS */}
         <div className="flex items-center justify-between gap-3 pt-1 pb-1">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#5F7A84] block">
+            <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] block">
               TOTAL SEWA
             </span>
-            <div className="text-2xl sm:text-3xl xl:text-[34px] font-black text-[#1f4e5f] leading-none mt-1">
+            <div className="text-2xl sm:text-3xl xl:text-[34px] font-black text-[var(--bg-dark)] leading-none mt-1">
               Rp {data.totalPrice.toLocaleString("id-ID")}
             </div>
-            <p className="text-[11px] sm:text-xs text-[#5F7A84] mt-1 font-medium">
+            <p className="text-[11px] sm:text-xs text-[var(--text-muted)] mt-1 font-medium">
               Sisa Rp {data.remainingPrice.toLocaleString("id-ID")} dibayar saat ambil
             </p>
           </div>
@@ -214,7 +214,7 @@ export function BookingReceiptCard({
               duration: 0.4,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border-[3px] border-[#8a5a12] bg-[#fbeccd] text-[#8a5a12] shadow-sm select-none shrink-0"
+            className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl border-[3px] border-[var(--accent-gold)] bg-[var(--bg-base)] text-[var(--bg-dark)] shadow-sm select-none shrink-0"
             aria-label={data.dpStatus}
           >
             <span className="block text-xs sm:text-sm font-black uppercase tracking-wider text-center whitespace-nowrap">
@@ -224,8 +224,8 @@ export function BookingReceiptCard({
         </div>
 
         {/* Footer Nota: Stok Terkunci Otomatis & Verifikasi Sukses */}
-        <div className="pt-3.5 mt-3.5 sm:pt-4 sm:mt-4 border-t border-[#e3e1d9] flex items-center justify-between text-xs sm:text-[13px]">
-          <span className="text-[#5F7A84] font-medium flex items-center gap-1.5">
+        <div className="pt-3.5 mt-3.5 sm:pt-4 sm:mt-4 border-t border-[var(--border-soft)] flex items-center justify-between text-xs sm:text-[13px]">
+          <span className="text-[var(--text-muted)] font-medium flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-[#2E5E4E]" />
             Stok terkunci otomatis
           </span>
@@ -249,7 +249,7 @@ export function BookingReceiptCard({
               }
         }
         transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-3.5 -right-2 sm:-right-4 z-20 px-4 py-2 rounded-full bg-white border border-[#e3e1d9] shadow-lg text-xs sm:text-sm font-bold text-[#1f4e5f] flex items-center gap-2 select-none"
+        className="absolute -top-3.5 -right-2 sm:-right-4 z-20 px-4 py-2 rounded-full bg-white border border-[var(--border-soft)] shadow-lg text-xs sm:text-sm font-bold text-[var(--bg-dark)] flex items-center gap-2 select-none"
         aria-hidden="true"
       >
         <span className="w-2.5 h-2.5 rounded-full bg-[#2E5E4E]" />
@@ -272,7 +272,7 @@ export function BookingReceiptCard({
           ease: "easeInOut",
           delay: 0.6,
         }}
-        className="absolute -bottom-3.5 -left-2 sm:-left-4 z-20 px-4.5 py-2 rounded-full bg-[#f2c96b] border border-[#e2b54d] shadow-lg text-xs sm:text-sm font-black text-[#0f2e39] flex items-center gap-2 select-none"
+        className="absolute -bottom-3.5 -left-2 sm:-left-4 z-20 px-4.5 py-2 rounded-full bg-[var(--accent-gold)] border border-[#E0A82E] shadow-lg text-xs sm:text-sm font-black text-[var(--bg-dark)] flex items-center gap-2 select-none"
         aria-hidden="true"
       >
         <span>{totalToolCount}+ alat siap sewa</span>

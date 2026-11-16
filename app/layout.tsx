@@ -94,7 +94,7 @@ export default function RootLayout({
       lang="id"
       className={`${openSans.variable} ${libreBaskerville.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--petrol)] font-sans antialiased">
+      <body className="min-h-full flex flex-col bg-[var(--bg-base)] text-[var(--text-main)] font-sans antialiased">
         <MotionProvider>
           <CartProvider>
             <Navbar />

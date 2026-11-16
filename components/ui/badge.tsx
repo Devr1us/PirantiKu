@@ -18,13 +18,13 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variantClasses = {
-    default: "bg-[#F3F3EF] text-[#234E5C] border-[#E8E8E1]",
-    secondary: "bg-[#F3F3EF] text-[#5F7A84] border-[#E8E8E1]",
-    petrol: "bg-[#E6FFFA] text-[#234E5C] border-[#B2F5EA]",
-    ochre: "bg-[#FEF3C7] text-[#78350F] border-[#FDE68A]",
+    default: "bg-[var(--bg-sage)] text-[var(--bg-dark)] border-[var(--border-soft)]",
+    secondary: "bg-[var(--bg-sage)] text-[var(--text-muted)] border-[var(--border-soft)]",
+    petrol: "bg-[var(--bg-sage)] text-[var(--bg-dark)] border-[var(--border-soft)]",
+    ochre: "bg-[var(--accent-gold)]/20 text-[var(--bg-dark)] border-[var(--accent-gold)]/40",
     success: "bg-[#E2F0D9] text-[#2E5E4E] border-[#C5E1A5]",
     destructive: "bg-[#FEE2E2] text-[#991B1B] border-[#FECACA]",
-    outline: "bg-white text-[#234E5C] border-[#E8E8E1]",
+    outline: "bg-white text-[var(--text-main)] border-[var(--border-soft)]",
   };
 
   return (

@@ -311,7 +311,7 @@ export function RentalReturnModal({
               </DialogTitle>
               <p className="text-xs text-[#5F7A84] mt-0.5">
                 Kode Booking: <strong className="text-[#234E5C]">#{booking.kode_booking}</strong> |
-                Penyewa: <strong className="text-[#234E5C]">{booking.profile?.nama || "Penyewa"}</strong>
+                User: <strong className="text-[#234E5C]">{booking.profile?.nama || "User"}</strong>
               </p>
             </div>
           </div>
@@ -580,13 +580,13 @@ export function RentalReturnModal({
                 <div>
                   <span className="font-extrabold text-sm block">
                     {netRefund >= 0
-                      ? "Deposit yang Dikembalikan ke Penyewa:"
-                      : "Deposit Habis! Penyewa Kurang Bayar Sebesar:"}
+                      ? "Deposit yang Dikembalikan ke User:"
+                      : "Deposit Habis! User Kurang Bayar Sebesar:"}
                   </span>
                   <span className="text-[11px] opacity-90">
                     {netRefund >= 0
-                      ? "Kembalikan dana deposit ini secara tunai atau transfer ke penyewa."
-                      : "Biaya denda & kerusakan melebihi deposit awal. Tagih kekurangan ke penyewa."}
+                      ? "Kembalikan dana deposit ini secara tunai atau transfer ke user."
+                      : "Biaya denda & kerusakan melebihi deposit awal. Tagih kekurangan ke user."}
                   </span>
                 </div>
 

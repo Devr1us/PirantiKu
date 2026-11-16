@@ -61,7 +61,7 @@ export function RentalInvoice({
     window.print();
   };
 
-  const customerName = data.customer?.nama || "Penyewa";
+  const customerName = data.customer?.nama || "User";
   const customerPhone = data.customer?.no_hp || "-";
   const customerAddress = data.customer?.alamat || "Alamat belum dilengkapi";
 
@@ -125,9 +125,8 @@ export function RentalInvoice({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="w-full font-bold text-xs gap-1.5 border-[#E8E8E1] text-[#2E5E4E] hover:bg-[#E2F0D9] justify-center"
+                  className="w-full font-bold text-xs border-[#E8E8E1] text-[#2E5E4E] hover:bg-[#E2F0D9] justify-center"
                 >
-                  <MessageCircle className="h-3.5 w-3.5" />
                   <span>WhatsApp Admin</span>
                 </Button>
               </a>
@@ -192,10 +191,10 @@ export function RentalInvoice({
 
         {/* 2. DATA IDENTITAS & JADWAL SEWA */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-lg bg-[#FAFAF8] border border-[#E8E8E1] text-xs">
-          {/* Kolom Kiri: Pihak Pertama (Penyewa) */}
+          {/* Kolom Kiri: Pihak Pertama (User) */}
           <div className="space-y-1.5 min-w-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#A0630F] block">
-              Pihak Pertama (Penyewa)
+              Pihak Pertama (User)
             </span>
             <p className="font-bold text-sm text-[#234E5C] break-words">{customerName}</p>
             <p className="text-[#5F7A84] break-words">
@@ -317,10 +316,10 @@ export function RentalInvoice({
           </span>
           <ol className="list-decimal list-inside space-y-1">
             <li>
-              <strong>Pemeriksaan Fisik:</strong> Penyewa telah memeriksa secara langsung dan memastikan seluruh unit peralatan yang disewa dalam kondisi normal, prima, bersih, dan lengkap aksesorisnya saat serah terima.
+              <strong>Pemeriksaan Fisik:</strong> User telah memeriksa secara langsung dan memastikan seluruh unit peralatan yang disewa dalam kondisi normal, prima, bersih, dan lengkap aksesorisnya saat serah terima.
             </li>
             <li>
-              <strong>Tanggung Jawab Kerusakan / Kehilangan:</strong> Penyewa bertanggung jawab penuh atas segala bentuk kerusakan akibat kelalaian pemakaian, benturan, terbakar, maupun kehilangan unit selama masa sewa berlangsung dan bersedia mengganti biaya perbaikan atau unit baru.
+              <strong>Tanggung Jawab Kerusakan / Kehilangan:</strong> User bertanggung jawab penuh atas segala bentuk kerusakan akibat kelalaian pemakaian, benturan, terbakar, maupun kehilangan unit selama masa sewa berlangsung dan bersedia mengganti biaya perbaikan atau unit baru.
             </li>
             <li>
               <strong>Keterlambatan Pengembalian:</strong> Pengembalian melewati batas tanggal/jam sewa yang telah disepakati dikenakan denda keterlambatan sebesar <strong>Rp 50.000 / hari</strong> per alat.

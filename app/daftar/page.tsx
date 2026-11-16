@@ -201,7 +201,7 @@ export default function DaftarPage() {
 
           <div className="space-y-1">
             <H1 className="text-xl font-bold uppercase tracking-tight text-[#234E5C]">
-              Buat Akun Penyewa
+              Buat Akun User
             </H1>
             <Lead className="text-xs text-[#5F7A84]">
               Gunakan akun Gmail Anda untuk mendaftar dan mulai sewa alat.

@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
       totalUsers = uCount;
     }
 
-    // 5. Ambil seluruh booking dengan profil penyewa dan pembayaran (sinkron 100% dengan Kelola Booking)
+    // 5. Ambil seluruh booking dengan profil user dan pembayaran (sinkron 100% dengan Kelola Booking)
     const { data: bData, count: bCount } = await supabase
       .from("bookings")
       .select(`
@@ -171,7 +171,7 @@ export default async function AdminDashboardPage() {
             <div className="text-3xl font-extrabold text-[#234E5C]">
               <CountUp value={totalUsers} />
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Penyewa terdaftar</p>
+            <p className="text-[11px] text-[#5F7A84]">User terdaftar</p>
           </div>
         </Reveal>
 
@@ -222,7 +222,7 @@ export default async function AdminDashboardPage() {
             <thead className="border-b border-[#E8E8E1] bg-[#FAFAF8] text-[11px] uppercase font-bold text-[#5F7A84]">
               <tr>
                 <th className="py-3 px-4">Kode</th>
-                <th className="py-3 px-4">Penyewa</th>
+                <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Status Booking</th>
                 <th className="py-3 px-4">Status Pembayaran</th>
                 <th className="py-3 px-4">Jadwal Sewa</th>
@@ -241,7 +241,7 @@ export default async function AdminDashboardPage() {
                       </td>
                       <td className="py-3.5 px-4">
                         <span className="font-bold text-[#234E5C] block">
-                          {b.profile?.nama || "Penyewa"}
+                          {b.profile?.nama || "User"}
                         </span>
                         <span className="text-[11px] text-[#5F7A84]">
                           {b.profile?.no_hp || "-"}

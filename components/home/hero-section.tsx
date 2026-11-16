@@ -39,9 +39,12 @@ export function HeroSection({
   return (
     <section
       aria-label="Hero PirantiKu - Booking Alat Serba Ada"
-      className="relative w-full min-h-[calc(100dvh-80px)] lg:h-[calc(100dvh-80px)] flex items-center justify-center bg-[#f6f5f1] text-[#0f2e39] py-12 lg:py-0 overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #FAF7F2 0%, #F1F6F3 100%)",
+      }}
+      className="relative w-full min-h-[calc(100svh-80px)] lg:h-[calc(100svh-80px)] flex items-center justify-center text-[var(--text-main)] py-12 lg:py-0 overflow-hidden"
     >
-      <div className="w-full max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
           {/* ========================================================
               KOLOM KIRI (±590px / col-span-7)
@@ -54,7 +57,10 @@ export function HeroSection({
               animate="visible"
               variants={fadeUpVariant}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#fbeccd] border border-[#f2c96b]/40 text-[#8a5a12] text-xs sm:text-sm font-bold uppercase tracking-[0.16em] select-none shadow-xs">
+              <div
+                style={{ color: "var(--bg-dark)" }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-base)] border border-[var(--border-soft)] text-[var(--bg-dark)] text-xs sm:text-sm font-bold uppercase tracking-[0.16em] select-none shadow-xs"
+              >
                 <span>PIRANTIKU · BOOKING ALAT SERBA ADA</span>
               </div>
             </motion.div>
@@ -65,10 +71,14 @@ export function HeroSection({
               initial="hidden"
               animate="visible"
               variants={fadeUpVariant}
-              className="text-4xl sm:text-6xl lg:text-[62px] xl:text-[70px] 2xl:text-[76px] font-extrabold text-[#0f2e39] leading-[1.06] tracking-tight"
+              style={{ color: "var(--text-main)" }}
+              className="text-4xl sm:text-6xl lg:text-[62px] xl:text-[70px] 2xl:text-[76px] font-extrabold text-[var(--text-main)] leading-[1.06] tracking-tight"
             >
               Booking Alat Tanpa Ribet,{" "}
-              <span className="inline-block bg-[#f2c96b] text-[#0f2e39] px-3 py-1 sm:px-4 sm:py-1.5 rounded-2xl shadow-xs">
+              <span
+                style={{ backgroundColor: "var(--accent-gold)", color: "var(--bg-dark)" }}
+                className="inline-block bg-[var(--accent-gold)] text-[var(--bg-dark)] px-3 py-1 sm:px-4 sm:py-1.5 rounded-2xl shadow-xs"
+              >
                 Stok Pasti
               </span>
               , Tinggal Ambil.
@@ -80,7 +90,8 @@ export function HeroSection({
               initial="hidden"
               animate="visible"
               variants={fadeUpVariant}
-              className="text-base sm:text-lg xl:text-xl text-[#3f5a64] leading-relaxed max-w-xl xl:max-w-2xl"
+              style={{ color: "var(--text-muted)" }}
+              className="text-base sm:text-lg xl:text-xl text-[var(--text-muted)] leading-relaxed max-w-xl xl:max-w-2xl font-medium"
             >
               Camping, pertukangan, olahraga, hingga acara. Pilih tanggal, amankan stok dengan DP, lalu ambil alat tepat waktu.
             </motion.p>
@@ -96,7 +107,7 @@ export function HeroSection({
               {/* Tombol Lihat Katalog */}
               <Link
                 href="/alat"
-                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-[#1f4e5f] text-white font-bold text-base sm:text-lg shadow-[5px_5px_0_#0f2e39] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#0f2e39] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
+                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-[var(--bg-dark)] text-white font-bold text-base sm:text-lg shadow-[5px_5px_0_var(--bg-footer)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_var(--bg-footer)] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
               >
                 <span>Lihat Katalog</span>
                 <span aria-hidden="true">→</span>
@@ -107,9 +118,10 @@ export function HeroSection({
                 href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-white border-2 border-[#1f4e5f] text-[#1f4e5f] font-bold text-base sm:text-lg shadow-[5px_5px_0_#8a5a12] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_#8a5a12] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
+                style={{ color: "var(--bg-dark)", borderColor: "var(--bg-dark)" }}
+                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-white border-2 border-[var(--bg-dark)] text-[var(--bg-dark)] font-bold text-base sm:text-lg shadow-[5px_5px_0_var(--accent-gold)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_var(--accent-gold)] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
               >
-                <span>Hubungi Admin</span>
+                <span style={{ color: "var(--bg-dark)" }}>Hubungi Admin</span>
               </a>
             </motion.div>
 
@@ -119,37 +131,45 @@ export function HeroSection({
               initial="hidden"
               animate="visible"
               variants={fadeUpVariant}
-              className="h-[1px] bg-[#e3e1d9] w-full max-w-xl my-1"
+              className="h-[1px] bg-[var(--border-soft)] w-full max-w-xl my-1"
               aria-hidden="true"
             />
 
-            {/* 6. Tiga Poin Centang Bulat Teal */}
+            {/* 6. Empat Poin Centang Bulat Teal */}
             <motion.div
               custom={6}
               initial="hidden"
               animate="visible"
               variants={fadeUpVariant}
-              className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm sm:text-base font-bold text-[#0f2e39]"
+              style={{ color: "var(--text-main)" }}
+              className="flex flex-wrap items-center gap-x-5 sm:gap-x-8 gap-y-2.5 sm:gap-y-3 text-xs sm:text-base font-bold text-[var(--text-main)]"
             >
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1f4e5f] text-white">
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </span>
-                <span>Stok terkunci per tanggal</span>
+                <span style={{ color: "var(--text-main)" }}>Stok terkunci per tanggal</span>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1f4e5f] text-white">
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </span>
-                <span>DP mulai {effectiveDp}%</span>
+                <span style={{ color: "var(--text-main)" }}>DP mulai {effectiveDp}%</span>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1f4e5f] text-white">
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </span>
-                <span>Tanpa antre, tinggal ambil</span>
+                <span style={{ color: "var(--text-main)" }}>Tanpa antre, tinggal ambil</span>
+              </div>
+
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
+                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+                </span>
+                <span style={{ color: "var(--text-main)" }}>Alat terawat</span>
               </div>
             </motion.div>
           </div>

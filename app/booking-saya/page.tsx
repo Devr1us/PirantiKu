@@ -156,7 +156,7 @@ export default function BookingSayaPage() {
         ? `${cancelReason} (${customReason.trim()})`
         : cancelReason;
 
-    const cancellationNote = `[Dibatalkan Penyewa: ${fullReason}]${
+    const cancellationNote = `[Dibatalkan User: ${fullReason}]${
       bookingToCancel.catatan_penyewa ? ` | ${bookingToCancel.catatan_penyewa}` : ""
     }`;
 
@@ -468,10 +468,9 @@ export default function BookingSayaPage() {
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
+                          className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
                           title="Hubungi Admin"
                         >
-                          <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
                           <span>Hubungi Admin</span>
                         </a>
                       </div>
@@ -509,10 +508,9 @@ export default function BookingSayaPage() {
                           )}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
+                          className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-[#A5D6A7] bg-[#E8F5E9] hover:bg-[#C8E6C9] text-[#1B5E20] text-xs font-semibold transition-colors shrink-0"
                           title="Hubungi Admin"
                         >
-                          <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
                           <span>Hubungi Admin</span>
                         </a>
                       </div>
@@ -646,7 +644,7 @@ export default function BookingSayaPage() {
                       {booking.catatan_penyewa && (
                         <div className="p-2.5 rounded-lg bg-white/90 border border-[#FECACA] text-[11px] text-[#7F1D1D] leading-relaxed">
                           <strong className="text-[#991B1B]">Alasan Pembatalan:</strong>{" "}
-                          {booking.catatan_penyewa.replace(/^\[Dibatalkan Penyewa:\s*([^\]]+)\]/, "$1")}
+                          {booking.catatan_penyewa.replace(/^\[Dibatalkan (?:Penyewa|User):\s*([^\]]+)\]/, "$1")}
                         </div>
                       )}
                     </div>
@@ -700,9 +698,8 @@ export default function BookingSayaPage() {
           href={createWhatsAppLink(whatsappAdmin, "Halo Admin PirantiKu, saya ingin bertanya tentang pesanan booking alat saya.")}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs shrink-0 transition-colors w-full sm:w-auto"
+          className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs shrink-0 transition-colors w-full sm:w-auto"
         >
-          <MessageCircle className="h-4 w-4" />
           <span>Hubungi Admin ({whatsappAdmin})</span>
         </a>
       </div>

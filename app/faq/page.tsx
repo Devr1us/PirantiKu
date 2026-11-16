@@ -41,11 +41,11 @@ export default function FAQPage() {
     },
     {
       q: "Berapa lama batas waktu pembayaran DP setelah booking?",
-      a: "Batas waktu pembayaran uang muka (DP) adalah maksimal 24 jam sejak pesanan dibuat. Jika pembayaran DP belum diselesaikan dalam 24 jam, sistem akan otomatis membatalkan pesanan agar stok alat dapat diakses oleh penyewa lain.",
+      a: "Batas waktu pembayaran uang muka (DP) adalah maksimal 24 jam sejak pesanan dibuat. Jika pembayaran DP belum diselesaikan dalam 24 jam, sistem akan otomatis membatalkan pesanan agar stok alat dapat diakses oleh user lain.",
     },
     {
       q: "Bagaimana ketentuan pembatalan sewa dan pengembalian uang muka (refund)?",
-      a: "Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai sewa berhak atas pengembalian (refund) DP 100% penuh atau dialihkan jadwalnya. Namun, pembatalan yang diajukan dalam kurun waktu 24 jam atau kurang sebelum tanggal mulai sewa membuat DP hangus (non-refundable) karena unit telah disiapkan dan menolak calon penyewa lain.",
+      a: "Pembatalan yang diajukan lebih dari 24 jam sebelum tanggal mulai sewa berhak atas pengembalian (refund) DP 100% penuh atau dialihkan jadwalnya. Namun, pembatalan yang diajukan dalam kurun waktu 24 jam atau kurang sebelum tanggal mulai sewa membuat DP hangus (non-refundable) karena unit telah disiapkan dan menolak calon user lain.",
     },
     {
       q: "Metode pembayaran apa saja yang didukung?",
@@ -57,11 +57,11 @@ export default function FAQPage() {
     },
     {
       q: "Apakah ada layanan antar-jemput alat?",
-      a: "Saat ini seluruh serah terima dan pengembalian alat berfokus dilakukan langsung di toko/workshop kami. Hal ini bertujuan agar penyewa dan staf dapat bersama-sama melakukan uji coba fungsi serta inspeksi fisik unit sebelum digunakan.",
+      a: "Saat ini seluruh serah terima dan pengembalian alat berfokus dilakukan langsung di toko/workshop kami. Hal ini bertujuan agar user dan staf dapat bersama-sama melakukan uji coba fungsi serta inspeksi fisik unit sebelum digunakan.",
     },
     {
       q: "Apa saja syarat dokumen saat pengambilan alat?",
-      a: "Penyewa wajib membawa dan menunjukkan kartu identitas resmi yang masih aktif (KTP atau SIM asli) yang sesuai dengan nama pada akun booking untuk verifikasi fisik saat serah terima, serta menyelesaikan pelunasan sisa biaya sewa dan deposit jaminan.",
+      a: "User wajib membawa dan menunjukkan kartu identitas resmi yang masih aktif (KTP atau SIM asli) yang sesuai dengan nama pada akun booking untuk verifikasi fisik saat serah terima, serta menyelesaikan pelunasan sisa biaya sewa dan deposit jaminan.",
     },
     {
       q: "Bagaimana jika saya terlambat mengembalikan alat?",
@@ -77,11 +77,11 @@ export default function FAQPage() {
     },
     {
       q: "Berapa batas usia minimal untuk menyewa alat?",
-      a: "Penyewa wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM asli) yang masih aktif untuk ditunjukkan dalam proses verifikasi serah terima unit. Khusus untuk peralatan pertukangan bermesin besar yang memiliki risiko tinggi (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), penyewa pemula disarankan didampingi teknisi atau orang dewasa berpengalaman demi keselamatan kerja.",
+      a: "User wajib berusia minimal 17 tahun dan memiliki kartu identitas resmi yang sah (KTP atau SIM asli) yang masih aktif untuk ditunjukkan dalam proses verifikasi serah terima unit. Khusus untuk peralatan pertukangan bermesin besar yang memiliki risiko tinggi (seperti mesin las, bor beton, gerinda tangan, dan gergaji circular), user pemula disarankan didampingi teknisi atau orang dewasa berpengalaman demi keselamatan kerja.",
     },
     {
       q: "Bisakah saya memperpanjang masa sewa (extend)?",
-      a: "Bisa. Anda wajib mengonfirmasi ke Admin WhatsApp kami minimal 24 jam sebelum masa sewa berakhir. Perpanjangan dapat disetujui jika unit belum dipesan oleh penyewa lain pada jadwal berikutnya.",
+      a: "Bisa. Anda wajib mengonfirmasi ke Admin WhatsApp kami minimal 24 jam sebelum masa sewa berakhir. Perpanjangan dapat disetujui jika unit belum dipesan oleh user lain pada jadwal berikutnya.",
     },
     {
       q: "Bagaimana jika stok alat yang saya butuhkan sedang habis?",
@@ -133,8 +133,7 @@ export default function FAQPage() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button variant="warm" size="sm" className="text-xs font-bold gap-2 shrink-0">
-            <MessageCircle className="h-4 w-4" />
+          <Button variant="warm" size="sm" className="text-xs font-bold shrink-0">
             Hubungi Admin WhatsApp
           </Button>
         </a>

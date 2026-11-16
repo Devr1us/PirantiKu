@@ -36,22 +36,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Tombol sekunder: pill petrol teks putih, atau pill outline petrol
     const variantClasses = {
       default:
-        "rounded-full bg-[#A0630F] text-white font-bold hover:bg-[#85510A] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full bg-[var(--accent-gold)] text-[var(--bg-dark)] font-bold hover:bg-[#E0A82E] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       warm:
-        "rounded-full bg-[#A0630F] text-white font-bold hover:bg-[#85510A] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full bg-[var(--accent-gold)] text-[var(--bg-dark)] font-bold hover:bg-[#E0A82E] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       petrol:
-        "rounded-full bg-[#234E5C] text-white font-bold hover:bg-[#1B3E49] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full bg-[var(--bg-dark)] text-white font-bold hover:bg-[var(--bg-footer)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       secondary:
-        "rounded-full bg-[#234E5C] text-white font-bold hover:bg-[#1B3E49] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full bg-[var(--bg-dark)] text-white font-bold hover:bg-[var(--bg-footer)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       outline:
-        "rounded-full border border-[#234E5C] text-[#234E5C] bg-white font-bold hover:bg-[#234E5C] hover:text-white hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full border border-[var(--border-soft)] text-[var(--text-main)] bg-white font-bold hover:bg-[var(--bg-sage)] hover:border-[var(--bg-dark)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       "outline-ochre":
-        "rounded-full border border-[#A0630F] text-[#A0630F] bg-white font-bold hover:bg-[#A0630F] hover:text-white hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
+        "rounded-full border border-[var(--accent-gold)] text-[var(--bg-dark)] bg-white font-bold hover:bg-[var(--accent-gold)] hover:text-[var(--bg-dark)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] transition-all duration-200",
       ghost:
-        "rounded-full text-[#234E5C] hover:bg-[#F3F3EF] hover:text-[#234E5C] font-semibold active:scale-[0.97] transition-all duration-200",
+        "rounded-full text-[var(--text-main)] hover:bg-[var(--bg-sage)] hover:text-[var(--bg-dark)] font-semibold active:scale-[0.97] transition-all duration-200",
       destructive:
         "rounded-full bg-[#DC2626] text-white font-bold hover:bg-[#B91C1C] hover:-translate-y-0.5 active:scale-[0.97] transition-all duration-200",
-      link: "text-[#A0630F] underline-offset-4 hover:underline font-semibold p-0 h-auto",
+      link: "text-[var(--accent-gold)] underline-offset-4 hover:underline font-semibold p-0 h-auto",
     };
 
     const sizeClasses = {

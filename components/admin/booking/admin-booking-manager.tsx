@@ -251,7 +251,7 @@ export function AdminBookingManager({
         })
       );
 
-      toast.success("Bukti transfer ditolak dan alasan telah disampaikan ke penyewa.");
+      toast.success("Bukti transfer ditolak dan alasan telah disampaikan ke user.");
       setIsRejectFormOpen(false);
       setRejectReason("");
       setIsDetailOpen(false);
@@ -450,7 +450,7 @@ export function AdminBookingManager({
             <thead className="border-b border-[#E8E8E1] bg-[#FAFAF8] text-[11px] uppercase font-bold text-[#5F7A84]">
               <tr>
                 <th className="py-3 px-4">Kode</th>
-                <th className="py-3 px-4">Penyewa</th>
+                <th className="py-3 px-4">User</th>
                 <th className="py-3 px-4">Status Booking</th>
                 <th className="py-3 px-4">Status Pembayaran</th>
                 <th className="py-3 px-4">Jadwal Sewa</th>
@@ -476,7 +476,7 @@ export function AdminBookingManager({
 
                       <td className="py-3.5 px-4">
                         <span className="font-bold text-[#234E5C] block">
-                          {b.profile?.nama || "Penyewa"}
+                          {b.profile?.nama || "User"}
                         </span>
                         <span className="text-[11px] text-[#5F7A84]">
                           {b.profile?.no_hp || "-"}
@@ -577,7 +577,7 @@ export function AdminBookingManager({
                 </div>
               </DialogHeader>
 
-              {/* Data Penyewa */}
+              {/* Data User */}
               <div className="p-4 rounded-xl bg-[#FAFAF8] border border-[#E8E8E1] space-y-3 text-xs">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5 text-[#234E5C]" />
@@ -585,9 +585,9 @@ export function AdminBookingManager({
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-[#5F7A84] block text-[11px]">Nama Penyewa:</span>
+                    <span className="text-[#5F7A84] block text-[11px]">Nama User:</span>
                     <span className="font-bold text-[#234E5C]">
-                      {selectedBooking.profile?.nama || "Penyewa"}
+                      {selectedBooking.profile?.nama || "User"}
                     </span>
                   </div>
                   <div>
@@ -614,7 +614,7 @@ export function AdminBookingManager({
                 {selectedBooking.catatan_penyewa && (
                   <div className={`border-t pt-2 text-xs ${selectedBooking.status === "dibatalkan" ? "border-[#FECACA] bg-[#FEF2F2] p-2.5 rounded-lg -mx-1" : "border-[#E8E8E1]"}`}>
                     <span className={`font-bold block text-[11px] ${selectedBooking.status === "dibatalkan" ? "text-[#991B1B]" : "text-[#5F7A84]"}`}>
-                      {selectedBooking.status === "dibatalkan" ? "Alasan Pembatalan Penyewa:" : "Catatan Tambahan Penyewa:"}
+                      {selectedBooking.status === "dibatalkan" ? "Alasan Pembatalan User:" : "Catatan Tambahan User:"}
                     </span>
                     <p className={`mt-0.5 leading-relaxed ${selectedBooking.status === "dibatalkan" ? "text-[#DC2626] font-medium" : "text-[#234E5C] italic"}`}>
                       &quot;{selectedBooking.catatan_penyewa}&quot;
@@ -784,7 +784,7 @@ export function AdminBookingManager({
                           {formatRupiah(returnRecord.deposit_dikembalikan)}
                         </span>
                         <span className="text-[10px] text-[#5F7A84] block mt-0.5">
-                          Dikembalikan ke penyewa
+                          Dikembalikan ke user
                         </span>
                       </div>
                     </div>

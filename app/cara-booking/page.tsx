@@ -128,7 +128,7 @@ export default async function CaraBookingPage() {
               Identitas Fisik Asli
             </span>
             <p className="text-[#5F7A84] leading-relaxed">
-              Penyewa wajib membawa fisik asli KTP atau SIM yang masih berlaku dan atas nama yang sama dengan data akun saat serah terima unit di lokasi.
+              User wajib membawa fisik asli KTP atau SIM yang masih berlaku dan atas nama yang sama dengan data akun saat serah terima unit di lokasi.
             </p>
           </div>
 
@@ -158,7 +158,7 @@ export default async function CaraBookingPage() {
               Alat Telah Diuji &amp; Siap Pakai
             </span>
             <p className="text-[#5F7A84] leading-relaxed">
-              Semua perlengkapan diinspeksi, diuji fungsi, dan dibersihkan sebelum diserahkan kepada penyewa agar langsung siap digunakan untuk aktivitas Anda.
+              Semua perlengkapan diinspeksi, diuji fungsi, dan dibersihkan sebelum diserahkan kepada user agar langsung siap digunakan untuk aktivitas Anda.
             </p>
           </div>
         </div>
@@ -184,8 +184,7 @@ export default async function CaraBookingPage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button variant="outline" size="lg" className="px-6 text-xs sm:text-sm font-bold gap-2">
-              <MessageCircle className="h-4 w-4 text-[#25D366]" />
+            <Button variant="outline" size="lg" className="px-6 text-xs sm:text-sm font-bold">
               <span>Hubungi Admin WhatsApp</span>
             </Button>
           </a>

@@ -114,7 +114,7 @@ export const BOOKING_STATUS_CONFIG: Record<
     text: "text-[#5B21B6]",
     border: "border-[#DDD6FE]",
     dot: "bg-[#7C3AED]",
-    description: "Alat sudah diserahkan kepada penyewa.",
+    description: "Alat sudah diserahkan kepada user.",
   },
   terlambat: {
     label: "Terlambat",

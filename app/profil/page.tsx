@@ -204,7 +204,7 @@ export default function ProfilPage() {
                   {profile?.nama || (isAdmin ? "Administrator" : "Pengguna")}
                 </h2>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F3F3EF] border border-[#E8E8E1] text-[#234E5C]">
-                  {isAdmin ? "Admin" : "Penyewa"}
+                  {isAdmin ? "Admin" : "User"}
                 </span>
               </div>
               <p className="text-xs text-[#5F7A84]">{userEmail}</p>
@@ -309,7 +309,7 @@ export default function ProfilPage() {
             <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-3.5 flex items-start gap-2.5 text-xs text-[#5F7A84]">
               <Shield className="h-4 w-4 text-[#234E5C] shrink-0 mt-0.5" />
               <span>
-                Data akun Anda hanya digunakan untuk verifikasi transaksi penyewaan dan keperluan serah terima barang di toko PirantiKu.
+                Data akun Anda hanya digunakan untuk verifikasi transaksi booking dan keperluan serah terima barang di toko PirantiKu.
               </span>
             </div>
 

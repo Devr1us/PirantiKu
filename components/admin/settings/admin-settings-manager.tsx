@@ -120,7 +120,7 @@ export function AdminSettingsManager({
         {
           key: "rekening_bank",
           value: combinedRekening,
-          deskripsi: "Nomor rekening bank tujuan transfer penyewa",
+          deskripsi: "Nomor rekening bank tujuan transfer user",
         },
         {
           key: "qris_url",
@@ -327,7 +327,7 @@ export function AdminSettingsManager({
                       Rekening Bank Pembayaran
                     </h3>
                     <p className="text-[11px] text-[#5F7A84] leading-snug">
-                      Tujuan transfer uang muka (DP) yang ditampilkan kepada penyewa
+                      Tujuan transfer uang muka (DP) yang ditampilkan kepada user
                     </p>
                   </div>
                 </div>
@@ -559,12 +559,12 @@ export function AdminSettingsManager({
                       <QrCode className="h-8 w-8 mb-1.5 opacity-50" />
                       <span className="text-[10px] font-bold">Belum Ada QRIS</span>
                       <span className="text-[9px] text-center">
-                        Unggah gambar untuk menampilkan QRIS ke penyewa
+                        Unggah gambar untuk menampilkan QRIS ke user
                       </span>
                     </div>
                   )}
                   <span className="text-[10px] text-[#5F7A84] mt-2 font-medium">
-                    Penyewa dapat memindai via GoPay, BCA, Mandiri, ShopeePay
+                    User dapat memindai via GoPay, BCA, Mandiri, ShopeePay
                   </span>
                 </div>
               </div>
@@ -587,7 +587,7 @@ export function AdminSettingsManager({
                     Nomor WhatsApp Admin / CS
                   </h3>
                   <p className="text-[11px] text-[#5F7A84] leading-snug">
-                    Nomor tujuan penyewa untuk konfirmasi bukti transfer dan tanya jawab alat
+                    Nomor tujuan user untuk konfirmasi bukti transfer dan tanya jawab alat
                   </p>
                 </div>
               </div>
@@ -713,7 +713,7 @@ export function AdminSettingsManager({
                     Alamat Pengambilan Alat
                   </h3>
                   <p className="text-[11px] text-[#5F7A84] leading-snug">
-                    Alamat fisik yang dituju oleh penyewa untuk serah terima peralatan
+                    Alamat fisik yang dituju oleh user untuk serah terima peralatan
                   </p>
                 </div>
               </div>

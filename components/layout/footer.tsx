@@ -5,13 +5,13 @@ import { APP_NAME } from "@/lib/constants";
 
 export async function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-[#E8E8E1] text-[#234E5C] mt-auto print:hidden">
+    <footer className="w-full bg-[var(--bg-footer)] border-t border-[var(--bg-dark)] text-white/90 mt-auto print:hidden">
       <div className="mx-auto max-w-[1200px] px-4 pt-12 pb-20 sm:pt-16 sm:pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-10">
           {/* Sisi Kiri: Wordmark & Deskripsi Singkat */}
           <div className="space-y-4 max-w-sm">
-            <Wordmark />
-            <P className="text-sm text-[#5F7A84] leading-relaxed">
+            <Wordmark variant="white" />
+            <P className="text-sm text-white/70 leading-relaxed">
               Layanan booking perlengkapan serba ada dengan transparansi stok,
               proses cepat per tanggal booking, dan kondisi alat prima siap pakai.
             </P>
@@ -20,27 +20,27 @@ export async function Footer() {
           {/* Sisi Kanan: Daftar Tautan Vertikal Rapi */}
           <div className="flex flex-col sm:flex-row gap-10 sm:gap-16">
             <div className="space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#234E5C]">
+              <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Navigasi Cepat
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Beranda
                   </Link>
                 </li>
                 <li>
-                  <Link href="/alat" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/alat" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Katalog
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#cara-sewa" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/#cara-sewa" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Cara Booking
                   </Link>
                 </li>
                 <li>
-                  <Link href="/#kontak" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/#kontak" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Kontak
                   </Link>
                 </li>
@@ -48,27 +48,27 @@ export async function Footer() {
             </div>
 
             <div className="space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#234E5C]">
+              <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Akun & Akses
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/login" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/login" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Masuk
                   </Link>
                 </li>
                 <li>
-                  <Link href="/daftar" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/daftar" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Daftar
                   </Link>
                 </li>
                 <li>
-                  <Link href="/booking-saya" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/booking-saya" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Booking Saya
                   </Link>
                 </li>
                 <li>
-                  <Link href="/keranjang" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/keranjang" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Keranjang Booking
                   </Link>
                 </li>
@@ -76,22 +76,22 @@ export async function Footer() {
             </div>
 
             <div className="space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#234E5C]">
+              <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Kebijakan & Bantuan
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/syarat-ketentuan" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/syarat-ketentuan" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Syarat & Ketentuan
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kebijakan-privasi" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/kebijakan-privasi" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Kebijakan Privasi
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="text-[#5F7A84] hover:text-[#234E5C] transition-colors">
+                  <Link href="/faq" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
                     Tanya Jawab (FAQ)
                   </Link>
                 </li>
@@ -101,9 +101,9 @@ export async function Footer() {
         </div>
 
         {/* Baris Hak Cipta */}
-        <div className="mt-12 pt-6 border-t border-[#E8E8E1] flex flex-col sm:flex-row items-center justify-between text-xs text-[#5F7A84] gap-3 pb-8 sm:pb-2">
+        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-3 pb-8 sm:pb-2">
           <p className="text-center sm:text-left">&copy; {new Date().getFullYear()} {APP_NAME}. Hak cipta dilindungi undang-undang.</p>
-          <p className="text-[11px] text-[#5F7A84]/80 text-center sm:text-right">
+          <p className="text-[11px] text-white/50 text-center sm:text-right">
             Rental alat praktis & transparan untuk segala kebutuhan Anda.
           </p>
         </div>

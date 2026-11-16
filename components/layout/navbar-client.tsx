@@ -171,7 +171,7 @@ export function NavbarClient({
     currentProfile?.nama ||
     currentUser?.user_metadata?.nama ||
     currentUser?.email?.split("@")[0] ||
-    "Penyewa";
+    "User";
   const userInitials = displayName.slice(0, 2).toUpperCase();
 
   // Sembunyikan avatar profil saat masih berada di halaman login/daftar agar tidak muncul sebelum redirect selesai
@@ -191,12 +191,12 @@ export function NavbarClient({
       }}
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
-      className={`sticky top-0 z-40 w-full bg-white transition-[border-color,box-shadow] duration-200 print:hidden ${isScrolled
-          ? "border-b border-[#E8E8E1] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
-          : "border-b border-transparent shadow-none"
+      className={`sticky top-0 z-50 w-full h-20 box-border bg-white/85 backdrop-blur-md transition-[border-color,box-shadow] duration-200 print:hidden ${isScrolled
+          ? "border-b border-[var(--border-soft)] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+          : "border-b border-[var(--border-soft)] shadow-none"
         }`}
     >
-      <div className="site-container flex h-20 items-center justify-between">
+      <div className="site-container flex h-full items-center justify-between">
         {/* Sisi Kiri: Wordmark PirantiKu */}
         <div className="flex items-center gap-6">
           <Wordmark />
@@ -211,15 +211,15 @@ export function NavbarClient({
               onClick={handleBerandaClick}
               aria-current={activeNav === "beranda" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "beranda"
-                  ? "text-[#234E5C] font-semibold"
-                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+                  ? "text-[var(--bg-dark)] font-bold"
+                  : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
                 }`}
             >
               <HoverRollText text="BERANDA" />
               {activeNav === "beranda" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -230,15 +230,15 @@ export function NavbarClient({
               href="/alat"
               aria-current={activeNav === "katalog" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "katalog"
-                  ? "text-[#234E5C] font-semibold"
-                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+                  ? "text-[var(--bg-dark)] font-bold"
+                  : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
                 }`}
             >
               <HoverRollText text="KATALOG" />
               {activeNav === "katalog" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -249,15 +249,15 @@ export function NavbarClient({
               href="/cara-booking"
               aria-current={activeNav === "cara-sewa" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "cara-sewa"
-                  ? "text-[#234E5C] font-semibold"
-                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+                  ? "text-[var(--bg-dark)] font-bold"
+                  : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
                 }`}
             >
               <HoverRollText text="CARA BOOKING" />
               {activeNav === "cara-sewa" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -268,15 +268,15 @@ export function NavbarClient({
               href="/kontak"
               aria-current={activeNav === "kontak" ? "page" : undefined}
               className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "kontak"
-                  ? "text-[#234E5C] font-semibold"
-                  : "text-[#234E5C]/80 hover:text-[#234E5C]"
+                  ? "text-[var(--bg-dark)] font-bold"
+                  : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
                 }`}
             >
               <HoverRollText text="KONTAK" />
               {activeNav === "kontak" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[#234E5C]"
+                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -291,7 +291,7 @@ export function NavbarClient({
             href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] hover:text-[#A0630F] transition-all"
+            className="hidden sm:inline-flex items-center justify-center h-10 w-10 rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] hover:text-[var(--accent-gold)] transition-all"
             aria-label="Hubungi Admin via WhatsApp"
             title="Hubungi Admin via WhatsApp"
           >
@@ -302,11 +302,11 @@ export function NavbarClient({
           {/* Ikon Keranjang dengan Badge Jumlah (Khusus Pelanggan, disembunyikan untuk Admin) */}
           {!isAdmin && (
             <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-all">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-all">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="sr-only">Keranjang Booking</span>
                 {isLoaded && totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#A0630F] px-1 text-[11px] font-bold text-white shadow-sm">
+                  <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--accent-gold)] px-1 text-[11px] font-bold text-[var(--bg-dark)] shadow-sm">
                     {totalItems}
                   </span>
                 )}
@@ -327,35 +327,35 @@ export function NavbarClient({
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="flex items-center gap-2.5 rounded-full border border-[#E8E8E1] bg-white pl-2 pr-3.5 py-1.5 hover:border-[#234E5C] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#234E5C]/20"
+                      className="flex items-center gap-2.5 rounded-full border border-[var(--border-soft)] bg-white pl-2 pr-3.5 py-1.5 hover:border-[var(--bg-dark)] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--bg-dark)]/20"
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white text-xs font-bold">
                         {userInitials}
                       </div>
-                      <span className="max-w-[120px] truncate text-xs font-bold text-[#234E5C]">
+                      <span className="max-w-[120px] truncate text-xs font-bold text-[var(--bg-dark)]">
                         {displayName}
                       </span>
-                      <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
+                      <ChevronDown className="h-3.5 w-3.5 text-[var(--text-muted)]" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-xl">
+                  <DropdownMenuContent align="end" className="w-56 p-2 bg-white border-[var(--border-soft)] rounded-2xl shadow-xl">
                     <DropdownMenuLabel className="px-3 py-2 font-normal">
-                      <p className="text-sm font-bold text-[#234E5C]">{displayName}</p>
-                      <p className="text-xs text-[#5F7A84] truncate">{currentUser?.email}</p>
+                      <p className="text-sm font-bold text-[var(--bg-dark)]">{displayName}</p>
+                      <p className="text-xs text-[var(--text-muted)] truncate">{currentUser?.email}</p>
                       {isAdmin && (
-                        <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
+                        <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[var(--bg-dark)] bg-[var(--accent-gold)]/20 px-2 py-0.5 rounded-full border border-[var(--accent-gold)]/40">
                           ADMINISTRATOR
                         </span>
                       )}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                    <DropdownMenuSeparator className="bg-[var(--border-soft)]" />
                     {!isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link
                           href="/booking-saya"
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-sage)] rounded-xl cursor-pointer"
                         >
-                          <Calendar className="h-4 w-4 text-[#5F7A84]" />
+                          <Calendar className="h-4 w-4 text-[var(--text-muted)]" />
                           <span>Booking Saya</span>
                         </Link>
                       </DropdownMenuItem>
@@ -364,9 +364,9 @@ export function NavbarClient({
                       <DropdownMenuItem asChild>
                         <Link
                           href="/admin"
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[var(--bg-dark)] hover:bg-[var(--bg-sage)] rounded-xl cursor-pointer"
                         >
-                          <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
+                          <ShieldAlert className="h-4 w-4 text-[var(--accent-gold)]" />
                           <span>Panel Admin</span>
                         </Link>
                       </DropdownMenuItem>
@@ -374,13 +374,13 @@ export function NavbarClient({
                     <DropdownMenuItem asChild>
                       <Link
                         href="/profil"
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[var(--text-main)] hover:bg-[var(--bg-sage)] rounded-xl cursor-pointer"
                       >
-                        <UserIcon className="h-4 w-4 text-[#5F7A84]" />
+                        <UserIcon className="h-4 w-4 text-[var(--text-muted)]" />
                         <span>Profil Akun</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                    <DropdownMenuSeparator className="bg-[var(--border-soft)]" />
                     <DropdownMenuItem
                       onClick={handleSignOut}
                       className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-xl cursor-pointer"
@@ -394,12 +394,12 @@ export function NavbarClient({
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-bold">
+                  <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-bold border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] hover:border-[var(--bg-dark)]">
                     <HoverRollText text="MASUK" />
                   </Button>
                 </Link>
                 <Link href="/daftar">
-                  <Button variant="warm" size="sm" className="h-9 px-5 text-xs font-bold">
+                  <Button variant="warm" size="sm" className="h-9 px-5 text-xs font-bold bg-[var(--accent-gold)] text-[var(--bg-dark)] hover:bg-[#E0A82E]">
                     <HoverRollText text="DAFTAR" />
                   </Button>
                 </Link>
@@ -413,7 +413,7 @@ export function NavbarClient({
               <SheetTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E8E8E1] text-[#234E5C] hover:bg-[#F3F3EF] transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-colors"
                   aria-label="Buka Menu"
                 >
                   <Menu className="h-5 w-5" />
@@ -421,7 +421,7 @@ export function NavbarClient({
               </SheetTrigger>
               <SheetContent side="right" className="w-[85vw] max-w-sm bg-white p-6 flex flex-col justify-between">
                 <div>
-                  <SheetHeader className="border-b border-[#E8E8E1] pb-4 mb-4 text-left">
+                  <SheetHeader className="border-b border-[var(--border-soft)] pb-4 mb-4 text-left">
                     <Wordmark />
                   </SheetHeader>
 
@@ -435,14 +435,14 @@ export function NavbarClient({
                         }}
                         aria-current={activeNav === "beranda" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "beranda"
-                            ? "bg-[#F3F3EF] text-[#234E5C]"
-                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "beranda" && (
                           <motion.span
                             layoutId="nav-underline-mobile"
-                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[var(--accent-gold)]"
                             transition={springTransition}
                           />
                         )}
@@ -454,14 +454,14 @@ export function NavbarClient({
                         onClick={() => setIsMobileOpen(false)}
                         aria-current={activeNav === "katalog" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "katalog"
-                            ? "bg-[#F3F3EF] text-[#234E5C]"
-                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "katalog" && (
                           <motion.span
                             layoutId="nav-underline-mobile"
-                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[var(--accent-gold)]"
                             transition={springTransition}
                           />
                         )}
@@ -473,14 +473,14 @@ export function NavbarClient({
                         onClick={() => setIsMobileOpen(false)}
                         aria-current={activeNav === "cara-sewa" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "cara-sewa"
-                            ? "bg-[#F3F3EF] text-[#234E5C]"
-                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "cara-sewa" && (
                           <motion.span
                             layoutId="nav-underline-mobile"
-                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[var(--accent-gold)]"
                             transition={springTransition}
                           />
                         )}
@@ -492,14 +492,14 @@ export function NavbarClient({
                         onClick={() => setIsMobileOpen(false)}
                         aria-current={activeNav === "kontak" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "kontak"
-                            ? "bg-[#F3F3EF] text-[#234E5C]"
-                            : "text-[#234E5C] hover:bg-[#F3F3EF]"
+                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "kontak" && (
                           <motion.span
                             layoutId="nav-underline-mobile"
-                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#234E5C]"
+                            className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[var(--accent-gold)]"
                             transition={springTransition}
                           />
                         )}
@@ -510,7 +510,7 @@ export function NavbarClient({
                         <Link
                           href="/booking-saya"
                           onClick={() => setIsMobileOpen(false)}
-                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
+                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                         >
                           BOOKING SAYA
                         </Link>
@@ -520,7 +520,7 @@ export function NavbarClient({
                         <Link
                           href="/profil"
                           onClick={() => setIsMobileOpen(false)}
-                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] hover:bg-[#F3F3EF]"
+                          className="px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                         >
                           PROFIL AKUN
                         </Link>
@@ -530,9 +530,9 @@ export function NavbarClient({
                         <Link
                           href="/admin"
                           onClick={() => setIsMobileOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[#234E5C] bg-[#FEF3C7] border border-[#FDE68A]"
+                          className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold uppercase text-[var(--bg-dark)] bg-[var(--accent-gold)]/20 border border-[var(--accent-gold)]/40"
                         >
-                          <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
+                          <ShieldAlert className="h-4 w-4 text-[var(--accent-gold)]" />
                           PANEL ADMIN
                         </Link>
                       )}
@@ -541,15 +541,14 @@ export function NavbarClient({
                 </div>
 
                 {/* Bagian Bawah Menu Mobile */}
-                <div className="border-t border-[#E8E8E1] pt-4 space-y-3">
+                <div className="border-t border-[var(--border-soft)] pt-4 space-y-3">
                   <a
                     href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full border border-[#E8E8E1] text-xs font-bold text-[#234E5C] hover:bg-[#F3F3EF]"
+                    className="flex items-center justify-center w-full py-2.5 rounded-full border border-[var(--border-soft)] text-xs font-bold text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                   >
-                    <MessageCircle className="h-4 w-4 text-[#A0630F]" />
-                    Hubungi Admin via WhatsApp
+                    <span>Hubungi Admin via WhatsApp</span>
                   </a>
 
                   {shouldShowUser ? (
@@ -563,23 +562,23 @@ export function NavbarClient({
                       <Link
                         href="/profil"
                         onClick={() => setIsMobileOpen(false)}
-                        className="flex items-center justify-between p-2.5 rounded-2xl bg-[#F3F3EF] hover:bg-[#E8E8E1] transition-colors group cursor-pointer"
+                        className="flex items-center justify-between p-2.5 rounded-2xl bg-[var(--bg-sage)] hover:bg-[var(--border-soft)] transition-colors group cursor-pointer"
                         title="Buka Profil Akun"
                       >
                         <div className="flex items-center gap-3 truncate">
-                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white text-xs font-bold">
                             {userInitials}
                           </div>
                           <div className="flex flex-col truncate">
-                            <span className="text-xs font-bold text-[#234E5C] truncate">
+                            <span className="text-xs font-bold text-[var(--bg-dark)] truncate">
                               {displayName}
                             </span>
-                            <span className="text-[11px] text-[#5F7A84] truncate">
+                            <span className="text-[11px] text-[var(--text-muted)] truncate">
                               {currentUser?.email}
                             </span>
                           </div>
                         </div>
-                        <span className="text-[10px] font-bold text-[#234E5C] group-hover:underline pl-2 shrink-0">
+                        <span className="text-[10px] font-bold text-[var(--bg-dark)] group-hover:underline pl-2 shrink-0">
                           Profil &rarr;
                         </span>
                       </Link>
@@ -598,12 +597,12 @@ export function NavbarClient({
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       <Link href="/login" onClick={() => setIsMobileOpen(false)}>
-                        <Button variant="outline" size="sm" className="w-full text-xs font-bold">
+                        <Button variant="outline" size="sm" className="w-full text-xs font-bold border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)]">
                           MASUK
                         </Button>
                       </Link>
                       <Link href="/daftar" onClick={() => setIsMobileOpen(false)}>
-                        <Button variant="warm" size="sm" className="w-full text-xs font-bold">
+                        <Button variant="warm" size="sm" className="w-full text-xs font-bold bg-[var(--accent-gold)] text-[var(--bg-dark)] hover:bg-[#E0A82E]">
                           DAFTAR
                         </Button>
                       </Link>

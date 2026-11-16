@@ -12,6 +12,6 @@ Route publik utama:
 - `/alat` untuk daftar alat.
 - `/kategori/[slug]` untuk alat berdasarkan kategori.
 - `/booking-saya` untuk riwayat booking.
-- `/keranjang` dan `/checkout` untuk proses penyewaan.
+- `/keranjang` dan `/checkout` untuk proses booking.
 
 Route admin berada di bawah `/admin`.

@@ -171,7 +171,7 @@ export function generateWhatsAppBookingMessage({
 Saya ingin konfirmasi pesanan sewa:
 
 - Kode Booking: *${bookingCode}*
-- Penyewa: *${customerName}*${phoneInfo}
+- User: *${customerName}*${phoneInfo}
 - Jadwal: ${startDate} s/d ${endDate}${itemsInfo}
 - Tagihan DP: *${formatRupiah(dpAmount)}*${notesInfo}
 

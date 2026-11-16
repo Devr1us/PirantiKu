@@ -167,7 +167,7 @@ function CheckoutContent() {
     }
 
     if (!nama.trim() || !noHp.trim()) {
-      toast.error("Mohon lengkapi nama dan nomor WhatsApp penyewa.");
+      toast.error("Mohon lengkapi nama dan nomor WhatsApp user.");
       setCurrentStep(1);
       return;
     }
@@ -285,7 +285,7 @@ function CheckoutContent() {
 
     const waOrderMessage = generateWhatsAppBookingMessage({
       bookingCode: createdBookingCode,
-      customerName: nama.trim() || profile?.nama || "Penyewa",
+      customerName: nama.trim() || profile?.nama || "User",
       customerPhone: noHp.trim() || profile?.no_hp,
       itemsList: bookedItemsSummary,
       startDate: formatDateIndo(startDate, "d MMMM yyyy"),
@@ -340,9 +340,8 @@ function CheckoutContent() {
               href={waBookingUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-bold text-xs shadow-md transition-all whitespace-nowrap w-full sm:w-auto"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-bold text-xs shadow-md transition-all whitespace-nowrap w-full sm:w-auto"
             >
-              <MessageCircle className="h-4 w-4" />
               <span>Kirim ke WhatsApp Admin</span>
             </a>
           </div>
@@ -351,7 +350,7 @@ function CheckoutContent() {
         {/* Modul Alur Pembayaran Interaktif */}
         <PaymentFlow
           booking={bookingForFlow}
-          customerName={nama.trim() || profile?.nama || "Penyewa"}
+          customerName={nama.trim() || profile?.nama || "User"}
           rekeningBank={rekeningInfo}
           qrisUrl={qrisUrl}
           whatsappAdmin={whatsappAdmin}
@@ -372,9 +371,9 @@ function CheckoutContent() {
           <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke Keranjang
         </Link>
-        <H1 className="section-title block pt-1">CHECKOUT PENYEWAAN</H1>
+        <H1 className="section-title block pt-1">CHECKOUT BOOKING</H1>
         <Lead className="text-sm text-[#5F7A84] font-medium">
-          Konfirmasi data penyewa, tinjau ringkasan biaya, dan amankan pesanan unit alat Anda.
+          Konfirmasi data user, tinjau ringkasan biaya, dan amankan pesanan unit alat Anda.
         </Lead>
       </div>
 
@@ -556,7 +555,7 @@ function CheckoutContent() {
                 <div className="rounded-xl border border-[#E8E8E1] bg-[#FAFAF8] p-4 space-y-2">
                   <h4 className="font-bold text-[#234E5C]">Ketentuan Pengambilan Unit:</h4>
                   <ul className="space-y-1 text-[#5F7A84] list-disc list-inside text-[11px] break-words">
-                    <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan ({nama.trim() || profile?.nama || "Penyewa"}) untuk verifikasi saat serah terima.</li>
+                    <li>Membawa kartu identitas asli (KTP atau SIM) atas nama pemesan ({nama.trim() || profile?.nama || "User"}) untuk verifikasi saat serah terima.</li>
                     <li>Melunasi sisa biaya booking ({formatRupiah(pricing.sisaSaatAmbil)}) saat serah terima.</li>
                     <li>Membayar deposit jaminan ({formatRupiah(pricing.totalDeposit)}) yang akan dikembalikan utuh saat alat kembali baik.</li>
                   </ul>

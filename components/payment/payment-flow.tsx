@@ -69,7 +69,7 @@ export interface PaymentFlowProps {
 
 export function PaymentFlow({
   booking,
-  customerName = "Penyewa",
+  customerName = "User",
   initialPayments = [],
   rekeningBank = "BCA 1234567890 a/n PirantiKu",
   qrisUrl = "",
@@ -654,9 +654,8 @@ export function PaymentFlow({
                   type="button"
                   variant="warm"
                   size="sm"
-                  className="text-xs font-bold gap-1.5 w-full"
+                  className="text-xs font-bold w-full"
                 >
-                  <MessageCircle className="h-3.5 w-3.5" />
                   Hubungi Admin
                 </Button>
               </a>

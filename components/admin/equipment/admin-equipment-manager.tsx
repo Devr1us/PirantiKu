@@ -373,7 +373,7 @@ export function AdminEquipmentManager({
         // Jika terdapat riwayat sewa / foreign key constraint, tawarkan soft delete (nonaktifkan)
         if (error.code === "23503" || error.message.includes("violates foreign key")) {
           const soft = confirm(
-            `Alat ini memiliki riwayat penyewaan sebelumnya dan tidak dapat dihapus permanen. Nonaktifkan alat ini agar tidak tampil lagi di katalog?`
+            `Alat ini memiliki riwayat booking sewa sebelumnya dan tidak dapat dihapus permanen. Nonaktifkan alat ini agar tidak tampil lagi di katalog?`
           );
           if (soft) {
             await supabase

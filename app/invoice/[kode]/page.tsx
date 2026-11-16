@@ -55,7 +55,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
     notFound();
   }
 
-  // 2. Ambil profil user penyewa & cek role
+  // 2. Ambil profil user & cek role
   const { data: profile } = await supabase
     .from("profiles")
     .select("nama, no_hp, alamat, role")
@@ -107,7 +107,7 @@ export default async function InvoicePage({ params }: InvoicePageProps) {
     pesan_admin: booking.pesan_admin,
     created_at: booking.created_at,
     customer: {
-      nama: customerProfile?.nama || "Penyewa",
+      nama: customerProfile?.nama || "User",
       no_hp: customerProfile?.no_hp,
       alamat: customerProfile?.alamat || undefined,
     },

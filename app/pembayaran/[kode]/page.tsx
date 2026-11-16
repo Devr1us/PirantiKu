@@ -116,7 +116,7 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
     });
   }
 
-  const customerName = profile?.nama || "Penyewa";
+  const customerName = profile?.nama || "User";
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">

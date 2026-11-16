@@ -1,68 +1,96 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #FAFAF8;
-  --surface: #FFFFFF;
-  --panel: #F3F3EF;
-  --border: #E8E8E1;
-  --petrol: #234E5C;
-  --petrol-soft: #5F7A84;
+  --bg-base: #FAF7F2;
+  --bg-white: #FFFFFF;
+  --bg-sage: #F1F6F3;
+  --bg-dark: #0F3D47;
+  --bg-footer: #0B2F37;
+  --accent-gold: #F2B93B;
+  --border-soft: #E8E2D6;
+  --text-main: #12343B;
+  --text-muted: #5B6B6E;
+  --text-on-dark: #FFFFFF;
+
+  /* Aliases untuk kompatibilitas token */
+  --bg: var(--bg-base);
+  --surface: var(--bg-white);
+  --panel: var(--bg-sage);
+  --border: var(--border-soft);
+  --petrol: var(--bg-dark);
+  --petrol-soft: var(--text-muted);
   --leaf: #2E5E4E;
-  --ochre: #A0630F;
-  --ochre-hover: #85510A;
+  --ochre: var(--accent-gold);
+  --ochre-hover: #E0A82E;
   --navbar-offset: 80px;
 
-  /* Standard design-token aliases for compatibility */
-  --background: #FAFAF8;
-  --foreground: #234E5C;
-  --card: #FFFFFF;
-  --card-foreground: #234E5C;
-  --popover: #FFFFFF;
-  --popover-foreground: #234E5C;
-  --primary: #A0630F;
-  --primary-foreground: #FFFFFF;
-  --secondary: #234E5C;
-  --secondary-foreground: #FFFFFF;
-  --muted: #F3F3EF;
-  --muted-foreground: #5F7A84;
-  --accent: #F3F3EF;
-  --accent-foreground: #234E5C;
+  --background: var(--bg-base);
+  --foreground: var(--text-main);
+  --card: var(--bg-white);
+  --card-foreground: var(--text-main);
+  --popover: var(--bg-white);
+  --popover-foreground: var(--text-main);
+  --primary: var(--accent-gold);
+  --primary-foreground: var(--bg-dark);
+  --secondary: var(--bg-dark);
+  --secondary-foreground: var(--text-on-dark);
+  --muted: var(--bg-sage);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--accent-gold);
+  --accent-foreground: var(--bg-dark);
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --input: #E8E8E1;
-  --ring: #234E5C;
+  --input: var(--border-soft);
+  --ring: var(--bg-dark);
   --radius: 0.75rem;
 }
 
-@theme {
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-panel: var(--panel);
-  --color-border: var(--border);
-  --color-petrol: var(--petrol);
-  --color-petrol-soft: var(--petrol-soft);
-  --color-leaf: var(--leaf);
-  --color-ochre: var(--ochre);
-  --color-ochre-hover: var(--ochre-hover);
+@theme inline {
+  --color-bg-base: var(--bg-base);
+  --color-white: var(--bg-white);
+  --color-sage: var(--bg-sage);
+  --color-brand: var(--bg-dark);
+  --color-dark: var(--bg-dark);
+  --color-footer: var(--bg-footer);
+  --color-gold: var(--accent-gold);
+  --color-soft: var(--border-soft);
+  --color-text-main: var(--text-main);
+  --color-muted-text: var(--text-muted);
+  --color-on-dark: var(--text-on-dark);
 
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  /* Pastikan utility font-size universal tidak tertimpa token warna */
+  --text-base: 1rem;
+  --text-base--line-height: calc(1.5 / 1);
+
+  /* Aliases */
+  --color-bg: var(--bg-base);
+  --color-surface: var(--bg-white);
+  --color-panel: var(--bg-sage);
+  --color-border: var(--border-soft);
+  --color-petrol: var(--bg-dark);
+  --color-petrol-soft: var(--text-muted);
+  --color-leaf: #2E5E4E;
+  --color-ochre: var(--accent-gold);
+  --color-ochre-hover: #E0A82E;
+
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text-main);
+  --color-card: var(--bg-white);
+  --color-card-foreground: var(--text-main);
+  --color-popover: var(--bg-white);
+  --color-popover-foreground: var(--text-main);
+  --color-primary: var(--accent-gold);
+  --color-primary-foreground: var(--bg-dark);
+  --color-secondary: var(--bg-dark);
+  --color-secondary-foreground: var(--text-on-dark);
+  --color-muted: var(--bg-sage);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--accent-gold);
+  --color-accent-foreground: var(--bg-dark);
+  --color-destructive: #DC2626;
+  --color-destructive-foreground: #FFFFFF;
+  --color-input: var(--border-soft);
+  --color-ring: var(--bg-dark);
 
   --font-sans: var(--font-open-sans), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-libre-baskerville), Georgia, serif;
@@ -124,8 +152,8 @@ body[data-scroll-locked] {
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--petrol);
+  background-color: var(--bg-base);
+  color: var(--text-main);
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.7;
@@ -169,3 +197,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #B8B8AD;
 }
+
+/* Design Token Utility Helpers */
+.text-main { color: var(--text-main); }
+.text-muted-custom { color: var(--text-muted); }
+.text-brand { color: var(--bg-dark); }
+.text-gold { color: var(--accent-gold); }
+.bg-brand { background-color: var(--bg-dark); }
+.bg-gold { background-color: var(--accent-gold); }
+.bg-base { background-color: var(--bg-base); }
+.bg-sage { background-color: var(--bg-sage); }
+.bg-footer { background-color: var(--bg-footer); }
+.border-soft { border-color: var(--border-soft); }
+.border-brand { border-color: var(--bg-dark); }

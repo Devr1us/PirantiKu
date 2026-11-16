@@ -246,7 +246,7 @@ export default async function EquipmentDetailPage({
                 </h2>
                 <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
                   {equipment.deskripsi ||
-                    "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada penyewa."}
+                    "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada user."}
                 </p>
               </div>
             </Reveal>

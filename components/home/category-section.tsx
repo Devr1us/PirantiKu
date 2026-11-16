@@ -21,25 +21,25 @@ export function CategorySection({
     <section
       id="kategori"
       aria-label="Kategori Alat PirantiKu"
-      className="w-full py-16 md:py-24 bg-white text-[#0f2e39]"
+      className="w-full py-16 md:py-24 bg-white text-[var(--text-main)]"
     >
-      <div className="w-full max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-10 sm:space-y-12">
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6 space-y-10 sm:space-y-12">
         {/* ========================================================
             HEADER SECTION KATEGORI
             ======================================================== */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#e3e1d9] pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[var(--border-soft)] pb-6">
           <div className="space-y-2">
-            <h2 className="text-3xl sm:text-4xl md:text-[40px] font-extrabold tracking-tight text-[#1f4e5f] leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-[40px] font-extrabold tracking-tight text-[var(--bg-dark)] leading-tight">
               Kategori Alat
             </h2>
-            <p className="text-sm sm:text-base text-[#5F7A84] font-medium max-w-xl">
+            <p className="text-sm sm:text-base text-[var(--text-muted)] font-medium max-w-xl">
               Perlengkapan lengkap sesuai kebutuhan aktivitas Anda.
             </p>
           </div>
 
           <Link
             href="/alat"
-            className="inline-flex items-center gap-1.5 text-sm sm:text-base font-bold text-[#8a5a12] hover:text-[#1f4e5f] transition-colors shrink-0 group"
+            className="inline-flex items-center gap-1.5 text-sm sm:text-base font-bold text-[var(--bg-dark)] hover:text-[var(--accent-gold)] transition-colors shrink-0 group"
           >
             <span>Lihat semua</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
@@ -59,31 +59,31 @@ export function CategorySection({
               <Link
                 key={cat.id}
                 href={`/kategori/${cat.slug}`}
-                className="group flex flex-col justify-between h-full bg-[#f6f5f1] border border-[#e3e1d9]/70 rounded-3xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-[#1f4e5f]/30"
+                className="group flex flex-col justify-between h-full bg-white border border-[var(--border-soft)] rounded-3xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--bg-dark)]"
               >
                 <div className="space-y-5">
                   {/* Area Ikon di Atas */}
-                  <div className="w-14 h-14 rounded-2xl bg-white border border-[#e3e1d9] flex items-center justify-center text-[#1f4e5f] shadow-xs group-hover:bg-[#1f4e5f] group-hover:text-white transition-colors duration-200">
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--bg-sage)] border border-[var(--border-soft)] flex items-center justify-center text-[var(--bg-dark)] shadow-xs group-hover:bg-[var(--bg-dark)] group-hover:text-white transition-colors duration-200">
                     <IconComponent className="h-7 w-7 stroke-[1.8]" />
                   </div>
 
                   {/* Nama & Deskripsi */}
                   <div className="space-y-2">
-                    <h3 className="text-xl font-bold text-[#1f4e5f] group-hover:text-[#8a5a12] transition-colors">
+                    <h3 className="text-xl font-bold text-[var(--bg-dark)] group-hover:text-[var(--accent-gold)] transition-colors">
                       {cat.nama}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#5F7A84] leading-relaxed line-clamp-3">
+                    <p className="text-sm text-[var(--text-muted)] leading-relaxed line-clamp-3">
                       {desc}
                     </p>
                   </div>
                 </div>
 
                 {/* Footer Kartu: N Alat Aktif -> */}
-                <div className="mt-6 pt-4 border-t border-[#e3e1d9] flex items-center justify-between text-xs sm:text-sm font-bold text-[#1f4e5f]">
-                  <span className="text-[#5F7A84] font-semibold">
+                <div className="mt-6 pt-4 border-t border-[var(--border-soft)] flex items-center justify-between text-sm font-bold text-[var(--bg-dark)]">
+                  <span className="text-[var(--text-muted)] font-medium">
                     {count} alat aktif
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[#8a5a12] group-hover:translate-x-1 transition-transform">
+                  <span className="inline-flex items-center gap-1 text-[var(--accent-gold)] group-hover:translate-x-1 transition-transform">
                     <span>Lihat alat</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
@@ -95,28 +95,28 @@ export function CategorySection({
           {/* Kartu Tambahan: Semua Alat */}
           <Link
             href="/alat"
-            className="group flex flex-col justify-between h-full bg-[#f6f5f1] border border-[#e3e1d9]/70 rounded-3xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-[#1f4e5f]/30"
+            className="group flex flex-col justify-between h-full bg-white border border-[var(--border-soft)] rounded-3xl p-6 sm:p-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--bg-dark)]"
           >
             <div className="space-y-5">
-              <div className="w-14 h-14 rounded-2xl bg-white border border-[#e3e1d9] flex items-center justify-center text-[#1f4e5f] shadow-xs group-hover:bg-[#1f4e5f] group-hover:text-white transition-colors duration-200">
+              <div className="w-14 h-14 rounded-2xl bg-[var(--bg-sage)] border border-[var(--border-soft)] flex items-center justify-center text-[var(--bg-dark)] shadow-xs group-hover:bg-[var(--bg-dark)] group-hover:text-white transition-colors duration-200">
                 <Layers className="h-7 w-7 stroke-[1.8]" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-[#1f4e5f] group-hover:text-[#8a5a12] transition-colors">
+                <h3 className="text-xl font-bold text-[var(--bg-dark)] group-hover:text-[var(--accent-gold)] transition-colors">
                   Semua Alat
                 </h3>
-                <p className="text-xs sm:text-sm text-[#5F7A84] leading-relaxed">
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">
                   Jelajahi seluruh inventaris perlengkapan dan perkakas yang tersedia di PirantiKu.
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#e3e1d9] flex items-center justify-between text-xs sm:text-sm font-bold text-[#1f4e5f]">
-              <span className="text-[#5F7A84] font-semibold">
+            <div className="mt-6 pt-4 border-t border-[var(--border-soft)] flex items-center justify-between text-sm font-bold text-[var(--bg-dark)]">
+              <span className="text-[var(--text-muted)] font-medium">
                 {totalActiveTypes > 0 ? `${totalActiveTypes} macam alat` : "Katalog Lengkap"}
               </span>
-              <span className="inline-flex items-center gap-1 text-[#8a5a12] group-hover:translate-x-1 transition-transform">
+              <span className="inline-flex items-center gap-1 text-[var(--accent-gold)] group-hover:translate-x-1 transition-transform">
                 <span>Buka katalog</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </span>
