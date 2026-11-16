@@ -115,33 +115,30 @@ export function NavbarClient({
     return null;
   }
 
-  const handleBerandaClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === "/") {
+  const handleNavLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (pathname === href) {
       e.preventDefault();
       if (window.location.hash) {
-        history.replaceState(null, "", "/");
+        history.replaceState(null, "", href);
       }
-      setOptimisticNav("beranda");
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      setOptimisticNav("beranda");
     }
   };
 
-  const handleAnchorClick = (
+  const handleMobileNavLinkClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    target: "cara-sewa" | "kontak"
+    href: string
   ) => {
-    if (pathname === "/") {
+    setIsMobileOpen(false);
+    if (pathname === href) {
       e.preventDefault();
-      const el = document.getElementById(target);
-      if (el) {
-        setOptimisticNav(target);
-        history.replaceState(null, "", `/#${target}`);
-        el.scrollIntoView({ behavior: "smooth" });
+      if (window.location.hash) {
+        history.replaceState(null, "", href);
       }
-    } else {
-      setOptimisticNav(target);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -196,30 +193,31 @@ export function NavbarClient({
           : "border-b border-[var(--border-soft)] shadow-none"
         }`}
     >
-      <div className="site-container flex h-full items-center justify-between">
+      <div className="site-container flex h-full items-center justify-between gap-4 sm:gap-6">
         {/* Sisi Kiri: Wordmark PirantiKu */}
-        <div className="flex items-center gap-4 sm:gap-6 min-w-0 shrink">
+        <div className="flex items-center min-w-0 shrink-0">
           <Wordmark />
         </div>
 
-        {/* Tengah: Navigasi Desktop (UPPERCASE, 14px, Medium) */}
+        {/* Tengah: Navigasi Desktop (UPPERCASE, 14px, Medium/Bold) */}
         <LayoutGroup id="navbar-desktop">
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          <nav className="hidden lg:flex items-center justify-center gap-2 xl:gap-5 mx-auto">
             {/* BERANDA */}
             <Link
               href="/"
-              onClick={handleBerandaClick}
+              onClick={(e) => handleNavLinkClick(e, "/")}
               aria-current={activeNav === "beranda" ? "page" : undefined}
-              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "beranda"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
+                activeNav === "beranda"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-                }`}
+              }`}
             >
               <HoverRollText text="BERANDA" />
               {activeNav === "beranda" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
+                  className="absolute inset-x-4 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -228,17 +226,19 @@ export function NavbarClient({
             {/* KATALOG */}
             <Link
               href="/alat"
+              onClick={(e) => handleNavLinkClick(e, "/alat")}
               aria-current={activeNav === "katalog" ? "page" : undefined}
-              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "katalog"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
+                activeNav === "katalog"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-                }`}
+              }`}
             >
               <HoverRollText text="KATALOG" />
               {activeNav === "katalog" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
+                  className="absolute inset-x-4 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -247,17 +247,19 @@ export function NavbarClient({
             {/* CARA BOOKING */}
             <Link
               href="/cara-booking"
+              onClick={(e) => handleNavLinkClick(e, "/cara-booking")}
               aria-current={activeNav === "cara-sewa" ? "page" : undefined}
-              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "cara-sewa"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
+                activeNav === "cara-sewa"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-                }`}
+              }`}
             >
               <HoverRollText text="CARA BOOKING" />
               {activeNav === "cara-sewa" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
+                  className="absolute inset-x-4 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -266,17 +268,19 @@ export function NavbarClient({
             {/* KONTAK */}
             <Link
               href="/kontak"
+              onClick={(e) => handleNavLinkClick(e, "/kontak")}
               aria-current={activeNav === "kontak" ? "page" : undefined}
-              className={`relative px-3.5 py-2 text-sm font-medium uppercase tracking-wide transition-colors ${activeNav === "kontak"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
+                activeNav === "kontak"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-                }`}
+              }`}
             >
               <HoverRollText text="KONTAK" />
               {activeNav === "kontak" && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute inset-x-3.5 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
+                  className="absolute inset-x-4 bottom-0 h-[2px] rounded-full bg-[var(--accent-gold)]"
                   transition={springTransition}
                 />
               )}
@@ -285,7 +289,7 @@ export function NavbarClient({
         </LayoutGroup>
 
         {/* Sisi Kanan: Keranjang, WhatsApp, Auth (Masuk / Daftar / Avatar) */}
-        <div className="flex items-center gap-3 sm:gap-3.5 shrink-0 ml-auto pl-3">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
           {/* Tombol Hubungi Admin via WhatsApp */}
           <a
             href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
@@ -429,10 +433,7 @@ export function NavbarClient({
                     <div className="flex flex-col space-y-1.5 pt-2">
                       <Link
                         href="/"
-                        onClick={(e) => {
-                          setIsMobileOpen(false);
-                          handleBerandaClick(e);
-                        }}
+                        onClick={(e) => handleMobileNavLinkClick(e, "/")}
                         aria-current={activeNav === "beranda" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "beranda"
                             ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
@@ -451,7 +452,7 @@ export function NavbarClient({
 
                       <Link
                         href="/alat"
-                        onClick={() => setIsMobileOpen(false)}
+                        onClick={(e) => handleMobileNavLinkClick(e, "/alat")}
                         aria-current={activeNav === "katalog" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "katalog"
                             ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
@@ -470,7 +471,7 @@ export function NavbarClient({
 
                       <Link
                         href="/cara-booking"
-                        onClick={() => setIsMobileOpen(false)}
+                        onClick={(e) => handleMobileNavLinkClick(e, "/cara-booking")}
                         aria-current={activeNav === "cara-sewa" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "cara-sewa"
                             ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
@@ -489,7 +490,7 @@ export function NavbarClient({
 
                       <Link
                         href="/kontak"
-                        onClick={() => setIsMobileOpen(false)}
+                        onClick={(e) => handleMobileNavLinkClick(e, "/kontak")}
                         aria-current={activeNav === "kontak" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "kontak"
                             ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"

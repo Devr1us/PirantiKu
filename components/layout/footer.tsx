@@ -1,9 +1,27 @@
+"use client";
+
+import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Wordmark } from "@/components/ui/wordmark";
 import { P } from "@/components/ui/typography";
 import { APP_NAME } from "@/lib/constants";
 
-export async function Footer() {
+export function Footer() {
+  const pathname = usePathname();
+
+  const handleLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (pathname === href) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <footer className="w-full bg-[var(--bg-footer)] border-t border-[var(--bg-dark)] text-white/90 mt-auto print:hidden">
       <div className="mx-auto max-w-[1200px] px-4 pt-12 pb-20 sm:pt-16 sm:pb-16 sm:px-6 lg:px-8">
@@ -25,22 +43,38 @@ export async function Footer() {
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/"
+                    onClick={(e) => handleLinkClick(e, "/")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Beranda
                   </Link>
                 </li>
                 <li>
-                  <Link href="/alat" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/alat"
+                    onClick={(e) => handleLinkClick(e, "/alat")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Katalog
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cara-booking" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/cara-booking"
+                    onClick={(e) => handleLinkClick(e, "/cara-booking")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Cara Booking
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kontak" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/kontak"
+                    onClick={(e) => handleLinkClick(e, "/kontak")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Kontak
                   </Link>
                 </li>
@@ -53,22 +87,38 @@ export async function Footer() {
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/login" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/login"
+                    onClick={(e) => handleLinkClick(e, "/login")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Masuk
                   </Link>
                 </li>
                 <li>
-                  <Link href="/daftar" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/daftar"
+                    onClick={(e) => handleLinkClick(e, "/daftar")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Daftar
                   </Link>
                 </li>
                 <li>
-                  <Link href="/booking-saya" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/booking-saya"
+                    onClick={(e) => handleLinkClick(e, "/booking-saya")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Riwayat Booking
                   </Link>
                 </li>
                 <li>
-                  <Link href="/keranjang" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/keranjang"
+                    onClick={(e) => handleLinkClick(e, "/keranjang")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Keranjang Booking
                   </Link>
                 </li>
@@ -81,17 +131,29 @@ export async function Footer() {
               </span>
               <ul className="space-y-2.5 text-sm font-medium">
                 <li>
-                  <Link href="/syarat-ketentuan" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/syarat-ketentuan"
+                    onClick={(e) => handleLinkClick(e, "/syarat-ketentuan")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Syarat & Ketentuan
                   </Link>
                 </li>
                 <li>
-                  <Link href="/kebijakan-privasi" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/kebijakan-privasi"
+                    onClick={(e) => handleLinkClick(e, "/kebijakan-privasi")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Kebijakan Privasi
                   </Link>
                 </li>
                 <li>
-                  <Link href="/faq" className="text-white/75 hover:text-[var(--accent-gold)] transition-colors">
+                  <Link
+                    href="/faq"
+                    onClick={(e) => handleLinkClick(e, "/faq")}
+                    className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
+                  >
                     Tanya Jawab (FAQ)
                   </Link>
                 </li>
