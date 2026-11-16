@@ -72,6 +72,7 @@ html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   overflow-y: scroll;
+  width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {

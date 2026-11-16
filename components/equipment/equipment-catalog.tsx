@@ -96,14 +96,14 @@ function FilterSidebar({
             <button
               type="button"
               onClick={() => handleCategorySelect("")}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${
                 !currentCategory
                   ? "bg-[#234E5C] text-white"
                   : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
               }`}
             >
-              <span>Semua Kategori</span>
-              <span className="text-[11px] opacity-80">
+              <span className="min-w-0 flex-1 truncate text-left">Semua Kategori</span>
+              <span className="text-[11px] opacity-80 shrink-0">
                 {initialEquipment.length}
               </span>
             </button>
@@ -119,14 +119,14 @@ function FilterSidebar({
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategorySelect(cat.slug)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                  className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${
                     isSelected
                       ? "bg-[#234E5C] text-white font-bold"
                       : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
                   }`}
                 >
-                  <span className="truncate">{cat.nama}</span>
-                  <span className="text-[11px] opacity-80">{count}</span>
+                  <span className="min-w-0 flex-1 truncate text-left">{cat.nama}</span>
+                  <span className="text-[11px] opacity-80 shrink-0">{count}</span>
                 </button>
               );
             })}
@@ -163,14 +163,14 @@ function FilterSidebar({
                 key={preset.id}
                 type="button"
                 onClick={() => handlePresetSelect(preset.min, preset.max)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${
                   isActive
                     ? "bg-[#234E5C] text-white font-bold"
                     : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
                 }`}
               >
-                <span className="truncate">{preset.label}</span>
-                <span className="text-[11px] opacity-80">{preset.count}</span>
+                <span className="min-w-0 flex-1 truncate text-left">{preset.label}</span>
+                <span className="text-[11px] opacity-80 shrink-0">{preset.count}</span>
               </button>
             );
           })}
@@ -223,15 +223,44 @@ export function EquipmentCatalog({
   const currentMaxPrice = searchParams.get("max_harga") || "";
 
   const [searchQuery, setSearchQuery] = React.useState(currentQ);
+  const [debouncedQuery, setDebouncedQuery] = React.useState(currentQ);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
-  // Sinkronisasi state pencarian jika URL berubah
+  // Sinkronisasi state pencarian jika URL berubah dari luar (misal tombol kembali / reset)
   const [prevQ, setPrevQ] = React.useState(currentQ);
 
   if (prevQ !== currentQ) {
     setPrevQ(currentQ);
     setSearchQuery(currentQ);
+    setDebouncedQuery(currentQ);
   }
+
+  // Debounce input search (300ms) agar hasil dan URL tidak berganti di setiap ketukan
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const trimmed = searchQuery.trim();
+        if (trimmed) {
+          params.set("q", trimmed);
+        } else {
+          params.delete("q");
+        }
+        const newQuery = params.toString();
+        const currentTarget = selectedCategorySlug ? window.location.pathname : "/alat";
+        const newUrl = newQuery ? `${currentTarget}?${newQuery}` : currentTarget;
+        const currentFull = `${window.location.pathname}${window.location.search}`;
+
+        if (newUrl !== currentFull) {
+          window.history.replaceState(window.history.state, "", newUrl);
+        }
+      }
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [searchQuery, selectedCategorySlug]);
 
   const applyFilters = (newParams: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -254,6 +283,7 @@ export function EquipmentCatalog({
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setDebouncedQuery(searchQuery);
     applyFilters({ q: searchQuery });
   };
 
@@ -273,6 +303,7 @@ export function EquipmentCatalog({
       const targetSlug = currentCategory === slug ? "" : slug;
       // BUG-EC2: Reset search query saat kategori berubah
       setSearchQuery("");
+      setDebouncedQuery("");
       applyFilters({ kategori: targetSlug, q: "" });
     }
   };
@@ -283,6 +314,7 @@ export function EquipmentCatalog({
 
   const handleResetFilters = () => {
     setSearchQuery("");
+    setDebouncedQuery("");
     const targetPath = selectedCategorySlug ? pathname : "/alat";
     startTransition(() => {
       router.replace(targetPath, { scroll: false });
@@ -370,7 +402,7 @@ export function EquipmentCatalog({
 
   // Filter dan sorting lokal
   const filteredEquipment = React.useMemo(() => {
-    const activeSearch = searchQuery.trim() || currentQ;
+    const activeSearch = debouncedQuery.trim();
     return initialEquipment
       .filter((item) => {
         if (activeSearch) {
@@ -412,8 +444,7 @@ export function EquipmentCatalog({
       });
   }, [
     initialEquipment,
-    searchQuery,
-    currentQ,
+    debouncedQuery,
     currentCategory,
     currentMinPrice,
     currentMaxPrice,
@@ -421,7 +452,7 @@ export function EquipmentCatalog({
   ]);
 
   const hasActiveFilters = Boolean(
-    currentQ ||
+    debouncedQuery ||
     (!selectedCategorySlug && currentCategory) ||
     currentMinPrice ||
     currentMaxPrice ||
@@ -443,7 +474,7 @@ export function EquipmentCatalog({
     currentMaxPrice,
   };
 
-  const filterSignature = `${currentCategory}|${currentMinPrice}|${currentMaxPrice}|${currentSort}|${currentQ}`;
+  const filterSignature = `${currentCategory}|${currentMinPrice}|${currentMaxPrice}|${currentSort}|${debouncedQuery}`;
 
   const [visibleCount, setVisibleCount] = React.useState(12);
   const [prevFilterSignature, setPrevFilterSignature] = React.useState(filterSignature);
@@ -490,6 +521,7 @@ export function EquipmentCatalog({
               aria-label="Hapus pencarian"
               onClick={() => {
                 setSearchQuery("");
+                setDebouncedQuery("");
                 applyFilters({ q: "" });
               }}
               className="absolute right-3.5 top-3.5 text-[#5F7A84] hover:text-[#234E5C] cursor-pointer"
@@ -550,10 +582,10 @@ export function EquipmentCatalog({
       </div>
 
       {/* Konten Utama: Filter di Wadah --panel + Grid Kartu Alat */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        {/* Sidebar Filter Desktop: Wadah --panel dengan scrolling mandiri */}
-        <aside className="hidden lg:block lg:col-span-1 min-w-0 w-full">
-          <div className="sticky top-[calc(var(--navbar-offset)+1rem)] max-h-[calc(100vh-var(--navbar-offset)-2rem)] flex flex-col rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] shadow-xs transition-[top] duration-300 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8 items-start w-full">
+        {/* Sidebar Filter Desktop: Lebar tetap 260px, align-self start */}
+        <aside className="hidden lg:block w-[260px] shrink-0 self-start">
+          <div className="sticky top-[calc(var(--navbar-offset)+24px)] max-h-[calc(100vh-var(--navbar-offset)-48px)] flex flex-col rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] shadow-xs transition-[top] duration-300 overflow-hidden">
             {/* Header Sticky Card */}
             <div className="flex items-center justify-between p-4 px-5 border-b border-[#E8E8E1] shrink-0 bg-[#F3F3EF]">
               <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
@@ -580,9 +612,9 @@ export function EquipmentCatalog({
           </div>
         </aside>
 
-        {/* Grid Kartu Alat */}
-        <main className="lg:col-span-3 min-w-0 w-full min-h-[500px] space-y-6">
-          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between min-h-[24px]">
+        {/* Kolom Kanan: Hasil Pencarian & Grid Alat */}
+        <main className="min-w-0 w-full space-y-6">
+          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between min-h-[28px]">
             <span>
               Menampilkan <strong className="text-[#234E5C] font-bold">{Math.min(visibleCount, filteredEquipment.length)}</strong> dari <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
             </span>
@@ -593,78 +625,81 @@ export function EquipmentCatalog({
             )}
           </div>
 
-          {filteredEquipment.length > 0 ? (
-            <div
-              key={filterSignature}
-              className={`space-y-8 transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""
-                }`}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {displayedEquipment.map((item, index) => {
-                  if (shouldReduceMotion) {
+          {/* Wrapper area hasil dengan min-height stabil dan transisi opacity */}
+          <div
+            className={`min-h-[max(60vh,520px)] flex flex-col justify-start transition-opacity duration-150 ${
+              isPending ? "opacity-60 pointer-events-none" : "opacity-100"
+            }`}
+          >
+            {filteredEquipment.length > 0 ? (
+              <div className="space-y-8 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 content-start">
+                  {displayedEquipment.map((item, index) => {
+                    if (shouldReduceMotion) {
+                      return (
+                        <div key={item.id} className="h-full">
+                          <EquipmentCard equipment={item} />
+                        </div>
+                      );
+                    }
+
+                    const delay = getGridColumnDelay(index, 3);
+
                     return (
-                      <div key={item.id} className="h-full">
+                      <Reveal
+                        key={item.id}
+                        delay={delay}
+                        duration={0.32}
+                        className="h-full"
+                      >
                         <EquipmentCard equipment={item} />
-                      </div>
+                      </Reveal>
                     );
-                  }
+                  })}
+                </div>
 
-                  const delay = getGridColumnDelay(index, 3);
-
-                  return (
-                    <Reveal
-                      key={item.id}
-                      delay={delay}
-                      duration={0.32}
-                      className="h-full"
+                {/* Tombol Muat Lebih Banyak (Pagination / Progressive Loading untuk HP) */}
+                {filteredEquipment.length > visibleCount && (
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-[#E8E8E1]">
+                    <Button
+                      variant="outline"
+                      onClick={() => setVisibleCount((prev) => prev + 12)}
+                      className="w-full sm:w-auto text-xs font-bold px-6 h-11 border-[#234E5C] text-[#234E5C] hover:bg-[#234E5C] hover:text-white transition-colors"
                     >
-                      <EquipmentCard equipment={item} />
-                    </Reveal>
-                  );
-                })}
+                      Muat Lebih Banyak ({filteredEquipment.length - visibleCount} alat lagi)
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => setVisibleCount(filteredEquipment.length)}
+                      className="w-full sm:w-auto text-xs font-semibold text-[#5F7A84] hover:text-[#234E5C]"
+                    >
+                      Tampilkan Semua ({filteredEquipment.length})
+                    </Button>
+                  </div>
+                )}
               </div>
-
-              {/* Tombol Muat Lebih Banyak (Pagination / Progressive Loading untuk HP) */}
-              {filteredEquipment.length > visibleCount && (
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-[#E8E8E1]">
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-2xl border border-dashed border-[#E8E8E1] bg-white w-full shadow-xs">
+                <Package className="h-12 w-12 text-[#5F7A84]/50 mb-3" />
+                <h3 className="text-base font-bold text-[#234E5C]">
+                  Tidak ada alat yang cocok
+                </h3>
+                <p className="text-xs text-[#5F7A84] max-w-sm mt-1">
+                  Silakan sesuaikan kata kunci pencarian atau ubah rentang harga filter Anda.
+                </p>
+                {hasActiveFilters && (
                   <Button
                     variant="outline"
-                    onClick={() => setVisibleCount((prev) => prev + 12)}
-                    className="w-full sm:w-auto text-xs font-bold px-6 h-11 border-[#234E5C] text-[#234E5C] hover:bg-[#234E5C] hover:text-white transition-colors"
+                    size="sm"
+                    onClick={handleResetFilters}
+                    className="mt-4 text-xs font-bold"
                   >
-                    Muat Lebih Banyak ({filteredEquipment.length - visibleCount} alat lagi)
+                    Reset Semua Filter
                   </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setVisibleCount(filteredEquipment.length)}
-                    className="w-full sm:w-auto text-xs font-semibold text-[#5F7A84] hover:text-[#234E5C]"
-                  >
-                    Tampilkan Semua ({filteredEquipment.length})
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-dashed border-[#E8E8E1] bg-white min-h-[420px] w-full shadow-xs">
-              <Package className="h-12 w-12 text-[#5F7A84]/50 mb-3" />
-              <h3 className="text-base font-bold text-[#234E5C]">
-                Tidak ada alat yang cocok
-              </h3>
-              <p className="text-xs text-[#5F7A84] max-w-sm mt-1">
-                Silakan sesuaikan kata kunci pencarian atau ubah rentang harga filter Anda.
-              </p>
-              {hasActiveFilters && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleResetFilters}
-                  className="mt-4 text-xs font-bold"
-                >
-                  Reset Semua Filter
-                </Button>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
