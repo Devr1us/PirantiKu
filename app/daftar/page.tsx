@@ -84,6 +84,28 @@ export default function DaftarPage() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
 
+  // Jika pengguna sudah login dan membuka halaman /daftar, otomatis logout akun sebelumnya
+  React.useEffect(() => {
+    async function checkAndSignOutIfLoggedIn() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.auth.signOut();
+          try {
+            localStorage.removeItem("pirantiku_cart_v1");
+            localStorage.removeItem("pirantiku_cart_user_id");
+            sessionStorage.removeItem("pirantiku_booking_dates");
+          } catch {}
+          toast.info("Anda telah keluar dari akun sebelumnya untuk mendaftar akun baru.");
+        }
+      } catch {}
+    }
+    checkAndSignOutIfLoggedIn();
+  }, []);
+
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
     try {

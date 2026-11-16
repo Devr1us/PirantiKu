@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Wordmark } from "@/components/ui/wordmark";
 import { P } from "@/components/ui/typography";
 import { APP_NAME } from "@/lib/constants";
@@ -20,6 +21,31 @@ export function Footer() {
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const handleAuthLinkClick = async (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    targetUrl: "/login" | "/daftar"
+  ) => {
+    e.preventDefault();
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await supabase.auth.signOut();
+        try {
+          localStorage.removeItem("pirantiku_cart_v1");
+          localStorage.removeItem("pirantiku_cart_user_id");
+          sessionStorage.removeItem("pirantiku_booking_dates");
+        } catch {}
+      }
+    } catch {
+      // ignore
+    }
+    window.location.href = targetUrl;
   };
 
   return (
@@ -89,7 +115,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/login"
-                    onClick={(e) => handleLinkClick(e, "/login")}
+                    onClick={(e) => handleAuthLinkClick(e, "/login")}
                     className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
                   >
                     Masuk
@@ -98,7 +124,7 @@ export function Footer() {
                 <li>
                   <Link
                     href="/daftar"
-                    onClick={(e) => handleLinkClick(e, "/daftar")}
+                    onClick={(e) => handleAuthLinkClick(e, "/daftar")}
                     className="text-white/75 hover:text-[var(--accent-gold)] transition-colors cursor-pointer"
                   >
                     Daftar

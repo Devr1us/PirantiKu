@@ -61,6 +61,28 @@ function LoginForm() {
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [isSuccess, setIsSuccess] = React.useState(false);
 
+  // Jika pengguna sudah login dan membuka halaman /login, otomatis logout akun sebelumnya
+  React.useEffect(() => {
+    async function checkAndSignOutIfLoggedIn() {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.auth.signOut();
+          try {
+            localStorage.removeItem("pirantiku_cart_v1");
+            localStorage.removeItem("pirantiku_cart_user_id");
+            sessionStorage.removeItem("pirantiku_booking_dates");
+          } catch {}
+          toast.info("Anda telah keluar dari akun sebelumnya untuk masuk dengan akun baru.");
+        }
+      } catch {}
+    }
+    checkAndSignOutIfLoggedIn();
+  }, []);
+
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     setAuthError(null);
