@@ -52,17 +52,10 @@ export default async function KontakPage() {
       : LOKASI_DEFAULT.alamat;
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-12 bg-[#FAFAF8] text-[#234E5C]">
-      {/* Header Halaman & Breadcrumbs */}
+    <div className="site-container py-10 space-y-12 bg-[#FAFAF8] text-[#234E5C]">
+      {/* Header Halaman */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
-          <Link href="/" className="hover:text-[#234E5C] font-semibold">
-            Beranda
-          </Link>
-          <span>/</span>
-          <span className="font-bold text-[#234E5C]">Kontak &amp; Lokasi</span>
-        </div>
-        <H1 className="section-title block pt-1">LOKASI &amp; KONTAK TOKO</H1>
+        <H1 className="section-title block">LOKASI &amp; KONTAK TOKO</H1>
         <Lead className="text-base text-[#5F7A84] font-medium max-w-2xl">
           Kunjungi toko kami untuk pengambilan unit atau hubungi admin WhatsApp untuk konsultasi ketersediaan alat.
         </Lead>

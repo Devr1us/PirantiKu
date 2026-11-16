@@ -37,17 +37,10 @@ export default async function CaraBookingPage() {
   const cleanWa = normalizeAdminPhone(whatsappAdmin);
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-12 bg-[#FAFAF8] text-[#234E5C]">
-      {/* Header Halaman & Breadcrumbs */}
+    <div className="site-container py-10 space-y-12 bg-[#FAFAF8] text-[#234E5C]">
+      {/* Header Halaman */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
-          <Link href="/" className="hover:text-[#234E5C] font-semibold">
-            Beranda
-          </Link>
-          <span>/</span>
-          <span className="font-bold text-[#234E5C]">Cara Booking</span>
-        </div>
-        <H1 className="section-title block pt-1">CARA BOOKING PERALATAN</H1>
+        <H1 className="section-title block">CARA BOOKING PERALATAN</H1>
         <Lead className="text-base text-[#5F7A84] font-medium max-w-2xl">
           Tiga langkah praktis untuk booking perlengkapan camping, pertukangan, event, dan kebersihan secara online.
         </Lead>

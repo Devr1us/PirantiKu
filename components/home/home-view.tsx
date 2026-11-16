@@ -4,10 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import {
-  ArrowRight,
   MessageCircle,
-  MapPin,
-  Clock,
   Package,
   Layers,
 } from "lucide-react";
@@ -15,12 +12,9 @@ import type { Category, EquipmentWithDetails } from "@/types/database";
 import {
   getCategoryIcon,
   getCategoryDescription,
-  getProductImage,
-  LOKASI_DEFAULT,
   normalizeAdminPhone,
 } from "@/lib/constants";
 import { SafeImage } from "@/components/ui/safe-image";
-import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import {
   Reveal,
@@ -30,50 +24,32 @@ import {
 } from "@/components/ui/motion";
 import { H1, H2, H3, Lead, P } from "@/components/ui/typography";
 import { HoverRollText } from "@/components/ui/text-motion";
-import {
-  LocationMap,
-  CopyAddressButton,
-  DirectionsButton,
-} from "./LocationMap";
 
 interface HomeViewProps {
   categories: Category[];
-  newestEquipment: EquipmentWithDetails[];
+  newestEquipment?: EquipmentWithDetails[];
   categoryCounts: Record<number, number>;
   totalActiveTypes: number;
   totalAvailableUnits: number;
   whatsappAdmin: string;
   dpPersen: number;
-  alamat: string;
-  jamOperasional: string;
-  mapsEmbedUrl: string;
+  alamat?: string;
+  jamOperasional?: string;
+  mapsEmbedUrl?: string;
   lokasiLat?: number;
   lokasiLng?: number;
 }
 
 export function HomeView({
   categories,
-  newestEquipment,
   categoryCounts,
   totalActiveTypes,
   totalAvailableUnits,
   whatsappAdmin,
   dpPersen,
-  alamat,
-  jamOperasional,
-  mapsEmbedUrl,
-  lokasiLat = LOKASI_DEFAULT.lat,
-  lokasiLng = LOKASI_DEFAULT.lng,
 }: HomeViewProps) {
   const cleanWa = normalizeAdminPhone(whatsappAdmin);
   const effectiveDp = Number(dpPersen) > 0 ? Number(dpPersen) : 30;
-
-  const effectiveAlamat =
-    alamat &&
-      alamat !== "Isi alamat pengambilan alat di sini" &&
-      alamat !== "Jl. Raya Rental No. 12, Jakarta"
-      ? alamat
-      : LOKASI_DEFAULT.alamat;
 
   return (
     <div className="flex flex-col w-full bg-[#FAFAF8] text-[#234E5C]">
@@ -81,7 +57,7 @@ export function HomeView({
           1. HERO SECTION (Dua Kolom)
           ======================================================== */}
       <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="site-container">
           <div className="max-w-3xl space-y-6">
             <div className="space-y-2">
               <H1 hero>PIRANTIKU</H1>
@@ -122,7 +98,7 @@ export function HomeView({
           2. KATEGORI ALAT (Wadah Besar --panel berisi Kartu Putih)
           ======================================================== */}
       <section className="py-12 md:py-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="site-container">
           <div className="rounded-[40px] bg-[#F3F3EF] p-6 sm:p-10 md:p-14 space-y-10 border border-[#E8E8E1]">
             <div className="space-y-2">
               <H2>KATEGORI ALAT</H2>
@@ -219,7 +195,7 @@ export function HomeView({
           3. TENTANG PIRANTIKU (Dua Kolom: Teks Jujur & Gambar/Slot)
           ======================================================== */}
       <section className="py-12 md:py-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <div className="site-container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Kolom Kiri: Teks Konkret dan Jujur */}
             <div className="lg:col-span-7 space-y-6">
@@ -277,8 +253,8 @@ export function HomeView({
       {/* ========================================================
           4. STRIP STATISTIK (Empat Kotak Bergaris Tipis)
           ======================================================== */}
-      <section className="py-8 md:py-12">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <section className="py-8 md:py-16">
+        <div className="site-container">
           <Stagger
             staggerDelay={0.06}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
@@ -327,309 +303,6 @@ export function HomeView({
               </div>
             </StaggerItem>
           </Stagger>
-        </div>
-      </section>
-
-      {/* ========================================================
-          5. PILIHAN ALAT (6 Alat Terbaru dari Database)
-          ======================================================== */}
-      <section className="py-12 md:py-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <H2>PILIHAN ALAT</H2>
-              <Lead className="text-sm text-[#5F7A84] font-semibold mt-1">
-                Perlengkapan terbaru yang siap dibooking hari ini.
-              </Lead>
-            </div>
-            <Link
-              href="/alat"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#A0630F] hover:underline uppercase tracking-wide group"
-            >
-              Lihat semua alat
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-
-          {/* Baris Kartu Foto Persegi (Desktop Grid 3 atau 6, Mobile horizontal snap) */}
-          <div className="overflow-x-auto pb-4 pt-1 snap-x snap-mandatory flex gap-5 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 md:overflow-visible">
-            {newestEquipment.map((item, index) => {
-              const dbImage =
-                item.images?.find((img) => img.is_utama)?.url ||
-                item.images?.[0]?.url ||
-                null;
-              const primaryImage =
-                getProductImage(item.slug, dbImage) ||
-                getProductImage(item.id, dbImage) ||
-                dbImage;
-              const IconComp = getCategoryIcon(item.category?.ikon);
-              const delay = (index % 6) * 0.05;
-
-              return (
-                <Reveal
-                  key={item.id}
-                  delay={delay}
-                  duration={0.35}
-                  className="min-w-[220px] sm:min-w-[240px] md:min-w-0 snap-start flex flex-col justify-between rounded-2xl border border-[#E8E8E1] bg-white p-3 hover:shadow-md transition-all group"
-                >
-                  <Link href={`/alat/${item.slug}`} className="block space-y-3">
-                    {/* Foto Persegi rounded-2xl dengan overflow hidden dan hover zoom 1.04 */}
-                    <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#F5F3EB] border border-[#E8E8E1]/60">
-                      <SafeImage
-                        src={primaryImage || ""}
-                        alt={item.nama}
-                        fill
-                        sizes="(max-width: 640px) 240px, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 200px"
-                        className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-                        fallback={
-                          <div className="flex flex-col items-center justify-center h-full w-full p-4 text-[#234E5C]">
-                            <IconComp className="h-10 w-10 stroke-[1.8]" />
-                            <span className="text-[10px] text-[#5F7A84] mt-2 font-medium">
-                              {item.category?.nama || "Peralatan"}
-                            </span>
-                          </div>
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-1 px-1">
-                      <span className="text-[11px] font-semibold text-[#5F7A84] block truncate">
-                        {item.category?.nama || "Alat"}
-                      </span>
-                      <h3 className="text-sm font-bold text-[#234E5C] line-clamp-1 group-hover:text-[#A0630F] transition-colors">
-                        {item.nama}
-                      </h3>
-                      <p className="text-sm font-bold text-[#A0630F] pt-1">
-                        {formatRupiah(item.harga_per_hari)}{" "}
-                        <span className="text-xs font-normal text-[#5F7A84]">/ hari</span>
-                      </p>
-                    </div>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-          6. CARA SEWA (id="cara-sewa", 3 Langkah Bernomor Besar)
-          ======================================================== */}
-      <section id="cara-sewa" className="py-12 md:py-20 scroll-mt-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="space-y-2">
-            <H2>CARA BOOKING</H2>
-            <Lead className="text-base text-[#5F7A84] font-bold">
-              Tiga langkah praktis untuk booking peralatan kebutuhan Anda.
-            </Lead>
-          </div>
-
-          <Stagger
-            staggerDelay={0.08}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            {/* Langkah 1 */}
-            <StaggerItem>
-              <div className="bg-white border border-[#E8E8E1] rounded-xl p-8 space-y-4 h-full flex flex-col justify-between">
-                <div className="space-y-4">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-[#234E5C] leading-none block">
-                    01
-                  </span>
-                  <h3 className="text-lg font-bold text-[#234E5C]">
-                    Pilih alat dan tanggal
-                  </h3>
-                  <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Jelajahi katalog dan pilih perlengkapan yang Anda perlukan. Tentukan tanggal mulai dan selesai peminjaman untuk melihat sisa stok yang tersedia secara real-time.
-                  </p>
-                </div>
-              </div>
-            </StaggerItem>
-
-            {/* Langkah 2 */}
-            <StaggerItem>
-              <div className="bg-white border border-[#E8E8E1] rounded-xl p-8 space-y-4 h-full flex flex-col justify-between">
-                <div className="space-y-4">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-[#A0630F] leading-none block">
-                    02
-                  </span>
-                  <h3 className="text-lg font-bold text-[#234E5C]">
-                    Booking dan bayar DP
-                  </h3>
-                  <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Kunci unit alat pesanan Anda dengan membayar uang muka (DP) {effectiveDp}% via transfer bank atau QRIS. Admin akan segera memverifikasi pesanan Anda.
-                  </p>
-                </div>
-              </div>
-            </StaggerItem>
-
-            {/* Langkah 3 */}
-            <StaggerItem>
-              <div className="bg-white border border-[#E8E8E1] rounded-xl p-8 space-y-4 h-full flex flex-col justify-between">
-                <div className="space-y-4">
-                  <span className="text-4xl sm:text-5xl font-extrabold text-[#2E5E4E] leading-none block">
-                    03
-                  </span>
-                  <h3 className="text-lg font-bold text-[#234E5C]">
-                    Ambil alat, pakai, lalu kembalikan
-                  </h3>
-                  <p className="text-sm text-[#5F7A84] leading-relaxed">
-                    Pengambilan unit dilakukan langsung di workshop/toko kami (wajib bawa kartu identitas fisik asli seperti KTP atau SIM atas nama pemesan untuk verifikasi). Selesaikan sisa sewa serta deposit jaminan, gunakan alat dengan baik, dan kembalikan tepat waktu untuk pencairan utuh deposit Anda.
-                  </p>
-                </div>
-              </div>
-            </StaggerItem>
-          </Stagger>
-        </div>
-      </section>
-
-      {/* ========================================================
-          7. LOKASI & KONTAK (id="kontak")
-          ======================================================== */}
-      <section id="kontak" className="py-12 md:py-20 scroll-mt-20">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="space-y-2">
-            <H2>LOKASI & KONTAK</H2>
-            <Lead className="text-base text-[#5F7A84] font-bold">
-              Kunjungi toko kami atau hubungi nomor layanan untuk konsultasi booking.
-            </Lead>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            {/* Informasi Alamat & Jam Kerja */}
-            <Reveal delay={0.05} className="lg:col-span-5 h-full">
-              <div className="bg-white border border-[#E8E8E1] rounded-xl p-6 space-y-6 h-full flex flex-col justify-between">
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                      <MapPin className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                        Alamat Pengambilan Alat
-                      </h3>
-                      <p
-                        id="alamat-pengambilan-text"
-                        className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed"
-                      >
-                        {effectiveAlamat}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                        Jam Operasional
-                      </h3>
-                      <p className="text-sm font-semibold text-[#234E5C] mt-1 leading-relaxed">
-                        {jamOperasional || "Senin - Minggu: 08.00 - 21.00 WIB"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4 border-t border-[#E8E8E1] pt-6">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F3F3EF] text-[#234E5C] shrink-0 mt-0.5">
-                      <MessageCircle className="h-5 w-5 text-[#A0630F]" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-[#5F7A84]">
-                        WhatsApp Pelayanan
-                      </h3>
-                      <a
-                        href={`https://wa.me/${cleanWa}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-bold text-[#A0630F] hover:underline mt-1 block"
-                      >
-                        {cleanWa === "6285701516287" ? "+62 857-0151-6287" : `+${cleanWa}`}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dua tombol pill kecil: Petunjuk Arah & Salin Alamat */}
-                <div className="border-t border-[#E8E8E1] pt-6 flex flex-wrap items-center gap-3">
-                  <DirectionsButton lat={lokasiLat} lng={lokasiLng} />
-                  <CopyAddressButton
-                    alamat={effectiveAlamat}
-                    targetElementId="alamat-pengambilan-text"
-                  />
-                </div>
-              </div>
-            </Reveal>
-
-            {/* Google Maps Embed Iframe - with once: true so it never reloads */}
-            <Reveal once={true} delay={0.1} className="lg:col-span-7 h-full">
-              <LocationMap
-                lat={lokasiLat}
-                lng={lokasiLng}
-                embedUrl={mapsEmbedUrl}
-                alamat={effectiveAlamat}
-              />
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================
-          8. KARTU CTA WADAH RAPI BERGAYA MODERN (CONTAINER CARD)
-          ======================================================== */}
-      <section className="w-full py-16 sm:py-24 bg-[#FAFAF8]">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="rounded-[28px] sm:rounded-[36px] border border-[#2E5E4E]/30 bg-white p-8 sm:p-14 md:p-16 text-center space-y-6 shadow-sm">
-              {/* Pill Badge Centered */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EBF4F0] border border-[#2E5E4E]/20 text-[#1E7450] text-xs font-semibold">
-                <Package className="h-3.5 w-3.5" />
-                <span>Mulai Booking Dalam 2 Menit</span>
-              </div>
-
-              {/* Judul Besar Sesuai Layout Referensi */}
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#1F2937] max-w-3xl mx-auto leading-tight">
-                Siap Booking Perlengkapan &amp; Melipatgandakan Kelancaran Acara Anda?
-              </h2>
-
-              {/* Teks Pendukung */}
-              <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#5F7A84] leading-relaxed">
-                Pilih perlengkapan yang Anda butuhkan tanpa ribet. Booking langsung, amankan unit dengan DP fleksibel {effectiveDp}%, dan nikmati alat terawat siap pakai untuk segala kebutuhan aktivitas Anda.
-              </p>
-
-              {/* Tombol Aksi Utama */}
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <Link href="/alat">
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#1E7450] hover:bg-[#16583D] active:scale-[0.98] text-white text-sm sm:text-base font-bold shadow-sm transition-all cursor-pointer"
-                  >
-                    <span>Lihat Katalog Alat Sekarang &mdash; Siap Pakai &rarr;</span>
-                  </button>
-                </Link>
-
-                <a
-                  href={`https://wa.me/${cleanWa}?text=Halo%20Admin%20PirantiKu,%20saya%20ingin%20tanya%20seputar%20booking%20alat`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button
-                    variant="outline"
-                    className="h-12 px-6 rounded-xl border-[#E8E8E1] text-[#234E5C] text-sm font-bold flex items-center gap-2 hover:bg-[#FAFAF8]"
-                  >
-                    <MessageCircle className="h-4 w-4 text-[#25D366]" />
-                    <span>Hubungi Admin WhatsApp</span>
-                  </Button>
-                </a>
-              </div>
-
-              {/* Poin Kepercayaan dengan Centang (Trust Checkmarks) */}
-              <div className="pt-2 text-xs sm:text-sm text-[#5F7A84] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                <span>&check; Tanpa jaminan berbelit. Cukup KTP / SIM fisik saat serah terima.</span>
-                <span>&check; Deposit jaminan kembali utuh 100% tanpa potongan tersembunyi.</span>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
     </div>
