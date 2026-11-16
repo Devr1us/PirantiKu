@@ -191,7 +191,7 @@ export function NavbarClient({
           : "border-b border-transparent shadow-none"
         }`}
     >
-      <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="site-container flex h-20 items-center justify-between">
         {/* Sisi Kiri: Wordmark PirantiKu */}
         <div className="flex items-center gap-6">
           <Wordmark />

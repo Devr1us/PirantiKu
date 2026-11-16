@@ -92,7 +92,7 @@ export default function RootLayout({
         <MotionProvider>
           <CartProvider>
             <Navbar />
-            <main className="flex-1 flex flex-col w-full">
+            <main className="flex-1 flex flex-col w-full items-stretch">
               {children}
             </main>
             <FooterWrapper>

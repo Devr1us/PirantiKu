@@ -75,6 +75,42 @@ html {
   width: 100%;
 }
 
+/* Container Terpadu Konsisten untuk Seluruh Halaman & Navbar */
+.site-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .site-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* Grid Layout Terkunci Halaman Katalog */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .catalog-layout {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

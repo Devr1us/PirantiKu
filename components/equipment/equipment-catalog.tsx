@@ -490,9 +490,9 @@ export function EquipmentCatalog({
   }, [filteredEquipment, visibleCount]);
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="site-container py-10 space-y-8 bg-[#FAFAF8] text-[#234E5C] self-stretch">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
-      <div className="space-y-2 border-b border-[#E8E8E1] pb-6">
+      <div className="w-full space-y-2 border-b border-[#E8E8E1] pb-6">
         <H1 className="section-title block">
           {categoryTitle ? categoryTitle.toUpperCase() : "KATALOG BOOKING ALAT"}
         </H1>
@@ -503,9 +503,9 @@ export function EquipmentCatalog({
       </div>
 
       {/* Control Bar: Pencarian & Pengurutan */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Form Pencarian */}
-        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md w-full">
+        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-[450px] w-full">
           <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-[#5F7A84] pointer-events-none" />
           <Input
             type="search"
@@ -531,7 +531,7 @@ export function EquipmentCatalog({
           )}
         </form>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto">
+        <div className="flex items-center gap-2 self-end sm:self-auto w-full sm:w-auto shrink-0">
           {/* Tombol Filter Mobile */}
           <div className="lg:hidden flex-1 sm:flex-none">
             <Sheet
@@ -565,7 +565,7 @@ export function EquipmentCatalog({
           </div>
 
           {/* Pengurutan */}
-          <div className="relative flex-1 sm:flex-none">
+          <div className="relative shrink-0 w-full sm:w-48">
             <select
               value={currentSort}
               onChange={(e) => handleSortChange(e.target.value)}
@@ -582,9 +582,9 @@ export function EquipmentCatalog({
       </div>
 
       {/* Konten Utama: Filter di Wadah --panel + Grid Kartu Alat */}
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-8 items-start w-full">
+      <div className="catalog-layout">
         {/* Sidebar Filter Desktop: Lebar tetap 260px, align-self start */}
-        <aside className="hidden lg:block w-[260px] shrink-0 self-start">
+        <aside className="hidden lg:block w-[260px] min-w-[260px] max-w-[260px] shrink-0 self-start">
           <div className="sticky top-[calc(var(--navbar-offset)+24px)] max-h-[calc(100vh-var(--navbar-offset)-48px)] flex flex-col rounded-2xl bg-[#F3F3EF] border border-[#E8E8E1] shadow-xs transition-[top] duration-300 overflow-hidden">
             {/* Header Sticky Card */}
             <div className="flex items-center justify-between p-4 px-5 border-b border-[#E8E8E1] shrink-0 bg-[#F3F3EF]">
@@ -613,8 +613,8 @@ export function EquipmentCatalog({
         </aside>
 
         {/* Kolom Kanan: Hasil Pencarian & Grid Alat */}
-        <main className="min-w-0 w-full space-y-6">
-          <div className="text-xs font-semibold text-[#5F7A84] flex items-center justify-between min-h-[28px]">
+        <div className="w-full min-w-0 space-y-6">
+          <div className="w-full text-xs font-semibold text-[#5F7A84] flex items-center justify-between min-h-[28px]">
             <span>
               Menampilkan <strong className="text-[#234E5C] font-bold">{Math.min(visibleCount, filteredEquipment.length)}</strong> dari <strong className="text-[#234E5C] font-bold">{filteredEquipment.length}</strong> alat siap booking
             </span>
@@ -627,13 +627,13 @@ export function EquipmentCatalog({
 
           {/* Wrapper area hasil dengan min-height stabil dan transisi opacity */}
           <div
-            className={`min-h-[max(60vh,520px)] flex flex-col justify-start transition-opacity duration-150 ${
+            className={`w-full min-w-0 min-h-[520px] lg:min-h-[max(60vh,520px)] flex flex-col justify-start transition-opacity duration-150 ${
               isPending ? "opacity-60 pointer-events-none" : "opacity-100"
             }`}
           >
             {filteredEquipment.length > 0 ? (
               <div className="space-y-8 w-full">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 content-start">
+                <div className="w-full grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6 content-start">
                   {displayedEquipment.map((item, index) => {
                     if (shouldReduceMotion) {
                       return (
@@ -679,7 +679,7 @@ export function EquipmentCatalog({
                 )}
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-2xl border border-dashed border-[#E8E8E1] bg-white w-full shadow-xs">
+              <div className="w-full min-h-[420px] flex-1 flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-2xl border border-dashed border-[#E8E8E1] bg-white shadow-xs">
                 <Package className="h-12 w-12 text-[#5F7A84]/50 mb-3" />
                 <h3 className="text-base font-bold text-[#234E5C]">
                   Tidak ada alat yang cocok
@@ -700,7 +700,7 @@ export function EquipmentCatalog({
               </div>
             )}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
