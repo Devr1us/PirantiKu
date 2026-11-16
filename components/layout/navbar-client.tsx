@@ -174,15 +174,20 @@ export function NavbarClient({
     "Penyewa";
   const userInitials = displayName.slice(0, 2).toUpperCase();
 
+  // Sembunyikan avatar profil saat masih berada di halaman login/daftar agar tidak muncul sebelum redirect selesai
+  const isAuthPage = pathname === "/login" || pathname === "/daftar";
+  const shouldShowUser = Boolean(currentUser && !isAuthPage);
+
   return (
     <motion.header
       ref={headerRef}
       animate={{
         y: isVisible ? 0 : "-100%",
+        opacity: isVisible ? 1 : 0,
       }}
       transition={{
-        duration: isVisible ? 0.25 : 0.3,
-        ease: isVisible ? [0.22, 1, 0.36, 1] : [0, 0, 0.2, 1],
+        duration: isVisible ? 0.3 : 0.25,
+        ease: isVisible ? [0.16, 1, 0.3, 1] : [0.4, 0, 0.2, 1],
       }}
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
@@ -311,74 +316,81 @@ export function NavbarClient({
 
           {/* Tombol Auth Desktop */}
           <div className="hidden sm:flex items-center gap-2">
-            {currentUser ? (
-              <DropdownMenu onOpenChange={setIsDropdownOpen}>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex items-center gap-2.5 rounded-full border border-[#E8E8E1] bg-white pl-2 pr-3.5 py-1.5 hover:border-[#234E5C] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#234E5C]/20"
-                  >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
-                      {userInitials}
-                    </div>
-                    <span className="max-w-[120px] truncate text-xs font-bold text-[#234E5C]">
-                      {displayName}
-                    </span>
-                    <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-xl">
-                  <DropdownMenuLabel className="px-3 py-2 font-normal">
-                    <p className="text-sm font-bold text-[#234E5C]">{displayName}</p>
-                    <p className="text-xs text-[#5F7A84] truncate">{currentUser.email}</p>
-                    {isAdmin && (
-                      <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
-                        ADMINISTRATOR
+            {shouldShowUser ? (
+              <motion.div
+                key="desktop-profile-badge"
+                initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <DropdownMenu onOpenChange={setIsDropdownOpen}>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex items-center gap-2.5 rounded-full border border-[#E8E8E1] bg-white pl-2 pr-3.5 py-1.5 hover:border-[#234E5C] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#234E5C]/20"
+                    >
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#234E5C] text-white text-xs font-bold">
+                        {userInitials}
+                      </div>
+                      <span className="max-w-[120px] truncate text-xs font-bold text-[#234E5C]">
+                        {displayName}
                       </span>
+                      <ChevronDown className="h-3.5 w-3.5 text-[#5F7A84]" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 p-2 bg-white border-[#E8E8E1] rounded-2xl shadow-xl">
+                    <DropdownMenuLabel className="px-3 py-2 font-normal">
+                      <p className="text-sm font-bold text-[#234E5C]">{displayName}</p>
+                      <p className="text-xs text-[#5F7A84] truncate">{currentUser?.email}</p>
+                      {isAdmin && (
+                        <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-[#A0630F] bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#FDE68A]">
+                          ADMINISTRATOR
+                        </span>
+                      )}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                    {!isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/booking-saya"
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                        >
+                          <Calendar className="h-4 w-4 text-[#5F7A84]" />
+                          <span>Booking Saya</span>
+                        </Link>
+                      </DropdownMenuItem>
                     )}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-                  {!isAdmin && (
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/admin"
+                          className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                        >
+                          <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
+                          <span>Panel Admin</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link
-                        href="/booking-saya"
+                        href="/profil"
                         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
                       >
-                        <Calendar className="h-4 w-4 text-[#5F7A84]" />
-                        <span>Booking Saya</span>
+                        <UserIcon className="h-4 w-4 text-[#5F7A84]" />
+                        <span>Profil Akun</span>
                       </Link>
                     </DropdownMenuItem>
-                  )}
-                  {isAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/admin"
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
-                      >
-                        <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
-                        <span>Panel Admin</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/profil"
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#234E5C] hover:bg-[#F3F3EF] rounded-xl cursor-pointer"
+                    <DropdownMenuSeparator className="bg-[#E8E8E1]" />
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-xl cursor-pointer"
                     >
-                      <UserIcon className="h-4 w-4 text-[#5F7A84]" />
-                      <span>Profil Akun</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-[#E8E8E1]" />
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-xl cursor-pointer"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Keluar Akun</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <LogOut className="h-4 w-4" />
+                      <span>Keluar Akun</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </motion.div>
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login">
@@ -494,7 +506,7 @@ export function NavbarClient({
                         KONTAK
                       </Link>
 
-                      {currentUser && !isAdmin && (
+                      {shouldShowUser && !isAdmin && (
                         <Link
                           href="/booking-saya"
                           onClick={() => setIsMobileOpen(false)}
@@ -504,7 +516,7 @@ export function NavbarClient({
                         </Link>
                       )}
 
-                      {currentUser && (
+                      {shouldShowUser && (
                         <Link
                           href="/profil"
                           onClick={() => setIsMobileOpen(false)}
@@ -514,7 +526,7 @@ export function NavbarClient({
                         </Link>
                       )}
 
-                      {isAdmin && (
+                      {shouldShowUser && isAdmin && (
                         <Link
                           href="/admin"
                           onClick={() => setIsMobileOpen(false)}
@@ -540,8 +552,14 @@ export function NavbarClient({
                     Hubungi Admin via WhatsApp
                   </a>
 
-                  {currentUser ? (
-                    <div className="space-y-2">
+                  {shouldShowUser ? (
+                    <motion.div
+                      key="mobile-user-profile"
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-2"
+                    >
                       <Link
                         href="/profil"
                         onClick={() => setIsMobileOpen(false)}
@@ -557,7 +575,7 @@ export function NavbarClient({
                               {displayName}
                             </span>
                             <span className="text-[11px] text-[#5F7A84] truncate">
-                              {currentUser.email}
+                              {currentUser?.email}
                             </span>
                           </div>
                         </div>
@@ -576,7 +594,7 @@ export function NavbarClient({
                       >
                         Keluar Akun
                       </Button>
-                    </div>
+                    </motion.div>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       <Link href="/login" onClick={() => setIsMobileOpen(false)}>

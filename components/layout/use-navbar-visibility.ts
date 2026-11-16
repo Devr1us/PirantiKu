@@ -25,13 +25,14 @@ export function useNavbarVisibility({
   const isVisibleRef = React.useRef(true);
   const isScrolledRef = React.useRef(false);
   const lastScrollY = React.useRef(0);
+  const idleTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Sync CSS variable --navbar-offset on <html>
-  const updateNavbarOffset = React.useCallback((visible: boolean) => {
+  const updateNavbarOffset = React.useCallback((_visible: boolean) => {
     if (typeof document !== "undefined") {
       document.documentElement.style.setProperty(
         "--navbar-offset",
-        visible ? "80px" : "0px"
+        "80px"
       );
     }
   }, []);
@@ -41,12 +42,19 @@ export function useNavbarVisibility({
     updateNavbarOffset(true);
     return () => {
       updateNavbarOffset(true);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
     };
   }, [updateNavbarOffset]);
 
   // If any exemption is active, force navbar visible
   React.useEffect(() => {
     if (isMobileOpen || isDropdownOpen || isHovered) {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
       if (!isVisibleRef.current) {
         isVisibleRef.current = true;
         setIsVisible(true);
@@ -54,6 +62,28 @@ export function useNavbarVisibility({
       }
     }
   }, [isMobileOpen, isDropdownOpen, isHovered, updateNavbarOffset]);
+
+  // Dengarkan event 'scrollend' native di browser modern agar navbar langsung muncul saat scroll berhenti
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleScrollEnd = () => {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        setIsVisible(true);
+        updateNavbarOffset(true);
+      }
+    };
+
+    window.addEventListener("scrollend", handleScrollEnd, { passive: true });
+    return () => {
+      window.removeEventListener("scrollend", handleScrollEnd);
+    };
+  }, [updateNavbarOffset]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     // If reduced motion is preferred, never hide navbar
@@ -77,8 +107,12 @@ export function useNavbarVisibility({
       setIsScrolled(scrolled);
     }
 
-    // Always visible at or above top of page (including iOS bounce negative values)
-    if (latest <= 0) {
+    // 1. Selalu tampil jika di bagian atas halaman (termasuk iOS bounce)
+    if (latest <= 20) {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
       if (!isVisibleRef.current) {
         isVisibleRef.current = true;
         setIsVisible(true);
@@ -87,15 +121,15 @@ export function useNavbarVisibility({
       return;
     }
 
-    // Check exemption conditions:
-    // - Mobile sheet is open
-    // - Dropdown is open
-    // - Pointer is hovering over navbar
-    // - Element inside navbar has keyboard focus (:focus-within)
+    // 2. Kondisi pengecualian: Menu mobile buka, Dropdown profil buka, Hover, atau keyboard focus
     const isFocusWithin =
       headerRef?.current?.matches?.(":focus-within") || false;
 
     if (isMobileOpen || isDropdownOpen || isHovered || isFocusWithin) {
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+        idleTimerRef.current = null;
+      }
       if (!isVisibleRef.current) {
         isVisibleRef.current = true;
         setIsVisible(true);
@@ -104,21 +138,28 @@ export function useNavbarVisibility({
       return;
     }
 
-    // Scroll DOWN > 8px and scrollY > 100px -> hide navbar
-    if (delta > 8 && latest > 100) {
+    // 3. Ketika di-scroll (baik scroll down maupun scroll up):
+    // Navbar menghilang / terkena animasi exit
+    if (Math.abs(delta) > 2) {
       if (isVisibleRef.current) {
         isVisibleRef.current = false;
         setIsVisible(false);
         updateNavbarOffset(false);
       }
-    }
-    // Scroll UP > 4px -> show navbar again
-    else if (delta < -4) {
-      if (!isVisibleRef.current) {
-        isVisibleRef.current = true;
-        setIsVisible(true);
-        updateNavbarOffset(true);
+
+      // Reset timer idle setiap kali user masih melakukan scrolling
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
       }
+
+      // 4. Ketika diam atau tidak scroll: navbar akan muncul kembali secara halus
+      idleTimerRef.current = setTimeout(() => {
+        if (!isVisibleRef.current) {
+          isVisibleRef.current = true;
+          setIsVisible(true);
+          updateNavbarOffset(true);
+        }
+      }, 650);
     }
   });
 

@@ -15,6 +15,7 @@ import {
   ArrowRight,
   AlertCircle,
   HelpCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,7 @@ function LoginForm() {
   const [resetEmail, setResetEmail] = React.useState("");
   const [isResetting, setIsResetting] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = React.useState(false);
 
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
@@ -128,7 +130,8 @@ function LoginForm() {
       }
 
       if (authData.user) {
-        toast.success("Berhasil masuk!");
+        setIsSuccess(true);
+        toast.success("Berhasil masuk! Mengalihkan ke beranda...");
 
         const { data: profile } = await supabase
           .from("profiles")
@@ -367,10 +370,15 @@ function LoginForm() {
               <Button
                 type="submit"
                 variant="warm"
-                disabled={isLoading}
+                disabled={isLoading || isSuccess}
                 className="w-full h-11 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
               >
-                {isLoading ? (
+                {isSuccess ? (
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                    <span>Mengalihkan ke beranda...</span>
+                  </span>
+                ) : isLoading ? (
                   <span>Memverifikasi...</span>
                 ) : (
                   <>
