@@ -75,6 +75,12 @@ html {
   width: 100%;
 }
 
+/* Hindari pergeseran layout (layout shift) akibat scroll-locking dari popover/dropdown/dialog */
+body[data-scroll-locked] {
+  padding-right: 0px !important;
+  margin-right: 0px !important;
+}
+
 /* Container Terpadu Konsisten untuk Seluruh Halaman & Navbar */
 .site-container {
   width: 100%;

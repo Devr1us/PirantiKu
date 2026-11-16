@@ -323,7 +323,7 @@ export function NavbarClient({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               >
-                <DropdownMenu onOpenChange={setIsDropdownOpen}>
+                <DropdownMenu onOpenChange={setIsDropdownOpen} modal={false}>
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
