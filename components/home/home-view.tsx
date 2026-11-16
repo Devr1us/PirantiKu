@@ -336,7 +336,7 @@ export function HomeView({
                     type="button"
                     className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-[#234E5C] hover:bg-[#1B3E49] active:scale-[0.98] text-white text-sm sm:text-base font-bold shadow-sm transition-all cursor-pointer"
                   >
-                    <span>Lihat Katalog Alat Sekarang &mdash; Siap Pakai &rarr;</span>
+                    <span>Lihat Katalog Alat</span>
                   </button>
                 </Link>
 
@@ -350,15 +350,9 @@ export function HomeView({
                     className="h-12 px-6 rounded-xl border-[#E8E8E1] text-[#234E5C] text-sm font-bold flex items-center gap-2 hover:bg-[#FAFAF8]"
                   >
                     <MessageCircle className="h-4 w-4 text-[#25D366]" />
-                    <span>Hubungi Admin WhatsApp</span>
+                    <span>Hubungi Admin</span>
                   </Button>
                 </a>
-              </div>
-
-              {/* Poin Kepercayaan dengan Centang (Trust Checkmarks) */}
-              <div className="pt-2 text-xs sm:text-sm text-[#5F7A84] flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-                <span>&check; Jaminan stok pasti per tanggal. Cukup KTP / SIM fisik saat serah terima.</span>
-                <span>&check; Deposit jaminan kembali utuh 100% tanpa potongan tersembunyi.</span>
               </div>
             </div>
           </Reveal>

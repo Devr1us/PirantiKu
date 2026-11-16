@@ -26,7 +26,14 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [adminUser, setAdminUser] = React.useState<{ name: string; email: string } | null>(null);
 
+  const isLoginPage = pathname === "/admin/login" || pathname?.startsWith("/admin/login");
+
   React.useEffect(() => {
+    // JANGAN periksa auth atau redirect jika berada di halaman login admin
+    if (isLoginPage) {
+      return;
+    }
+
     async function loadAdminUser() {
       try {
         const supabase = createClient();
@@ -67,7 +74,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
       }
     }
     loadAdminUser();
-  }, []);
+  }, [isLoginPage, pathname]);
 
   const handleSignOut = async () => {
     try {
@@ -91,7 +98,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   };
 
   // Jika halaman login admin, tampilkan children langsung tanpa sidebar
-  if (pathname === "/admin/login") {
+  if (isLoginPage) {
     return <>{children}</>;
   }
 

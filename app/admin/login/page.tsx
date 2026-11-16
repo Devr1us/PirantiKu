@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
-  ShieldAlert,
   Lock,
   Mail,
   Eye,
@@ -157,8 +156,7 @@ function AdminLoginForm() {
       >
         <div className="flex flex-col items-center text-center space-y-3">
           <Wordmark />
-          <div className="flex items-center gap-2 pt-2">
-            <ShieldAlert className="h-5 w-5 text-[#A0630F]" />
+          <div className="pt-2">
             <H1 className="text-lg font-bold uppercase tracking-tight text-[#234E5C]">
               Portal Pengelola Admin
             </H1>
