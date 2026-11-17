@@ -76,6 +76,36 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     loadAdminUser();
   }, [isLoginPage, pathname]);
 
+  // Otomatis tutup menu sidebar mobile jika beralih ke mode desktop (>= 1024px / lg)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleViewportChange = () => {
+      if (window.innerWidth >= 1024 || mediaQuery.matches) {
+        setIsMobileOpen((prev) => (prev ? false : prev));
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleViewportChange);
+    } else {
+      mediaQuery.addListener(handleViewportChange);
+    }
+
+    window.addEventListener("resize", handleViewportChange, { passive: true });
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleViewportChange);
+      } else {
+        mediaQuery.removeListener(handleViewportChange);
+      }
+      window.removeEventListener("resize", handleViewportChange);
+    };
+  }, []);
+
   const handleSignOut = async () => {
     try {
       const supabase = createClient();
@@ -233,7 +263,11 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
                 <Menu className="h-6 w-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72 bg-[#234E5C] text-white p-6 border-r-0 overflow-y-auto">
+            <SheetContent
+              side="left"
+              className="lg:hidden w-72 bg-[#234E5C] text-white p-6 border-r-0 overflow-y-auto"
+              overlayClassName="lg:hidden"
+            >
               {sidebarContent}
             </SheetContent>
           </Sheet>

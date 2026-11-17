@@ -226,6 +226,36 @@ export function EquipmentCatalog({
   const [debouncedQuery, setDebouncedQuery] = React.useState(currentQ);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
+  // Otomatis tutup filter mobile jika beralih ke mode desktop (>= 1024px / lg)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleViewportChange = () => {
+      if (window.innerWidth >= 1024 || mediaQuery.matches) {
+        setIsMobileFilterOpen((prev) => (prev ? false : prev));
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleViewportChange);
+    } else {
+      mediaQuery.addListener(handleViewportChange);
+    }
+
+    window.addEventListener("resize", handleViewportChange, { passive: true });
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleViewportChange);
+      } else {
+        mediaQuery.removeListener(handleViewportChange);
+      }
+      window.removeEventListener("resize", handleViewportChange);
+    };
+  }, []);
+
   // Sinkronisasi state pencarian jika URL berubah dari luar (misal tombol kembali / reset)
   const [prevQ, setPrevQ] = React.useState(currentQ);
 
@@ -550,7 +580,11 @@ export function EquipmentCatalog({
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[85vw] max-w-xs bg-white p-0 flex flex-col h-full">
+              <SheetContent
+                side="left"
+                className="lg:hidden w-[85vw] max-w-xs bg-white p-0 flex flex-col h-full"
+                overlayClassName="lg:hidden"
+              >
                 <SheetHeader className="text-left border-b border-[#E8E8E1] p-5 pb-4 shrink-0">
                   <SheetTitle className="text-base font-bold text-[#234E5C] flex items-center gap-2">
                     <SlidersHorizontal className="h-4 w-4 text-[#234E5C]" />

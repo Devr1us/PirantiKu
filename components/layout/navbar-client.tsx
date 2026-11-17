@@ -94,6 +94,36 @@ export function NavbarClient({
     };
   }, []);
 
+  // Otomatis tutup menu hamburger mobile ketika viewport beralih ke mode desktop (>= 1024px / lg)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleViewportChange = () => {
+      if (window.innerWidth >= 1024 || mediaQuery.matches) {
+        setIsMobileOpen((prev) => (prev ? false : prev));
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleViewportChange);
+    } else {
+      mediaQuery.addListener(handleViewportChange);
+    }
+
+    window.addEventListener("resize", handleViewportChange, { passive: true });
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleViewportChange);
+      } else {
+        mediaQuery.removeListener(handleViewportChange);
+      }
+      window.removeEventListener("resize", handleViewportChange);
+    };
+  }, []);
+
   const activeNav = useActiveNav();
   const shouldReduceMotion = useReducedMotion();
 
@@ -423,7 +453,11 @@ export function NavbarClient({
                   <Menu className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[85vw] max-w-sm bg-white p-6 flex flex-col justify-between">
+              <SheetContent
+                side="right"
+                className="lg:hidden w-[85vw] max-w-sm bg-white p-6 flex flex-col justify-between"
+                overlayClassName="lg:hidden"
+              >
                 <div>
                   <SheetHeader className="border-b border-[var(--border-soft)] pb-4 mb-4 text-left">
                     <Wordmark />
