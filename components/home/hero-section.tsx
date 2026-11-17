@@ -42,14 +42,14 @@ export function HeroSection({
       style={{
         background: "linear-gradient(180deg, #FAF7F2 0%, #F1F6F3 100%)",
       }}
-      className="relative w-full min-h-[calc(100svh-80px)] lg:h-[calc(100svh-80px)] flex items-center justify-center text-[var(--text-main)] py-12 lg:py-0 overflow-hidden"
+      className="relative w-full flex items-center justify-center text-[var(--text-main)] py-10 sm:py-14 lg:py-12 xl:py-16 min-h-[min(100svh-80px,840px)]"
     >
       <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-14 items-center">
           {/* ========================================================
-              KOLOM KIRI (±590px / col-span-7)
+              KOLOM KIRI (col-span-7)
               ======================================================== */}
-          <div className="lg:col-span-7 flex flex-col items-start justify-center space-y-6 sm:space-y-7">
+          <div className="lg:col-span-7 flex flex-col items-start justify-center space-y-4 sm:space-y-5 lg:space-y-4.5 xl:space-y-6">
             {/* 1. Badge Pil Krem */}
             <motion.div
               custom={1}
@@ -59,7 +59,7 @@ export function HeroSection({
             >
               <div
                 style={{ color: "var(--bg-dark)" }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-base)] border border-[var(--border-soft)] text-[var(--bg-dark)] text-xs sm:text-sm font-bold uppercase tracking-[0.16em] select-none shadow-xs"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[var(--bg-base)] border border-[var(--border-soft)] text-[var(--bg-dark)] text-xs sm:text-sm font-bold uppercase tracking-[0.14em] sm:tracking-[0.16em] select-none shadow-xs"
               >
                 <span>PIRANTIKU · BOOKING ALAT SERBA ADA</span>
               </div>
@@ -72,12 +72,12 @@ export function HeroSection({
               animate="visible"
               variants={fadeUpVariant}
               style={{ color: "var(--text-main)" }}
-              className="text-4xl sm:text-6xl lg:text-[62px] xl:text-[70px] 2xl:text-[76px] font-extrabold text-[var(--text-main)] leading-[1.06] tracking-tight"
+              className="text-3xl sm:text-5xl lg:text-[44px] xl:text-[56px] 2xl:text-[68px] font-extrabold text-[var(--text-main)] leading-[1.1] tracking-tight"
             >
               Booking Alat Tanpa Ribet,{" "}
               <span
                 style={{ backgroundColor: "var(--accent-gold)", color: "var(--bg-dark)" }}
-                className="inline-block bg-[var(--accent-gold)] text-[var(--bg-dark)] px-3 py-1 sm:px-4 sm:py-1.5 rounded-2xl shadow-xs"
+                className="inline-block bg-[var(--accent-gold)] text-[var(--bg-dark)] px-2.5 py-0.5 sm:px-4 sm:py-1 rounded-xl sm:rounded-2xl shadow-xs"
               >
                 Stok Pasti
               </span>
@@ -91,7 +91,7 @@ export function HeroSection({
               animate="visible"
               variants={fadeUpVariant}
               style={{ color: "var(--text-muted)" }}
-              className="text-base sm:text-lg xl:text-xl text-[var(--text-muted)] leading-relaxed max-w-xl xl:max-w-2xl font-medium"
+              className="text-sm sm:text-base lg:text-[15px] xl:text-lg text-[var(--text-muted)] leading-relaxed max-w-xl xl:max-w-2xl font-medium"
             >
               Camping, pertukangan, olahraga, hingga acara. Pilih tanggal, amankan stok dengan DP, lalu ambil alat tepat waktu.
             </motion.p>
@@ -102,12 +102,12 @@ export function HeroSection({
               initial="hidden"
               animate="visible"
               variants={fadeUpVariant}
-              className="flex flex-col min-[480px]:flex-row items-stretch min-[480px]:items-center gap-4 pt-1 w-full min-[480px]:w-auto"
+              className="flex flex-col min-[480px]:flex-row items-stretch min-[480px]:items-center gap-3 sm:gap-4 pt-1 w-full min-[480px]:w-auto"
             >
               {/* Tombol Lihat Katalog */}
               <Link
                 href="/alat"
-                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-[var(--bg-dark)] text-white font-bold text-base sm:text-lg shadow-[5px_5px_0_var(--bg-footer)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_var(--bg-footer)] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
+                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 xl:px-9 py-3 sm:py-3.5 xl:py-4 rounded-xl sm:rounded-2xl bg-[var(--bg-dark)] text-white font-bold text-sm sm:text-base xl:text-lg shadow-[4px_4px_0_var(--bg-footer)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--bg-footer)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
               >
                 <span>Lihat Katalog</span>
               </Link>
@@ -118,7 +118,7 @@ export function HeroSection({
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: "var(--bg-dark)", borderColor: "var(--bg-dark)" }}
-                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2.5 px-8 sm:px-9 py-4 rounded-2xl bg-white border-2 border-[var(--bg-dark)] text-[var(--bg-dark)] font-bold text-base sm:text-lg shadow-[5px_5px_0_var(--accent-gold)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0_var(--accent-gold)] active:translate-x-[5px] active:translate-y-[5px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
+                className="w-full min-[480px]:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 xl:px-9 py-3 sm:py-3.5 xl:py-4 rounded-xl sm:rounded-2xl bg-white border-2 border-[var(--bg-dark)] text-[var(--bg-dark)] font-bold text-sm sm:text-base xl:text-lg shadow-[4px_4px_0_var(--accent-gold)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_var(--accent-gold)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-150 cursor-pointer select-none"
               >
                 <span style={{ color: "var(--bg-dark)" }}>Hubungi Admin</span>
               </a>
@@ -141,31 +141,31 @@ export function HeroSection({
               animate="visible"
               variants={fadeUpVariant}
               style={{ color: "var(--text-main)" }}
-              className="flex flex-wrap items-center gap-x-5 sm:gap-x-8 gap-y-2.5 sm:gap-y-3 text-xs sm:text-base font-bold text-[var(--text-main)]"
+              className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 xl:gap-x-8 gap-y-2 sm:gap-y-2.5 text-xs sm:text-sm xl:text-base font-bold text-[var(--text-main)]"
             >
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
-                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="flex h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
+                  <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[3]" />
                 </span>
                 <span style={{ color: "var(--text-main)" }}>Stok terkunci per tanggal</span>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
-                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="flex h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
+                  <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[3]" />
                 </span>
                 <span style={{ color: "var(--text-main)" }}>DP mulai {effectiveDp}%</span>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
-                  <Check className="h-3.5 w-3.5 stroke-[3]" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="flex h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
+                  <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5 stroke-[3]" />
                 </span>
                 <span style={{ color: "var(--text-main)" }}>Tanpa antre, tinggal ambil</span>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-2.5">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="flex h-4.5 w-4.5 sm:h-5 sm:w-5 shrink-0 items-center justify-center rounded-full bg-[var(--bg-dark)] text-white">
                   <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </span>
                 <span style={{ color: "var(--text-main)" }}>Alat terawat</span>
@@ -176,7 +176,7 @@ export function HeroSection({
           {/* ========================================================
               KOLOM KANAN: KARTU NOTA BOOKING (col-span-5)
               ======================================================== */}
-          <div className="lg:col-span-5 w-full flex justify-center lg:justify-end mt-6 lg:mt-0">
+          <div className="lg:col-span-5 w-full flex justify-center lg:justify-end mt-4 lg:mt-0">
             <BookingReceiptCard totalActiveTypes={totalActiveTypes} />
           </div>
         </div>

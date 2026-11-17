@@ -68,7 +68,7 @@ export function BookingReceiptCard({
       }
       animate={{ opacity: 1, y: 0, rotate: 0 }}
       transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative w-full max-w-[460px] xl:max-w-[500px] 2xl:max-w-[530px] mx-auto select-none ${className}`}
+      className={`relative w-full max-w-[420px] lg:max-w-[390px] xl:max-w-[460px] 2xl:max-w-[500px] mx-auto select-none ${className}`}
     >
       {/* ========================================================
           1. LAPISAN KARTU BELAKANG (Layered Shadow Depth)
@@ -88,14 +88,14 @@ export function BookingReceiptCard({
       {/* ========================================================
           2. KARTU UTAMA PUTIH (Rounded-[28px] + Ticket Cutouts)
           ======================================================== */}
-      <div className="relative z-10 w-full rounded-[28px] bg-white border border-[var(--border-soft)] shadow-2xl shadow-black/10 p-6 sm:p-8 xl:p-9 text-[var(--text-main)] overflow-hidden">
+      <div className="relative z-10 w-full rounded-[24px] sm:rounded-[28px] bg-white border border-[var(--border-soft)] shadow-2xl shadow-black/10 p-5 sm:p-6 lg:p-5 xl:p-8 text-[var(--text-main)] overflow-hidden">
         {/* Header Nota: User, Jadwal, ID & Status Badge */}
-        <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-[var(--border-soft)]">
+        <div className="flex items-start justify-between gap-3 pb-3 border-b border-[var(--border-soft)]">
           <div>
             <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[var(--accent-gold)] block">
               USER
             </span>
-            <h4 className="text-2xl sm:text-[28px] font-black text-[var(--bg-dark)] tracking-tight leading-tight mt-0.5">
+            <h4 className="text-xl sm:text-2xl lg:text-xl xl:text-[26px] font-black text-[var(--bg-dark)] tracking-tight leading-tight mt-0.5">
               {data.customerName}
             </h4>
             <p className="text-xs sm:text-[13px] text-[var(--text-muted)] font-medium mt-1">
@@ -115,11 +115,11 @@ export function BookingReceiptCard({
         </div>
 
         {/* Kotak Abu Krem: KODE BOOKING Besar */}
-        <div className="my-4 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-soft)] p-3.5 sm:p-4.5 text-center">
+        <div className="my-3.5 rounded-2xl bg-[var(--bg-base)] border border-[var(--border-soft)] p-3 sm:p-4 text-center">
           <span className="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-widest text-[var(--text-muted)] block">
             KODE BOOKING
           </span>
-          <div className="text-3xl sm:text-[46px] xl:text-[50px] font-black tracking-[0.2em] text-[var(--bg-dark)] font-mono leading-tight py-1">
+          <div className="text-2xl sm:text-4xl lg:text-3xl xl:text-[44px] font-black tracking-[0.2em] text-[var(--bg-dark)] font-mono leading-tight py-1">
             {data.bookingCode}
           </div>
           <p className="text-[11px] sm:text-xs text-[var(--text-muted)]">
