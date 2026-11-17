@@ -219,8 +219,8 @@ export function NavbarClient({
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
       className={`sticky top-0 z-50 w-full h-20 box-border bg-white/85 backdrop-blur-md transition-[border-color,box-shadow] duration-200 print:hidden ${isScrolled
-          ? "border-b border-[var(--border-soft)] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
-          : "border-b border-[var(--border-soft)] shadow-none"
+        ? "border-b border-[var(--border-soft)] shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
+        : "border-b border-[var(--border-soft)] shadow-none"
         }`}
     >
       <div className="site-container flex h-full items-center justify-between gap-4 sm:gap-6">
@@ -237,11 +237,10 @@ export function NavbarClient({
               href="/"
               onClick={(e) => handleNavLinkClick(e, "/")}
               aria-current={activeNav === "beranda" ? "page" : undefined}
-              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
-                activeNav === "beranda"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${activeNav === "beranda"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-              }`}
+                }`}
             >
               <HoverRollText text="BERANDA" />
               {activeNav === "beranda" && (
@@ -258,11 +257,10 @@ export function NavbarClient({
               href="/alat"
               onClick={(e) => handleNavLinkClick(e, "/alat")}
               aria-current={activeNav === "katalog" ? "page" : undefined}
-              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
-                activeNav === "katalog"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${activeNav === "katalog"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-              }`}
+                }`}
             >
               <HoverRollText text="KATALOG" />
               {activeNav === "katalog" && (
@@ -279,11 +277,10 @@ export function NavbarClient({
               href="/cara-booking"
               onClick={(e) => handleNavLinkClick(e, "/cara-booking")}
               aria-current={activeNav === "cara-sewa" ? "page" : undefined}
-              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
-                activeNav === "cara-sewa"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${activeNav === "cara-sewa"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-              }`}
+                }`}
             >
               <HoverRollText text="CARA BOOKING" />
               {activeNav === "cara-sewa" && (
@@ -300,11 +297,10 @@ export function NavbarClient({
               href="/kontak"
               onClick={(e) => handleNavLinkClick(e, "/kontak")}
               aria-current={activeNav === "kontak" ? "page" : undefined}
-              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${
-                activeNav === "kontak"
+              className={`relative px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer ${activeNav === "kontak"
                   ? "text-[var(--bg-dark)] font-bold"
                   : "text-[var(--text-main)]/80 hover:text-[var(--bg-dark)]"
-              }`}
+                }`}
             >
               <HoverRollText text="KONTAK" />
               {activeNav === "kontak" && (
@@ -470,8 +466,8 @@ export function NavbarClient({
                         onClick={(e) => handleMobileNavLinkClick(e, "/")}
                         aria-current={activeNav === "beranda" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "beranda"
-                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
-                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
+                          ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                          : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "beranda" && (
@@ -489,8 +485,8 @@ export function NavbarClient({
                         onClick={(e) => handleMobileNavLinkClick(e, "/alat")}
                         aria-current={activeNav === "katalog" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "katalog"
-                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
-                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
+                          ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                          : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "katalog" && (
@@ -508,8 +504,8 @@ export function NavbarClient({
                         onClick={(e) => handleMobileNavLinkClick(e, "/cara-booking")}
                         aria-current={activeNav === "cara-sewa" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "cara-sewa"
-                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
-                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
+                          ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                          : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "cara-sewa" && (
@@ -527,8 +523,8 @@ export function NavbarClient({
                         onClick={(e) => handleMobileNavLinkClick(e, "/kontak")}
                         aria-current={activeNav === "kontak" ? "page" : undefined}
                         className={`relative px-3.5 py-2.5 rounded-xl text-sm font-bold uppercase transition-colors ${activeNav === "kontak"
-                            ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
-                            : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
+                          ? "bg-[var(--bg-sage)] text-[var(--bg-dark)]"
+                          : "text-[var(--text-main)] hover:bg-[var(--bg-sage)]"
                           }`}
                       >
                         {activeNav === "kontak" && (

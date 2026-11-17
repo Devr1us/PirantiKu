@@ -96,11 +96,10 @@ function FilterSidebar({
             <button
               type="button"
               onClick={() => handleCategorySelect("")}
-              className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${
-                !currentCategory
+              className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${!currentCategory
                   ? "bg-[#234E5C] text-white"
                   : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-              }`}
+                }`}
             >
               <span className="min-w-0 flex-1 truncate text-left">Semua Kategori</span>
               <span className="text-[11px] opacity-80 shrink-0">
@@ -119,11 +118,10 @@ function FilterSidebar({
                   key={cat.id}
                   type="button"
                   onClick={() => handleCategorySelect(cat.slug)}
-                  className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${
-                    isSelected
+                  className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${isSelected
                       ? "bg-[#234E5C] text-white font-bold"
                       : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-                  }`}
+                    }`}
                 >
                   <span className="min-w-0 flex-1 truncate text-left">{cat.nama}</span>
                   <span className="text-[11px] opacity-80 shrink-0">{count}</span>
@@ -163,11 +161,10 @@ function FilterSidebar({
                 key={preset.id}
                 type="button"
                 onClick={() => handlePresetSelect(preset.min, preset.max)}
-                className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${
-                  isActive
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer text-left ${isActive
                     ? "bg-[#234E5C] text-white font-bold"
                     : "text-[#5F7A84] hover:bg-white hover:text-[#234E5C]"
-                }`}
+                  }`}
               >
                 <span className="min-w-0 flex-1 truncate text-left">{preset.label}</span>
                 <span className="text-[11px] opacity-80 shrink-0">{preset.count}</span>
@@ -387,31 +384,31 @@ export function EquipmentCatalog({
       min: string;
       max: string;
     }> = [
-      {
-        id: "under-10k",
-        label: "< Rp 10.000",
-        min: "",
-        max: "9999",
-      },
-      {
-        id: "10k-50k",
-        label: "Rp 10.000 - Rp 49.999",
-        min: "10000",
-        max: "49999",
-      },
-      {
-        id: "50k-100k",
-        label: "Rp 50.000 - Rp 99.999",
-        min: "50000",
-        max: "99999",
-      },
-      {
-        id: "above-100k",
-        label: "≥ Rp 100.000",
-        min: "100000",
-        max: "",
-      },
-    ];
+        {
+          id: "under-10k",
+          label: "< Rp 10.000",
+          min: "",
+          max: "9999",
+        },
+        {
+          id: "10k-50k",
+          label: "Rp 10.000 - Rp 49.999",
+          min: "10000",
+          max: "49999",
+        },
+        {
+          id: "50k-100k",
+          label: "Rp 50.000 - Rp 99.999",
+          min: "50000",
+          max: "99999",
+        },
+        {
+          id: "above-100k",
+          label: "≥ Rp 100.000",
+          min: "100000",
+          max: "",
+        },
+      ];
 
     const presetsWithCount: PricePreset[] = candidateConfigs.map((cfg) => {
       const count = scopeEquipment.filter((item) => {
@@ -661,9 +658,8 @@ export function EquipmentCatalog({
 
           {/* Wrapper area hasil dengan min-height stabil dan transisi opacity */}
           <div
-            className={`w-full min-w-0 min-h-[520px] lg:min-h-[max(60vh,520px)] flex flex-col justify-start transition-opacity duration-150 ${
-              isPending ? "opacity-60 pointer-events-none" : "opacity-100"
-            }`}
+            className={`w-full min-w-0 min-h-[520px] lg:min-h-[max(60vh,520px)] flex flex-col justify-start transition-opacity duration-150 ${isPending ? "opacity-60 pointer-events-none" : "opacity-100"
+              }`}
           >
             {filteredEquipment.length > 0 ? (
               <div className="space-y-8 w-full">
