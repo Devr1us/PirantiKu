@@ -119,69 +119,101 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Kartu Statistik Sederhana */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-        <Reveal delay={0.05}>
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Jenis Alat Aktif
-            </span>
-            <div className="text-3xl font-extrabold text-[#234E5C]">
-              <CountUp value={totalEquipment} />
+      {/* Kartu Statistik Dashboard (Responsif: 2 Kolom di Mobile, 3 di Tablet, 6 di Desktop) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        <Reveal delay={0.05} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Jenis Alat Aktif
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#234E5C]">
+                <CountUp value={totalEquipment} />
+              </div>
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Katalog terpublikasi</p>
-          </div>
-        </Reveal>
-
-        <Reveal delay={0.1}>
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Unit Siap Booking
-            </span>
-            <div className="text-3xl font-extrabold text-[#234E5C]">
-              <CountUp value={totalAvailableUnits} />
-            </div>
-            <p className="text-[11px] text-[#5F7A84]">
-              {totalRentedUnits > 0
-                ? `${totalRentedUnits} unit sedang dibooking`
-                : "Semua unit siap di gudang"}
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              Katalog terpublikasi
             </p>
           </div>
         </Reveal>
 
-        <Reveal delay={0.15}>
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Total Transaksi
-            </span>
-            <div className="text-3xl font-extrabold text-[#A0630F]">
-              <CountUp value={totalBookings} />
+        <Reveal delay={0.1} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Unit Siap Booking
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#234E5C]">
+                <CountUp value={totalAvailableUnits} />
+              </div>
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Pesanan booking masuk</p>
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              Tersedia di gudang
+            </p>
           </div>
         </Reveal>
 
-        <Reveal delay={0.2}>
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Pengguna Akun
-            </span>
-            <div className="text-3xl font-extrabold text-[#234E5C]">
-              <CountUp value={totalUsers} />
+        <Reveal delay={0.15} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Sedang Disewa
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#234E5C]">
+                <CountUp value={totalRentedUnits} />
+              </div>
             </div>
-            <p className="text-[11px] text-[#5F7A84]">User terdaftar</p>
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              Di tangan penyewa
+            </p>
           </div>
         </Reveal>
 
-        <Reveal delay={0.25}>
-          <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 space-y-1 shadow-[0_1px_3px_rgba(0,0,0,0.02)] col-span-2 sm:col-span-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84]">
-              Kategori Alat
-            </span>
-            <div className="text-3xl font-extrabold text-[#2E5E4E]">
-              <CountUp value={totalCategories} />
+        <Reveal delay={0.2} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Total Transaksi
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#A0630F]">
+                <CountUp value={totalBookings} />
+              </div>
             </div>
-            <p className="text-[11px] text-[#5F7A84]">Klasifikasi inventaris</p>
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              Pesanan booking masuk
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.25} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Pengguna Akun
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#234E5C]">
+                <CountUp value={totalUsers} />
+              </div>
+            </div>
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              User terdaftar
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.3} className="h-full">
+          <div className="h-full flex flex-col justify-between rounded-xl border border-[#E8E8E1] bg-white p-3.5 sm:p-4 md:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all hover:border-[#234E5C]/30">
+            <div className="space-y-1">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] block min-h-[2.25rem] leading-tight flex items-center">
+                Kategori Alat
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#2E5E4E]">
+                <CountUp value={totalCategories} />
+              </div>
+            </div>
+            <p className="text-[10px] sm:text-[11px] text-[#5F7A84] mt-2 pt-1.5 border-t border-[#F0F0EB] line-clamp-1 truncate">
+              Klasifikasi inventaris
+            </p>
           </div>
         </Reveal>
       </div>
