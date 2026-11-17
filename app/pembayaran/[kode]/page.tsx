@@ -130,10 +130,10 @@ export default async function PembayaranPage({ params }: PembayaranPageProps) {
     booking.payments?.some((p) => p.status === "terverifikasi");
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="w-full max-w-[1200px] mx-auto px-4 pt-6 pb-28 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 text-[#234E5C] min-w-0 overflow-x-hidden box-border">
       {/* Breadcrumbs & Header */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <div className="flex items-center gap-2 text-xs text-[#5F7A84]">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-[#5F7A84] min-w-0">
           <Link href="/booking-saya" className="hover:text-[#234E5C] font-semibold flex items-center gap-1">
             <ArrowLeft className="h-3.5 w-3.5" />
             Kembali ke Riwayat Booking

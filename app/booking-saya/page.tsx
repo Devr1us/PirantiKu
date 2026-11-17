@@ -248,7 +248,7 @@ export default function BookingSayaPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="w-full max-w-[1200px] mx-auto px-4 py-8 sm:py-10 sm:px-6 lg:px-8 space-y-8 text-[#234E5C] min-w-0 overflow-x-hidden box-border">
       {/* Header Halaman: Judul Kapital Petrol + Satu Kalimat Pendukung */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <H1 className="section-title block">

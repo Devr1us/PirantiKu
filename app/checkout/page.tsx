@@ -368,14 +368,14 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 pt-6 pb-24 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="w-full max-w-[1200px] mx-auto px-4 pt-6 pb-28 sm:px-6 lg:px-8 sm:pt-8 sm:pb-32 space-y-8 text-[#234E5C] min-w-0 overflow-x-hidden box-border">
       {/* Header Halaman */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
         <Link
           href="/keranjang"
           className="text-xs text-[#5F7A84] hover:text-[#234E5C] transition-colors flex items-center gap-1 font-semibold"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
           Kembali ke Keranjang
         </Link>
         <H1 className="section-title block pt-1">CHECKOUT BOOKING</H1>
@@ -385,12 +385,12 @@ function CheckoutContent() {
       </div>
 
       {/* Stepper Sederhana dengan Lingkaran Angka Petrol */}
-      <div className="flex items-center justify-center max-w-xl mx-auto py-2">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center max-w-xl mx-auto py-2 w-full min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Step 1 */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 1
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 1
                 ? "bg-[#234E5C] text-white"
                 : "border border-[#234E5C] text-[#234E5C]"
                 }`}
@@ -402,12 +402,12 @@ function CheckoutContent() {
             </span>
           </div>
 
-          <div className="h-[1px] w-8 sm:w-16 bg-[#E8E8E1]" />
+          <div className="h-[1px] w-6 sm:w-16 bg-[#E8E8E1]" />
 
           {/* Step 2 */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 2
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 2
                 ? "bg-[#234E5C] text-white"
                 : "border border-[#234E5C]/40 text-[#5F7A84]"
                 }`}
@@ -419,12 +419,12 @@ function CheckoutContent() {
             </span>
           </div>
 
-          <div className="h-[1px] w-8 sm:w-16 bg-[#E8E8E1]" />
+          <div className="h-[1px] w-6 sm:w-16 bg-[#E8E8E1]" />
 
           {/* Step 3 */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 3
+              className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${currentStep >= 3
                 ? "bg-[#234E5C] text-white"
                 : "border border-[#234E5C]/40 text-[#5F7A84]"
                 }`}
@@ -438,9 +438,9 @@ function CheckoutContent() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-w-0 w-full">
         {/* Kolom Kiri: Formulir Step (7 Kolom) */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+        <div className="min-w-0 w-full lg:col-span-7 xl:col-span-8 space-y-6">
           {currentStep === 1 && (
             <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 sm:p-8 shadow-sm space-y-6">
               <h2 className="text-base font-bold text-[#234E5C] flex items-center gap-2 border-b border-[#E8E8E1] pb-3">

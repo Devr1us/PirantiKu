@@ -168,29 +168,29 @@ export default async function EquipmentDetailPage({
   > | null;
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 pb-24 md:pb-12 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="w-full max-w-[1200px] mx-auto px-4 py-6 sm:py-8 sm:px-6 lg:px-8 space-y-8 pb-32 md:pb-12 text-[#234E5C] min-w-0 overflow-x-hidden box-border">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs sm:text-sm text-[#5F7A84]">
-        <Link href="/" className="hover:text-[#234E5C] transition-colors">
+      <nav className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-[#5F7A84] min-w-0 leading-normal">
+        <Link href="/" className="hover:text-[#234E5C] transition-colors shrink-0">
           Beranda
         </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
-        <Link href="/alat" className="hover:text-[#234E5C] transition-colors">
+        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84] shrink-0" />
+        <Link href="/alat" className="hover:text-[#234E5C] transition-colors shrink-0">
           Katalog
         </Link>
         {equipment.category && (
           <>
-            <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
+            <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84] shrink-0" />
             <Link
               href={`/kategori/${equipment.category.slug}`}
-              className="hover:text-[#234E5C] transition-colors truncate max-w-[120px]"
+              className="hover:text-[#234E5C] transition-colors truncate max-w-[140px] sm:max-w-none shrink-0"
             >
               {equipment.category.nama}
             </Link>
           </>
         )}
-        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84]" />
-        <span className="font-bold text-[#234E5C] truncate max-w-[160px] sm:max-w-xs">
+        <ChevronRight className="h-3.5 w-3.5 text-[#5F7A84] shrink-0" />
+        <span className="font-bold text-[#234E5C] truncate max-w-[150px] sm:max-w-none">
           {equipment.nama}
         </span>
       </nav>
@@ -206,9 +206,9 @@ export default async function EquipmentDetailPage({
       </div>
 
       {/* Grid: Detail & Widget Pemesanan */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 min-w-0 w-full">
         {/* Kolom Kiri: Galeri Foto, Deskripsi, Spesifikasi */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-8">
+        <div className="min-w-0 w-full lg:col-span-7 xl:col-span-8 space-y-8">
           {/* Galeri Gambar: gunakan EquipmentGallery dengan foto lokal utama dan deduplikasi cerdas */}
           <EquipmentGallery
             images={equipment.images || []}
@@ -301,8 +301,8 @@ export default async function EquipmentDetailPage({
         </div>
 
         {/* Kolom Kanan: Rental Booking Widget */}
-        <div className="lg:col-span-5 xl:col-span-4">
-          <div className="sticky top-[var(--navbar-offset)] transition-[top] duration-300">
+        <div className="min-w-0 w-full lg:col-span-5 xl:col-span-4">
+          <div className="sticky top-[var(--navbar-offset)] transition-[top] duration-300 w-full min-w-0">
             <RentalBookingWidget
               equipment={equipment}
               defaultDpPersen={dpPersen}
@@ -313,10 +313,10 @@ export default async function EquipmentDetailPage({
 
       {/* Rekomendasi Alat Terkait */}
       {relatedEquipment.length > 0 && (
-        <section className="pt-12 border-t border-[#E8E8E1] space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-[#234E5C]">
+        <section className="pt-12 border-t border-[#E8E8E1] space-y-6 w-full min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base sm:text-xl font-bold uppercase tracking-tight text-[#234E5C] break-words">
                 Alat Terkait di Kategori {equipment.category?.nama}
               </h3>
               <p className="text-xs text-[#5F7A84] mt-0.5">
@@ -326,9 +326,9 @@ export default async function EquipmentDetailPage({
             {equipment.category && (
               <Link
                 href={`/kategori/${equipment.category.slug}`}
-                className="text-xs font-bold text-[#A0630F] hover:underline uppercase"
+                className="text-xs font-bold text-[#A0630F] hover:underline uppercase shrink-0 self-start sm:self-auto"
               >
-                Lihat Semua
+                Lihat Semua &rarr;
               </Link>
             )}
           </div>

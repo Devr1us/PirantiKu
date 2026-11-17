@@ -279,7 +279,7 @@ export function RentalBookingWidget({
 
   return (
     <>
-      <div ref={widgetRef} className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-6 text-[#234E5C]">
+      <div ref={widgetRef} className="w-full min-w-0 rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5 sm:space-y-6 text-[#234E5C] box-border">
         {/* Header Widget: Harga Sewa & Stok */}
         <div className="flex items-start justify-between border-b border-[#E8E8E1] pb-4">
           <div>
@@ -569,41 +569,41 @@ export function RentalBookingWidget({
       </div>
 
       {/* Sticky Bar di Mobile */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E8E8E1] p-3 px-4 shadow-lg flex items-center justify-between">
-        <div>
-          <span className="text-[10px] text-[#5F7A84] font-semibold block">
-            Total ({pricing.days} hari booking)
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E8E8E1] p-2.5 px-3.5 sm:px-4 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] flex items-center justify-between gap-2 max-w-full box-border">
+        <div className="min-w-0 flex-1 pr-1">
+          <span className="text-[10px] text-[#5F7A84] font-semibold block truncate">
+            Total ({pricing.days} hari sewa)
           </span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-base font-extrabold text-[#A0630F]">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-sm sm:text-base font-extrabold text-[#A0630F] leading-tight">
               {formatRupiah(pricing.totalKeseluruhan)}
             </span>
-            <span className="text-[10px] text-[#5F7A84]">
+            <span className="text-[10px] text-[#5F7A84] whitespace-nowrap">
               (DP {formatRupiah(pricing.dpJumlah)})
             </span>
           </div>
         </div>
 
         {isAdminUser ? (
-          <Link href="/admin/alat">
+          <Link href="/admin/alat" className="shrink-0">
             <Button
               type="button"
               variant="petrol"
-              className="h-10 px-4 text-xs font-bold gap-1.5"
+              className="h-9 sm:h-10 px-3 sm:px-4 text-xs font-bold gap-1.5 shrink-0"
             >
               <ShieldAlert className="h-4 w-4 text-[#A0630F]" />
               Kelola di Admin
             </Button>
           </Link>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Button
               type="button"
               variant="outline"
               size="icon"
               disabled={!isAvailable}
               onClick={handleAddToCart}
-              className="h-10 w-10 border-[#E8E8E1]"
+              className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 border-[#E8E8E1] flex items-center justify-center p-0"
               aria-label="Tambah ke keranjang"
             >
               <ShoppingCart className="h-4 w-4 text-[#234E5C]" />
@@ -613,7 +613,7 @@ export function RentalBookingWidget({
               variant="warm"
               disabled={!isAvailable}
               onClick={handleRentNow}
-              className="h-10 px-5 text-xs font-bold"
+              className="h-9 sm:h-10 px-3.5 sm:px-5 text-xs font-bold shrink-0 whitespace-nowrap"
             >
               Booking Sekarang
             </Button>

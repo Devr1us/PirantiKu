@@ -256,10 +256,10 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             <SheetTrigger asChild>
               <button
                 type="button"
-                className="p-2 rounded-xl text-white hover:bg-white/10 flex items-center gap-1.5 focus:outline-none"
+                className="h-10 w-10 rounded-xl text-white hover:bg-white/10 flex items-center justify-center p-2 focus:outline-none shrink-0"
                 aria-label="Buka Menu Pengelola"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6 shrink-0" />
               </button>
             </SheetTrigger>
             <SheetContent

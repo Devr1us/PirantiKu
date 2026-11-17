@@ -218,15 +218,15 @@ function KeranjangContent() {
   }
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8 space-y-8 bg-[#FAFAF8] text-[#234E5C]">
+    <div className="w-full max-w-[1200px] mx-auto px-4 py-6 sm:py-8 sm:px-6 lg:px-8 space-y-8 text-[#234E5C] min-w-0 overflow-x-hidden box-border">
       {/* Header Halaman */}
       <div className="border-b border-[#E8E8E1] pb-6 space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <Link
             href="/alat"
             className="text-xs text-[#5F7A84] hover:text-[#234E5C] transition-colors flex items-center gap-1 font-semibold"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
             Kembali ke Katalog
           </Link>
           <button
@@ -234,7 +234,7 @@ function KeranjangContent() {
             onClick={() => setIsClearConfirmOpen(true)}
             className="text-xs text-[#5F7A84] hover:text-[#DC2626] font-semibold flex items-center gap-1 cursor-pointer transition-colors"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 className="h-3.5 w-3.5 shrink-0" />
             Kosongkan Keranjang
           </button>
         </div>
@@ -247,9 +247,9 @@ function KeranjangContent() {
         </Lead>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 min-w-0 w-full">
         {/* Kolom Kiri: Jadwal Sewa & Daftar Barang */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+        <div className="min-w-0 w-full lg:col-span-7 xl:col-span-8 space-y-6">
           {/* Jadwal Sewa Terpadu */}
           <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between">

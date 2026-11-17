@@ -331,12 +331,12 @@ export function NavbarClient({
 
           {/* Ikon Keranjang dengan Badge Jumlah (Khusus Pelanggan, disembunyikan untuk Admin) */}
           {!isAdmin && (
-            <Link href="/keranjang" aria-label="Keranjang Booking" className="relative">
+            <Link href="/keranjang" aria-label="Keranjang Booking" className="relative shrink-0">
               <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-all">
-                <ShoppingCart className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                 <span className="sr-only">Keranjang Booking</span>
                 {isLoaded && totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--accent-gold)] px-1 text-[11px] font-bold text-[var(--bg-dark)] shadow-sm">
+                  <span className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 sm:h-5 sm:min-w-5 items-center justify-center rounded-full bg-[var(--accent-gold)] px-1 text-[10px] sm:text-[11px] font-bold text-[var(--bg-dark)] shadow-sm">
                     {totalItems}
                   </span>
                 )}
@@ -438,7 +438,7 @@ export function NavbarClient({
           </div>
 
           {/* Hamburger Mobile */}
-          <div className="lg:hidden flex items-center">
+          <div className="lg:hidden flex items-center shrink-0">
             <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
               <SheetTrigger asChild>
                 <button
@@ -446,7 +446,7 @@ export function NavbarClient({
                   className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-[var(--border-soft)] text-[var(--text-main)] hover:bg-[var(--bg-sage)] transition-colors cursor-pointer"
                   aria-label="Buka Menu"
                 >
-                  <Menu className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                  <Menu className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                 </button>
               </SheetTrigger>
               <SheetContent
