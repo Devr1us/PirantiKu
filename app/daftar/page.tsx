@@ -458,7 +458,8 @@ export default function DaftarPage() {
             <span>{isGoogleLoading ? "Menghubungkan..." : "Daftar dengan Google"}</span>
           </button>
 
-          <div className="text-center border-t border-[#E8E8E1] pt-3">
+          {/* Footer Navigasi Tanpa Garis Pembatas Kasar */}
+          <div className="text-center pt-3 pb-1">
             <p className="text-xs text-[#5F7A84]">
               Sudah punya akun?{" "}
               <Link
