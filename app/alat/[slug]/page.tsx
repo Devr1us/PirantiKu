@@ -239,64 +239,58 @@ export default async function EquipmentDetailPage({
             </div>
 
             {/* Deskripsi dalam Kartu Putih */}
-            <Reveal delay={0.05}>
-              <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-2">
-                <h2 className="text-base font-bold text-[#234E5C]">
-                  Deskripsi Perlengkapan
-                </h2>
-                <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
-                  {equipment.deskripsi ||
-                    "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada user."}
-                </p>
-              </div>
-            </Reveal>
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 sm:p-6 shadow-sm space-y-2">
+              <h2 className="text-base font-bold text-[#234E5C]">
+                Deskripsi Perlengkapan
+              </h2>
+              <p className="text-sm text-[#234E5C] leading-relaxed whitespace-pre-line">
+                {equipment.deskripsi ||
+                  "Perlengkapan rental berkualitas dalam kondisi siap pakai. Telah melalui pengecekan fungsionalitas dan kebersihan sebelum diserahkan kepada user."}
+              </p>
+            </div>
 
             {/* Spesifikasi Teknis */}
             {spesifikasiObj && Object.keys(spesifikasiObj).length > 0 && (
-              <Reveal delay={0.1}>
-                <div className="rounded-xl border border-[#E8E8E1] bg-white p-6 shadow-sm space-y-4">
-                  <h2 className="text-base font-bold text-[#234E5C]">
-                    Spesifikasi Teknis
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {Object.entries(spesifikasiObj).map(([key, val]) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between p-3 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs"
-                      >
-                        <span className="font-semibold text-[#5F7A84]">
-                          {formatSpecKey(key)}
-                        </span>
-                        <span className="font-bold text-[#234E5C]">
-                          {formatSpecValue(val)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="rounded-xl border border-[#E8E8E1] bg-white p-5 sm:p-6 shadow-sm space-y-4">
+                <h2 className="text-base font-bold text-[#234E5C]">
+                  Spesifikasi Teknis
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {Object.entries(spesifikasiObj).map(([key, val]) => (
+                    <div
+                      key={key}
+                      className="flex items-center justify-between p-3 rounded-xl bg-[#F3F3EF] border border-[#E8E8E1] text-xs"
+                    >
+                      <span className="font-semibold text-[#5F7A84]">
+                        {formatSpecKey(key)}
+                      </span>
+                      <span className="font-bold text-[#234E5C]">
+                        {formatSpecValue(val)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              </Reveal>
+              </div>
             )}
 
             {/* Ketentuan Booking */}
-            <Reveal delay={0.15}>
-              <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-6 space-y-3">
-                <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
-                  Ketentuan & Jaminan Booking di {APP_NAME}
-                </h3>
-                <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
-                  <li>
-                    Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
-                  </li>
-                  <li>
-                    Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal booking yang Anda pilih.
-                  </li>
-                  <li>
-                    Wajib membawa kartu identitas asli (KTP atau SIM) untuk verifikasi saat serah terima alat di toko.
-                  </li>
-                </ul>
-              </div>
-            </Reveal>
+            <div className="rounded-xl border border-[#E8E8E1] bg-[#F3F3EF] p-5 sm:p-6 space-y-3">
+              <h3 className="text-sm font-bold text-[#234E5C] flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-[#234E5C]" />
+                Ketentuan & Jaminan Booking di {APP_NAME}
+              </h3>
+              <ul className="space-y-2 text-xs text-[#5F7A84] leading-relaxed list-disc list-inside">
+                <li>
+                  Deposit jaminan akan dikembalikan utuh saat alat diserahkan kembali dalam kondisi baik.
+                </li>
+                <li>
+                  Pembayaran DP {dpPersen}% mengunci ketersediaan unit untuk jadwal booking yang Anda pilih.
+                </li>
+                <li>
+                  Wajib membawa kartu identitas asli (KTP atau SIM) untuk verifikasi saat serah terima alat di toko.
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

@@ -4,8 +4,8 @@
  */
 
 // Master flag: when true, scroll animations replay on entering the screen from both directions.
-// If set to false, all animations run once on initial view.
-export const ANIMASI_ULANG = true;
+// Di-set ke false agar seluruh animasi scroll berjalan satu kali (run once) dan elemen tetap stabil tanpa bergeser saat di-scroll naik/turun.
+export const ANIMASI_ULANG = false;
 
 // Easing presets
 export const EASE = [0.22, 1, 0.36, 1] as const; // Smooth exponential ease-out
