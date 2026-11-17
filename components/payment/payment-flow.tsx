@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   CreditCard,
   QrCode,
@@ -40,6 +39,7 @@ import {
   createWhatsAppLink,
 } from "@/lib/payment-utils";
 import { DEFAULT_SETTINGS } from "@/lib/constants";
+import { useBookingStatusPolling } from "@/hooks/use-booking-status-polling";
 import type { BookingStatus, Payment } from "@/types/database";
 
 export interface PaymentFlowProps {
@@ -81,7 +81,6 @@ export function PaymentFlow({
   defaultBank = "bca",
   hideMethodSelector = false,
 }: PaymentFlowProps) {
-  const router = useRouter();
   // BUG-PF3: Supabase client di useMemo, bukan di render body
   const supabase = React.useMemo(() => createClient(), []);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -90,7 +89,7 @@ export function PaymentFlow({
   const [activeTab, setActiveTab] = React.useState<"transfer" | "qris">(defaultTab);
   const [selectedBank, setSelectedBank] = React.useState<"bca" | "mandiri" | "bri" | "bni">(defaultBank);
   const [payments, setPayments] = React.useState<Payment[]>(initialPayments);
-  const [currentBookingStatus, setCurrentBookingStatus] = React.useState<BookingStatus>(booking.status);
+  const [currentBookingStatus] = React.useState<BookingStatus>(booking.status);
   
   const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
@@ -108,224 +107,6 @@ export function PaymentFlow({
     getPaymentCountdown(booking.created_at, 24)
   );
 
-  // Realtime subscription + Smart Polling: otomatis redirect ke Riwayat Booking HANYA jika pengguna sedang menunggu verifikasi di halaman ini lalu status berubah
-  React.useEffect(() => {
-    if (!booking?.id && !booking?.kode_booking) return;
-
-    // Jika saat halaman pertama kali dibuka booking memang sudah terverifikasi / lunas / diambil / selesai,
-    // maka JANGAN PERNAH redirect atau memicu notifikasi verifikasi.
-    // Pengguna membuka halaman ini murni untuk melihat rincian booking & lokasi (crosscheck status).
-    const isInitiallyVerified =
-      booking.status === "dp_dibayar" ||
-      booking.status === "lunas" ||
-      booking.status === "diambil" ||
-      booking.status === "selesai" ||
-      initialPayments.some((p) => p.status === "terverifikasi");
-
-    if (isInitiallyVerified) {
-      return;
-    }
-
-    const isInitiallyRejected =
-      booking.status === "dibatalkan" ||
-      initialPayments.some((p) => p.status === "ditolak") ||
-      Boolean(booking.pesan_admin && /ditolak/i.test(booking.pesan_admin));
-
-    const isUUID = Boolean(
-      booking.id &&
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(booking.id)
-    );
-
-    let isRedirecting = false;
-
-    const handleRedirect = (type: "verified" | "rejected", msg?: string) => {
-      if (isRedirecting) return;
-      isRedirecting = true;
-
-      if (type === "verified") {
-        toast.success("Pembayaran DP Berhasil Diverifikasi!", {
-          description:
-            msg ||
-            "Jadwal booking alat Anda telah dikunci oleh admin. Mengalihkan ke riwayat booking...",
-          duration: 4000,
-        });
-      } else {
-        toast.error("Pembayaran DP Ditolak Admin", {
-          description:
-            msg ||
-            "Bukti pembayaran tidak dapat diverifikasi oleh admin. Mengalihkan ke riwayat booking...",
-          duration: 5000,
-        });
-      }
-
-      setTimeout(() => {
-        router.replace("/booking-saya");
-        router.refresh();
-      }, 850);
-    };
-
-    // 1. Supabase Realtime channel
-    const channelId = isUUID ? booking.id : (booking.kode_booking || booking.id);
-    const channel = supabase
-      .channel(`realtime-booking-${channelId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "bookings",
-          ...(isUUID
-            ? { filter: `id=eq.${booking.id}` }
-            : booking.kode_booking
-            ? { filter: `kode_booking=eq.${booking.kode_booking}` }
-            : {}),
-        },
-        (payload) => {
-          const newStatus = payload.new?.status as BookingStatus | undefined;
-          const pesanAdmin = (payload.new?.pesan_admin as string | undefined) || "";
-          if (newStatus) {
-            setCurrentBookingStatus(newStatus);
-          }
-          const isVerified =
-            newStatus === "dp_dibayar" ||
-            newStatus === "lunas" ||
-            newStatus === "diambil";
-          const isRejected =
-            !isInitiallyRejected &&
-            (newStatus === "dibatalkan" || /ditolak/i.test(pesanAdmin));
-
-          if (isVerified) {
-            handleRedirect(
-              "verified",
-              pesanAdmin || "Jadwal booking alat Anda telah dikunci oleh admin."
-            );
-          } else if (isRejected) {
-            handleRedirect(
-              "rejected",
-              pesanAdmin || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
-            );
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "payments",
-          ...(isUUID ? { filter: `booking_id=eq.${booking.id}` } : {}),
-        },
-        (payload) => {
-          if (payload.eventType === "UPDATE") {
-            const updatedPayment = payload.new as Payment;
-            setPayments((prev) =>
-              prev.map((p) => (p.id === updatedPayment.id ? updatedPayment : p))
-            );
-            if (updatedPayment.status === "terverifikasi") {
-              setCurrentBookingStatus("dp_dibayar");
-              handleRedirect("verified", "Pembayaran DP berhasil diverifikasi oleh admin.");
-            } else if (updatedPayment.status === "ditolak" && !isInitiallyRejected) {
-              handleRedirect(
-                "rejected",
-                "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
-              );
-            }
-          } else if (payload.eventType === "INSERT") {
-            const newPayment = payload.new as Payment;
-            setPayments((prev) => [newPayment, ...prev]);
-          }
-        }
-      )
-      .subscribe();
-
-    // 2. Fast Smart Polling fallback (setiap 1.5 detik) agar deteksi verifikasi/penolakan admin instan
-    const pollInterval = setInterval(async () => {
-      if (isRedirecting) return;
-      try {
-        // Query status booking terbaru
-        let bQuery = supabase.from("bookings").select("id, status, pesan_admin");
-        if (isUUID) {
-          bQuery = bQuery.eq("id", booking.id);
-        } else if (booking.kode_booking) {
-          bQuery = bQuery.eq("kode_booking", booking.kode_booking);
-        } else {
-          bQuery = bQuery.eq("kode_booking", booking.id);
-        }
-
-        const { data: bData } = await bQuery.maybeSingle();
-
-        if (bData && !isRedirecting) {
-          const bStatus = bData.status as BookingStatus;
-          const pesan = bData.pesan_admin || "";
-
-          const isVerified =
-            bStatus === "dp_dibayar" ||
-            bStatus === "lunas" ||
-            bStatus === "diambil";
-          const isRejected =
-            !isInitiallyRejected &&
-            (bStatus === "dibatalkan" || /ditolak/i.test(pesan));
-
-          if (isVerified) {
-            handleRedirect(
-              "verified",
-              pesan || "Jadwal booking alat Anda telah dikunci oleh admin."
-            );
-            return;
-          } else if (isRejected) {
-            handleRedirect(
-              "rejected",
-              pesan || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
-            );
-            return;
-          }
-
-          // Cek status pembayaran terbaru di tabel payments
-          const resolvedBookingId = bData.id || (isUUID ? booking.id : null);
-          if (resolvedBookingId) {
-            const { data: pData } = await supabase
-              .from("payments")
-              .select("id, status")
-              .eq("booking_id", resolvedBookingId)
-              .order("id", { ascending: false });
-
-            if (pData && pData.length > 0 && !isRedirecting) {
-              if (pData.some((p) => p.status === "terverifikasi")) {
-                handleRedirect(
-                  "verified",
-                  pesan || "Pembayaran DP berhasil diverifikasi oleh admin."
-                );
-                return;
-              }
-              if (pData.some((p) => p.status === "ditolak") && !isInitiallyRejected) {
-                handleRedirect(
-                  "rejected",
-                  pesan || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
-                );
-                return;
-              }
-            }
-          }
-        }
-      } catch {
-        // Abaikan gangguan jaringan sesaat selama polling
-      }
-    }, 1500);
-
-    return () => {
-      clearInterval(pollInterval);
-      supabase.removeChannel(channel);
-    };
-  }, [
-    booking.id,
-    booking.kode_booking,
-    booking.status,
-    booking.pesan_admin,
-    initialPayments,
-    router,
-    supabase,
-  ]);
-
   React.useEffect(() => {
     const timer = setInterval(() => {
       setCountdown(getPaymentCountdown(booking.created_at, 24));
@@ -338,8 +119,7 @@ export function PaymentFlow({
     [rekeningBank]
   );
 
-  // Daftar Pilihan Bank — BUG-PF1: nomor rekening dari settings untuk BCA,
-  // bank lain ditandai jelas sebagai "DEMO / Simulasi" agar tidak ada transfer nyata ke nomor salah
+  // Daftar Pilihan Bank
   const bankOptions = React.useMemo(() => ({
     bca: {
       name: "Bank BCA",
@@ -395,6 +175,27 @@ export function PaymentFlow({
     currentBookingStatus === "lunas" ||
     currentBookingStatus === "diambil" ||
     latestDpPayment?.status === "terverifikasi";
+
+  // Status verifikasi pembayaran saat ini untuk hook polling status
+  const currentVerificationStatus = isDpVerified
+    ? "terverifikasi"
+    : latestDpPayment?.status === "ditolak"
+    ? "ditolak"
+    : latestDpPayment?.status === "menunggu_verifikasi"
+    ? "menunggu_verifikasi"
+    : booking.status === "dp_dibayar" || booking.status === "lunas" || booking.status === "diambil" || booking.status === "selesai"
+    ? "terverifikasi"
+    : booking.status === "dibatalkan"
+    ? "ditolak"
+    : "menunggu_dp";
+
+  // Hook Polling: otomatis mengecek endpoint status tiap 4 detik saat status "menunggu verifikasi",
+  // berhenti saat tab hidden, dan redirect ke Booking Saya saat terverifikasi/ditolak
+  const { isTimeout } = useBookingStatusPolling({
+    bookingId: booking.id || booking.kode_booking,
+    initialStatus: currentVerificationStatus,
+    enabled: Boolean(booking.id || booking.kode_booking),
+  });
 
   // Cek apakah customer sudah berhasil submit bukti pembayaran (menunggu verifikasi / terverifikasi) dan tidak sedang edit ulang
   const isPaymentSubmitted = Boolean(
@@ -705,6 +506,18 @@ export function PaymentFlow({
               <p className="leading-relaxed text-[11px]">
                 Bukti transfer Anda sudah masuk ke sistem pengelola PirantiKu. Petugas kami sedang mencocokkan mutasi bank. Anda tidak perlu membayar ulang.
               </p>
+              {isTimeout && (
+                <div className="pt-2 border-t border-[#FDE68A] flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-semibold text-xs text-[#78350F]">
+                    Silakan cek status di Booking Saya
+                  </span>
+                  <Link href="/booking-saya">
+                    <Button variant="warm" size="sm" className="h-7 text-xs font-bold px-3 cursor-pointer">
+                      Buka Booking Saya
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 

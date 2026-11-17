@@ -68,6 +68,13 @@ export function AdminBookingManager({
   const [statusFilter, setStatusFilter] = React.useState<string>("semua");
   const [selectedBooking, setSelectedBooking] = React.useState<AdminBookingWithDetails | null>(null);
   const [isDetailOpen, setIsDetailOpen] = React.useState<boolean>(false);
+  const [isReturnModalOpen, setIsReturnModalOpen] = React.useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
+  const [rejectReason, setRejectReason] = React.useState<string>("");
+  const [isRejectFormOpen, setIsRejectFormOpen] = React.useState<boolean>(false);
+  const [isZoomImageOpen, setIsZoomImageOpen] = React.useState<boolean>(false);
+  const [zoomImageSrc, setZoomImageSrc] = React.useState<string | null>(null);
+  const [zoomImageTitle, setZoomImageTitle] = React.useState<string>("Pratinjau Foto");
 
   // Helper: Kembali ke daftar booking awal (membersihkan search, filter, dan URL parameter)
   const returnToInitialBookingList = React.useCallback(() => {
@@ -110,13 +117,6 @@ export function AdminBookingManager({
       }
     }
   }, [qParam, bookings]);
-  const [isReturnModalOpen, setIsReturnModalOpen] = React.useState<boolean>(false);
-  const [isProcessing, setIsProcessing] = React.useState<boolean>(false);
-  const [rejectReason, setRejectReason] = React.useState<string>("");
-  const [isRejectFormOpen, setIsRejectFormOpen] = React.useState<boolean>(false);
-  const [isZoomImageOpen, setIsZoomImageOpen] = React.useState<boolean>(false);
-  const [zoomImageSrc, setZoomImageSrc] = React.useState<string | null>(null);
-  const [zoomImageTitle, setZoomImageTitle] = React.useState<string>("Pratinjau Foto");
 
   // Filter list
   const filteredBookings = React.useMemo(() => {

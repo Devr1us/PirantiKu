@@ -23,6 +23,8 @@ interface PembayaranPageProps {
   params: Promise<{ kode: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: PembayaranPageProps): Promise<Metadata> {
