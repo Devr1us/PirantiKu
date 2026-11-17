@@ -110,7 +110,7 @@ export function PaymentFlow({
 
   // Realtime subscription + Smart Polling: otomatis redirect ke Riwayat Booking HANYA jika pengguna sedang menunggu verifikasi di halaman ini lalu status berubah
   React.useEffect(() => {
-    if (!booking?.id) return;
+    if (!booking?.id && !booking?.kode_booking) return;
 
     // Jika saat halaman pertama kali dibuka booking memang sudah terverifikasi / lunas / diambil / selesai,
     // maka JANGAN PERNAH redirect atau memicu notifikasi verifikasi.
@@ -126,42 +126,84 @@ export function PaymentFlow({
       return;
     }
 
+    const isInitiallyRejected =
+      booking.status === "dibatalkan" ||
+      initialPayments.some((p) => p.status === "ditolak") ||
+      Boolean(booking.pesan_admin && /ditolak/i.test(booking.pesan_admin));
+
+    const isUUID = Boolean(
+      booking.id &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(booking.id)
+    );
+
     let isRedirecting = false;
 
     const handleRedirect = (type: "verified" | "rejected", msg?: string) => {
       if (isRedirecting) return;
       isRedirecting = true;
+
       if (type === "verified") {
-        toast.success(msg || "Pembayaran DP Anda telah dikonfirmasi oleh admin.");
+        toast.success("Pembayaran DP Berhasil Diverifikasi!", {
+          description:
+            msg ||
+            "Jadwal booking alat Anda telah dikunci oleh admin. Mengalihkan ke riwayat booking...",
+          duration: 4000,
+        });
       } else {
-        toast.error(msg || "Bukti pembayaran ditolak oleh admin.");
+        toast.error("Pembayaran DP Ditolak Admin", {
+          description:
+            msg ||
+            "Bukti pembayaran tidak dapat diverifikasi oleh admin. Mengalihkan ke riwayat booking...",
+          duration: 5000,
+        });
       }
+
       setTimeout(() => {
-        router.push("/booking-saya");
-      }, 700);
+        router.replace("/booking-saya");
+        router.refresh();
+      }, 850);
     };
 
     // 1. Supabase Realtime channel
+    const channelId = isUUID ? booking.id : (booking.kode_booking || booking.id);
     const channel = supabase
-      .channel(`realtime-booking-${booking.id}`)
+      .channel(`realtime-booking-${channelId}`)
       .on(
         "postgres_changes",
         {
           event: "UPDATE",
           schema: "public",
           table: "bookings",
-          filter: `id=eq.${booking.id}`,
+          ...(isUUID
+            ? { filter: `id=eq.${booking.id}` }
+            : booking.kode_booking
+            ? { filter: `kode_booking=eq.${booking.kode_booking}` }
+            : {}),
         },
         (payload) => {
-          const newStatus = payload.new?.status as BookingStatus;
-          const pesanAdmin = payload.new?.pesan_admin as string | undefined;
+          const newStatus = payload.new?.status as BookingStatus | undefined;
+          const pesanAdmin = (payload.new?.pesan_admin as string | undefined) || "";
           if (newStatus) {
             setCurrentBookingStatus(newStatus);
           }
-          if (newStatus === "dp_dibayar" || newStatus === "lunas" || newStatus === "diambil") {
-            handleRedirect("verified");
-          } else if (newStatus === "dibatalkan") {
-            handleRedirect("rejected", pesanAdmin || "Pesanan ini telah dibatalkan atau ditolak admin.");
+          const isVerified =
+            newStatus === "dp_dibayar" ||
+            newStatus === "lunas" ||
+            newStatus === "diambil";
+          const isRejected =
+            !isInitiallyRejected &&
+            (newStatus === "dibatalkan" || /ditolak/i.test(pesanAdmin));
+
+          if (isVerified) {
+            handleRedirect(
+              "verified",
+              pesanAdmin || "Jadwal booking alat Anda telah dikunci oleh admin."
+            );
+          } else if (isRejected) {
+            handleRedirect(
+              "rejected",
+              pesanAdmin || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
+            );
           }
         }
       )
@@ -171,7 +213,7 @@ export function PaymentFlow({
           event: "*",
           schema: "public",
           table: "payments",
-          filter: `booking_id=eq.${booking.id}`,
+          ...(isUUID ? { filter: `booking_id=eq.${booking.id}` } : {}),
         },
         (payload) => {
           if (payload.eventType === "UPDATE") {
@@ -181,9 +223,12 @@ export function PaymentFlow({
             );
             if (updatedPayment.status === "terverifikasi") {
               setCurrentBookingStatus("dp_dibayar");
-              handleRedirect("verified");
-            } else if (updatedPayment.status === "ditolak") {
-              handleRedirect("rejected", "Bukti pembayaran ditolak oleh admin.");
+              handleRedirect("verified", "Pembayaran DP berhasil diverifikasi oleh admin.");
+            } else if (updatedPayment.status === "ditolak" && !isInitiallyRejected) {
+              handleRedirect(
+                "rejected",
+                "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
+              );
             }
           } else if (payload.eventType === "INSERT") {
             const newPayment = payload.new as Payment;
@@ -193,47 +238,93 @@ export function PaymentFlow({
       )
       .subscribe();
 
-    // 2. Smart Polling fallback setiap 2.5 detik (hanya bagi pengguna yang sedang aktif menunggu verifikasi)
+    // 2. Fast Smart Polling fallback (setiap 1.5 detik) agar deteksi verifikasi/penolakan admin instan
     const pollInterval = setInterval(async () => {
-      if (isRedirecting || !booking.id) return;
+      if (isRedirecting) return;
       try {
-        const { data: bData } = await supabase
-          .from("bookings")
-          .select("status, pesan_admin, payments(*)")
-          .eq("id", booking.id)
-          .maybeSingle();
+        // Query status booking terbaru
+        let bQuery = supabase.from("bookings").select("id, status, pesan_admin");
+        if (isUUID) {
+          bQuery = bQuery.eq("id", booking.id);
+        } else if (booking.kode_booking) {
+          bQuery = bQuery.eq("kode_booking", booking.kode_booking);
+        } else {
+          bQuery = bQuery.eq("kode_booking", booking.id);
+        }
+
+        const { data: bData } = await bQuery.maybeSingle();
 
         if (bData && !isRedirecting) {
           const bStatus = bData.status as BookingStatus;
-          const payList = (bData.payments || []) as Payment[];
+          const pesan = bData.pesan_admin || "";
 
-          if (
+          const isVerified =
             bStatus === "dp_dibayar" ||
             bStatus === "lunas" ||
-            bStatus === "diambil" ||
-            payList.some((p) => p.status === "terverifikasi")
-          ) {
-            handleRedirect("verified", "Pembayaran DP Anda telah dikonfirmasi oleh admin.");
-          } else if (
-            bStatus === "dibatalkan" ||
-            payList.some((p) => p.status === "ditolak")
-          ) {
+            bStatus === "diambil";
+          const isRejected =
+            !isInitiallyRejected &&
+            (bStatus === "dibatalkan" || /ditolak/i.test(pesan));
+
+          if (isVerified) {
+            handleRedirect(
+              "verified",
+              pesan || "Jadwal booking alat Anda telah dikunci oleh admin."
+            );
+            return;
+          } else if (isRejected) {
             handleRedirect(
               "rejected",
-              bData.pesan_admin || "Bukti transfer ditolak oleh admin."
+              pesan || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
             );
+            return;
+          }
+
+          // Cek status pembayaran terbaru di tabel payments
+          const resolvedBookingId = bData.id || (isUUID ? booking.id : null);
+          if (resolvedBookingId) {
+            const { data: pData } = await supabase
+              .from("payments")
+              .select("id, status")
+              .eq("booking_id", resolvedBookingId)
+              .order("id", { ascending: false });
+
+            if (pData && pData.length > 0 && !isRedirecting) {
+              if (pData.some((p) => p.status === "terverifikasi")) {
+                handleRedirect(
+                  "verified",
+                  pesan || "Pembayaran DP berhasil diverifikasi oleh admin."
+                );
+                return;
+              }
+              if (pData.some((p) => p.status === "ditolak") && !isInitiallyRejected) {
+                handleRedirect(
+                  "rejected",
+                  pesan || "Bukti transfer ditolak oleh admin. Silakan periksa rincian booking."
+                );
+                return;
+              }
+            }
           }
         }
       } catch {
-        // abaikan kesalahan polling sementara
+        // Abaikan gangguan jaringan sesaat selama polling
       }
-    }, 2500);
+    }, 1500);
 
     return () => {
       clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
-  }, [booking.id, booking.status, initialPayments, router, supabase]);
+  }, [
+    booking.id,
+    booking.kode_booking,
+    booking.status,
+    booking.pesan_admin,
+    initialPayments,
+    router,
+    supabase,
+  ]);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
