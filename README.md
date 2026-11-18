@@ -28,15 +28,6 @@
 * **Proses Booking Konvensional:** Menggantikan pencatatan manual via chat/kertas menjadi sistem reservasi digital yang transparan dengan kalkulasi otomatis uang muka (DP), deposit jaminan, dan diskon sewa mingguan ($\ge 7$ hari).
 * **Verifikasi & Rekonsiliasi:** Memfasilitasi alur verifikasi pembayaran transfer/QRIS, pencetakan invoice digital siap cetak, serta rekonsiliasi pengembalian barang dan denda kerusakan secara sistematis.
 
-### 👤 Identitas Pengembang
-| Data | Keterangan |
-| :--- | :--- |
-| **Nama Lengkap** | Devr1us (Aditya) |
-| **NIM / ID Peserta** | `[Isi NIM / ID Anda di sini]` |
-| **Kelas / Jurusan** | `[Isi Kelas / Program Studi Anda di sini]` |
-| **Instansi / Universitas**| `[Isi Nama Sekolah / Kampus di sini]` |
-| **Peran (Role)** | Full-Stack Developer (UI/UX, Frontend, Backend & Database Architecture) |
-
 ### 🌐 Tautan Proyek & Demo Langsung
 * **Live Demo Website:** [https://pirantiku.vercel.app](https://pirantiku.vercel.app) *(atau domain kustom Anda)*
 * **Repositori GitHub:** [https://github.com/Devr1us/PirantiKu](https://github.com/Devr1us/PirantiKu)
