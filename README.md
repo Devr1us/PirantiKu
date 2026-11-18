@@ -175,8 +175,8 @@ Untuk mempermudah proses penilaian fitur multi-role tanpa harus mendaftar dari a
 
 ### 🔑 1. Akun Administrator (Pengelola Toko)
 * **URL Login:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-* **Email:** `admin@pirantiku.id`
-* **Password:** `AdminPirantiKu2026!`
+* **Email:** `admin@pirantiku.com`
+* **Password:** `AdminPirantiKu123!`
 * **Hak Akses:**
   * Mengakses Dashboard Ringkasan Operasional (`/admin`)
   * Mengelola, menambah, dan mengubah data katalog alat (`/admin/alat`)
