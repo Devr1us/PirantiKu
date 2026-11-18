@@ -31,6 +31,7 @@
 ### 🌐 Tautan Proyek & Demo Langsung
 * **Live Demo Website:** [https://pirantiku.vercel.app](https://pirantiku.vercel.app) *(atau domain kustom Anda)*
 * **Repositori GitHub:** [https://github.com/Devr1us/PirantiKu](https://github.com/Devr1us/PirantiKu)
+* **Domain web** [https://pirantiku.web.id/]
 
 ---
 
