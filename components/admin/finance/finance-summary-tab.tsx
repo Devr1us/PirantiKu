@@ -7,14 +7,14 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
-  Calendar,
   ArrowDownRight,
   ArrowUpRight,
   Clock,
 } from "lucide-react";
-import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DailyIncomeChart } from "./daily-income-chart";
 
 export interface FinanceSummaryData {
   totalPemasukan: number;
@@ -84,12 +84,38 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
     fetchSummary();
   }, [period, customStart, customEnd, fetchSummary]);
 
-  // Hitung nilai maksimum chart untuk penskalaan tinggi batang
-  const maxChartAmount = React.useMemo(() => {
-    if (!chartData || chartData.length === 0) return 100000;
-    const max = Math.max(...chartData.map((d) => d.amount));
-    return max > 0 ? max : 100000;
-  }, [chartData]);
+  // Hitung rentang tanggal string (YYYY-MM-DD) untuk pengisian hari lengkap pada grafik
+  const { chartDari, chartSampai } = React.useMemo(() => {
+    const now = new Date();
+    const wibStr = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(now);
+
+    const [y, m] = wibStr.split("-");
+
+    if (period === "hari_ini") {
+      return { chartDari: wibStr, chartSampai: wibStr };
+    }
+    if (period === "7_hari") {
+      const [yearNum, monthNum, dayNum] = wibStr.split("-").map(Number);
+      const currUtc = Date.UTC(yearNum, monthNum - 1, dayNum);
+      const startUtc = currUtc - 6 * 24 * 60 * 60 * 1000;
+      const d = new Date(startUtc);
+      const startStr = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+      return { chartDari: startStr, chartSampai: wibStr };
+    }
+    if (period === "bulan_ini") {
+      // 1 sampai hari ini pada bulan berjalan
+      return { chartDari: `${y}-${m}-01`, chartSampai: wibStr };
+    }
+    if (period === "kustom" && customStart && customEnd) {
+      return { chartDari: customStart, chartSampai: customEnd };
+    }
+    return { chartDari: `${y}-${m}-01`, chartSampai: wibStr };
+  }, [period, customStart, customEnd]);
 
   return (
     <div className="space-y-6">
@@ -340,50 +366,12 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
           </span>
         </div>
 
-        {isLoading ? (
-          <div className="h-48 flex items-center justify-center text-xs text-[#5F7A84]">
-            Memuat grafik tren pemasukan...
-          </div>
-        ) : chartData.length === 0 ? (
-          <div className="h-48 flex flex-col items-center justify-center text-xs text-[#5F7A84] space-y-1">
-            <Calendar className="h-8 w-8 text-[#A0630F]/40" />
-            <p>Belum ada transaksi pemasukan terverifikasi pada rentang waktu ini.</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <div className="h-56 flex items-end gap-2 pt-6 pb-2 px-2 overflow-x-auto">
-              {chartData.map((d) => {
-                const heightPercent = Math.max(8, Math.round((d.amount / maxChartAmount) * 100));
-                return (
-                  <div
-                    key={d.date}
-                    className="flex-1 min-w-[36px] max-w-[64px] flex flex-col items-center gap-1.5 group relative"
-                  >
-                    {/* Tooltip Hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-10 bg-[#234E5C] text-white text-[10px] font-bold px-2 py-1 rounded-md whitespace-nowrap shadow-md pointer-events-none z-10">
-                      {formatDateIndo(d.date, "d MMM")}: {formatRupiah(d.amount)}
-                    </div>
-
-                    {/* Bar Batang */}
-                    <div
-                      style={{ height: `${heightPercent}%` }}
-                      className="w-full bg-[#234E5C] hover:bg-[#A0630F] rounded-t-md transition-all shadow-xs cursor-pointer"
-                    />
-
-                    {/* Label Tanggal */}
-                    <span className="text-[10px] text-[#5F7A84] font-medium truncate w-full text-center">
-                      {formatDateIndo(d.date, "d/M")}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-between items-center text-[11px] text-[#5F7A84] border-t border-[#E8E8E1] pt-2 px-1">
-              <span>Rp 0</span>
-              <span>Maks: {formatRupiah(maxChartAmount)}</span>
-            </div>
-          </div>
-        )}
+        <DailyIncomeChart
+          data={chartData}
+          dari={chartDari}
+          sampai={chartSampai}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
