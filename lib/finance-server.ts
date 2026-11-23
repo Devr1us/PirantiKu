@@ -319,9 +319,8 @@ export async function verifyPaymentTransaction(
   if (adminId) {
     await logAdminAction(supabase, {
       adminId,
-      aksi: `Verifikasi Pembayaran ID #${payment.id} (${payment.jenis}) -> ${status}${
-        alasan ? `: ${alasan}` : ""
-      }`,
+      aksi: `Verifikasi Pembayaran ID #${payment.id} (${payment.jenis}) -> ${status}${alasan ? `: ${alasan}` : ""
+        }`,
       namaTabel: "payments",
       targetId: String(payment.id),
     });
