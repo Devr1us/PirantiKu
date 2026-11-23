@@ -6,6 +6,7 @@ import { formatRupiah } from "@/lib/format";
 import {
   isiHariKosong,
   hitungBatasSumbuY,
+  hitungLabelSumbuX,
   formatRupiahRingkas,
   formatTanggalIndoPenuh,
   type DailyChartItem,
@@ -48,26 +49,24 @@ export function DailyIncomeChart({
     return hitungBatasSumbuY(maxOriginalAmount);
   }, [maxOriginalAmount]);
 
+  // 4. Hitung label sumbu X cerdas (tidak pernah bertumpuk bahkan untuk 1 tahun penuh)
+  const xAxisTicks = React.useMemo(() => {
+    return hitungLabelSumbuX(chartItems);
+  }, [chartItems]);
+
   // Geometri SVG tetap (viewBox="0 0 800 280")
   const SVG_WIDTH = 800;
   const SVG_HEIGHT = 280;
-  const PADDING_TOP = 25;
-  const PADDING_BOTTOM = 40;
+  const PADDING_TOP = 30;
+  const PADDING_BOTTOM = 42;
   const PADDING_LEFT = 75;
   const PADDING_RIGHT = 25;
 
   const PLOT_WIDTH = SVG_WIDTH - PADDING_LEFT - PADDING_RIGHT; // 700
-  const PLOT_HEIGHT = SVG_HEIGHT - PADDING_TOP - PADDING_BOTTOM; // 215
-  const BASELINE_Y = PADDING_TOP + PLOT_HEIGHT; // 240
+  const PLOT_HEIGHT = SVG_HEIGHT - PADDING_TOP - PADDING_BOTTOM; // 208
+  const BASELINE_Y = PADDING_TOP + PLOT_HEIGHT; // 238
 
   const totalDays = chartItems.length;
-
-  // Logika interval pelabelan sumbu X agar tidak bertumpuk jika > 12 hari
-  const labelInterval = React.useMemo(() => {
-    if (totalDays <= 12) return 1;
-    if (totalDays <= 24) return 2;
-    return 3;
-  }, [totalDays]);
 
   // Loading State
   if (isLoading) {
@@ -98,15 +97,50 @@ export function DailyIncomeChart({
   }
 
   const slotWidth = PLOT_WIDTH / totalDays;
-  const barWidth = Math.max(4, Math.min(26, slotWidth * 0.65));
+  const barWidth = Math.max(1, Math.min(26, slotWidth * 0.75));
 
-  // Data titik aktif untuk tooltip
+  // Handler interaksi mouse & touch responsif di seluruh bidang grafik
+  const handlePointerInteraction = (clientX: number, target: SVGSVGElement) => {
+    if (totalDays === 0) return;
+    const rect = target.getBoundingClientRect();
+    if (!rect.width) return;
+    const scale = SVG_WIDTH / rect.width;
+    const svgX = (clientX - rect.left) * scale;
+
+    if (svgX < PADDING_LEFT - 5 || svgX > SVG_WIDTH - PADDING_RIGHT + 5) {
+      setActiveIndex(null);
+      return;
+    }
+
+    const relX = svgX - PADDING_LEFT;
+    const idx = Math.min(totalDays - 1, Math.max(0, Math.floor(relX / slotWidth)));
+    setActiveIndex(idx);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    handlePointerInteraction(e.clientX, e.currentTarget);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<SVGSVGElement>) => {
+    if (e.touches.length > 0) {
+      handlePointerInteraction(e.touches[0].clientX, e.currentTarget);
+    }
+  };
+
+  // Data titik aktif untuk tooltip & garis penunjuk
   const activeItem = activeIndex !== null && chartItems[activeIndex] ? chartItems[activeIndex] : null;
+  const activeXCenter =
+    activeIndex !== null ? PADDING_LEFT + activeIndex * slotWidth + slotWidth / 2 : null;
+  const activeBarHeight =
+    activeItem && activeItem.total > 0
+      ? Math.max(4, (activeItem.total / maxAxis) * PLOT_HEIGHT)
+      : 2;
+  const activeBarY = BASELINE_Y - activeBarHeight;
 
   return (
     <div className="space-y-3 select-none">
       {/* Container SVG Responsif */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-visible">
         <svg
           viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
           width="100%"
@@ -114,8 +148,11 @@ export function DailyIncomeChart({
           preserveAspectRatio="xMidYMid meet"
           role="img"
           aria-label={`Grafik tren pemasukan harian periode ${dari} sampai ${sampai}. Total pemasukan: ${formatRupiah(totalPemasukan)}, nilai harian tertinggi: ${formatRupiah(maxOriginalAmount)}.`}
-          className="overflow-visible"
+          className="overflow-visible cursor-crosshair"
+          onMouseMove={handleMouseMove}
           onMouseLeave={() => setActiveIndex(null)}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={() => setActiveIndex(null)}
         >
           {/* Defs untuk shadow & styling */}
           <defs>
@@ -158,7 +195,7 @@ export function DailyIncomeChart({
             );
           })}
 
-          {/* 2. Gambar Batang Grafik & Label Sumbu X */}
+          {/* 2. Gambar Batang Grafik Tiap Hari */}
           {chartItems.map((item, idx) => {
             const isHovered = activeIndex === idx;
             const xCenter = PADDING_LEFT + idx * slotWidth + slotWidth / 2;
@@ -178,73 +215,90 @@ export function DailyIncomeChart({
               ? "#234E5C"
               : "#CBD5E1";
 
-            // Tanggal untuk sumbu X (format dd/MM)
-            const parts = item.tanggal.split("-");
-            const xLabel = parts.length === 3 ? `${parts[2]}/${parts[1]}` : item.tanggal;
-            const isLast = idx === totalDays - 1;
-            const showXLabel = idx % labelInterval === 0 || (isLast && (totalDays - 1) % labelInterval !== 0);
+            const applyShadow = hasIncome && barWidth >= 4;
 
             return (
-              <g key={`bar-group-${item.tanggal}`}>
-                {/* Area Hit-Target Transparan (Memudahkan Hover & Tap di Layar Sentuh) */}
-                <rect
-                  x={PADDING_LEFT + idx * slotWidth}
-                  y={PADDING_TOP}
-                  width={slotWidth}
-                  height={PLOT_HEIGHT + 10}
-                  fill="transparent"
-                  cursor="pointer"
-                  onMouseEnter={() => setActiveIndex(idx)}
-                  onTouchStart={() => setActiveIndex(idx)}
-                  onClick={() => setActiveIndex(idx)}
-                />
+              <rect
+                key={`bar-${item.tanggal}-${idx}`}
+                x={barX}
+                y={barY}
+                width={barWidth}
+                height={barHeight}
+                rx={hasIncome && barWidth >= 3 ? 2 : 0}
+                ry={hasIncome && barWidth >= 3 ? 2 : 0}
+                fill={barFill}
+                filter={applyShadow ? "url(#barShadow)" : undefined}
+                className="transition-colors duration-150"
+                style={{ pointerEvents: "none" }}
+              />
+            );
+          })}
 
-                {/* Elemen Batang SVG */}
-                <rect
-                  x={barX}
-                  y={barY}
-                  width={barWidth}
-                  height={barHeight}
-                  rx={hasIncome ? 3 : 1}
-                  ry={hasIncome ? 3 : 1}
-                  fill={barFill}
-                  filter={hasIncome ? "url(#barShadow)" : undefined}
-                  className="transition-colors duration-150"
-                  style={{ pointerEvents: "none" }}
-                />
+          {/* 3. Label Sumbu X yang Bersih, Cerdas, dan Anti-Tabrakan */}
+          {xAxisTicks.map((tick) => {
+            const xCenter = PADDING_LEFT + tick.index * slotWidth + slotWidth / 2;
+            const isHovered = activeIndex === tick.index;
 
-                {/* Label Tanggal Sumbu X */}
-                {showXLabel && (
-                  <text
-                    x={xCenter}
-                    y={BASELINE_Y + 18}
-                    textAnchor="middle"
-                    fill={isHovered ? "#234E5C" : "#5F7A84"}
-                    fontSize="10"
-                    fontWeight={isHovered ? "700" : "500"}
-                    fontFamily="inherit"
-                  >
-                    {xLabel}
-                  </text>
-                )}
+            return (
+              <g key={`x-tick-${tick.index}-${tick.label}`}>
+                {/* Notch kecil penanda posisi tanggal */}
+                <line
+                  x1={xCenter}
+                  y1={BASELINE_Y}
+                  x2={xCenter}
+                  y2={BASELINE_Y + 4}
+                  stroke="#CBD5E1"
+                  strokeWidth="1"
+                />
+                <text
+                  x={xCenter}
+                  y={BASELINE_Y + 18}
+                  textAnchor="middle"
+                  fill={isHovered ? "#234E5C" : "#5F7A84"}
+                  fontSize="10"
+                  fontWeight={isHovered ? "700" : "600"}
+                  fontFamily="inherit"
+                >
+                  {tick.label}
+                </text>
               </g>
             );
           })}
 
-          {/* 3. Tooltip Interaktif SVG Saat Hover / Tap */}
-          {activeItem && activeIndex !== null && (
+          {/* 4. Garis Bantu Penunjuk Vertikal Saat Hover / Tap */}
+          {activeItem && activeXCenter !== null && (
+            <g style={{ pointerEvents: "none" }}>
+              <line
+                x1={activeXCenter}
+                y1={PADDING_TOP}
+                x2={activeXCenter}
+                y2={BASELINE_Y}
+                stroke="#A0630F"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
+                opacity="0.75"
+              />
+              <circle
+                cx={activeXCenter}
+                cy={activeBarY}
+                r={Math.max(2.5, Math.min(4.5, barWidth / 2 + 1.5))}
+                fill="#A0630F"
+              />
+            </g>
+          )}
+
+          {/* 5. Tooltip Interaktif SVG Saat Hover / Tap */}
+          {activeItem && activeIndex !== null && activeXCenter !== null && (
             <g
               transform={`translate(${Math.max(
-                110,
+                PADDING_LEFT + 85,
                 Math.min(
-                  SVG_WIDTH - 110,
-                  PADDING_LEFT + activeIndex * slotWidth + slotWidth / 2
+                  SVG_WIDTH - PADDING_RIGHT - 85,
+                  activeXCenter
                 )
               )}, ${Math.max(
-                15,
-                BASELINE_Y -
-                  (activeItem.total > 0 ? (activeItem.total / maxAxis) * PLOT_HEIGHT : 2) -
-                  45
+                10,
+                activeBarY - 48
               )})`}
               style={{ pointerEvents: "none" }}
             >
@@ -253,18 +307,18 @@ export function DailyIncomeChart({
                 x="-85"
                 y="-5"
                 width="170"
-                height="40"
+                height="42"
                 rx="8"
                 fill="#234E5C"
                 filter="url(#barShadow)"
               />
               {/* Segitiga Panah Bawah */}
-              <polygon points="-6,35 6,35 0,41" fill="#234E5C" />
+              <polygon points="-6,37 6,37 0,43" fill="#234E5C" />
 
               {/* Teks Tanggal Lengkap */}
               <text
                 x="0"
-                y="11"
+                y="12"
                 textAnchor="middle"
                 fill="#E8E8E1"
                 fontSize="9"
@@ -277,7 +331,7 @@ export function DailyIncomeChart({
               {/* Teks Nominal Rupiah */}
               <text
                 x="0"
-                y="26"
+                y="28"
                 textAnchor="middle"
                 fill="#FFFFFF"
                 fontSize="11"

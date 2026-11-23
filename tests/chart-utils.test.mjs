@@ -3,8 +3,10 @@ import assert from "node:assert/strict";
 import {
   isiHariKosong,
   hitungBatasSumbuY,
+  hitungLabelSumbuX,
   formatRupiahRingkas,
   formatTanggalIndoPenuh,
+  formatTanggalIndoRingkas,
 } from "../lib/chart-utils.ts";
 
 test("Chart Utils - Skenario 1: Tanpa Transaksi (data kosong)", () => {
@@ -104,8 +106,44 @@ test("Chart Utils - Skenario 7: Format Rupiah Ringkas", () => {
   assert.equal(formatRupiahRingkas(1500000000), "Rp 1,5 M");
 });
 
-test("Chart Utils - Skenario 8: Format Tanggal Indonesia Lengkap", () => {
+test("Chart Utils - Skenario 8: Format Tanggal Indonesia Lengkap & Ringkas", () => {
   assert.equal(formatTanggalIndoPenuh("2026-11-23"), "23 November 2026");
   assert.equal(formatTanggalIndoPenuh("2026-08-17"), "17 Agustus 2026");
   assert.equal(formatTanggalIndoPenuh("2026-01-01"), "1 Januari 2026");
+
+  assert.equal(formatTanggalIndoRingkas("2026-11-23"), "23 Nov 2026");
+  assert.equal(formatTanggalIndoRingkas("2026-01-01"), "1 Jan 2026");
+});
+
+test("Chart Utils - Skenario 9: Rentang Kustom Panjang 11 Bulan (334 hari) Tidak Tabrakan Label", () => {
+  // Simulasi rentang persis seperti di gambar user: 01/01/2026 sampai 30/11/2026
+  const items = isiHariKosong([], "2026-01-01", "2026-11-30");
+  assert.equal(items.length, 334);
+
+  const ticks = hitungLabelSumbuX(items);
+  // Harus menghasilkan tepat 11 label bulan (Jan s/d Nov) tanpa tumpuk ribuan angka
+  assert.equal(ticks.length, 11);
+  assert.deepEqual(
+    ticks.map((t) => t.label),
+    ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov"]
+  );
+});
+
+test("Chart Utils - Skenario 10: Stepping Label Bulan Berjalan (23 hari)", () => {
+  const items = isiHariKosong([], "2026-11-01", "2026-11-23");
+  assert.equal(items.length, 23);
+
+  const ticks = hitungLabelSumbuX(items);
+  // Stepping 3 hari menghasilkan 9 label berjarak lega
+  assert.ok(ticks.length >= 7 && ticks.length <= 10);
+  assert.equal(ticks[0].label, "01/11");
+  assert.equal(ticks[ticks.length - 1].label, "23/11");
+});
+
+test("Chart Utils - Skenario 11: Auto-swap jika tanggal awal > akhir", () => {
+  // Input terbalik tidak boleh error atau return []
+  const items = isiHariKosong([], "2026-11-05", "2026-11-01");
+  assert.equal(items.length, 5);
+  assert.equal(items[0].tanggal, "2026-11-01");
+  assert.equal(items[4].tanggal, "2026-11-05");
 });

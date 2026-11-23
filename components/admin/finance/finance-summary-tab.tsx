@@ -15,6 +15,7 @@ import { formatRupiah } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DailyIncomeChart } from "./daily-income-chart";
+import { formatTanggalIndoRingkas, BULAN_INDO } from "@/lib/chart-utils";
 
 export interface FinanceSummaryData {
   totalPemasukan: number;
@@ -84,6 +85,33 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
     fetchSummary();
   }, [period, customStart, customEnd, fetchSummary]);
 
+  // Handler pergantian periode dengan prefill tanggal kustom otomatis
+  const handleSelectPeriod = (btnId: string) => {
+    setPeriod(btnId);
+    if (btnId === "kustom" && (!customStart || !customEnd)) {
+      const now = new Date();
+      const wibStr = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(now);
+      const [y] = wibStr.split("-");
+      setCustomStart(`${y}-01-01`);
+      setCustomEnd(wibStr);
+    }
+  };
+
+  const handleApplyCustomFilter = () => {
+    if (!customStart || !customEnd) return;
+    if (customStart > customEnd) {
+      const temp = customStart;
+      setCustomStart(customEnd);
+      setCustomEnd(temp);
+    }
+    fetchSummary();
+  };
+
   // Hitung rentang tanggal string (YYYY-MM-DD) untuk pengisian hari lengkap pada grafik
   const { chartDari, chartSampai } = React.useMemo(() => {
     const now = new Date();
@@ -112,10 +140,32 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
       return { chartDari: `${y}-${m}-01`, chartSampai: wibStr };
     }
     if (period === "kustom" && customStart && customEnd) {
-      return { chartDari: customStart, chartSampai: customEnd };
+      const start = customStart < customEnd ? customStart : customEnd;
+      const end = customStart < customEnd ? customEnd : customStart;
+      return { chartDari: start, chartSampai: end };
     }
     return { chartDari: `${y}-${m}-01`, chartSampai: wibStr };
   }, [period, customStart, customEnd]);
+
+  // Label periode yang jelas, deskriptif, dan memuat nama bulan/tanggal lengkap
+  const periodeBadgeLabel = React.useMemo(() => {
+    if (period === "hari_ini") {
+      return `HARI INI (${formatTanggalIndoRingkas(chartDari)})`;
+    }
+    if (period === "7_hari") {
+      return `7 HARI TERAKHIR (${formatTanggalIndoRingkas(chartDari)} – ${formatTanggalIndoRingkas(chartSampai)})`;
+    }
+    if (period === "bulan_ini") {
+      const parts = chartDari.split("-");
+      const monthIdx = parseInt(parts[1], 10) - 1;
+      const namaBulan = BULAN_INDO[monthIdx] || parts[1];
+      return `BULAN INI (${namaBulan.toUpperCase()} ${parts[0]})`;
+    }
+    if (period === "kustom" && chartDari && chartSampai) {
+      return `${formatTanggalIndoRingkas(chartDari)} – ${formatTanggalIndoRingkas(chartSampai)}`;
+    }
+    return period.replace("_", " ").toUpperCase();
+  }, [period, chartDari, chartSampai]);
 
   return (
     <div className="space-y-6">
@@ -138,7 +188,7 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
             <button
               key={btn.id}
               type="button"
-              onClick={() => setPeriod(btn.id)}
+              onClick={() => handleSelectPeriod(btn.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 period === btn.id
                   ? "bg-[#234E5C] text-white shadow-xs"
@@ -174,7 +224,7 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
           </div>
           <Button
             size="sm"
-            onClick={fetchSummary}
+            onClick={handleApplyCustomFilter}
             className="h-8 text-xs bg-[#234E5C] text-white hover:bg-[#1a3b46]"
           >
             Terapkan Filter
@@ -362,7 +412,7 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
             </p>
           </div>
           <span className="text-xs font-semibold text-[#5F7A84]">
-            Periode: <strong className="text-[#234E5C]">{period.replace("_", " ").toUpperCase()}</strong>
+            Periode: <strong className="text-[#234E5C]">{periodeBadgeLabel}</strong>
           </span>
         </div>
 
