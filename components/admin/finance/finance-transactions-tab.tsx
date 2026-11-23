@@ -176,7 +176,9 @@ export function FinanceTransactionsTab() {
               <option value="deposit">Deposit Jaminan</option>
               <option value="denda">Denda Keterlambatan</option>
               <option value="ganti_rugi">Ganti Rugi</option>
+              <option value="tagihan_kekurangan">Tagihan Kekurangan</option>
               <option value="refund_deposit">Refund Deposit</option>
+              <option value="refund_pembayaran">Refund Pembayaran (Batal)</option>
               <option value="penyesuaian">Penyesuaian</option>
             </select>
           </div>
@@ -203,7 +205,9 @@ export function FinanceTransactionsTab() {
             >
               <option value="semua">Semua Status</option>
               <option value="terverifikasi">Terverifikasi</option>
-              <option value="menunggu_verifikasi">Menunggu</option>
+              <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
+              <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
+              <option value="menunggu_transfer">Menunggu Transfer</option>
               <option value="ditolak">Ditolak</option>
             </select>
           </div>
@@ -345,6 +349,10 @@ export function FinanceTransactionsTab() {
                               ? "bg-[#E2F0D9] text-[#2E5E4E]"
                               : tx.status === "menunggu_verifikasi"
                               ? "bg-[#FEF3C7] text-[#78350F]"
+                              : tx.status === "menunggu_pembayaran"
+                              ? "bg-[#EDE9FE] text-[#5B21B6]"
+                              : tx.status === "menunggu_transfer"
+                              ? "bg-[#E0F2FE] text-[#0369A1]"
                               : "bg-[#FEE2E2] text-[#991B1B]"
                           }`}
                         >
@@ -352,6 +360,10 @@ export function FinanceTransactionsTab() {
                             ? "Terverifikasi"
                             : tx.status === "menunggu_verifikasi"
                             ? "Menunggu"
+                            : tx.status === "menunggu_pembayaran"
+                            ? "Perlu Dibayar"
+                            : tx.status === "menunggu_transfer"
+                            ? "Perlu Transfer"
                             : "Ditolak"}
                         </span>
                       </td>

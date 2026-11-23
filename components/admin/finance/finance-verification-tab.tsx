@@ -73,7 +73,15 @@ export function FinanceVerificationTab({ onActionSuccess }: FinanceVerificationT
       const res = await fetch("/api/admin/finance/transactions?status=menunggu_verifikasi&limit=100");
       const json = await res.json();
       if (json.data) {
-        setItems(json.data);
+        // Hanya tampilkan pembayaran DP & Pelunasan yang butuh verifikasi admin
+        const filtered = json.data.filter(
+          (p: VerificationItem) =>
+            p.jenis !== "refund_deposit" &&
+            p.jenis !== "refund_pembayaran" &&
+            p.jenis !== "tagihan_kekurangan" &&
+            !p.metode?.toLowerCase().includes("kekurangan")
+        );
+        setItems(filtered);
       }
     } catch (err) {
       console.error("Gagal memuat antrean pembayaran:", err);

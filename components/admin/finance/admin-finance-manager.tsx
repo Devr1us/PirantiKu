@@ -5,15 +5,17 @@ import { useSearchParams, useRouter } from "next/navigation";
 import {
   TrendingUp,
   Clock,
+  RotateCcw,
   Receipt,
   ShieldCheck,
 } from "lucide-react";
 import { FinanceSummaryTab } from "./finance-summary-tab";
 import { FinanceVerificationTab } from "./finance-verification-tab";
+import { FinanceRefundsTab } from "./finance-refunds-tab";
 import { FinanceTransactionsTab } from "./finance-transactions-tab";
 import { FinanceDepositsTab } from "./finance-deposits-tab";
 
-type FinanceTab = "ringkasan" | "verifikasi" | "transaksi" | "deposit";
+type FinanceTab = "ringkasan" | "verifikasi" | "refund" | "transaksi" | "deposit";
 
 interface AdminFinanceManagerProps {
   initialPendingCount?: number;
@@ -26,21 +28,25 @@ export function AdminFinanceManager({ initialPendingCount = 0 }: AdminFinanceMan
 
   const [activeTab, setActiveTab] = React.useState<FinanceTab>(tabParam);
   const [pendingCount, setPendingCount] = React.useState<number>(initialPendingCount);
+  const [pendingRefundCount, setPendingRefundCount] = React.useState<number>(0);
 
   // Sync tab jika URL query param berubah
   React.useEffect(() => {
-    if (tabParam && ["ringkasan", "verifikasi", "transaksi", "deposit"].includes(tabParam)) {
+    if (tabParam && ["ringkasan", "verifikasi", "refund", "transaksi", "deposit"].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [tabParam]);
 
   // Cek jumlah pending terbaru
-  const refreshPendingCount = React.useCallback(async () => {
+  const refreshCounts = React.useCallback(async () => {
     try {
       const res = await fetch("/api/admin/finance/summary?period=bulan_ini");
       const json = await res.json();
       if (json.summary?.pendingVerifications !== undefined) {
         setPendingCount(json.summary.pendingVerifications);
+      }
+      if (json.summary?.pendingRefunds !== undefined) {
+        setPendingRefundCount(json.summary.pendingRefunds);
       }
     } catch {
       // ignore
@@ -69,6 +75,13 @@ export function AdminFinanceManager({ initialPendingCount = 0 }: AdminFinanceMan
       icon: Clock,
       badge: pendingCount > 0 ? pendingCount : null,
       badgeColor: "bg-[#FEF3C7] text-[#78350F]",
+    },
+    {
+      id: "refund" as const,
+      label: "Antrean Refund",
+      icon: RotateCcw,
+      badge: pendingRefundCount > 0 ? pendingRefundCount : null,
+      badgeColor: "bg-[#FEE2E2] text-[#991B1B]",
     },
     {
       id: "transaksi" as const,
@@ -122,14 +135,28 @@ export function AdminFinanceManager({ initialPendingCount = 0 }: AdminFinanceMan
       {activeTab === "ringkasan" && (
         <FinanceSummaryTab
           onGoToVerification={() => handleTabChange("verifikasi")}
-          onSummaryLoaded={(data) => setPendingCount(data.pendingVerifications)}
+          onSummaryLoaded={(data) => {
+            setPendingCount(data.pendingVerifications);
+            if (data.pendingRefunds !== undefined) {
+              setPendingRefundCount(data.pendingRefunds);
+            }
+          }}
         />
       )}
 
       {activeTab === "verifikasi" && (
         <FinanceVerificationTab
           onActionSuccess={() => {
-            refreshPendingCount();
+            refreshCounts();
+            router.refresh();
+          }}
+        />
+      )}
+
+      {activeTab === "refund" && (
+        <FinanceRefundsTab
+          onActionSuccess={() => {
+            refreshCounts();
             router.refresh();
           }}
         />

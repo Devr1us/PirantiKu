@@ -27,6 +27,8 @@ export type PaymentJenis =
   | "denda_keterlambatan"
   | "ganti_rugi"
   | "refund_deposit"
+  | "tagihan_kekurangan"
+  | "refund_pembayaran"
   | "penyesuaian";
 
 export type PaymentArah = "masuk" | "keluar";
@@ -40,6 +42,8 @@ export type BookingStatusPembayaran =
 
 export type PaymentStatus =
   | "menunggu_verifikasi"
+  | "menunggu_pembayaran"
+  | "menunggu_transfer"
   | "terverifikasi"
   | "ditolak";
 
@@ -125,6 +129,7 @@ export interface Database {
           harga_per_hari: number;
           harga_mingguan: number | null;
           deposit: number;
+          nilai_ganti?: number | null;
           stok: number;
           stok_rusak: number;
           aktif: boolean;
@@ -297,6 +302,11 @@ export interface Database {
           bukti_url: string | null;
           status: PaymentStatus;
           catatan?: string | null;
+          sumber?: string | null;
+          rekening_pengirim?: Json | null;
+          bank_pengirim?: string | null;
+          no_rekening_pengirim?: string | null;
+          atas_nama_pengirim?: string | null;
           dicatat_oleh?: string | null;
           tanggal_transaksi?: string;
           dibayar_pada: string;
@@ -377,6 +387,9 @@ export interface Database {
           jumlah: number;
           deskripsi: string;
           biaya_ganti_rugi: number;
+          biaya_otomatis?: number | null;
+          biaya_override?: number | null;
+          alasan_override?: string | null;
           foto_url: string | null;
         };
         Insert: {

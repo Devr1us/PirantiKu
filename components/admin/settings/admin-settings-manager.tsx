@@ -63,6 +63,21 @@ export function AdminSettingsManager({
   const [dendaPerHari, setDendaPerHari] = React.useState(
     initialSettings.denda_per_hari || String(DEFAULT_SETTINGS.denda_per_hari)
   );
+  const [persenRusakRingan, setPersenRusakRingan] = React.useState(
+    initialSettings.persen_rusak_ringan || String(DEFAULT_SETTINGS.persen_rusak_ringan)
+  );
+  const [persenRusakBerat, setPersenRusakBerat] = React.useState(
+    initialSettings.persen_rusak_berat || String(DEFAULT_SETTINGS.persen_rusak_berat)
+  );
+  const [persenHilang, setPersenHilang] = React.useState(
+    initialSettings.persen_hilang || String(DEFAULT_SETTINGS.persen_hilang)
+  );
+  const [faktorNilaiGanti, setFaktorNilaiGanti] = React.useState(
+    initialSettings.faktor_nilai_ganti || String(DEFAULT_SETTINGS.faktor_nilai_ganti)
+  );
+  const [batasVerifikasiJam, setBatasVerifikasiJam] = React.useState(
+    initialSettings.batas_verifikasi_jam || String(DEFAULT_SETTINGS.batas_verifikasi_jam)
+  );
   const [batasPelunasan, setBatasPelunasan] = React.useState(
     initialSettings.batas_pelunasan || "sebelum_diambil"
   );
@@ -151,6 +166,31 @@ export function AdminSettingsManager({
           deskripsi: "Nominal denda keterlambatan per hari (Rp)",
         },
         {
+          key: "persen_rusak_ringan",
+          value: String(Math.max(0, Math.min(100, parseInt(persenRusakRingan, 10) || 20))),
+          deskripsi: "Persentase tarif ganti rugi Rusak Ringan (%)",
+        },
+        {
+          key: "persen_rusak_berat",
+          value: String(Math.max(0, Math.min(100, parseInt(persenRusakBerat, 10) || 60))),
+          deskripsi: "Persentase tarif ganti rugi Rusak Berat (%)",
+        },
+        {
+          key: "persen_hilang",
+          value: String(Math.max(0, Math.min(200, parseInt(persenHilang, 10) || 100))),
+          deskripsi: "Persentase tarif ganti rugi Unit Hilang (%)",
+        },
+        {
+          key: "faktor_nilai_ganti",
+          value: String(Math.max(1, parseInt(faktorNilaiGanti, 10) || 10)),
+          deskripsi: "Faktor pengali harga per hari jika nilai ganti alat kosong",
+        },
+        {
+          key: "batas_verifikasi_jam",
+          value: String(Math.max(1, parseInt(batasVerifikasiJam, 10) || 24)),
+          deskripsi: "Batas waktu tunggu verifikasi pembayaran sebelum auto-cancel (jam)",
+        },
+        {
           key: "batas_pelunasan",
           value: batasPelunasan,
           deskripsi: "Batas waktu pelunasan sisa tagihan sewa dan deposit",
@@ -222,6 +262,11 @@ export function AdminSettingsManager({
     setQrisUrl(DEFAULT_SETTINGS.qris_url);
     setDpPersen(String(DEFAULT_SETTINGS.dp_persen));
     setDendaPerHari(String(DEFAULT_SETTINGS.denda_per_hari));
+    setPersenRusakRingan(String(DEFAULT_SETTINGS.persen_rusak_ringan));
+    setPersenRusakBerat(String(DEFAULT_SETTINGS.persen_rusak_berat));
+    setPersenHilang(String(DEFAULT_SETTINGS.persen_hilang));
+    setFaktorNilaiGanti(String(DEFAULT_SETTINGS.faktor_nilai_ganti));
+    setBatasVerifikasiJam(String(DEFAULT_SETTINGS.batas_verifikasi_jam));
     setBatasPelunasan("sebelum_diambil");
     setWhatsappAdmin(DEFAULT_SETTINGS.whatsapp_admin);
     setJamOperasional(DEFAULT_SETTINGS.jam_operasional);
@@ -465,6 +510,122 @@ export function AdminSettingsManager({
                   </select>
                   <span className="text-[11px] text-[#5F7A84]">
                     Kebijakan penagihan pelunasan biaya rental dan deposit kepada penyewa sebelum alat diserahkan.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Form Kebijakan Tarif Kerusakan & Batas Otomasi */}
+            <div className="rounded-xl border border-[#E8E8E1] bg-white p-4 sm:p-6 shadow-sm space-y-5">
+              <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-3">
+                <div className="h-8 w-8 rounded-full bg-[#FEE2E2] text-[#991B1B] flex items-center justify-center shrink-0">
+                  <RotateCcw className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-[#234E5C]">
+                      Tarif Ganti Rugi Kerusakan &amp; Batas Verifikasi Otomatis
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#78350F] border border-[#FDE68A]">
+                      Default Usulan
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#5F7A84] leading-snug">
+                    Persentase ganti rugi fisik dari nilai penggantian alat serta durasi batas waktu verifikasi admin.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Tarif Rusak Ringan (%)
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={persenRusakRingan}
+                      onChange={(e) => setPersenRusakRingan(e.target.value)}
+                      className="h-10 text-xs font-bold pr-10"
+                    />
+                    <span className="absolute right-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">%</span>
+                  </div>
+                  <span className="text-[10px] text-[#5F7A84]">Default usulan: 20%</span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Tarif Rusak Berat (%)
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={persenRusakBerat}
+                      onChange={(e) => setPersenRusakBerat(e.target.value)}
+                      className="h-10 text-xs font-bold pr-10"
+                    />
+                    <span className="absolute right-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">%</span>
+                  </div>
+                  <span className="text-[10px] text-[#5F7A84]">Default usulan: 60%</span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Tarif Unit Hilang (%)
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={0}
+                      max={200}
+                      value={persenHilang}
+                      onChange={(e) => setPersenHilang(e.target.value)}
+                      className="h-10 text-xs font-bold pr-10"
+                    />
+                    <span className="absolute right-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">%</span>
+                  </div>
+                  <span className="text-[10px] text-[#5F7A84]">Default usulan: 100%</span>
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-1">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Faktor Nilai Ganti Fallback
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={faktorNilaiGanti}
+                      onChange={(e) => setFaktorNilaiGanti(e.target.value)}
+                      className="h-10 text-xs font-bold pr-16"
+                    />
+                    <span className="absolute right-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">x Sewa</span>
+                  </div>
+                  <span className="text-[10px] text-[#5F7A84]">Jika master alat belum diatur (default: 10x)</span>
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Batas Waktu Verifikasi Pembayaran (Auto-Cancel)
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={72}
+                      value={batasVerifikasiJam}
+                      onChange={(e) => setBatasVerifikasiJam(e.target.value)}
+                      className="h-10 text-xs font-bold pr-14"
+                    />
+                    <span className="absolute right-3.5 top-2.5 text-xs font-bold text-[#5F7A84]">Jam</span>
+                  </div>
+                  <span className="text-[10px] text-[#5F7A84]">
+                    Booking yang tidak diverifikasi admin dalam rentang ini otomatis dibatalkan sistem &amp; refund diproses (default: 24 jam).
                   </span>
                 </div>
               </div>

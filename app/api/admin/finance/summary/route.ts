@@ -57,7 +57,7 @@ export async function GET(req: Request) {
           dailyMap[tglWib] = (dailyMap[tglWib] || 0) + jml;
         }
       } else if (arah === "keluar") {
-        if (p.jenis === "refund_deposit") {
+        if (p.jenis === "refund_deposit" || p.jenis === "refund_pembayaran") {
           refundDibayar += jml;
         }
       }
@@ -92,11 +92,38 @@ export async function GET(req: Request) {
       }
     }
 
-    // 3. Jumlah pembayaran menunggu verifikasi
+    // 3. Jumlah pembayaran menunggu verifikasi admin (Hanya pembayaran DP & Pelunasan)
     const { count: pendingCount } = await supabase
       .from("payments")
       .select("*", { count: "exact", head: true })
+      .in("jenis", ["dp", "pelunasan"])
       .eq("status", "menunggu_verifikasi");
+
+    // 4. Jumlah refund yang menunggu transfer admin
+    const { data: pendingRefundList } = await supabase
+      .from("payments")
+      .select("id, status, metode")
+      .in("jenis", ["refund_deposit", "refund_pembayaran"]);
+
+    const pendingRefundsCount = (pendingRefundList || []).filter(
+      (p) =>
+        p.status === "menunggu_transfer" ||
+        (p.status === "menunggu_verifikasi" && p.metode?.includes("Transfer"))
+    ).length;
+
+    // 5. Total tagihan kekurangan pelanggan yang belum dibayar
+    const { data: allUnpaidPayments } = await supabase
+      .from("payments")
+      .select("jumlah, jenis, metode, status")
+      .in("status", ["menunggu_pembayaran", "menunggu_verifikasi"]);
+
+    const pendingShortfallTotal = (allUnpaidPayments || [])
+      .filter(
+        (p) =>
+          p.jenis === "tagihan_kekurangan" ||
+          p.metode?.toLowerCase().includes("kekurangan")
+      )
+      .reduce((acc, curr) => acc + (Number(curr.jumlah) || 0), 0);
 
     // Format chart series diurutkan secara kronologis
     const chartData = Object.entries(dailyMap)
@@ -115,9 +142,11 @@ export async function GET(req: Request) {
         dpMasuk,
         pelunasanMasuk,
         dendaDanGantiRugi: dendaMasuk + gantiRugiMasuk,
+        pendingShortfall: pendingShortfallTotal,
         totalDepositDitahan,
         refundDibayar,
         pendingVerifications: pendingCount || 0,
+        pendingRefunds: pendingRefundsCount || 0,
       },
       chartData,
     });

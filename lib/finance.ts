@@ -303,6 +303,8 @@ export const PAYMENT_JENIS_LABELS: Record<PaymentJenis, string> = {
   denda_keterlambatan: "Denda Keterlambatan",
   ganti_rugi: "Ganti Rugi Kerusakan",
   refund_deposit: "Pengembalian Deposit",
+  tagihan_kekurangan: "Tagihan Kekurangan Bayar",
+  refund_pembayaran: "Pengembalian Dana Pembayaran",
   penyesuaian: "Koreksi / Penyesuaian",
 };
 
@@ -316,7 +318,73 @@ export function getPaymentArah(p: {
   if (p.arah === "keluar" || p.arah === "masuk") {
     return p.arah;
   }
-  return p.jenis === "refund_deposit" ? "keluar" : "masuk";
+  return p.jenis === "refund_deposit" || p.jenis === "refund_pembayaran" ? "keluar" : "masuk";
+}
+
+export interface DamageCostCalculation {
+  baseValue: number;
+  isFallback: boolean;
+  percentage: number;
+  biayaOtomatis: number;
+  formulaText: string;
+}
+
+/**
+ * Menghitung biaya ganti rugi berdasarkan kondisi, qty, nilai penggantian unit, dan persentase settings
+ */
+export function calculateDamageCost(params: {
+  condition: "baik" | "rusak_ringan" | "rusak_berat" | "hilang";
+  qty: number;
+  nilaiGanti?: number | null;
+  hargaPerHari?: number | null;
+  persenRingan?: number;
+  persenBerat?: number;
+  persenHilang?: number;
+  faktorNilaiGanti?: number;
+}): DamageCostCalculation {
+  const {
+    condition,
+    qty,
+    nilaiGanti,
+    hargaPerHari = 0,
+    persenRingan = 20,
+    persenBerat = 60,
+    persenHilang = 100,
+    faktorNilaiGanti = 10,
+  } = params;
+
+  if (condition === "baik" || qty <= 0) {
+    return {
+      baseValue: 0,
+      isFallback: false,
+      percentage: 0,
+      biayaOtomatis: 0,
+      formulaText: "Kondisi Baik - Tanpa Ganti Rugi",
+    };
+  }
+
+  const isFallback = !nilaiGanti || Number(nilaiGanti) <= 0;
+  const baseValue = isFallback
+    ? Math.max(0, (Number(hargaPerHari) || 0) * (Number(faktorNilaiGanti) || 10))
+    : Number(nilaiGanti);
+
+  let percentage = 0;
+  if (condition === "rusak_ringan") percentage = persenRingan;
+  else if (condition === "rusak_berat") percentage = persenBerat;
+  else if (condition === "hilang") percentage = persenHilang;
+
+  const validQty = Math.max(1, qty);
+  const biayaOtomatis = Math.round(baseValue * (percentage / 100) * validQty);
+
+  const formulaText = `Rp ${baseValue.toLocaleString("id-ID")} × ${percentage}% × ${validQty} unit = Rp ${biayaOtomatis.toLocaleString("id-ID")}`;
+
+  return {
+    baseValue,
+    isFallback,
+    percentage,
+    biayaOtomatis,
+    formulaText,
+  };
 }
 
 /**
@@ -385,4 +453,57 @@ export function getWibDateRange(
   }
 
   return { startDate, endDate };
+}
+
+/**
+ * Ekstraksi informasi rekening pengirim/penerima secara aman dari data transaksi
+ * Mendukung format kolom baru maupun ekstraksi cerdas dari string metode
+ */
+export function extractBankDetailsFromPayment(p: {
+  metode?: string | null;
+  bank_pengirim?: string | null;
+  no_rekening_pengirim?: string | null;
+  atas_nama_pengirim?: string | null;
+  rekening_pengirim?: Record<string, unknown> | null;
+}): { bank: string | null; nomor: string | null; atas_nama: string | null } {
+  if (p.bank_pengirim || p.no_rekening_pengirim || p.atas_nama_pengirim) {
+    return {
+      bank: p.bank_pengirim || null,
+      nomor: p.no_rekening_pengirim || null,
+      atas_nama: p.atas_nama_pengirim || null,
+    };
+  }
+
+  if (p.rekening_pengirim && typeof p.rekening_pengirim === "object") {
+    const rek = p.rekening_pengirim as { bank?: string; nomor?: string; atas_nama?: string };
+    if (rek.bank || rek.nomor || rek.atas_nama) {
+      return {
+        bank: rek.bank || null,
+        nomor: rek.nomor || null,
+        atas_nama: rek.atas_nama || null,
+      };
+    }
+  }
+
+  // Fallback: ekstraksi dari teks metode (misal: "[Rek: BCA 123456 a/n Budi]" atau "Pengirim: BCA 123456 a/n Budi")
+  const metode = p.metode || "";
+  const matchRek = metode.match(/(?:\[Rek:\s*|Rekening Pengirim:\s*)([^\s-]+)(?:\s*-\s*|\s+)([^\s]+)\s+a\/n\s+([^\]\)]+)/i);
+  if (matchRek) {
+    return {
+      bank: matchRek[1].trim(),
+      nomor: matchRek[2].trim(),
+      atas_nama: matchRek[3].trim(),
+    };
+  }
+
+  const matchPengirim = metode.match(/Pengirim:\s*([^\)]+)/i);
+  if (matchPengirim) {
+    return {
+      bank: matchPengirim[1].trim(),
+      nomor: null,
+      atas_nama: null,
+    };
+  }
+
+  return { bank: null, nomor: null, atas_nama: null };
 }

@@ -11,7 +11,6 @@ import {
   UploadCloud,
   FileCheck,
   AlertCircle,
-  MessageCircle,
   ShieldCheck,
   ZoomIn,
   X,
@@ -95,6 +94,7 @@ export function PaymentFlow({
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [namaPengirim, setNamaPengirim] = React.useState<string>("");
   const [bankPengirim, setBankPengirim] = React.useState<string>("");
+  const [noRekeningPengirim, setNoRekeningPengirim] = React.useState<string>("");
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const [isCopiedRek, setIsCopiedRek] = React.useState<boolean>(false);
   const [isCopiedNominal, setIsCopiedNominal] = React.useState<boolean>(false);
@@ -300,6 +300,21 @@ export function PaymentFlow({
       return;
     }
 
+    if (!bankPengirim.trim()) {
+      toast.error("Mohon sebutkan Bank atau E-Wallet asal transfer.");
+      return;
+    }
+
+    if (!noRekeningPengirim.trim()) {
+      toast.error("Mohon isi nomor rekening atau nomor e-wallet pengirim.");
+      return;
+    }
+
+    if (!namaPengirim.trim()) {
+      toast.error("Mohon isi nama lengkap pemilik rekening pengirim.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       let finalBuktiUrl = previewUrl;
@@ -331,24 +346,57 @@ export function PaymentFlow({
         }
       }
 
+      const cleanBank = bankPengirim.trim();
+      const cleanNoRek = noRekeningPengirim.trim();
+      const cleanNama = namaPengirim.trim();
+
       const metodeLabel =
         activeTab === "transfer"
-          ? `Transfer ${activeBank.bank}${bankPengirim ? ` (Pengirim: ${bankPengirim})` : ""}`
-          : "QRIS / E-Wallet";
+          ? `Transfer ${activeBank.bank} (Dari: ${cleanBank})`
+          : `QRIS / E-Wallet (Dari: ${cleanBank})`;
 
-      const { data: newPayment, error: insertErr } = await supabase
-        .from("payments")
-        .insert({
-          booking_id: booking.id,
-          jenis: "dp",
-          jumlah: booking.dp_jumlah,
-          metode: metodeLabel,
-          bukti_url: finalBuktiUrl,
-          status: "menunggu_verifikasi",
-          dibayar_pada: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      const basePaymentData = {
+        booking_id: booking.id,
+        jenis: "dp",
+        jumlah: booking.dp_jumlah,
+        metode: metodeLabel,
+        bukti_url: finalBuktiUrl,
+        status: "menunggu_verifikasi",
+        dibayar_pada: new Date().toISOString(),
+      };
+
+      // Coba insert dengan kolom data rekening pengirim
+      let newPayment = null;
+      let insertErr = null;
+
+      const fullPaymentPayload = {
+        ...basePaymentData,
+        bank_pengirim: cleanBank,
+        no_rekening_pengirim: cleanNoRek,
+        atas_nama_pengirim: cleanNama,
+        rekening_pengirim: {
+          bank: cleanBank,
+          nomor: cleanNoRek,
+          atas_nama: cleanNama,
+        },
+      };
+
+      const res = await supabase.from("payments").insert(fullPaymentPayload).select().single();
+      if (res.error) {
+        if (res.error.message.includes("column") || res.error.code === "42703") {
+          // Fallback jika database belum memiliki kolom baru
+          const fallbackRes = await supabase.from("payments").insert({
+            ...basePaymentData,
+            catatan: `Rekening Pengirim: ${cleanBank} - ${cleanNoRek} a/n ${cleanNama}`,
+          }).select().single();
+          newPayment = fallbackRes.data;
+          insertErr = fallbackRes.error;
+        } else {
+          insertErr = res.error;
+        }
+      } else {
+        newPayment = res.data;
+      }
 
       if (insertErr) {
         throw new Error("Gagal menyimpan data pembayaran: " + insertErr.message);
@@ -361,7 +409,7 @@ export function PaymentFlow({
       setIsEditingProof(false);
       setUploadedFile(null);
       setPreviewUrl(null);
-      toast.success("Bukti transfer berhasil dikirim ke pengelola!");
+      toast.success("Bukti transfer & data rekening berhasil dikirim!");
       onPaymentSuccess?.();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
@@ -1095,32 +1143,60 @@ export function PaymentFlow({
                 )}
               </div>
 
-              {/* Field Informasi Pengirim (Opsional) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="space-y-1.5">
-                  <Label htmlFor="nama-pengirim" className="text-xs font-semibold text-[#5F7A84]">
-                    Nama Pemilik Rekening / Pengirim (Opsional)
-                  </Label>
-                  <Input
-                    id="nama-pengirim"
-                    placeholder="Contoh: Budi Santoso"
-                    value={namaPengirim}
-                    onChange={(e) => setNamaPengirim(e.target.value)}
-                    className="bg-white text-xs"
-                  />
+              {/* Data Rekening Pengirim (Wajib untuk refund otomatis jika booking dibatalkan/timeout) */}
+              <div className="space-y-3 p-4 bg-[#FAFAF8] rounded-xl border border-[#E8E8E1]">
+                <div>
+                  <h5 className="text-xs font-bold text-[#234E5C] flex items-center gap-1.5">
+                    <span>Data Rekening / E-Wallet Pengirim</span>
+                    <span className="text-[10px] text-red-500 font-semibold">*Wajib Diisi</span>
+                  </h5>
+                  <p className="text-[11px] text-[#5F7A84] mt-0.5">
+                    Digunakan untuk verifikasi pembayaran dan pengembalian dana (refund) cepat jika booking dibatalkan atau kedaluwarsa.
+                  </p>
                 </div>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor="bank-pengirim" className="text-xs font-semibold text-[#5F7A84]">
-                    Bank / E-Wallet Asal Transfer (Opsional)
-                  </Label>
-                  <Input
-                    id="bank-pengirim"
-                    placeholder="Contoh: BCA / Mandiri / GoPay"
-                    value={bankPengirim}
-                    onChange={(e) => setBankPengirim(e.target.value)}
-                    className="bg-white text-xs"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="space-y-1">
+                    <Label htmlFor="bank-pengirim" className="text-xs font-semibold text-[#234E5C]">
+                      Bank / E-Wallet Asal <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="bank-pengirim"
+                      placeholder="BCA / Mandiri / GoPay"
+                      value={bankPengirim}
+                      onChange={(e) => setBankPengirim(e.target.value)}
+                      required
+                      className="bg-white text-xs h-9"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="no-rekening-pengirim" className="text-xs font-semibold text-[#234E5C]">
+                      Nomor Rekening / HP <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="no-rekening-pengirim"
+                      placeholder="0123456789 / 0812..."
+                      value={noRekeningPengirim}
+                      onChange={(e) => setNoRekeningPengirim(e.target.value)}
+                      required
+                      className="bg-white text-xs h-9 font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="nama-pengirim" className="text-xs font-semibold text-[#234E5C]">
+                      Nama Pemilik Rekening <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="nama-pengirim"
+                      placeholder="Sesuai buku tabungan"
+                      value={namaPengirim}
+                      onChange={(e) => setNamaPengirim(e.target.value)}
+                      required
+                      className="bg-white text-xs h-9"
+                    />
+                  </div>
                 </div>
               </div>
 

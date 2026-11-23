@@ -13,6 +13,7 @@ export default async function AdminFinancePage() {
     const { count } = await supabase
       .from("payments")
       .select("*", { count: "exact", head: true })
+      .in("jenis", ["dp", "pelunasan"])
       .eq("status", "menunggu_verifikasi");
 
     if (count !== null) {

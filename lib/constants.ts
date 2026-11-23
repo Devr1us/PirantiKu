@@ -178,6 +178,16 @@ export const PAYMENT_STATUS_CONFIG: Record<
     bg: "bg-[#FEE2E2] text-[#991B1B]",
     text: "text-[#991B1B]",
   },
+  menunggu_pembayaran: {
+    label: "Menunggu Pembayaran",
+    bg: "bg-[#EDE9FE] text-[#5B21B6]",
+    text: "text-[#5B21B6]",
+  },
+  menunggu_transfer: {
+    label: "Menunggu Transfer",
+    bg: "bg-[#E0F2FE] text-[#0369A1]",
+    text: "text-[#0369A1]",
+  },
 };
 
 // Lokasi Default (Nilai Cadangan Sesuai Sumber Kebenaran)
@@ -217,6 +227,11 @@ export function normalizeAdminPhone(phone?: string | null): string {
 export const DEFAULT_SETTINGS = {
   dp_persen: 30,
   denda_per_hari: 50000,
+  persen_rusak_ringan: 20,
+  persen_rusak_berat: 60,
+  persen_hilang: 100,
+  faktor_nilai_ganti: 10,
+  batas_verifikasi_jam: 24,
   rekening_bank: "BCA 1234567890 a/n PirantiKu",
   qris_url: "",
   whatsapp_admin: ADMIN_WHATSAPP_NUMBER,

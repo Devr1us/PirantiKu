@@ -105,7 +105,11 @@ export async function GET(req: Request) {
     // Map properties for UI consistency
     const rawPayments = (data as unknown as JoinedPayment[]) || [];
     let mappedData = rawPayments.map((p) => {
-      const computedArah: PaymentArah = p.arah || (p.jenis === "refund_deposit" ? "keluar" : "masuk");
+      const computedArah: PaymentArah =
+        p.arah ||
+        (p.jenis === "refund_deposit" || p.jenis === "refund_pembayaran"
+          ? "keluar"
+          : "masuk");
       const computedTime = p.tanggal_transaksi || p.dibayar_pada || p.created_at || "";
       return {
         ...p,

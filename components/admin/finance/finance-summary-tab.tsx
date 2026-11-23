@@ -21,9 +21,11 @@ export interface FinanceSummaryData {
   dpMasuk: number;
   pelunasanMasuk: number;
   dendaDanGantiRugi: number;
+  pendingShortfall?: number;
   totalDepositDitahan: number;
   refundDibayar: number;
   pendingVerifications: number;
+  pendingRefunds?: number;
 }
 
 export interface DailyChartPoint {
@@ -275,9 +277,16 @@ export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: Finan
               {isLoading ? "..." : formatRupiah(summary.dendaDanGantiRugi)}
             </span>
           </div>
-          <p className="mt-1 text-[11px] text-[#5F7A84]">
-            Kompensasi keterlambatan & unit rusak.
-          </p>
+          <div className="mt-1 flex flex-col gap-0.5">
+            <p className="text-[11px] text-[#5F7A84]">
+              Kompensasi keterlambatan & unit rusak.
+            </p>
+            {Number(summary.pendingShortfall) > 0 && (
+              <p className="text-[11px] font-bold text-[#DC2626]">
+                Belum dibayar: {formatRupiah(summary.pendingShortfall || 0)}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* 6. Refund Dibayarkan */}
