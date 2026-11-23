@@ -24,7 +24,19 @@ export type PaymentJenis =
   | "pelunasan"
   | "deposit"
   | "denda"
-  | "refund_deposit";
+  | "denda_keterlambatan"
+  | "ganti_rugi"
+  | "refund_deposit"
+  | "penyesuaian";
+
+export type PaymentArah = "masuk" | "keluar";
+
+export type BookingStatusPembayaran =
+  | "belum_bayar"
+  | "dp_dibayar"
+  | "lunas"
+  | "menunggu_refund"
+  | "selesai";
 
 export type PaymentStatus =
   | "menunggu_verifikasi"
@@ -183,6 +195,8 @@ export interface Database {
           total_harga: number;
           deposit: number;
           dp_jumlah: number;
+          total_sewa?: number | null;
+          status_pembayaran?: BookingStatusPembayaran | null;
           tanggal_diambil: string | null;
           catatan_penyewa: string | null;
           pesan_admin: string | null;
@@ -198,6 +212,8 @@ export interface Database {
           total_harga: number;
           deposit: number;
           dp_jumlah: number;
+          total_sewa?: number | null;
+          status_pembayaran?: BookingStatusPembayaran | null;
           tanggal_diambil?: string | null;
           catatan_penyewa?: string | null;
           pesan_admin?: string | null;
@@ -213,6 +229,8 @@ export interface Database {
           total_harga?: number;
           deposit?: number;
           dp_jumlah?: number;
+          total_sewa?: number | null;
+          status_pembayaran?: BookingStatusPembayaran | null;
           tanggal_diambil?: string | null;
           catatan_penyewa?: string | null;
           pesan_admin?: string | null;
@@ -273,34 +291,49 @@ export interface Database {
           id: number;
           booking_id: string;
           jenis: PaymentJenis;
+          arah: PaymentArah;
           jumlah: number;
           metode: string;
           bukti_url: string | null;
           status: PaymentStatus;
+          catatan?: string | null;
+          dicatat_oleh?: string | null;
+          tanggal_transaksi?: string;
           dibayar_pada: string;
           diverifikasi_oleh: string | null;
+          created_at?: string;
         };
         Insert: {
           id?: number;
           booking_id: string;
           jenis: PaymentJenis;
+          arah?: PaymentArah;
           jumlah: number;
           metode: string;
           bukti_url?: string | null;
           status?: PaymentStatus;
+          catatan?: string | null;
+          dicatat_oleh?: string | null;
+          tanggal_transaksi?: string;
           dibayar_pada?: string;
           diverifikasi_oleh?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: number;
           booking_id?: string;
           jenis?: PaymentJenis;
+          arah?: PaymentArah;
           jumlah?: number;
           metode?: string;
           bukti_url?: string | null;
           status?: PaymentStatus;
+          catatan?: string | null;
+          dicatat_oleh?: string | null;
+          tanggal_transaksi?: string;
           dibayar_pada?: string;
           diverifikasi_oleh?: string | null;
+          created_at?: string;
         };
       };
       booking_returns: {

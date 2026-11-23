@@ -15,6 +15,7 @@ import {
   User,
   Users,
   LogOut,
+  CircleDollarSign,
 } from "lucide-react";
 import { Wordmark } from "@/components/ui/wordmark";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -138,6 +139,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Kelola Alat", href: "/admin/alat", icon: Package },
     { label: "Kelola Booking", href: "/admin/booking", icon: CalendarDays },
+    { label: "Keuangan", href: "/admin/keuangan", icon: CircleDollarSign },
     { label: "Kalender Rental", href: "/admin/kalender", icon: Calendar },
     { label: "Kelola Pengguna", href: "/admin/pengguna", icon: Users },
     { label: "Kategori Alat", href: "/admin/kategori", icon: Layers },

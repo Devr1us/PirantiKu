@@ -16,10 +16,12 @@ import {
   Printer,
   RotateCcw,
   X,
+  CircleDollarSign,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
+import { calculateBookingFinancials, PAYMENT_STATUS_BADGES } from "@/lib/finance";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +32,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RentalReturnModal } from "./rental-return-modal";
+import { BookingFinancePanel } from "./booking-finance-panel";
 import type {
   Booking,
   BookingItem,
+  BookingStatus,
   EquipmentItem,
   Payment,
   Profile,
@@ -75,6 +79,18 @@ export function AdminBookingManager({
   const [isZoomImageOpen, setIsZoomImageOpen] = React.useState<boolean>(false);
   const [zoomImageSrc, setZoomImageSrc] = React.useState<string | null>(null);
   const [zoomImageTitle, setZoomImageTitle] = React.useState<string>("Pratinjau Foto");
+  const [activeDetailTab, setActiveDetailTab] = React.useState<"detail" | "keuangan">("detail");
+
+  const handleFinancialUpdate = (updatedPayments: Payment[], updatedStatus?: string) => {
+    if (!selectedBooking) return;
+    const updated: AdminBookingWithDetails = {
+      ...selectedBooking,
+      status: (updatedStatus as BookingStatus) || selectedBooking.status,
+      payments: updatedPayments,
+    };
+    setSelectedBooking(updated);
+    setBookings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+  };
 
   // Helper: Kembali ke daftar booking awal (membersihkan search, filter, dan URL parameter)
   const returnToInitialBookingList = React.useCallback(() => {
@@ -525,28 +541,31 @@ export function AdminBookingManager({
                       </td>
 
                       <td className="py-3.5 px-4">
-                        {dpPayment ? (
-                          dpPayment.status === "menunggu_verifikasi" ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FEF3C7] text-[#78350F] border border-[#FDE68A] animate-pulse">
-                              <Clock className="h-3 w-3 text-[#A0630F]" />
-                              Perlu Cek Bukti
-                            </span>
-                          ) : dpPayment.status === "terverifikasi" ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E2F0D9] text-[#2E5E4E] border border-[#C5E1A5]">
-                              <CheckCircle2 className="h-3 w-3" />
-                              DP Terverifikasi
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#FEE2E2] text-[#991B1B] border border-[#FECACA]">
-                              <XCircle className="h-3 w-3" />
-                              Ditolak
-                            </span>
-                          )
-                        ) : (
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#F3F3EF] text-[#5F7A84]">
-                            Belum Ada Bukti
-                          </span>
-                        )}
+                        {(() => {
+                          const fin = calculateBookingFinancials({
+                            booking: b,
+                            items: b.items,
+                            payments: b.payments,
+                            returns: b.returns,
+                          });
+                          const payBadge = PAYMENT_STATUS_BADGES[fin.statusPembayaran];
+                          return (
+                            <div className="space-y-1">
+                              <span
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${payBadge.bg} ${payBadge.text} ${payBadge.border}`}
+                              >
+                                <span className={`h-1.5 w-1.5 rounded-full ${payBadge.dot}`} />
+                                {payBadge.label}
+                              </span>
+                              {hasPendingProof && (
+                                <span className="flex items-center gap-1 text-[10px] font-bold text-[#D97706] animate-pulse">
+                                  <Clock className="h-3 w-3" />
+                                  Perlu Cek Bukti
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
 
                       <td className="py-3.5 px-4 text-[#5F7A84] font-medium">
@@ -614,7 +633,36 @@ export function AdminBookingManager({
                 </div>
               </DialogHeader>
 
-              {/* Data User */}
+              {/* Tab Switcher: Detail Operasional vs Keuangan & Pembukuan */}
+              <div className="flex items-center gap-2 border-b border-[#E8E8E1] pb-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveDetailTab("detail")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeDetailTab === "detail"
+                      ? "bg-[#234E5C] text-white shadow-xs"
+                      : "text-[#5F7A84] hover:bg-[#F3F3EF]"
+                  }`}
+                >
+                  Rincian Booking & Alat
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveDetailTab("keuangan")}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeDetailTab === "keuangan"
+                      ? "bg-[#234E5C] text-white shadow-xs"
+                      : "text-[#5F7A84] hover:bg-[#F3F3EF]"
+                  }`}
+                >
+                  <CircleDollarSign className="h-3.5 w-3.5 text-[#A0630F]" />
+                  <span>Keuangan & Buku Kas</span>
+                </button>
+              </div>
+
+              {activeDetailTab === "detail" ? (
+                <>
+                  {/* Data User */}
               <div className="p-4 rounded-xl bg-[#FAFAF8] border border-[#E8E8E1] space-y-3 text-xs">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5 text-[#234E5C]" />
@@ -923,6 +971,13 @@ export function AdminBookingManager({
                   </div>
                 </div>
               )}
+            </>
+          ) : (
+            <BookingFinancePanel
+              booking={selectedBooking}
+              onFinancialUpdate={handleFinancialUpdate}
+            />
+          )}
 
               {/* TOMBOL AKSI OPERASIONAL ADMIN */}
               <div className="border-t border-[#E8E8E1] pt-4 space-y-3">

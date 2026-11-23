@@ -261,12 +261,18 @@ export function RentalReturnModal({
       // 3. Catat payment refund jika ada sisa deposit yang dikembalikan
       if (netRefund > 0) {
         try {
+          const { data: { user } } = await supabase.auth.getUser();
           await supabase.from("payments").insert({
             booking_id: booking.id,
             jenis: "refund_deposit",
+            arah: "keluar",
             jumlah: netRefund,
             metode: "Pengembalian Deposit (Tunai/Transfer)",
             status: "terverifikasi",
+            catatan: "Pengembalian sisa deposit jaminan setelah inspeksi pengembalian alat",
+            dicatat_oleh: user?.id || null,
+            diverifikasi_oleh: user?.id || null,
+            tanggal_transaksi: new Date().toISOString(),
             dibayar_pada: new Date().toISOString(),
           });
         } catch {

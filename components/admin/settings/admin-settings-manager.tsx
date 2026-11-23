@@ -63,6 +63,9 @@ export function AdminSettingsManager({
   const [dendaPerHari, setDendaPerHari] = React.useState(
     initialSettings.denda_per_hari || String(DEFAULT_SETTINGS.denda_per_hari)
   );
+  const [batasPelunasan, setBatasPelunasan] = React.useState(
+    initialSettings.batas_pelunasan || "sebelum_diambil"
+  );
   const [whatsappAdmin, setWhatsappAdmin] = React.useState(
     normalizeAdminPhone(initialSettings.whatsapp_admin) || DEFAULT_SETTINGS.whatsapp_admin
   );
@@ -123,6 +126,11 @@ export function AdminSettingsManager({
           deskripsi: "Nomor rekening bank tujuan transfer user",
         },
         {
+          key: "info_rekening",
+          value: combinedRekening,
+          deskripsi: "Informasi nomor rekening resmi untuk pembayaran transfer",
+        },
+        {
           key: "qris_url",
           value: qrisUrl.trim(),
           deskripsi: "URL atau data gambar QRIS pembayaran",
@@ -133,9 +141,19 @@ export function AdminSettingsManager({
           deskripsi: "Persentase uang muka DP pemesanan",
         },
         {
+          key: "persentase_dp",
+          value: String(Math.max(1, Math.min(100, parseInt(dpPersen, 10) || 30))),
+          deskripsi: "Persentase uang muka (DP) dari total biaya sewa dalam persen (%)",
+        },
+        {
           key: "denda_per_hari",
           value: String(Math.max(0, parseInt(dendaPerHari, 10) || 50000)),
           deskripsi: "Nominal denda keterlambatan per hari (Rp)",
+        },
+        {
+          key: "batas_pelunasan",
+          value: batasPelunasan,
+          deskripsi: "Batas waktu pelunasan sisa tagihan sewa dan deposit",
         },
         {
           key: "whatsapp_admin",
@@ -204,6 +222,7 @@ export function AdminSettingsManager({
     setQrisUrl(DEFAULT_SETTINGS.qris_url);
     setDpPersen(String(DEFAULT_SETTINGS.dp_persen));
     setDendaPerHari(String(DEFAULT_SETTINGS.denda_per_hari));
+    setBatasPelunasan("sebelum_diambil");
     setWhatsappAdmin(DEFAULT_SETTINGS.whatsapp_admin);
     setJamOperasional(DEFAULT_SETTINGS.jam_operasional);
     setAlamat(LOKASI_DEFAULT.alamat);
@@ -429,6 +448,23 @@ export function AdminSettingsManager({
                   </div>
                   <span className="text-[11px] text-[#5F7A84]">
                     Setara {formatRupiah(parseInt(dendaPerHari, 10) || 0)} per hari telat kembali.
+                  </span>
+                </div>
+
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs font-bold text-[#234E5C]">
+                    Batas Waktu Pelunasan Sisa Sewa & Uang Jaminan (Deposit)
+                  </Label>
+                  <select
+                    value={batasPelunasan}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBatasPelunasan(e.target.value)}
+                    className="w-full h-10 px-3 rounded-xl border border-[#E8E8E1] bg-white text-xs font-semibold text-[#234E5C] focus:outline-none focus:ring-2 focus:ring-[#234E5C]"
+                  >
+                    <option value="sebelum_diambil">Sebelum Unit Diambil (Wajib Lunas Sebelum Serah Terima)</option>
+                    <option value="saat_diambil">Saat Unit Diambil (Bisa Pelunasan Tunai/QRIS di Tempat)</option>
+                  </select>
+                  <span className="text-[11px] text-[#5F7A84]">
+                    Kebijakan penagihan pelunasan biaya rental dan deposit kepada penyewa sebelum alat diserahkan.
                   </span>
                 </div>
               </div>

@@ -5,6 +5,8 @@ import {
   XCircle,
   Eye,
   Users,
+  CircleDollarSign,
+  ArrowDownRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatRupiah, formatDateIndo } from "@/lib/format";
@@ -29,6 +31,8 @@ export default async function AdminDashboardPage() {
   let totalBookings = 0;
   let totalCategories = 0;
   let totalUsers = 0;
+  let todayIncome = 0;
+  let pendingVerificationsCount = 0;
   let recentBookings: DashboardBookingWithDetails[] = [];
 
   try {
@@ -87,6 +91,32 @@ export default async function AdminDashboardPage() {
     if (bData) {
       recentBookings = bData as DashboardBookingWithDetails[];
     }
+
+    // 6. Ringkasan Keuangan: Pemasukan Hari Ini & Antrean Verifikasi
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const { data: todayPayments } = await supabase
+      .from("payments")
+      .select("jumlah, arah, status, jenis")
+      .eq("status", "terverifikasi")
+      .gte("created_at", todayStart.toISOString());
+
+    if (todayPayments) {
+      todayIncome = todayPayments.reduce((sum, p) => {
+        const isMasuk = p.arah === "masuk" || (p.jenis !== "refund_deposit" && !p.arah);
+        return isMasuk ? sum + (Number(p.jumlah) || 0) : sum;
+      }, 0);
+    }
+
+    const { count: pendingPayCount } = await supabase
+      .from("payments")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "menunggu_verifikasi");
+
+    if (pendingPayCount !== null) {
+      pendingVerificationsCount = pendingPayCount;
+    }
   } catch (err) {
     console.error("Gagal memuat ringkasan admin:", err);
   }
@@ -105,6 +135,12 @@ export default async function AdminDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Link href="/admin/keuangan">
+            <Button variant="outline" size="sm" className="text-xs font-bold gap-1.5 shadow-sm border-[#E8E8E1] text-[#234E5C]">
+              <CircleDollarSign className="h-3.5 w-3.5 text-[#A0630F]" />
+              <span>Keuangan Toko</span>
+            </Button>
+          </Link>
           <Link href="/admin/pengguna">
             <Button variant="outline" size="sm" className="text-xs font-bold gap-1.5 shadow-sm border-[#E8E8E1] text-[#234E5C]">
               <Users className="h-3.5 w-3.5" />
@@ -117,6 +153,61 @@ export default async function AdminDashboardPage() {
             </Button>
           </Link>
         </div>
+      </div>
+
+      {/* Kartu Ringkasan Cepat Keuangan Hari Ini (Langsung Mengarah ke Menu Keuangan) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Pemasukan Hari Ini */}
+        <Link href="/admin/keuangan?tab=ringkasan" className="block group">
+          <div className="p-4 rounded-2xl bg-white border border-[#E8E8E1] shadow-xs group-hover:border-[#234E5C] transition-all flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#5F7A84] flex items-center gap-1.5">
+                <CircleDollarSign className="h-3.5 w-3.5 text-[#A0630F]" />
+                Pemasukan Hari Ini (WIB)
+              </span>
+              <div className="text-xl sm:text-2xl font-black text-[#234E5C]">
+                {formatRupiah(todayIncome)}
+              </div>
+              <p className="text-[11px] text-[#5F7A84]">
+                Total pembayaran masuk terverifikasi hari ini &rarr;
+              </p>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-[#E2F0D9] text-[#2E5E4E] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <ArrowDownRight className="h-5 w-5" />
+            </div>
+          </div>
+        </Link>
+
+        {/* Antrean Verifikasi Pembayaran */}
+        <Link href="/admin/keuangan?tab=verifikasi" className="block group">
+          <div className={`p-4 rounded-2xl border shadow-xs transition-all flex items-center justify-between ${
+            pendingVerificationsCount > 0
+              ? "bg-[#FEF3C7]/40 border-[#FDE68A] group-hover:border-[#D97706]"
+              : "bg-white border-[#E8E8E1] group-hover:border-[#234E5C]"
+          }`}>
+            <div className="space-y-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#78350F] flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-[#D97706]" />
+                Pembayaran Perlu Verifikasi
+              </span>
+              <div className="text-xl sm:text-2xl font-black text-[#78350F]">
+                {pendingVerificationsCount} Pembayaran
+              </div>
+              <p className="text-[11px] text-[#5F7A84]">
+                {pendingVerificationsCount > 0
+                  ? "Ada bukti bayar menunggu persetujuan Anda &rarr;"
+                  : "Semua bukti transfer telah terverifikasi &rarr;"}
+              </p>
+            </div>
+            <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${
+              pendingVerificationsCount > 0
+                ? "bg-[#FEF3C7] text-[#78350F]"
+                : "bg-[#F3F3EF] text-[#5F7A84]"
+            }`}>
+              <Clock className="h-5 w-5" />
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Kartu Statistik Dashboard (Responsif: 2 Kolom di Mobile, 3 di Tablet, 6 di Desktop) */}
