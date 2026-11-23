@@ -8,6 +8,7 @@ interface UseBookingStatusPollingOptions {
   bookingId: string;
   initialStatus?: string;
   enabled?: boolean;
+  redirectIfFinalOnMount?: boolean;
 }
 
 const POLLING_INTERVAL_MS = 4000; // 4 detik
@@ -17,6 +18,7 @@ export function useBookingStatusPolling({
   bookingId,
   initialStatus,
   enabled = true,
+  redirectIfFinalOnMount = false,
 }: UseBookingStatusPollingOptions) {
   const router = useRouter();
   const [isTimeout, setIsTimeout] = React.useState<boolean>(false);
@@ -26,9 +28,9 @@ export function useBookingStatusPolling({
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = React.useRef<number>(0);
 
-  // Kasus Tepi 1: Jika halaman dibuka saat status sudah final, langsung redirect tanpa menunggu polling
+  // Kasus Tepi 1: Hanya redirect saat mount jika opsi eksplisit redirectIfFinalOnMount diaktifkan
   React.useEffect(() => {
-    if (!bookingId || !enabled) return;
+    if (!bookingId || !enabled || !redirectIfFinalOnMount) return;
 
     const isFinal =
       initialStatus === "terverifikasi" ||
@@ -44,7 +46,7 @@ export function useBookingStatusPolling({
       router.replace("/booking-saya");
       router.refresh();
     }
-  }, [bookingId, initialStatus, enabled, router]);
+  }, [bookingId, initialStatus, enabled, redirectIfFinalOnMount, router]);
 
   // Polling aktif HANYA saat status masih "menunggu verifikasi"
   React.useEffect(() => {

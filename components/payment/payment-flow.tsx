@@ -174,6 +174,7 @@ export function PaymentFlow({
     currentBookingStatus === "dp_dibayar" ||
     currentBookingStatus === "lunas" ||
     currentBookingStatus === "diambil" ||
+    currentBookingStatus === "selesai" ||
     latestDpPayment?.status === "terverifikasi";
 
   // Status verifikasi pembayaran saat ini untuk hook polling status
@@ -189,12 +190,31 @@ export function PaymentFlow({
     ? "ditolak"
     : "menunggu_dp";
 
-  // Hook Polling: otomatis mengecek endpoint status tiap 4 detik saat status "menunggu verifikasi",
+  // Simpan status verifikasi awal saat komponen pertama kali dimuat (mount)
+  // menggunakan lazy useState inisialisasi agar stabil dan mematuhi aturan react-hooks
+  const [initialStatusOnMount] = React.useState<string>(() => currentVerificationStatus);
+  const isInitialWaiting =
+    initialStatusOnMount === "menunggu_dp" ||
+    initialStatusOnMount === "menunggu_verifikasi";
+
+  // Polling hanya diaktifkan jika:
+  // 1. Ada booking.id atau booking.kode_booking
+  // 2. Booking belum terverifikasi DP-nya (bukan dp_dibayar/lunas/diambil/selesai)
+  // 3. Status awal saat mount adalah menunggu (menunggu_dp atau menunggu_verifikasi),
+  //    atau user baru saja mengunggah bukti pembayaran baru (menunggu_verifikasi)
+  const isPollingEnabled = Boolean(
+    (booking.id || booking.kode_booking) &&
+    !isDpVerified &&
+    (isInitialWaiting || currentVerificationStatus === "menunggu_verifikasi")
+  );
+
+  // Hook Polling: otomatis mengecek endpoint status tiap 4 detik saat status "menunggu",
   // berhenti saat tab hidden, dan redirect ke Booking Saya saat terverifikasi/ditolak
   const { isTimeout } = useBookingStatusPolling({
     bookingId: booking.id || booking.kode_booking,
-    initialStatus: currentVerificationStatus,
-    enabled: Boolean(booking.id || booking.kode_booking),
+    initialStatus: isInitialWaiting ? initialStatusOnMount : currentVerificationStatus,
+    enabled: isPollingEnabled,
+    redirectIfFinalOnMount: false,
   });
 
   // Cek apakah customer sudah berhasil submit bukti pembayaran (menunggu verifikasi / terverifikasi) dan tidak sedang edit ulang
