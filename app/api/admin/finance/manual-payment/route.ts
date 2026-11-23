@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { verifyAdminAuth, logAdminAction, syncBookingPaymentStatus } from "@/lib/finance-server";
+import { verifyAdminAuth, logAdminAction, syncBookingPaymentStatus, safeInsertPayment } from "@/lib/finance-server";
 import type { PaymentArah, PaymentJenis } from "@/types/database";
 
 export async function POST(req: Request) {
@@ -56,24 +56,20 @@ export async function POST(req: Request) {
     }
 
     const now = new Date().toISOString();
-    const { data: newPayment, error: insertErr } = await supabase
-      .from("payments")
-      .insert({
-        booking_id: bookingId,
-        jenis: jenis as PaymentJenis,
-        arah: arah as PaymentArah,
-        jumlah: parsedJumlah,
-        metode: metode.trim(),
-        bukti_url: buktiUrl || null,
-        status: "terverifikasi",
-        catatan: catatan ? catatan.trim() : null,
-        dicatat_oleh: auth.userId,
-        diverifikasi_oleh: auth.userId,
-        tanggal_transaksi: now,
-        dibayar_pada: now,
-      })
-      .select()
-      .single();
+    const { data: newPayment, error: insertErr } = await safeInsertPayment(supabase, {
+      booking_id: bookingId,
+      jenis: jenis as PaymentJenis,
+      arah: arah as PaymentArah,
+      jumlah: parsedJumlah,
+      metode: metode.trim(),
+      bukti_url: buktiUrl || null,
+      status: "terverifikasi",
+      catatan: catatan ? catatan.trim() : null,
+      dicatat_oleh: auth.userId,
+      diverifikasi_oleh: auth.userId,
+      tanggal_transaksi: now,
+      dibayar_pada: now,
+    });
 
     if (insertErr || !newPayment) {
       return NextResponse.json({ error: insertErr?.message || "Gagal mencatat transaksi." }, { status: 500 });

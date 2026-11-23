@@ -305,3 +305,84 @@ export const PAYMENT_JENIS_LABELS: Record<PaymentJenis, string> = {
   refund_deposit: "Pengembalian Deposit",
   penyesuaian: "Koreksi / Penyesuaian",
 };
+
+/**
+ * Menghitung arah transaksi secara andal (fallback ke jenis jika kolom arah belum ada)
+ */
+export function getPaymentArah(p: {
+  arah?: string | null;
+  jenis?: string | null;
+}): "masuk" | "keluar" {
+  if (p.arah === "keluar" || p.arah === "masuk") {
+    return p.arah;
+  }
+  return p.jenis === "refund_deposit" ? "keluar" : "masuk";
+}
+
+/**
+ * Menentukan timestamp transaksi yang valid (fallback tanggal_transaksi -> dibayar_pada -> created_at)
+ */
+export function getPaymentTransactionDate(p: {
+  tanggal_transaksi?: string | null;
+  dibayar_pada?: string | null;
+  created_at?: string | null;
+}): string {
+  return p.tanggal_transaksi || p.dibayar_pada || p.created_at || new Date().toISOString();
+}
+
+/**
+ * Mengubah ISO string menjadi format tanggal YYYY-MM-DD dalam zona waktu WIB (Asia/Jakarta, UTC+7)
+ */
+export function toWibDateString(isoString: string | null | undefined): string {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Jakarta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+/**
+ * Mendapatkan rentang waktu presisi dalam zona waktu WIB (UTC+7)
+ */
+export function getWibDateRange(
+  period: string,
+  customStart?: string,
+  customEnd?: string
+): { startDate: Date; endDate: Date } {
+  const now = new Date();
+  const wibToday = toWibDateString(now.toISOString());
+  const [yearStr, monthStr, dayStr] = (wibToday || "2026-11-23").split("-");
+
+  let startDate: Date;
+  let endDate: Date;
+
+  if (period === "hari_ini") {
+    startDate = new Date(`${yearStr}-${monthStr}-${dayStr}T00:00:00.000+07:00`);
+    endDate = new Date(`${yearStr}-${monthStr}-${dayStr}T23:59:59.999+07:00`);
+  } else if (period === "7_hari") {
+    const todayEnd = new Date(`${yearStr}-${monthStr}-${dayStr}T23:59:59.999+07:00`);
+    startDate = new Date(todayEnd.getTime() - 7 * 24 * 60 * 60 * 1000 + 1);
+    endDate = todayEnd;
+  } else if (period === "bulan_ini") {
+    startDate = new Date(`${yearStr}-${monthStr}-01T00:00:00.000+07:00`);
+    // Akhir bulan WIB
+    const nextMonth = Number(monthStr) === 12 ? 1 : Number(monthStr) + 1;
+    const nextYear = Number(monthStr) === 12 ? Number(yearStr) + 1 : Number(yearStr);
+    const nextMonthStr = String(nextMonth).padStart(2, "0");
+    const firstOfNextMonth = new Date(`${nextYear}-${nextMonthStr}-01T00:00:00.000+07:00`);
+    endDate = new Date(firstOfNextMonth.getTime() - 1);
+  } else if (period === "kustom" && customStart && customEnd) {
+    startDate = new Date(`${customStart}T00:00:00.000+07:00`);
+    endDate = new Date(`${customEnd}T23:59:59.999+07:00`);
+  } else {
+    // Default: bulan_ini
+    startDate = new Date(`${yearStr}-${monthStr}-01T00:00:00.000+07:00`);
+    endDate = new Date();
+  }
+
+  return { startDate, endDate };
+}

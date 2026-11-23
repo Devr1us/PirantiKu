@@ -33,9 +33,10 @@ export interface DailyChartPoint {
 
 interface FinanceSummaryTabProps {
   onGoToVerification: () => void;
+  onSummaryLoaded?: (data: FinanceSummaryData) => void;
 }
 
-export function FinanceSummaryTab({ onGoToVerification }: FinanceSummaryTabProps) {
+export function FinanceSummaryTab({ onGoToVerification, onSummaryLoaded }: FinanceSummaryTabProps) {
   const [period, setPeriod] = React.useState<string>("bulan_ini");
   const [customStart, setCustomStart] = React.useState<string>("");
   const [customEnd, setCustomEnd] = React.useState<string>("");
@@ -62,6 +63,7 @@ export function FinanceSummaryTab({ onGoToVerification }: FinanceSummaryTabProps
       const json = await res.json();
       if (json.summary) {
         setSummary(json.summary);
+        onSummaryLoaded?.(json.summary);
       }
       if (json.chartData) {
         setChartData(json.chartData);
@@ -71,7 +73,7 @@ export function FinanceSummaryTab({ onGoToVerification }: FinanceSummaryTabProps
     } finally {
       setIsLoading(false);
     }
-  }, [period, customStart, customEnd]);
+  }, [period, customStart, customEnd, onSummaryLoaded]);
 
   React.useEffect(() => {
     if (period === "kustom" && (!customStart || !customEnd)) {

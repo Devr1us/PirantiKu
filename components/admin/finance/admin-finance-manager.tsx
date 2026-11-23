@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   TrendingUp,
   Clock,
@@ -20,6 +20,7 @@ interface AdminFinanceManagerProps {
 }
 
 export function AdminFinanceManager({ initialPendingCount = 0 }: AdminFinanceManagerProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = (searchParams.get("tab") as FinanceTab) || "ringkasan";
 
@@ -119,13 +120,17 @@ export function AdminFinanceManager({ initialPendingCount = 0 }: AdminFinanceMan
 
       {/* Konten Tab Aktif */}
       {activeTab === "ringkasan" && (
-        <FinanceSummaryTab onGoToVerification={() => handleTabChange("verifikasi")} />
+        <FinanceSummaryTab
+          onGoToVerification={() => handleTabChange("verifikasi")}
+          onSummaryLoaded={(data) => setPendingCount(data.pendingVerifications)}
+        />
       )}
 
       {activeTab === "verifikasi" && (
         <FinanceVerificationTab
           onActionSuccess={() => {
             refreshPendingCount();
+            router.refresh();
           }}
         />
       )}

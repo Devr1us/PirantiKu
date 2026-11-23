@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search,
   CheckCircle2,
@@ -64,6 +64,7 @@ export function AdminBookingManager({
   dendaPerHari = 50000,
 }: AdminBookingManagerProps) {
   const supabase = createClient();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const qParam = searchParams.get("q") || "";
 
@@ -162,54 +163,50 @@ export function AdminBookingManager({
     ).length;
   }, [bookings]);
 
-  // Aksi 1: Verifikasi Pembayaran DP
+  // Aksi 1: Verifikasi Pembayaran DP (Terintegrasi Atomik via Finance API)
   const handleVerifyDp = async (booking: AdminBookingWithDetails) => {
     setIsProcessing(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
       const latestPayment = booking.payments?.find(
         (p) => p.jenis === "dp" && p.status === "menunggu_verifikasi"
       );
 
-      // BUG-06: Cek error update payments dulu sebelum lanjut update booking
       if (latestPayment) {
-        const { error: payErr } = await supabase
-          .from("payments")
-          .update({
+        const res = await fetch("/api/admin/finance/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentId: latestPayment.id,
             status: "terverifikasi",
-            diverifikasi_oleh: user?.id || null,
-          })
-          .eq("id", latestPayment.id);
-
-        if (payErr) throw new Error("Gagal memperbarui status pembayaran: " + payErr.message);
-      }
-
-      // 2. Update status booking ke dp_dibayar
-      const { error: bErr } = await supabase
-        .from("bookings")
-        .update({
-          status: "dp_dibayar",
-          pesan_admin: "Pembayaran DP telah diverifikasi admin. Pesanan siap dijadwalkan.",
-        })
-        .eq("id", booking.id);
-
-      if (bErr) throw bErr;
-
-      // 3. Catat riwayat status
-      try {
-        await supabase.from("booking_status_history").insert({
-          booking_id: booking.id,
-          status_lama: booking.status,
-          status_baru: "dp_dibayar",
+          }),
         });
-      } catch {
-        // Abaikan jika trigger db sudah menangani
+        const resData = await res.json();
+        if (!res.ok) {
+          throw new Error(resData.error || "Gagal memverifikasi DP.");
+        }
+      } else {
+        // Fallback update booking jika tidak ada payment record tersendiri
+        const { error: bErr } = await supabase
+          .from("bookings")
+          .update({
+            status: "dp_dibayar",
+            pesan_admin: "Pembayaran DP telah diverifikasi admin. Pesanan siap dijadwalkan.",
+          })
+          .eq("id", booking.id);
+        if (bErr) throw bErr;
+
+        try {
+          await supabase.from("booking_status_history").insert({
+            booking_id: booking.id,
+            status_lama: booking.status,
+            status_baru: "dp_dibayar",
+          });
+        } catch {
+          // Abaikan
+        }
       }
 
-      // BUG-05: Update state lokal dan juga selectedBooking agar dialog tidak stale
+      // Update state lokal dan juga selectedBooking agar dialog tidak stale
       const updatedBooking: AdminBookingWithDetails = {
         ...booking,
         status: "dp_dibayar",
@@ -224,11 +221,11 @@ export function AdminBookingManager({
       setBookings((prev) =>
         prev.map((item) => item.id === booking.id ? updatedBooking : item)
       );
-      // Sync selectedBooking agar dialog menampilkan data terbaru
       setSelectedBooking(updatedBooking);
 
       toast.success(`Pembayaran DP booking #${booking.kode_booking} berhasil diverifikasi!`);
       returnToInitialBookingList();
+      router.refresh();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal memverifikasi DP.";
       toast.error(msg);
@@ -237,7 +234,7 @@ export function AdminBookingManager({
     }
   };
 
-  // Aksi 2: Tolak Bukti Transfer
+  // Aksi 2: Tolak Bukti Transfer (Terintegrasi Atomik via Finance API)
   const handleRejectPayment = async (booking: AdminBookingWithDetails) => {
     if (!rejectReason.trim()) {
       toast.error("Mohon isi alasan penolakan bukti transfer.");
@@ -246,33 +243,33 @@ export function AdminBookingManager({
 
     setIsProcessing(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
       const latestPayment = booking.payments?.find(
         (p) => p.jenis === "dp" && p.status === "menunggu_verifikasi"
       );
 
       if (latestPayment) {
-        await supabase
-          .from("payments")
-          .update({
+        const res = await fetch("/api/admin/finance/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentId: latestPayment.id,
             status: "ditolak",
-            diverifikasi_oleh: user?.id || null,
-          })
-          .eq("id", latestPayment.id);
+            alasan: rejectReason.trim(),
+          }),
+        });
+        const resData = await res.json();
+        if (!res.ok) {
+          throw new Error(resData.error || "Gagal menolak bukti transfer.");
+        }
+      } else {
+        const reasonMsg = `Bukti transfer ditolak: ${rejectReason.trim()}`;
+        await supabase
+          .from("bookings")
+          .update({ pesan_admin: reasonMsg })
+          .eq("id", booking.id);
       }
 
       const reasonMsg = `Bukti transfer ditolak: ${rejectReason.trim()}`;
-
-      await supabase
-        .from("bookings")
-        .update({
-          pesan_admin: reasonMsg,
-        })
-        .eq("id", booking.id);
-
       setBookings((prev) =>
         prev.map((item) => {
           if (item.id === booking.id) {
@@ -293,8 +290,9 @@ export function AdminBookingManager({
       toast.success("Bukti transfer ditolak dan alasan telah disampaikan ke user.");
       setRejectReason("");
       returnToInitialBookingList();
+      router.refresh();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Gagal menolak bukti pembayaran.";
+      const msg = err instanceof Error ? err.message : "Gagal menolak bukti transfer.";
       toast.error(msg);
     } finally {
       setIsProcessing(false);

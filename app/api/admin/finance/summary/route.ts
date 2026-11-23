@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { verifyAdminAuth } from "@/lib/finance-server";
+import { getWibDateRange, toWibDateString, getPaymentArah } from "@/lib/finance";
 
 export async function GET(req: Request) {
   try {
@@ -15,31 +16,17 @@ export async function GET(req: Request) {
     const customStart = searchParams.get("start_date") || "";
     const customEnd = searchParams.get("end_date") || "";
 
-    const now = new Date();
-    let startDate: Date;
-    let endDate: Date = new Date();
-
-    if (period === "hari_ini") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    } else if (period === "7_hari") {
-      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      startDate.setHours(0, 0, 0, 0);
-    } else if (period === "bulan_ini") {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    } else if (period === "kustom" && customStart && customEnd) {
-      startDate = new Date(customStart + "T00:00:00");
-      endDate = new Date(customEnd + "T23:59:59.999");
-    } else {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    }
+    // Dapatkan rentang tanggal presisi zona waktu WIB (UTC+7)
+    const { startDate, endDate } = getWibDateRange(period, customStart, customEnd);
 
     // 1. Ambil seluruh pembayaran terverifikasi dalam rentang periode
+    // Gunakan kolom yang dijamin ada: id, jenis, jumlah, status, dibayar_pada
     const { data: periodPayments, error: pErr } = await supabase
       .from("payments")
-      .select("id, jenis, arah, jumlah, status, created_at, tanggal_transaksi, dibayar_pada")
+      .select("id, booking_id, jenis, jumlah, status, dibayar_pada")
       .eq("status", "terverifikasi")
-      .gte("created_at", startDate.toISOString())
-      .lte("created_at", endDate.toISOString());
+      .gte("dibayar_pada", startDate.toISOString())
+      .lte("dibayar_pada", endDate.toISOString());
 
     if (pErr) {
       return NextResponse.json({ error: pErr.message }, { status: 500 });
@@ -56,8 +43,8 @@ export async function GET(req: Request) {
 
     for (const p of periodPayments || []) {
       const jml = Number(p.jumlah) || 0;
-      const arah = p.arah || (p.jenis === "refund_deposit" ? "keluar" : "masuk");
-      const tgl = (p.created_at || p.tanggal_transaksi || p.dibayar_pada || "").slice(0, 10);
+      const arah = getPaymentArah(p);
+      const tglWib = toWibDateString(p.dibayar_pada);
 
       if (arah === "masuk") {
         totalPemasukan += jml;
@@ -66,8 +53,8 @@ export async function GET(req: Request) {
         else if (p.jenis === "denda" || p.jenis === "denda_keterlambatan") dendaMasuk += jml;
         else if (p.jenis === "ganti_rugi") gantiRugiMasuk += jml;
 
-        if (tgl) {
-          dailyMap[tgl] = (dailyMap[tgl] || 0) + jml;
+        if (tglWib) {
+          dailyMap[tglWib] = (dailyMap[tglWib] || 0) + jml;
         }
       } else if (arah === "keluar") {
         if (p.jenis === "refund_deposit") {
@@ -83,14 +70,15 @@ export async function GET(req: Request) {
         id,
         status,
         deposit,
-        payments(id, jenis, arah, status, jumlah),
+        payments(id, jenis, status, jumlah),
         returns:booking_returns(id, denda_terlambat, total_ganti_rugi)
       `)
       .not("status", "in", "('selesai','dibatalkan')");
 
     let totalDepositDitahan = 0;
     for (const b of activeBookings || []) {
-      const hasVerifiedPayment = b.payments?.some((p) => p.status === "terverifikasi");
+      const paymentsList = Array.isArray(b.payments) ? b.payments : [];
+      const hasVerifiedPayment = paymentsList.some((p) => p.status === "terverifikasi");
       if (hasVerifiedPayment && Number(b.deposit) > 0) {
         let potong = 0;
         if (b.returns) {
@@ -110,7 +98,7 @@ export async function GET(req: Request) {
       .select("*", { count: "exact", head: true })
       .eq("status", "menunggu_verifikasi");
 
-    // Format chart series
+    // Format chart series diurutkan secara kronologis
     const chartData = Object.entries(dailyMap)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, amount]) => ({

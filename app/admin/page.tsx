@@ -15,6 +15,7 @@ import { H1, Lead } from "@/components/ui/typography";
 import { CountUp, Reveal } from "@/components/ui/motion";
 import { Button } from "@/components/ui/button";
 import { fetchRentedUnitsSummary } from "@/lib/inventory";
+import { getWibDateRange, getPaymentArah } from "@/lib/finance";
 import type { Booking, Profile, Payment } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -92,19 +93,19 @@ export default async function AdminDashboardPage() {
       recentBookings = bData as DashboardBookingWithDetails[];
     }
 
-    // 6. Ringkasan Keuangan: Pemasukan Hari Ini & Antrean Verifikasi
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
+    // 6. Ringkasan Keuangan: Pemasukan Hari Ini & Antrean Verifikasi (WIB UTC+7)
+    const { startDate: todayStartWib, endDate: todayEndWib } = getWibDateRange("hari_ini");
 
     const { data: todayPayments } = await supabase
       .from("payments")
-      .select("jumlah, arah, status, jenis")
+      .select("jumlah, status, jenis, dibayar_pada")
       .eq("status", "terverifikasi")
-      .gte("created_at", todayStart.toISOString());
+      .gte("dibayar_pada", todayStartWib.toISOString())
+      .lte("dibayar_pada", todayEndWib.toISOString());
 
     if (todayPayments) {
       todayIncome = todayPayments.reduce((sum, p) => {
-        const isMasuk = p.arah === "masuk" || (p.jenis !== "refund_deposit" && !p.arah);
+        const isMasuk = getPaymentArah(p) === "masuk";
         return isMasuk ? sum + (Number(p.jumlah) || 0) : sum;
       }, 0);
     }

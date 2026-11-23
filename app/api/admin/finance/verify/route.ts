@@ -1,20 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { verifyAdminAuth, logAdminAction, syncBookingPaymentStatus, logBookingStatusHistory } from "@/lib/finance-server";
-import type { Payment, BookingStatus } from "@/types/database";
-
-interface JoinedPaymentVerify {
-  id: number;
-  booking_id: string;
-  jenis: string;
-  status: string;
-  catatan: string | null;
-  booking?: {
-    id: string;
-    kode_booking: string;
-    status: BookingStatus;
-  } | null;
-}
+import { verifyAdminAuth, verifyPaymentTransaction } from "@/lib/finance-server";
 
 export async function POST(req: Request) {
   try {
@@ -41,89 +27,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Ambil data payment saat ini
-    const { data, error: fetchErr } = await supabase
-      .from("payments")
-      .select(`
-        *,
-        booking:bookings(id, kode_booking, status)
-      `)
-      .eq("id", paymentId)
-      .single();
-
-    if (fetchErr || !data) {
-      return NextResponse.json({ error: "Data pembayaran tidak ditemukan." }, { status: 404 });
-    }
-
-    const payment = data as unknown as JoinedPaymentVerify;
-
-    // Transaksi yang sudah terverifikasi tidak boleh diubah
-    if (payment.status === "terverifikasi") {
-      return NextResponse.json(
-        { error: "Transaksi ini sudah berstatus terverifikasi dan bersifat kekal (immutable). Gunakan penyesuaian jika perlu koreksi." },
-        { status: 400 }
-      );
-    }
-
-    // Update status payment
-    const updatePayload: Partial<Payment> = {
+    const result = await verifyPaymentTransaction(supabase, {
+      paymentId: Number(paymentId),
       status,
-      diverifikasi_oleh: auth.userId,
-    };
-    if (alasan && status === "ditolak") {
-      updatePayload.catatan = payment.catatan
-        ? `${payment.catatan} | [Ditolak]: ${alasan.trim()}`
-        : `[Ditolak]: ${alasan.trim()}`;
-    }
-
-    const { error: updateErr } = await supabase
-      .from("payments")
-      .update(updatePayload)
-      .eq("id", paymentId);
-
-    if (updateErr) {
-      return NextResponse.json({ error: updateErr.message }, { status: 500 });
-    }
-
-    // Jika payment DP disetujui dan booking masih menunggu_dp, ubah booking ke dp_dibayar
-    const booking = payment.booking;
-    if (status === "terverifikasi" && payment.jenis === "dp" && booking?.status === "menunggu_dp") {
-      await supabase
-        .from("bookings")
-        .update({
-          status: "dp_dibayar",
-          pesan_admin: "Pembayaran DP telah diverifikasi admin. Pesanan siap dijadwalkan.",
-        })
-        .eq("id", booking.id);
-
-      await logBookingStatusHistory(supabase, {
-        bookingId: booking.id,
-        statusLama: "menunggu_dp",
-        statusBaru: "dp_dibayar",
-      });
-    } else if (status === "ditolak") {
-      await supabase
-        .from("bookings")
-        .update({
-          pesan_admin: `Bukti transfer ditolak: ${alasan.trim()}`,
-        })
-        .eq("id", payment.booking_id);
-    }
-
-    // Sinkronisasi status_pembayaran booking
-    await syncBookingPaymentStatus(supabase, payment.booking_id);
-
-    // Catat log admin
-    await logAdminAction(supabase, {
-      adminId: auth.userId!,
-      aksi: `Verifikasi Pembayaran ID #${payment.id} (${payment.jenis}) -> ${status}${alasan ? `: ${alasan}` : ""}`,
-      namaTabel: "payments",
-      targetId: String(payment.id),
+      alasan,
+      adminId: auth.userId,
     });
 
     return NextResponse.json({
       success: true,
       message: `Pembayaran berhasil ${status === "terverifikasi" ? "disetujui" : "ditolak"}.`,
+      isAlreadyInStatus: result.isAlreadyInStatus,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Kesalahan server";

@@ -13,6 +13,8 @@ interface JoinedPayment {
   bukti_url: string | null;
   status: PaymentStatus;
   catatan: string | null;
+  dibayar_pada: string;
+  tanggal_transaksi?: string;
   created_at: string;
   booking?: {
     id: string;
@@ -55,23 +57,27 @@ export async function GET(req: Request) {
     let query = supabase
       .from("payments")
       .select(`
-        *,
+        id,
+        booking_id,
+        jenis,
+        jumlah,
+        metode,
+        bukti_url,
+        status,
+        dibayar_pada,
+        diverifikasi_oleh,
         booking:bookings(
           id,
           kode_booking,
           status,
           user_id,
           profile:profiles(id, nama, no_hp)
-        ),
-        admin:profiles!payments_dicatat_oleh_fkey(id, nama)
+        )
       `, { count: "exact" })
-      .order("created_at", { ascending: false });
+      .order("id", { ascending: false });
 
     if (jenis !== "semua") {
       query = query.eq("jenis", jenis as PaymentJenis);
-    }
-    if (arah !== "semua") {
-      query = query.eq("arah", arah as PaymentArah);
     }
     if (status !== "semua") {
       query = query.eq("status", status as PaymentStatus);
@@ -80,13 +86,13 @@ export async function GET(req: Request) {
       query = query.ilike("metode", `%${metode}%`);
     }
     if (startDate) {
-      query = query.gte("created_at", `${startDate}T00:00:00.000Z`);
+      query = query.gte("dibayar_pada", `${startDate}T00:00:00.000+07:00`);
     }
     if (endDate) {
-      query = query.lte("created_at", `${endDate}T23:59:59.999Z`);
+      query = query.lte("dibayar_pada", `${endDate}T23:59:59.999+07:00`);
     }
 
-    if (!isExport) {
+    if (!isExport && arah === "semua") {
       query = query.range(offset, offset + limit - 1);
     }
 
@@ -96,16 +102,38 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    let filteredData = (data as unknown as JoinedPayment[]) || [];
+    // Map properties for UI consistency
+    const rawPayments = (data as unknown as JoinedPayment[]) || [];
+    let mappedData = rawPayments.map((p) => {
+      const computedArah: PaymentArah = p.arah || (p.jenis === "refund_deposit" ? "keluar" : "masuk");
+      const computedTime = p.tanggal_transaksi || p.dibayar_pada || p.created_at || "";
+      return {
+        ...p,
+        arah: computedArah,
+        tanggal_transaksi: computedTime,
+        created_at: computedTime,
+        catatan: p.catatan || null,
+      };
+    });
+
+    if (arah !== "semua") {
+      mappedData = mappedData.filter((p) => p.arah === arah);
+    }
+
+    let filteredData = mappedData;
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       filteredData = filteredData.filter((p) => {
         const kode = p.booking?.kode_booking?.toLowerCase() || "";
         const nama = p.booking?.profile?.nama?.toLowerCase() || "";
         const hp = p.booking?.profile?.no_hp?.toLowerCase() || "";
-        const cat = p.catatan?.toLowerCase() || "";
+        const cat = (p.catatan || "").toLowerCase();
         return kode.includes(q) || nama.includes(q) || hp.includes(q) || cat.includes(q);
       });
+    }
+
+    if (!isExport && arah !== "semua") {
+      filteredData = filteredData.slice(offset, offset + limit);
     }
 
     if (isExport) {

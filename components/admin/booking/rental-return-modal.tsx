@@ -262,7 +262,8 @@ export function RentalReturnModal({
       if (netRefund > 0) {
         try {
           const { data: { user } } = await supabase.auth.getUser();
-          await supabase.from("payments").insert({
+          const now = new Date().toISOString();
+          const fullRefundPayload = {
             booking_id: booking.id,
             jenis: "refund_deposit",
             arah: "keluar",
@@ -272,11 +273,23 @@ export function RentalReturnModal({
             catatan: "Pengembalian sisa deposit jaminan setelah inspeksi pengembalian alat",
             dicatat_oleh: user?.id || null,
             diverifikasi_oleh: user?.id || null,
-            tanggal_transaksi: new Date().toISOString(),
-            dibayar_pada: new Date().toISOString(),
-          });
-        } catch {
-          // optional
+            tanggal_transaksi: now,
+            dibayar_pada: now,
+          };
+          const { error: insErr } = await supabase.from("payments").insert(fullRefundPayload);
+          if (insErr && (insErr.code === "42703" || insErr.message?.includes("does not exist"))) {
+            await supabase.from("payments").insert({
+              booking_id: booking.id,
+              jenis: "refund_deposit",
+              jumlah: netRefund,
+              metode: "Pengembalian Deposit (Tunai/Transfer)",
+              status: "terverifikasi",
+              dibayar_pada: now,
+              diverifikasi_oleh: user?.id || null,
+            });
+          }
+        } catch (pErr) {
+          console.warn("Gagal mencatat mutasi refund_deposit:", pErr);
         }
       }
 
