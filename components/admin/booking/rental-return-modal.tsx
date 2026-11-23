@@ -712,19 +712,19 @@ export function RentalReturnModal({
                   className={`p-3.5 rounded-xl border mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${
                     netRefund >= 0
                       ? "bg-[#E2F0D9] border-[#C5E1A5] text-[#2E5E4E]"
-                      : "bg-[#FEE2E2] border-[#FECACA] text-[#991B1B]"
+                      : "bg-[#FEF3C7] border-[#FDE68A] text-[#78350F]"
                   }`}
                 >
                   <div>
                     <span className="font-extrabold text-sm block">
                       {netRefund >= 0
                         ? "Deposit Dikembalikan (Masuk Antrean Refund):"
-                        : "Deposit Habis! Tagihan Kurang Bayar:"}
+                        : "Deposit Habis. Pelunasan Tambahan Dibayar di Toko:"}
                     </span>
                     <span className="text-[11px] opacity-90">
                       {netRefund >= 0
                         ? `Sisa deposit sebesar ${formatRupiah(sisaRefundDeposit)} akan masuk ke antrean transfer admin.`
-                        : `Biaya denda & kerusakan melebihi deposit. Tagihan kekurangan sebesar ${formatRupiah(kekuranganBayar)} akan dicatat di keuangan.`}
+                        : `Biaya denda & kerusakan melebihi deposit. Sisa ${formatRupiah(kekuranganBayar)} telah lunas dibayar langsung oleh pelanggan di kasir toko.`}
                     </span>
                   </div>
 
@@ -821,12 +821,12 @@ export function RentalReturnModal({
                 </ul>
               </div>
             ) : (
-              <div className="p-3 bg-[#FEE2E2] border border-[#FECACA] rounded-xl text-[#991B1B] text-[11px] space-y-1">
-                <span className="font-bold block">⚠️ Deposit Habis &amp; Tagihan Terbentuk:</span>
+              <div className="p-3 bg-[#FEF3C7] border border-[#FDE68A] rounded-xl text-[#78350F] text-[11px] space-y-1">
+                <span className="font-bold block">💵 Mutasi Otomatis yang Akan Dicatat:</span>
                 <ul className="list-disc list-inside space-y-0.5">
                   <li>Deposit dipotong habis: {formatRupiah(depositAwal)}</li>
-                  <li>Tagihan kekurangan: {formatRupiah(kekuranganBayar)} (Status: Menunggu Pembayaran)</li>
-                  <li>Status booking akan menjadi <strong>Bermasalah</strong> hingga tagihan dilunasi.</li>
+                  <li>Pelunasan tunai di toko: {formatRupiah(kekuranganBayar)} (Status: Lunas Terverifikasi)</li>
+                  <li>Total denda &amp; kerusakan masuk ke pendapatan toko, status booking menjadi <strong>Selesai</strong>.</li>
                 </ul>
               </div>
             )}

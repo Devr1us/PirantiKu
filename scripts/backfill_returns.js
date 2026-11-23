@@ -200,41 +200,42 @@ async function run() {
       }
     }
 
-    // 4. Jika total kewajiban > deposit -> Kurang Bayar!
+    // 4. Jika total kewajiban > deposit -> Pelunasan tunai di toko saat pengembalian
     if (totalKewajiban > depositAwal) {
       const shortfall = totalKewajiban - depositAwal;
       const { error: insErr } = await safeInsert(supabase, {
         booking_id: booking.id,
-        jenis: "tagihan_kekurangan",
+        jenis: "denda_keterlambatan",
         arah: "masuk",
         jumlah: shortfall,
-        metode: "Menunggu Pembayaran",
-        status: "menunggu_pembayaran",
-        sumber: "backfill",
-        catatan: `[Backfill] Tagihan kekurangan denda & ganti rugi #${booking.kode_booking}`,
+        metode: "Tunai di Toko (Pelunasan Denda/Kerusakan)",
+        status: "terverifikasi",
+        sumber: "kasir_toko",
+        catatan: `[Backfill] Pelunasan sisa denda & ganti rugi dibayar di toko #${booking.kode_booking}`,
         dicatat_oleh: adminId,
+        diverifikasi_oleh: adminId,
         tanggal_transaksi: now,
         dibayar_pada: now,
       });
       if (insErr) {
-        console.error("Gagal insert tagihan kekurangan:", insErr);
+        console.error("Gagal insert pelunasan tunai toko:", insErr);
       } else {
-        console.log(`+ Tercatat tagihan_kekurangan: Rp ${shortfall.toLocaleString("id-ID")}`);
+        console.log(`+ Tercatat pelunasan tunai di toko (terverifikasi): Rp ${shortfall.toLocaleString("id-ID")}`);
       }
 
-      // Update status booking menjadi 'bermasalah'
-      if (booking.status !== "bermasalah") {
+      // Update status booking menjadi 'selesai'
+      if (booking.status !== "selesai") {
         const { error: upErr } = await supabase
           .from("bookings")
           .update({
-            status: "bermasalah",
-            catatan_admin: `Kurang bayar denda/ganti rugi sebesar Rp ${shortfall.toLocaleString("id-ID")}`,
+            status: "selesai",
+            pesan_admin: `Unit telah dikembalikan & diinspeksi. Seluruh denda/ganti rugi telah lunas dibayar di toko.`,
           })
           .eq("id", booking.id);
         if (upErr) {
-          console.error("Gagal update booking status bermasalah:", upErr);
+          console.error("Gagal update booking status selesai:", upErr);
         } else {
-          console.log(`+ Status booking diubah menjadi 'bermasalah'.`);
+          console.log(`+ Status booking diubah menjadi 'selesai'.`);
         }
       }
     }

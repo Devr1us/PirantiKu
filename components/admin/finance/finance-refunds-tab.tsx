@@ -88,12 +88,16 @@ export function FinanceRefundsTab({ onActionSuccess }: FinanceRefundsTabProps) {
     try {
       const res = await fetch(`/api/admin/finance/refund?status=${statusFilter}`);
       const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error || `HTTP ${res.status}`);
+      }
       if (json.data) {
         setRefunds(json.data);
       }
-    } catch (err) {
-      console.error("Gagal memuat antrean refund:", err);
-      toast.error("Gagal memuat antrean refund.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan";
+      console.error("Gagal memuat antrean refund:", msg);
+      toast.error(`Gagal memuat antrean refund: ${msg}`);
     } finally {
       setIsLoading(false);
     }

@@ -626,36 +626,35 @@ export async function processBookingReturnFinancials(
     });
   }
 
-  // D. Tagihan Kekurangan Bayar jika kewajiban > deposit
+  // D. Pelunasan sisa denda & kerusakan yang dibayar pelanggan langsung di kasir toko saat pengembalian
   if (kekuranganBayar > 0) {
     await safeInsertPayment(supabase, {
       booking_id: bookingId,
-      jenis: "tagihan_kekurangan",
+      jenis: "denda_keterlambatan",
       arah: "masuk",
       jumlah: kekuranganBayar,
-      metode: "Menunggu Pembayaran Pelanggan",
-      status: "menunggu_pembayaran",
-      catatan: `Kekurangan bayar denda & kerusakan melebihi deposit (Total Denda: ${lateFee}, Ganti Rugi: ${totalGantiRugi}, Deposit: ${depositAwal})`,
+      metode: "Tunai / Kasir di Toko",
+      status: "terverifikasi",
+      sumber: "kasir_toko",
+      catatan: `Pelunasan sisa biaya keterlambatan / kerusakan dibayar langsung oleh pelanggan di kasir toko saat pengembalian (Denda: ${lateFee}, Ganti Rugi: ${totalGantiRugi}, Deposit: ${depositAwal})`,
       dicatat_oleh: adminId,
+      diverifikasi_oleh: adminId,
       tanggal_transaksi: now,
       dibayar_pada: now,
     });
   }
 
   // 6. Tentukan status akhir booking
-  // Aturan: Tidak boleh berstatus 'selesai' jika ada kekurangan bayar atau deposit belum ditransfer
-  let finalStatus: BookingStatus = "selesai";
-  if (kekuranganBayar > 0) {
-    finalStatus = "bermasalah";
-  } else if (sisaDepositDikembalikan > 0) {
-    finalStatus = "dikembalikan";
-  }
+  // Seluruh denda dan ganti rugi telah lunas diselesaikan saat pengembalian barang di toko
+  const finalStatus: BookingStatus = sisaDepositDikembalikan > 0 ? "dikembalikan" : "selesai";
 
-  let pesanStatus = `Unit telah dikembalikan. Denda: ${lateFee.toLocaleString("id-ID")}, Ganti Rugi: ${totalGantiRugi.toLocaleString("id-ID")}.`;
+  let pesanStatus = `Unit telah dikembalikan. Denda: Rp ${lateFee.toLocaleString("id-ID")}, Ganti Rugi: Rp ${totalGantiRugi.toLocaleString("id-ID")}.`;
   if (kekuranganBayar > 0) {
-    pesanStatus += ` Menunggu pembayaran kekurangan sebesar Rp ${kekuranganBayar.toLocaleString("id-ID")}.`;
+    pesanStatus += ` Sisa biaya sebesar Rp ${kekuranganBayar.toLocaleString("id-ID")} telah lunas dibayar di toko. Pengembalian selesai.`;
   } else if (sisaDepositDikembalikan > 0) {
-    pesanStatus += ` Sisa deposit Rp ${sisaDepositDikembalikan.toLocaleString("id-ID")} dalam antrean refund.`;
+    pesanStatus += ` Sisa deposit Rp ${sisaDepositDikembalikan.toLocaleString("id-ID")} dalam antrean refund transfer.`;
+  } else {
+    pesanStatus += ` Deposit telah habis dialokasikan. Pengembalian selesai.`;
   }
 
   await supabase

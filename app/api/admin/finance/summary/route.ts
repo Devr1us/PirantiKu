@@ -111,20 +111,6 @@ export async function GET(req: Request) {
         (p.status === "menunggu_verifikasi" && p.metode?.includes("Transfer"))
     ).length;
 
-    // 5. Total tagihan kekurangan pelanggan yang belum dibayar
-    const { data: allUnpaidPayments } = await supabase
-      .from("payments")
-      .select("jumlah, jenis, metode, status")
-      .in("status", ["menunggu_pembayaran", "menunggu_verifikasi"]);
-
-    const pendingShortfallTotal = (allUnpaidPayments || [])
-      .filter(
-        (p) =>
-          p.jenis === "tagihan_kekurangan" ||
-          p.metode?.toLowerCase().includes("kekurangan")
-      )
-      .reduce((acc, curr) => acc + (Number(curr.jumlah) || 0), 0);
-
     // Format chart series diurutkan secara kronologis
     const chartData = Object.entries(dailyMap)
       .sort(([a], [b]) => a.localeCompare(b))
@@ -142,7 +128,7 @@ export async function GET(req: Request) {
         dpMasuk,
         pelunasanMasuk,
         dendaDanGantiRugi: dendaMasuk + gantiRugiMasuk,
-        pendingShortfall: pendingShortfallTotal,
+        pendingShortfall: 0,
         totalDepositDitahan,
         refundDibayar,
         pendingVerifications: pendingCount || 0,
